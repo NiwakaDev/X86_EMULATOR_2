@@ -51,10 +51,10 @@ void Gui::InitFontAscii(){
         this->font_ascii['('][i] = font_RIGHT_PAR[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[32][i] = font_SPACE[i];
+        this->font_ascii[' '][i] = font_SPACE[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[43][i] = font_PLUS[i];
+        this->font_ascii['+'][i] = font_PLUS[i];
     }
     for(i=0; i<16; i++){
         this->font_ascii[','][i] = font_COMMA[i];
@@ -63,112 +63,112 @@ void Gui::InitFontAscii(){
         font_ascii['='][i] = font_EQUAL[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[45][i] = font_HYPHEN[i];
+        this->font_ascii['-'][i] = font_HYPHEN[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[46][i] = font_DOT[i];
+        this->font_ascii['.'][i] = font_DOT[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[48][i] = font_0[i];
+        this->font_ascii['0'][i] = font_0[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[49][i] = font_1[i];
+        this->font_ascii['1'][i] = font_1[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[50][i] = font_2[i];
+        this->font_ascii['2'][i] = font_2[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[51][i] = font_3[i];
+        this->font_ascii['3'][i] = font_3[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[52][i] = font_4[i];
+        this->font_ascii['4'][i] = font_4[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[53][i] = font_5[i];
+        this->font_ascii['5'][i] = font_5[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[54][i] = font_6[i];
+        this->font_ascii['6'][i] = font_6[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[55][i] = font_7[i];
+        this->font_ascii['7'][i] = font_7[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[56][i] = font_8[i];
+        this->font_ascii['8'][i] = font_8[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[57][i] = font_9[i];
+        this->font_ascii['9'][i] = font_9[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[58][i] = font_COLON[i];
+        this->font_ascii[':'][i] = font_COLON[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[65][i] = font_A[i];
+        this->font_ascii['A'][i] = font_A[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[66][i] = font_B[i];
+        this->font_ascii['B'][i] = font_B[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[67][i] = font_C[i];
+        this->font_ascii['C'][i] = font_C[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[68][i] = font_D[i];
+        this->font_ascii['D'][i] = font_D[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[69][i] = font_E[i];
+        this->font_ascii['E'][i] = font_E[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[70][i] = font_F[i];
+        this->font_ascii['F'][i] = font_F[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[71][i] = font_G[i];
+        this->font_ascii['G'][i] = font_G[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[72][i] = font_H[i];
+        this->font_ascii['H'][i] = font_H[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[73][i] = font_I[i];
+        this->font_ascii['I'][i] = font_I[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[74][i] = font_J[i];
+        this->font_ascii['J'][i] = font_J[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[75][i] = font_K[i];
+        this->font_ascii['K'][i] = font_K[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[76][i] = font_L[i];
+        this->font_ascii['L'][i] = font_L[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[77][i] = font_M[i];
+        this->font_ascii['M'][i] = font_M[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[78][i] = font_N[i];
+        this->font_ascii['N'][i] = font_N[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[79][i] = font_O[i];
+        this->font_ascii['O'][i] = font_O[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[80][i] = font_P[i];
+        this->font_ascii['P'][i] = font_P[i];
     }
     for(i=0; i < 16; i++){
         this->font_ascii['Q'][i] = font_Q[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[82][i] = font_R[i];
+        this->font_ascii['R'][i] = font_R[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[83][i] = font_S[i];
+        this->font_ascii['S'][i] = font_S[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[84][i] = font_T[i];
+        this->font_ascii['T'][i] = font_T[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[85][i] = font_U[i];
+        this->font_ascii['U'][i] = font_U[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[86][i] = font_V[i];
+        this->font_ascii['V'][i] = font_V[i];
     }
     for(i=0; i < 16; i++){
-        this->font_ascii[87][i] = font_W[i];
+        this->font_ascii['W'][i] = font_W[i];
     }
     for(i=0; i < 16; i++){
         this->font_ascii['X'][i] = font_X[i];
