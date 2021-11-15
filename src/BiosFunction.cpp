@@ -15,17 +15,43 @@ VideoFunction::VideoFunction():BiosFunction(){
     this->function_name = "VideoFunction";
 }
 
+//http://oswiki.osask.jp/?%28AT%29BIOS
 void VideoFunction::Run(Cpu *cpu, Memory* mem){
-    unsigned char mode;
-    mode = cpu->GetR8H(EAX);
-    return;
+    uint16_t mode;
+    uint16_t video_mode;
+    uint16_t height;
+    uint16_t width;
+    uint32_t vram;
+    mode = cpu->GetR16(EAX);
     switch(mode){
-        case 0x00:
-            //何もせずリターン。本当の実装
-            //http://oswiki.osask.jp/?%28AT%29BIOS
+        case 0x0000:
+            return;
+        case 0x4F02:
+            video_mode = cpu->GetR16(EBX);
+            if(video_mode==0x4101){
+                height = 480;
+                width  = 640;
+                vram   = 0xfd000000;
+                cpu->SetR8H(EAX, 0x00);
+                cpu->SetR8L(EAX, 0x4F);
+                return;
+            }else{
+                this->Error("Not implemented: video_mode=0x%04X at VideoFunction::Run", video_mode);
+            }
+        case 0x4F00:
+            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+4, (uint16_t)0x2000);
+            cpu->SetR8H(EAX, 0x00);
+            cpu->SetR8L(EAX, 0x4F);
+            return;
+        case 0x4F01:
+            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI), (uint16_t)0x0080);
+            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x19, (uint8_t)0x08);
+            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x1b, (uint8_t)0x04);
+            cpu->SetR8H(EAX, 0x00);
+            cpu->SetR8L(EAX, 0x4F);
             return;
         default:
-            this->Error("Not implemented at VideoFunction::Run");
+            this->Error("Not implemented: mode=0x%04X at VideoFunction::Run", mode);
     }
     unsigned char color;
     unsigned char ascii_code;

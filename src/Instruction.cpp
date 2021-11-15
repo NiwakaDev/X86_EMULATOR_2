@@ -128,8 +128,8 @@ uint32_t Instruction::GetEffectiveAddr(Cpu* cpu, Memory* mem){
     uint32_t rm32;
     uint32_t disp8;
     uint32_t disp32;
+    uint32_t addr = 0;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
-        uint32_t addr = 0;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
             addr = this->sib.GetAddress(cpu);
         }
@@ -169,7 +169,6 @@ uint32_t Instruction::GetEffectiveAddr(Cpu* cpu, Memory* mem){
             return addr;
         }
     }else{
-        uint16_t addr = 0;
         uint16_t disp16;
         if(this->modrm.mod==0){
             if(this->modrm.rm==6){
@@ -243,9 +242,8 @@ uint16_t Instruction::GetR16ForEffectiveAddr(Cpu* cpu){
 uint8_t Instruction::GetRM8(Cpu* cpu, Memory* mem){
     uint8_t rm8;
     uint32_t disp32;
-
+    uint32_t addr;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
-        uint32_t addr;
         uint32_t disp8;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
             addr = this->sib.GetAddress(cpu);
@@ -293,7 +291,6 @@ uint8_t Instruction::GetRM8(Cpu* cpu, Memory* mem){
         rm8 = cpu->GetR8(this->modrm.rm);
         return rm8;
     }else{//16bitアドレス
-        uint16_t addr;
         uint16_t disp8;
         uint16_t disp16;
         if(this->modrm.mod==0){
@@ -331,9 +328,8 @@ uint8_t Instruction::GetRM8(Cpu* cpu, Memory* mem){
 uint16_t Instruction::GetRM16(Cpu* cpu, Memory* mem){
     uint16_t rm16;
     uint32_t disp32;
-
+    uint32_t addr;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
-        uint32_t addr;
         uint32_t disp8;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
             addr = this->sib.GetAddress(cpu);
@@ -373,7 +369,6 @@ uint16_t Instruction::GetRM16(Cpu* cpu, Memory* mem){
             return rm16;
         }
     }else{//16bitアドレス
-        uint16_t addr;
         uint16_t disp8;
         uint16_t disp16;
         if(this->modrm.mod==0){
@@ -409,9 +404,8 @@ uint16_t Instruction::GetRM16(Cpu* cpu, Memory* mem){
 
 uint32_t Instruction::GetRM32(Cpu* cpu, Memory* mem){
     uint32_t rm32;
-
+    uint32_t addr;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
-        uint32_t addr;
         uint32_t disp8;
         uint32_t disp32;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
@@ -463,7 +457,6 @@ uint32_t Instruction::GetRM32(Cpu* cpu, Memory* mem){
             return rm32;
         }
     }else{//16bitアドレス
-        uint16_t addr;
         uint16_t disp8;
         uint16_t disp16;
         if(this->modrm.mod==0){
@@ -498,8 +491,8 @@ uint32_t Instruction::GetRM32(Cpu* cpu, Memory* mem){
 }
 
 void Instruction::SetRM8(Cpu* cpu, Memory* mem, uint8_t data){
+    uint32_t addr;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
-        uint32_t addr;
         uint32_t disp8;
         uint32_t disp32;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
@@ -548,7 +541,6 @@ void Instruction::SetRM8(Cpu* cpu, Memory* mem, uint8_t data){
         cpu->SetR8(this->modrm.rm, data);
         return;
     }else{
-        uint16_t addr;
         uint16_t disp8;
         uint16_t disp16;
         if(this->modrm.mod==0){
@@ -582,8 +574,8 @@ void Instruction::SetRM8(Cpu* cpu, Memory* mem, uint8_t data){
 }
 
 void Instruction::SetRM16(Cpu* cpu, Memory* mem, uint16_t data){
+    uint32_t addr;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
-        uint32_t addr;
         uint32_t disp8;
         uint32_t disp32;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
@@ -659,8 +651,8 @@ void Instruction::SetRM16(Cpu* cpu, Memory* mem, uint16_t data){
 }
 
 void Instruction::SetRM32(Cpu* cpu, Memory* mem, uint32_t data){
+    uint32_t addr;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
-        uint32_t addr;
         uint32_t disp8;
         uint32_t disp32;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
@@ -711,7 +703,6 @@ void Instruction::SetRM32(Cpu* cpu, Memory* mem, uint32_t data){
             return;
         }
     }else{//16bitアドレスサイズ
-        uint16_t addr;
         uint16_t disp8;
         uint16_t disp16;
         if(this->modrm.mod==0){
@@ -1761,7 +1752,15 @@ void AndEaxImm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAnd(result);
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    uint16_t imm16;
+    uint16_t result;
+    uint16_t ax;
+    imm16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    ax = cpu->GetR16(EAX);
+    result = ax & imm16;
+    cpu->SetR16(EAX, result);
+    cpu->UpdateEflagsForAnd(result);
     return;
 }
 

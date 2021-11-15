@@ -3,7 +3,8 @@
 EMULATOR = x86
 
 CC = g++
-G++_OPTIONS = -Wall -std=c++11 -O2 -I ${INCLUDE_DIR}
+//G++_OPTIONS = -Wall -std=c++11 -O2 -I ${INCLUDE_DIR}
+G++_OPTIONS = -Wall -std=c++11 -O0 -g -I ${INCLUDE_DIR}
 G++_OPTIONS += -lSDL2
 
 SOURCE_DIR      = ./src/

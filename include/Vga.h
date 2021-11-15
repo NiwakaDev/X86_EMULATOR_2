@@ -1,10 +1,15 @@
 #pragma once
 #include "common.h"
-#define VRAM_START_ADDR 0x000a0000
+
 class Memory;
 
-#define DEFAULT_HEIGHT 200
-#define DEFAULT_WIDTH 320
+//#define DEFAULT_HEIGHT 200
+//#define DEFAULT_WIDTH 320
+//#define VRAM_START_ADDR 0x000a0000
+
+#define DEFAULT_HEIGHT 480
+#define DEFAULT_WIDTH 640
+#define VRAM_START_ADDR 0xfd000000
 
 class Vga:public Object{
     public:
