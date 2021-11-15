@@ -12,8 +12,8 @@
 Vga::Vga(Memory* mem){
     Pixel pixel;
     this->mem = mem;
-    this->height = HEIGHT;
-    this->width  = WIDTH;
+    this->height = DEFAULT_HEIGHT;
+    this->width  = DEFAULT_WIDTH;
     this->InitPalette();
 }
 

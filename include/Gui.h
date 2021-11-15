@@ -11,7 +11,6 @@ class Gui:public Object{
         void Display();
         void SetFont(unsigned char ascii_code, int row, int col);
         void SetFont(unsigned char ascii_code);
-        void ResizeWindow(int w, int h);
         void Update();
         unsigned char font_ascii[128][16];   
     private:    
@@ -21,8 +20,8 @@ class Gui:public Object{
         Mouse* mouse = NULL;
         Pixel* vram_mem = NULL;
         void InitFontAscii();
-        int SCREEN_WIDTH = WIDTH;
-        int SCREEN_HEIGHT = HEIGHT;
+        int SCREEN_WIDTH;
+        int SCREEN_HEIGHT;
         SDL_Window* window = NULL;
         SDL_Surface* screenSurface = NULL;
         SDL_Renderer *renderer = NULL;
@@ -35,4 +34,5 @@ class Gui:public Object{
         void HandleMouseMotion(SDL_Event *e);
         void HandleMouseButton(SDL_Event *e);
         void HideCursor();
+        void Resize();
 };

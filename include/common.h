@@ -30,5 +30,3 @@ struct _Pixel{
 typedef struct _Pixel Pixel;
 
 #define SECTOR_SIZE 512
-#define HEIGHT 200
-#define WIDTH 320

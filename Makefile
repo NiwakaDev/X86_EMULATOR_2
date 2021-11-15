@@ -12,7 +12,7 @@ INCLUDE_DIR     = ./include/
 vpath %.h ${INCLUDE_DIR}
 vpath %.cpp ${SOURCE_DIR}
 
-HEADERS = $(wildcard *.h)
+HEADERS = $(wildcard ${INCLUDE_DIR}*.h)
 SOURCES = $(wildcard ${SOURCE_DIR}*.cpp)
 OBJECTS = ${SOURCES:.cpp=.o}
 
