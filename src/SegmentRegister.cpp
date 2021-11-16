@@ -36,9 +36,6 @@ void SegmentRegister::SetCache(Cpu* cpu, uint16_t idx){
     this->cache.bit32_mode = (gdt_gate->limit_high&DB)==DB;
     this->dpl = GET_DPL(gdt_gate->access_right);
     this->cpl             = this->dpl;
-    if(this->cpl==255){
-        fprintf(stderr, "\n");
-    }
 }
 
 void SegmentRegister::Set(uint16_t data, Cpu* cpu){

@@ -3,13 +3,13 @@
 
 class Memory;
 
-//#define DEFAULT_HEIGHT 200
-//#define DEFAULT_WIDTH 320
-//#define VRAM_START_ADDR 0x000a0000
+#define DEFAULT_HEIGHT 200
+#define DEFAULT_WIDTH 320
+#define DEFAULT_VRAM_START_ADDR 0x000a0000
 
-#define DEFAULT_HEIGHT 480
-#define DEFAULT_WIDTH 640
-#define VRAM_START_ADDR 0xfd000000
+//#define DEFAULT_HEIGHT 480
+//#define DEFAULT_WIDTH 640
+//#define DEFAULT_VRAM_START_ADDR 0xfd000000
 
 class Vga:public Object{
     public:
@@ -25,7 +25,7 @@ class Vga:public Object{
         Memory* mem;
         int height;
         int width;
-        int vram_start_addr = VRAM_START_ADDR;
+        int vram_start_addr;
         void InitPalette();
         void SetColor(int idx, uint32_t color);
 };

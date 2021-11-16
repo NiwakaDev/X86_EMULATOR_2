@@ -23,6 +23,9 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
     uint16_t width;
     uint32_t vram;
     mode = cpu->GetR16(EAX);
+    return;
+    //画面サイズを変更する処理を実装予定だが、
+    //とりあえず、何もせずにreturn
     switch(mode){
         case 0x0000:
             return;
@@ -34,19 +37,23 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 vram   = 0xfd000000;
                 cpu->SetR8H(EAX, 0x00);
                 cpu->SetR8L(EAX, 0x4F);
-                return;
-            }else{
-                this->Error("Not implemented: video_mode=0x%04X at VideoFunction::Run", video_mode);
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x28, (uint32_t)vram);
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x12, (uint8_t)640);
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x14, (uint8_t)480);
             }
+            break;
         case 0x4F00:
             mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+4, (uint16_t)0x2000);
             cpu->SetR8H(EAX, 0x00);
             cpu->SetR8L(EAX, 0x4F);
             return;
         case 0x4F01:
-            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI), (uint16_t)0x0080);
+            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI), (uint16_t)0x0180);//0x100 :  640 x  400 x 8bitカラー
             mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x19, (uint8_t)0x08);
             mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x1b, (uint8_t)0x04);
+            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x12, (uint16_t)640);
+            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x14, (uint16_t)480);
+            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x28, (uint32_t)0xfd000000);
             cpu->SetR8H(EAX, 0x00);
             cpu->SetR8L(EAX, 0x4F);
             return;

@@ -3077,14 +3077,25 @@ MovMoffs32Eax::MovMoffs32Eax(string code_name):Instruction(code_name){
 
 void MovMoffs32Eax::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
+    //op_size = 32bit
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
-        mem->Write(cpu->GetLinearAddrForDataAccess(mem->Read32(cpu->GetLinearAddrForCodeAccess())), cpu->GetR32(EAX));
-        cpu->AddEip(4);
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bit_addr
+            mem->Write(cpu->GetLinearAddrForDataAccess(mem->Read32(cpu->GetLinearAddrForCodeAccess())), cpu->GetR32(EAX));
+            cpu->AddEip(4);
+        }else{//16bit_addr
+            mem->Write(cpu->GetLinearAddrForDataAccess(mem->Read16(cpu->GetLinearAddrForCodeAccess())), cpu->GetR32(EAX));
+            cpu->AddEip(2);
+        }
         return;
     }
-    
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
-    return;
+    //op_size = 16bit
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bit_addr
+        mem->Write(cpu->GetLinearAddrForDataAccess(mem->Read32(cpu->GetLinearAddrForCodeAccess())), cpu->GetR16(EAX));
+        cpu->AddEip(4);
+    }else{//16bit_addr
+        mem->Write(cpu->GetLinearAddrForDataAccess(mem->Read16(cpu->GetLinearAddrForCodeAccess())), cpu->GetR16(EAX));
+        cpu->AddEip(2);
+    }
 }
 
 SubR32Rm32::SubR32Rm32(string code_name):Instruction(code_name){

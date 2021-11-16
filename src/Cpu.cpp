@@ -26,9 +26,17 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->gdtr = new Gdtr("Gdtr", 0, 0);
     this->idtr = new Idtr("Idtr", 0, 0);
 
-    for(int i=0; i<PREFIX_FLG_KIND_COUNT; i++){
-        this->prefix_flgs[i] = false;
-    }
+    this->prefix_flgs[FLG_67] = false;
+    this->prefix_flgs[FLG_66] = false;
+    this->prefix_flgs[FLG_F0] = false;
+    this->prefix_flgs[FLG_F2] = false;
+    this->prefix_flgs[FLG_F3] = false;
+    this->prefix_flgs[FLG_2E] = false;
+    this->prefix_flgs[FLG_36] = false;
+    this->prefix_flgs[FLG_26] = false;
+    this->prefix_flgs[FLG_64] = false;
+    this->prefix_flgs[FLG_65] = false;
+
 
     this->prefix_table[0xF0] = true;
     this->prefix_table[0xF2] = true;
@@ -420,32 +428,39 @@ void Cpu::SetEip(uint32_t addr){
 }
 
 void Cpu::ResetPrefixFlg(){
-    for(int i=0; i<PREFIX_FLG_KIND_COUNT; i++){
-        this->prefix_flgs[i] = false;
-    }
+    this->prefix_flgs[FLG_67] = false;
+    this->prefix_flgs[FLG_66] = false;
+    this->prefix_flgs[FLG_F0] = false;
+    this->prefix_flgs[FLG_F2] = false;
+    this->prefix_flgs[FLG_F3] = false;
+    this->prefix_flgs[FLG_2E] = false;
+    this->prefix_flgs[FLG_36] = false;
+    this->prefix_flgs[FLG_26] = false;
+    this->prefix_flgs[FLG_64] = false;
+    this->prefix_flgs[FLG_65] = false;
 }
 
 void Cpu::CheckPrefixCode(Memory* mem){
     uint8_t op_code=mem->Read8(this->GetLinearAddrForCodeAccess());
     while(this->prefix_table[op_code]){      
         switch (op_code){
-            case 0x66:
+            case FLG_66:
                 this->prefix_flgs[FLG_66] = true;
                 break;
-            case 0x67:
+            case FLG_67:
                 this->prefix_flgs[FLG_67] = true;
                 break;
-            case 0xF2:
+            case FLG_F2:
                 this->prefix_flgs[FLG_F2] = true;
                 break;
-            case 0xF3:
+            case FLG_F3:
                 this->prefix_flgs[FLG_F3] = true;
                 break;
-            case 0x2E:
+            case FLG_2E:
                 this->prefix_flgs[FLG_2E] = true;
                 this->default_data_selector = CS;
                 break;
-            case 0x26:
+            case FLG_26:
                 this->prefix_flgs[FLG_26] = true;
                 this->default_data_selector = ES;
                 break;

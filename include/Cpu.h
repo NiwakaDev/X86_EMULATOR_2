@@ -14,7 +14,8 @@ class TaskRegister;
 
 enum SEGMENT_REGISTER {ES, CS, SS, DS, FS, GS, SEGMENT_REGISTER_COUNT};
 enum GENERAL_PURPOSE_REGISTER32 {EAX , ECX, EDX, EBX, ESP, EBP, ESI, EDI, GENERAL_PURPOSE_REGISTER32_COUNT};
-enum PREFIX_FLG_KIND {FLG_67, FLG_66, FLG_F0, FLG_F2, FLG_F3, FLG_2E, FLG_36, FLG_26, FLG_64, FLG_65, PREFIX_FLG_KIND_COUNT};
+//enum PREFIX_FLG_KIND {FLG_67, FLG_66, FLG_F0, FLG_F2, FLG_F3, FLG_2E, FLG_36, FLG_26, FLG_64, FLG_65, PREFIX_FLG_KIND_COUNT};
+enum PREFIX_FLG_KIND {FLG_67=0x67, FLG_66=0x66, FLG_F0=0xF0, FLG_F2=0xF2, FLG_F3=0xF3, FLG_2E=0x2E, FLG_36=0x36, FLG_26=0x26, FLG_64=0x64, FLG_65=0x65, PREFIX_FLG_KIND_COUNT=10};
 enum EFLAGS_KIND {ZF, CF, SF, OF, IF, DF, EFLAGS_KIND_CNT};
 enum CONTROL_REGISTER {CR0, CR1, CR2, CR3, CR4, CONTROL_REGISTERS_COUNT};
 
@@ -70,8 +71,9 @@ class Cpu:public Object{
         SEGMENT_REGISTER default_code_selector;
         SEGMENT_REGISTER default_data_selector;
         SEGMENT_REGISTER default_stack_selector;
-        map<uint8_t, bool> prefix_table;
-        bool prefix_flgs[PREFIX_FLG_KIND_COUNT];
+        map<uint8_t, bool> prefix_table;//1byteがprefixかどうかを示すテーブル
+        map<uint8_t, bool> prefix_flgs;//現在実行中の機械語命令で使用しているプレフィックスを管理
+        //bool prefix_flgs[PREFIX_FLG_KIND_COUNT];
         //制御レジスタ : 「IA-32 インテル® アーキテクチャソフトウェア・デベロッパーズ・マニュアル下巻：システム・プログラミング・ガイド」2.5節を参照
         union{
             uint32_t raw;

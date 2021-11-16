@@ -14,6 +14,7 @@ Vga::Vga(Memory* mem){
     this->mem = mem;
     this->height = DEFAULT_HEIGHT;
     this->width  = DEFAULT_WIDTH;
+    this->vram_start_addr = DEFAULT_VRAM_START_ADDR;
     this->InitPalette();
 }
 
