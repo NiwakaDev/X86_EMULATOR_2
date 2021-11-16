@@ -8,7 +8,7 @@
 #include "Ldtr.h"
 #include "TaskRegister.h"
 
-#define SIGN_FLG 0x80000000
+#define SIGN_FLG 0x80000000//いずれ消す予定
 #define BYTE 8
 
 Cpu::Cpu(Bios* bios, Memory* mem){
@@ -727,23 +727,13 @@ void Cpu::ShowSegmentRegisters(){
 }
 
 void Cpu::Run(IoPort* io_port){
-    static int cnt = 0;
-    static vector<string> instr_code_names;
     this->InitSelector();
     this->ResetPrefixFlg();
     this->CheckPrefixCode(this->mem);
     uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
     if(this->instructions[op_code]==NULL){
-        fprintf(stderr, "cnt = %d, linear_addr = %08X, eip = %08X\n", cnt, this->GetLinearAddrForCodeAccess(), this->eip);
-        Dump(this->mem, this->GetLinearAddrForCodeAccess(), 512);
-        for(int i=instr_code_names.size()-OFFSET; i<instr_code_names.size(); i++){
-            fprintf(stderr, "%s\n", instr_code_names[i].c_str());
-        }
-        fprintf(stderr, "EIP=%08X, ESP=%08X\n", this->eip, this->gprs[ESP]);
-        this->ShowSegmentRegisters();
         this->Error("Not implemented: op_code = 0x%02X Cpu::Run", op_code);
     }
     this->instructions[op_code]->Run(this, this->mem, io_port);
-    cnt++;
     return;
 }
