@@ -502,22 +502,22 @@ void Cpu::UpdatePF(uint32_t result){
     this->eflags.flgs.PF = (pf_cnt%2==0)? 1:0;
 }
 
-void Cpu::UpdateEflagsForSub16(uint32_t result, uint16_t d1, uint16_t d2){
-    this->UpdateCF(result);
-    this->UpdateZF((uint32_t)result);
-    this->UpdateOF_Sub16((uint32_t)result, d1, d2);
-    this->UpdateSF((uint32_t)result);
-}
-
 void Cpu::UpdateEflagsForSub8(uint32_t result, uint8_t d1, uint8_t d2){
-    this->UpdateCF(result);
+    this->UpdateCfForSub(result, 1);
     this->UpdateZF((uint32_t)result);
     this->UpdateOF_Sub8((uint32_t)result, d1, d2);
-    this->UpdateSF((uint32_t)result);
+    this->UpdateSF((uint8_t)result);
+}
+
+void Cpu::UpdateEflagsForSub16(uint32_t result, uint16_t d1, uint16_t d2){
+    this->UpdateCfForSub(result, 2);
+    this->UpdateZF((uint32_t)result);
+    this->UpdateOF_Sub16((uint32_t)result, d1, d2);
+    this->UpdateSF((uint16_t)result);
 }
 
 void Cpu::UpdateEflagsForSub(uint64_t result, uint32_t d1, uint32_t d2){
-    this->UpdateCF(result);
+    this->UpdateCfForSub(result, 4);
     this->UpdateZF((uint32_t)result);
     this->UpdateOF_Sub((uint32_t)result, d1, d2);
     this->UpdateSF((uint32_t)result);
@@ -732,6 +732,9 @@ void Cpu::Run(IoPort* io_port){
     this->CheckPrefixCode(this->mem);
     uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
     if(this->instructions[op_code]==NULL){
+        fprintf(stderr, "EIP = %08X\n", this->eip);
+        this->ShowSegmentRegisters();
+        Dump(this->mem, this->eip, 512);
         this->Error("Not implemented: op_code = 0x%02X Cpu::Run", op_code);
     }
     this->instructions[op_code]->Run(this, this->mem, io_port);

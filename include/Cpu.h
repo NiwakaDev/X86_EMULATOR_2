@@ -235,6 +235,23 @@ class Cpu:public Object{
         void UpdateOF_Sub8(uint8_t result, uint8_t d1, uint8_t d2);
         void UpdateZF(uint32_t result);
         void UpdateCF(uint64_t result);
+        template<typename type> void UpdateCfForSub(type data, int group){
+            switch(group){
+                case 1:
+                    this->eflags.flgs.CF = ((data>>8)&1)? 1:0;
+                    break;
+                case 2:
+                    this->eflags.flgs.CF = ((data>>16)&1)? 1:0;
+                    break;
+                case 4:
+                case 8:
+                    this->eflags.flgs.CF = ((data>>32)&1)? 1:0;
+                    break;
+                default:
+                    this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(data));
+            }
+        }
+
         void UpdatePF(uint32_t result);
         template<typename type> void UpdateSF(type data){
             switch(sizeof(data)){

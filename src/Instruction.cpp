@@ -1440,7 +1440,7 @@ void CmpRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     rm8  = this->GetRM8(cpu, mem);
     result = (uint64_t)rm8 - (uint64_t)imm8;
-    cpu->UpdateEflagsForSub(result, rm8, imm8);
+    cpu->UpdateEflagsForSub8(result, rm8, imm8);
     return;
 }
 
