@@ -25,6 +25,9 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->ldtr = new Ldtr(0);
     this->gdtr = new Gdtr("Gdtr", 0, 0);
     this->idtr = new Idtr("Idtr", 0, 0);
+    for(int i=0; i<GENERAL_PURPOSE_REGISTER32_COUNT; i++){
+        this->gprs[i] = 0x00000000;
+    }
 
     this->prefix_flgs[FLG_67] = false;
     this->prefix_flgs[FLG_66] = false;
@@ -732,9 +735,6 @@ void Cpu::Run(IoPort* io_port){
     this->CheckPrefixCode(this->mem);
     uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
     if(this->instructions[op_code]==NULL){
-        fprintf(stderr, "EIP = %08X\n", this->eip);
-        this->ShowSegmentRegisters();
-        Dump(this->mem, this->eip, 512);
         this->Error("Not implemented: op_code = 0x%02X Cpu::Run", op_code);
     }
     this->instructions[op_code]->Run(this, this->mem, io_port);
