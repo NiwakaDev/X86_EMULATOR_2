@@ -283,7 +283,7 @@ class Cpu:public Object{
         void HandleInterrupt(int irq_num);
         void SaveTask(uint16_t selector);
         void SwitchTask();
-        void ShowSegmentRegisters();
+        void ShowRegisters();
         uint8_t GetCpl();
         bool CheckPrivilegeLevel();
         void SetRpl(SEGMENT_REGISTER register_type, uint8_t rpl);

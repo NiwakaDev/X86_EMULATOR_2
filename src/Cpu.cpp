@@ -723,10 +723,20 @@ static void Dump(Memory* mem, uint32_t start, uint32_t size){
     fprintf(stderr, "\n");
 }
 
-void Cpu::ShowSegmentRegisters(){
-    fprintf(stderr, "CS = %04X %08X\n", this->segment_registers[CS]->GetData(), this->segment_registers[CS]->GetBaseAddr());
-    fprintf(stderr, "DS = %04X %08X\n", this->segment_registers[DS]->GetData(), this->segment_registers[DS]->GetBaseAddr());
-    fprintf(stderr, "SS = %04X %08X\n", this->segment_registers[SS]->GetData(), this->segment_registers[SS]->GetBaseAddr());
+void Cpu::ShowRegisters(){
+    fprintf(stderr, "EAX=%08X EBX=%08X ECX=%08X EDX=%08X\n", this->gprs[EAX], this->gprs[EBX], this->gprs[ECX], this->gprs[EDX]);
+    fprintf(stderr, "ESI=%08X EDI=%08X EBP=%08X ESP=%08X\n", this->gprs[ESI], this->gprs[EDI], this->gprs[EBP], this->gprs[ESP]);
+    fprintf(stderr, "EIP=%08X\n", this->eip);
+    fprintf(stderr, "ES =%04X %08X\n", this->segment_registers[ES]->GetData(), this->segment_registers[ES]->GetBaseAddr());
+    fprintf(stderr, "CS =%04X %08X\n", this->segment_registers[CS]->GetData(), this->segment_registers[CS]->GetBaseAddr());
+    fprintf(stderr, "SS =%04X %08X\n", this->segment_registers[SS]->GetData(), this->segment_registers[SS]->GetBaseAddr());
+    fprintf(stderr, "DS =%04X %08X\n", this->segment_registers[DS]->GetData(), this->segment_registers[DS]->GetBaseAddr());
+    fprintf(stderr, "FS =%04X %08X\n", this->segment_registers[FS]->GetData(), this->segment_registers[FS]->GetBaseAddr());
+    fprintf(stderr, "GS =%04X %08X\n", this->segment_registers[GS]->GetData(), this->segment_registers[GS]->GetBaseAddr());
+    fprintf(stderr, "LDT=%04X %08X\n", this->ldtr->GetData(), this->ldtr->GetBaseAddr());
+    fprintf(stderr, "TR =%04X %08X\n", this->task_register->GetData(), this->task_register->GetBaseAddr());
+    fprintf(stderr, "GDT=%08X\n", this->gdtr->GetBase());
+    fprintf(stderr, "GDT=%08X\n", this->idtr->GetBase());
 }
 
 void Cpu::Run(IoPort* io_port){
