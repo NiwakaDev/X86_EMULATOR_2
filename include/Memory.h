@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#define MEM_SIZE 4294967296
 
 class Memory:public Object{
     private:
@@ -7,9 +8,6 @@ class Memory:public Object{
     public:
         Memory();
         template<typename type>void Write(uint32_t addr, type data){
-            if(33554432<=addr){
-                return;
-            }
             uint8_t* p = (uint8_t*)&data;
             for(int i=0; i<sizeof(data); i++){
                 this->buff[addr+i] = p[i];

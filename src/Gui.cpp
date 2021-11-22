@@ -5,7 +5,7 @@
 #include "Mouse.h"
 
 #define MOVE_SCALE 5
-#define DISPLAY_SCALE 2
+#define DISPLAY_SCALE 1
 
 /***resize方法
     this->SCREEN_HEIGHT = this->SCREEN_HEIGHT*2;
