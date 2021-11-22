@@ -1,5 +1,5 @@
 # X86_EMULATOR_2
-![スクリーンショット 2021-11-21 16 18 05](https://user-images.githubusercontent.com/61189782/142753474-c430bbb3-7986-4b43-ab43-eadf06c009a2.png)
+![スクリーンショット 2021-11-22 9 56 41](https://user-images.githubusercontent.com/61189782/142801566-46440b1e-ad22-402d-baef-45e24ce638dd.png)
 
 ![スクリーンショット 2021-11-15 21 01 06](https://user-images.githubusercontent.com/61189782/141778695-87a2b344-9fb3-47f3-8804-2589154f0339.png)
 
