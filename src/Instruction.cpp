@@ -2873,9 +2873,18 @@ void PushAd::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         this->Push32(cpu, mem, cpu->GetR32(EBP));
         this->Push32(cpu, mem, cpu->GetR32(ESI));
         this->Push32(cpu, mem, cpu->GetR32(EDI));
-    }else{
-        this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+        return;
     }
+    uint16_t sp;
+    sp = cpu->GetR16(ESP);
+    this->Push16(cpu, mem, cpu->GetR16(EAX));
+    this->Push16(cpu, mem, cpu->GetR16(ECX));
+    this->Push16(cpu, mem, cpu->GetR16(EDX));
+    this->Push16(cpu, mem, cpu->GetR16(EBX));
+    this->Push16(cpu, mem, sp);
+    this->Push16(cpu, mem, cpu->GetR16(EBP));
+    this->Push16(cpu, mem, cpu->GetR16(ESI));
+    this->Push16(cpu, mem, cpu->GetR16(EDI));
     return;
 }
 
