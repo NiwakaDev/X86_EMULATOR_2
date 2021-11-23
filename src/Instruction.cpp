@@ -1137,9 +1137,6 @@ AddRm8Imm8::AddRm8Imm8(string code_name):Instruction(code_name){
 }
 
 void AddRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: 32bit op_size at %s::Run", this->code_name.c_str());
-    }
     uint8_t rm8;
     uint8_t imm8;
     GENERAL_PURPOSE_REGISTER32 register_type;
