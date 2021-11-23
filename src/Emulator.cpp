@@ -31,6 +31,8 @@ Emulator::Emulator(int argc, char* argv[]){
     this->gui     = new Gui(this->vga, this->kbc, this->mouse);
     this->bios->LoadIpl(this->disk_image_name, this->mem);
     if(this->head_start){//今後改良予定
+        //最初から32bitモードにする
+        this->cpu->On32bitMode();
         for(int i=0; i<10; i++){//とりあえず10
             this->cpu->Run(this->io_port);
         }

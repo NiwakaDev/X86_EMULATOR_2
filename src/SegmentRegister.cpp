@@ -20,6 +20,10 @@ bool SegmentRegister::Is32bitsMode(){
     return this->cache.bit32_mode;
 }
 
+void SegmentRegister::On32bitMode(){
+    this->cache.bit32_mode = true;
+}
+
 uint16_t SegmentRegister::GetData(){
     return this->selector.raw;
 }

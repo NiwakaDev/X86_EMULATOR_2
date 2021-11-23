@@ -267,6 +267,10 @@ bool Cpu::Is32bitsMode(){
     return this->segment_registers[CS]->Is32bitsMode();
 }
 
+void Cpu::On32bitMode(){
+    this->segment_registers[CS]->On32bitMode();
+}
+
 uint8_t Cpu::GetR8H(GENERAL_PURPOSE_REGISTER32 register_type){
     return (uint8_t)((this->gprs[register_type]>>8)&0xff);
 }

@@ -288,4 +288,5 @@ class Cpu:public Object{
         bool CheckPrivilegeLevel();
         void SetRpl(SEGMENT_REGISTER register_type, uint8_t rpl);
         void SetCpl(SEGMENT_REGISTER register_type, uint8_t cpl);
+        void On32bitMode();
 };

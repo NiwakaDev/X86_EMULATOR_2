@@ -33,4 +33,5 @@ class SegmentRegister:public Object{
         void SetRpl(uint8_t rpl);
         void SetCpl(uint8_t cpl);
         void Set(uint16_t data, Cpu* cpu);
+        void On32bitMode();
 };
