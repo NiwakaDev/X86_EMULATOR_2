@@ -30,6 +30,12 @@ Emulator::Emulator(int argc, char* argv[]){
     this->io_port = new IoPort(this->vga, this->pic, this->kbc, this->timer);
     this->gui     = new Gui(this->vga, this->kbc, this->mouse);
     this->bios->LoadIpl(this->disk_image_name, this->mem);
+    if(this->head_start){//今後改良予定
+        for(int i=0; i<10; i++){//とりあえず10
+            this->cpu->Run(this->io_port);
+        }
+        return;
+    }
     if(!this->debug){
         this->emu_thread = new thread(&Emulator::Run, this);
         this->gui->Display();
@@ -52,6 +58,12 @@ int Emulator::ParseArgv(int argc, char* argv[]){
         }
         if ((strcmp("-debug", argv[0])==0) || (strcmp("-d", argv[0])==0)) {
             this->debug = true;
+            argc -= 1;
+            argv += 1;
+            continue;
+        }
+        if ((strcmp("-headstart", argv[0])==0) || (strcmp("-h", argv[0])==0)) {//バイナリファイルの先頭から実行する。
+            this->head_start = true;
             argc -= 1;
             argv += 1;
             continue;

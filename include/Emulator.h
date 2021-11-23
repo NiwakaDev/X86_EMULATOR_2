@@ -27,6 +27,7 @@ class Emulator:public Object{
         int ParseArgv(int argc, char* argv[]);
         char* disk_image_name = NULL;
         bool debug      = false;
+        bool head_start = false;
     public:
         Emulator(int argc, char* argv[]);
         void Run();

@@ -21,15 +21,14 @@ void Bios::CallFunction(Cpu *cpu, Memory* mem, uint8_t bios_number){
 void Bios::LoadIpl(char* file_name, Memory* mem){
     uint8_t* buff = NULL;
     FILE* fp      = NULL;
+    int cnt;
     if((buff=(uint8_t*)malloc(IPL_SIZE))==NULL){
         this->Error("buff==NULL at Bios::LoadIpl");
     }
     if((fp=fopen(file_name, "rb"))==NULL){
         this->Error("can`t open %s at Bios::LoadIpl", file_name);
     }
-    if(fread(buff, 1, IPL_SIZE, fp)<IPL_SIZE){
-        this->Error("can`t open %s at Bios::LoadIpl", file_name);
-    }
+    cnt=fread(buff, 1, IPL_SIZE, fp);
     for(int i=0; i<IPL_SIZE; i++){
         mem->Write(IPL_START_ADDR+i, buff[i]);
     }
