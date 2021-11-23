@@ -1219,7 +1219,12 @@ void AddRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAdd(result, rm32, r32);
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    uint16_t rm16, r16;
+    uint32_t result;
+    rm16 = this->GetRM16(cpu, mem);
+    r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = rm16+r16;
+    this->SetRM16(cpu, mem, result);
     return;
 }
 
