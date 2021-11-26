@@ -2262,8 +2262,10 @@ void LeaR32M::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         uint32_t effective_addr = this->GetEffectiveAddr(cpu, mem);
         cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, effective_addr);
         return;
+    }else{
+        uint16_t effective_addr = this->GetEffectiveAddr(cpu, mem);
+        cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, effective_addr);
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 PopFd::PopFd(string code_name):Instruction(code_name){
