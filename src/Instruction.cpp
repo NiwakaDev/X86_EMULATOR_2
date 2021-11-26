@@ -1960,7 +1960,14 @@ void JmpPtr1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->SetEip(offset);
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    uint32_t offset;
+    uint16_t selector;
+    cpu->AddEip(1);
+    offset = mem->Read32(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(4);
+    selector = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->SetR16(CS, selector);
+    cpu->SetEip(offset&0x0000FFFF);
     return;
 }
 
