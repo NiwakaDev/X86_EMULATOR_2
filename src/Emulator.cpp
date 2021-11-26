@@ -33,7 +33,7 @@ Emulator::Emulator(int argc, char* argv[]){
     if(this->head_start){//今後改良予定
         //最初から32bitモードにする
         this->cpu->On32bitMode();
-        for(int i=0; i<10; i++){//とりあえず10
+        for(int i=0; i<10000; i++){//とりあえず10
             this->cpu->Run(this->io_port);
         }
         return;

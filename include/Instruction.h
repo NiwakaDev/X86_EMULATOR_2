@@ -1162,6 +1162,12 @@ class Scasb:public Instruction{
         Scasb(string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class CallRm32:public Instruction{
+    public: 
+        CallRm32(string code_name);
+        inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

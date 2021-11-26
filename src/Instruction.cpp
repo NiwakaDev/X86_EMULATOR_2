@@ -1058,6 +1058,7 @@ CodeFF::CodeFF(string code_name):Instruction(code_name){
     }
     this->instructions[0] = new IncRm32("IncRm32");
     this->instructions[1] = new DecRm32("DecRm32");
+    this->instructions[2] = new CallRm32("CallRm32");
     this->instructions[3] = new CallM1632("CallM1632");
     this->instructions[4] = new JmpRm32("JmpRm32");
     this->instructions[5] = new JmpM1632("JmpM1632");
@@ -1250,7 +1251,6 @@ void AddR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
 CmpAlImm8::CmpAlImm8(string code_name):Instruction(code_name){
 
 }
-
 
 //ADD命令のフラグレジスタ更新処理を今後やる。
 void CmpAlImm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
@@ -2113,7 +2113,14 @@ void XorRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    uint16_t r16;
+    uint16_t result;
+    rm16 = this->GetRM16(cpu, mem);
+    r16  = cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = rm16^r16;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
     return;
 }
 
@@ -4346,6 +4353,20 @@ void Scasb::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
                 }
             }
         }
+        return;
+    }
+    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    return;
+}
+
+CallRm32::CallRm32(string code_name):Instruction(code_name){
+
+}
+
+void CallRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint32_t rm32 = this->GetRM32(cpu, mem);
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//アドレスで場合分け
+            this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
         return;
     }
     this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
