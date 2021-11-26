@@ -4434,12 +4434,13 @@ void AdcRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint16_t imm8;
     uint16_t rm16;
     uint32_t result;
+    uint16_t cf = cpu->IsFlag(CF)?1:0;
     rm16 = this->GetRM16(cpu, mem);
     imm8 = (int16_t)((int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess()));
-    result = (uint32_t)imm8 + (uint32_t)rm16;
+    result = (uint32_t)imm8 + (uint32_t)rm16+(uint32_t)cf;
     this->SetRM16(cpu, mem, rm16+imm8);
+    cpu->UpdateEflagsForAdd(result, rm16, (uint16_t)(imm8+cf));
     cpu->AddEip(1);
-    this->Error("Not implemented: %s::Run", this->code_name.c_str());
 }
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
