@@ -1170,9 +1170,11 @@ void AddRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     }
     uint16_t imm8_16bits;
     uint16_t rm16;
+    uint32_t result;
     rm16 = this->GetRM16(cpu, mem);
     imm8_16bits = (int16_t)((int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess()));
     this->SetRM16(cpu, mem, rm16+imm8_16bits);
+    cpu->UpdateEflagsForAdd(result, rm16, imm8_16bits);
     cpu->AddEip(1);
     return;
 }
