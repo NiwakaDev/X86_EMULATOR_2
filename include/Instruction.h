@@ -1174,6 +1174,12 @@ class MovM32M32:public Instruction{
         MovM32M32(string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class AdcRm32Imm8:public Instruction{
+    public: 
+        AdcRm32Imm8(string code_name);
+        inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

@@ -975,6 +975,7 @@ Code83::Code83(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new AddRm32Imm8("AddRm32Imm8");
+    this->instructions[2] = new AdcRm32Imm8("AdcRm32Imm8");
     this->instructions[1] = new OrRm32Imm8("OrRm32Imm8");
     this->instructions[4] = new AndRm32Imm8("AndRm32Imm8");
     this->instructions[5] = new SubRm32Imm8("SubRm32Imm8");
@@ -986,7 +987,7 @@ void Code83::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code 83 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("code 83 /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -4417,6 +4418,26 @@ void MovM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         }
         return;
     }
+}
+
+AdcRm32Imm8::AdcRm32Imm8(string code_name):Instruction(code_name){
+
+}
+
+void AdcRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
+        return;
+    }
+    uint16_t imm8;
+    uint16_t rm16;
+    uint32_t result;
+    rm16 = this->GetRM16(cpu, mem);
+    imm8 = (int16_t)((int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess()));
+    result = (uint32_t)imm8 + (uint32_t)rm16;
+    this->SetRM16(cpu, mem, rm16+imm8);
+    cpu->AddEip(1);
+    this->Error("Not implemented: %s::Run", this->code_name.c_str());
 }
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){

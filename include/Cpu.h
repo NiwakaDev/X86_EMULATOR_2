@@ -193,9 +193,9 @@ class Cpu:public Object{
         }
         template<typename type1, typename type2>void UpdateEflagsForAdd(type1 result, type2 d1, type2 d2){
             this->UpdateZF(result);
-            this->UpdateSF(result);
+            this->UpdateSF((type2)result);
             this->UpdatePF(result);
-            this->UpdateCF(result);
+            this->UpdateCfForSub(result, sizeof(d1));
             switch(sizeof(d1)){
                 case 1:
                     this->UpdateOF_Add((uint8_t)result, (uint8_t)d1, (uint8_t)d2);
