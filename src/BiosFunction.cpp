@@ -25,6 +25,7 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
     mode = cpu->GetR16(EAX);
     //画面サイズを変更する処理を実装予定だが、
     //とりあえず、何もせずにreturn
+    return;
     switch(mode){
         case 0x0000:
             return;

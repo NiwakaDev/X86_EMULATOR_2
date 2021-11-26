@@ -1168,6 +1168,12 @@ class CallRm32:public Instruction{
         CallRm32(string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class MovM32M32:public Instruction{
+    public: 
+        MovM32M32(string code_name);
+        inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 
