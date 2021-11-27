@@ -4470,6 +4470,25 @@ void Cwde::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint16_t al = (int16_t)(int8_t)cpu->GetR8L(EAX);
     cpu->SetR16(EAX, al);
 }
+
+AdcRm32R32::AdcRm32R32(string code_name):Instruction(code_name){
+
+}
+
+void AdcRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
+        return;
+    }
+    uint16_t rm16   = this->GetRM16(cpu, mem);
+    uint16_t r16    = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint16_t cf     = cpu->IsFlag(CF)?1:0;
+    uint32_t result = (uint32_t)rm16+(uint32_t)r16+(uint32_t)cf;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAdd(result, rm16, (uint16_t)(r16+cf));
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 

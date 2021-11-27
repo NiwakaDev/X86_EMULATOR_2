@@ -1186,6 +1186,12 @@ class Cwde:public Instruction{
         Cwde(string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class AdcRm32R32:public Instruction{
+    public: 
+        AdcRm32R32(string code_name);
+        inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 
