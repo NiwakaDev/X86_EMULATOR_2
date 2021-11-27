@@ -1,3 +1,7 @@
 *.o
 .DS_Store
 binary.bin
+binary
+test.c
+x86
+lldb_cmd.txt

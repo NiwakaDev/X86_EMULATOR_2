@@ -1,2 +1,0 @@
-b Instruction.cpp:2537
-r -i ../30日でできるOS自作/30nichideosjisaku/30_day/harib27d/haribote.img
