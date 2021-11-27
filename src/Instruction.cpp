@@ -4448,6 +4448,7 @@ Cwde::Cwde(string code_name):Instruction(code_name){
 }
 
 void Cwde::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
         return;
