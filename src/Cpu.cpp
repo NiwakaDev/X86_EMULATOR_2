@@ -133,6 +133,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0x8E] = new MovSregRm16("MovSregRm16");
     //this->instructions[0x8F] = new PopM32("PopM32");
     this->instructions[0x90] = new Nop("Nop");
+    this->instructions[0x98] = new Cwde("Cwde");
     this->instructions[0x99] = new Cdq("Cdq");
     this->instructions[0x9A] = new CallPtr1632("CallPtr1632");
     this->instructions[0x9C] = new PushFd("PushFd");

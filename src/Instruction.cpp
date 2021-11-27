@@ -4442,6 +4442,19 @@ void AdcRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->UpdateEflagsForAdd(result, rm16, (uint16_t)(imm8+cf));
     cpu->AddEip(1);
 }
+
+Cwde::Cwde(string code_name):Instruction(code_name){
+
+}
+
+void Cwde::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
+        return;
+    }
+    uint16_t al = (int16_t)(int8_t)cpu->GetR8L(EAX);
+    cpu->SetR16(EAX, al);
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 
