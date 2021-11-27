@@ -2669,7 +2669,17 @@ void DivRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->SetR32(EDX, r64%(uint64_t)rm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    uint32_t r32;
+    uint16_t dx, ax;
+    dx = cpu->GetR16(EDX);
+    ax = cpu->GetR16(EAX);
+    rm16 = this->GetRM16(cpu, mem);
+
+    r32  = (((uint32_t)dx)<<((uint32_t)16))| ((uint32_t)ax);
+    cpu->SetR16(EAX, r32/((uint32_t)rm16));
+    cpu->SetR16(EDX, r32%(uint32_t)rm16);
+    return;
 }
 
 NotRm32::NotRm32(string code_name):Instruction(code_name){
