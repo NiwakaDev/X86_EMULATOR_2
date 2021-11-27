@@ -3478,7 +3478,28 @@ void ShrRm32Cl::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForShr(rm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    uint8_t cl;
+    rm16 = this->GetRM16(cpu, mem);
+    cl = cpu->GetR8L(ECX);
+    if(cl==1){
+        if(rm16&SIGN_FLG2){
+            cpu->SetFlag(OF);
+        }else{
+            cpu->ClearFlag(OF);
+        }
+    }
+    for(uint32_t i=0; i<cl; i++){
+        if(rm16&1){
+            cpu->SetFlag(CF);
+        }else{
+            cpu->ClearFlag(CF);
+        }
+        rm16 = rm16 >> 1;
+    }
+    this->SetRM32(cpu, mem, rm16);
+    cpu->UpdateEflagsForShr(rm16);
+    return;
 }
 
 Xlatb::Xlatb(string code_name):Instruction(code_name){
