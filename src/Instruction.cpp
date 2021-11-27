@@ -3977,7 +3977,7 @@ void MulRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         result = eax*rm32;
         cpu->SetR32(EAX, result&0x00000000FFFFFFFF);
         cpu->SetR32(EDX, (result&0xFFFFFFFF00000000)>>32);
-        if(cpu->GetR32(EDX)){
+        if(!cpu->GetR32(EDX)){
             cpu->ClearFlag(OF);
             cpu->ClearFlag(CF);
         }else{
@@ -3986,7 +3986,21 @@ void MulRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         }
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint32_t rm16;
+    uint32_t ax;
+    uint32_t result;
+    ax    = cpu->GetR16(EAX);
+    rm16   = this->GetRM16(cpu, mem);
+    result = ax*rm16;
+    cpu->SetR16(EAX, result&0x0000FFFF);
+    cpu->SetR16(EDX, (result&0xFFFF0000)>>16);
+    if(!cpu->GetR16(EDX)){
+        cpu->ClearFlag(OF);
+        cpu->ClearFlag(CF);
+    }else{
+        cpu->SetFlag(OF);
+        cpu->SetFlag(CF);
+    }
     return;
 }
 
