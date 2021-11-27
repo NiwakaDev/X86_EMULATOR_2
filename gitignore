@@ -1,4 +1,5 @@
-*.o
+src/*.o
+src/*.tmp
 .DS_Store
 binary.bin
 binary
