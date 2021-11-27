@@ -4452,7 +4452,7 @@ void AdcRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     rm16 = this->GetRM16(cpu, mem);
     imm8 = (int16_t)((int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess()));
     result = (uint32_t)imm8 + (uint32_t)rm16+(uint32_t)cf;
-    this->SetRM16(cpu, mem, rm16+imm8);
+    this->SetRM16(cpu, mem, result);
     cpu->UpdateEflagsForAdd(result, rm16, (uint16_t)(imm8+cf));
     cpu->AddEip(1);
 }
