@@ -7,6 +7,9 @@
 #define MOVE_SCALE 5
 #define DISPLAY_SCALE 1
 
+#define MAX_WIDTH 1280
+#define MAX_HEIGHT 1024
+
 /***resize方法
     this->SCREEN_HEIGHT = this->SCREEN_HEIGHT*2;
     this->SCREEN_WIDTH  = this->SCREEN_WIDTH*2;
@@ -42,7 +45,7 @@ Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
         cout << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
     }
-    this->image = (Pixel*)malloc(this->SCREEN_WIDTH*this->SCREEN_HEIGHT*sizeof(Pixel));
+    this->image = (Pixel*)malloc(MAX_WIDTH*MAX_HEIGHT*sizeof(Pixel));//最大領域の場合のサイズで確保しておく。
 }
 
 Gui::~Gui(){
@@ -195,13 +198,9 @@ void Gui::InitFontAscii(){
 }
 
 void Gui::Resize(){
-    this->SCREEN_HEIGHT = this->SCREEN_HEIGHT*2;
-    this->SCREEN_WIDTH  = this->SCREEN_WIDTH*2;
     SDL_SetWindowSize(this->window, this->SCREEN_WIDTH, this->SCREEN_HEIGHT);
-    SDL_RenderSetLogicalSize(this->renderer,
-                             this->SCREEN_WIDTH,
-                             this->SCREEN_HEIGHT);
-    this->texture       = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->SCREEN_WIDTH, this->SCREEN_HEIGHT); 
+    SDL_RenderSetLogicalSize(this->renderer,this->SCREEN_WIDTH,this->SCREEN_HEIGHT);
+    this->texture = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->SCREEN_WIDTH, this->SCREEN_HEIGHT); 
 }
 
 void Gui::Update(){
@@ -213,7 +212,6 @@ void Gui::Update(){
 void Gui::Display(){
     SDL_Event e;
     bool quit = false;
-    unsigned int key_code;
     unsigned int start;
     unsigned int end;
 
@@ -247,11 +245,18 @@ void Gui::Display(){
                 this->HandleMouseButton(&e);
             }
         }
+        this->vga->vga_mtx.lock();
+        if((this->vga->GetHeight()!=this->SCREEN_HEIGHT)||(this->vga->GetWidth()!=this->SCREEN_WIDTH)){
+            this->SCREEN_HEIGHT = this->vga->GetHeight();
+            this->SCREEN_WIDTH  = this->vga->GetWidth();
+            this->Resize();
+        }
         for(int y=0; y<this->SCREEN_HEIGHT; y++){
             for(int x=0; x<this->SCREEN_WIDTH; x++){
                 this->image[x+y*this->SCREEN_WIDTH] = *(this->vga->GetPixel(x, y));
             }
         }
+        this->vga->vga_mtx.unlock();
         end = SDL_GetTicks();
         end = end - start;
         if(16>end){

@@ -18,6 +18,22 @@ Vga::Vga(Memory* mem){
     this->InitPalette();
 }
 
+void Vga::SetInfo(int width, int height, int vram_start_addr){
+    this->vga_mtx.lock();
+    this->width = width;
+    this->height = height;
+    this->vram_start_addr = vram_start_addr;
+    this->vga_mtx.unlock();
+}
+
+int Vga::GetWidth(){
+    return this->width;
+}
+
+int Vga::GetHeight(){
+    return this->height;
+}
+
 void Vga::Out8(uint16_t addr, uint8_t data){
     static int internal_cnt = 0;
     switch(addr){

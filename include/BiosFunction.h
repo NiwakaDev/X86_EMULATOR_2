@@ -2,6 +2,7 @@
 #include "common.h"
 class Cpu;
 class Memory;
+class Vga;
 
 class BiosFunction:public Object{
     protected:
@@ -15,8 +16,9 @@ class VideoFunction:public BiosFunction{
     private:
         uint8_t color_table[8] = {30, 34, 32, 36, 31, 35, 33, 37};
         void out8(uint16_t addr, uint8_t value);
+        Vga* vga;
     public:
-        VideoFunction();
+        VideoFunction(Vga* vga);
         void Run(Cpu *cpu, Memory* mem);
 };
 

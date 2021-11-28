@@ -19,10 +19,10 @@ Emulator::Emulator(int argc, char* argv[]){
         fprintf(stderr, "               -d : debug\n");
         exit(EXIT_FAILURE);
     }
-    this->bios    = new Bios(this->disk_image_name);
     this->mem     = new Memory();
-    this->cpu     = new Cpu(this->bios, this->mem);
     this->vga     = new Vga(this->mem);
+    this->bios    = new Bios(this->disk_image_name, this->vga);
+    this->cpu     = new Cpu(this->bios, this->mem);
     this->pic     = new Pic();
     this->timer   = new Timer(this->pic);
     this->mouse   = new Mouse(this->pic);

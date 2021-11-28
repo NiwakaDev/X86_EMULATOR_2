@@ -1,6 +1,7 @@
 #include "BiosFunction.h"
 #include "Cpu.h"
 #include "Memory.h"
+#include "Vga.h"
 
 BiosFunction::BiosFunction(){
 
@@ -11,13 +12,15 @@ void BiosFunction::Run(Cpu* cpu, Memory* mem){
 }
 
 
-VideoFunction::VideoFunction():BiosFunction(){
+VideoFunction::VideoFunction(Vga* vga):BiosFunction(){
     this->function_name = "VideoFunction";
+    this->vga = vga;
 }
 
 //http://oswiki.osask.jp/?%28AT%29BIOS
 void VideoFunction::Run(Cpu *cpu, Memory* mem){
     uint16_t mode;
+    uint8_t vga_mode;
     uint16_t video_mode;
     uint16_t height;
     uint16_t width;
@@ -25,12 +28,29 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
     mode = cpu->GetR16(EAX);
     //画面サイズを変更する処理を実装予定だが、
     //とりあえず、何もせずにreturn
-    switch(mode){
-        case 0x0000:
-            return;
-        case 0x4F02:
-            video_mode = cpu->GetR16(EBX);
-            if(video_mode==0x4101){
+    if(cpu->GetR8H(EAX)!=0x4F){
+        //VGAサービス
+        vga_mode = (mode>>8);
+        switch(vga_mode){
+            case 0x00:
+                if((mode&0x00FF)==0x13){
+                    this->vga->SetInfo(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_VRAM_START_ADDR);
+                }else{
+                    this->Error("Not implemented: video mode=0x%02X at VideoFunction::Run", mode&0x00FF);
+                }
+                return;
+            case 0x13:
+                this->vga->SetInfo(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_VRAM_START_ADDR);
+                return;
+            default:
+                this->Error("Not implemented: vga_mode=0x%02X at VideoFunction::Run", mode);
+        }
+    }else{//VESAサービス
+        switch(mode){
+            case 0x0000:
+                return;
+            case 0x4F02:
+                video_mode = cpu->GetR16(EBX);
                 height = 400;
                 width  = 640;
                 vram   = 0xfd000000;
@@ -39,26 +59,28 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x28, (uint32_t)vram);
                 mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x12, (uint8_t)640);
                 mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x14, (uint8_t)400);
-            }
-            break;
-        case 0x4F00:
-            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+4, (uint16_t)0xe004);
-            cpu->SetR8H(EAX, 0x00);
-            cpu->SetR8L(EAX, 0x4F);
-            return;
-        case 0x4F01:
-            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI), (uint16_t)0x00BB);//0x100 :  640 x  400 x 8bitカラー
-            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x19, (uint8_t)0x08);
-            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x1b, (uint8_t)0x04);
-            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x12, (uint16_t)640);
-            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x14, (uint16_t)400);
-            mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x28, (uint32_t)0xfd000000);
-            cpu->SetR8H(EAX, 0x00);
-            cpu->SetR8L(EAX, 0x4F);
-            return;
-        default:
-            this->Error("Not implemented: mode=0x%04X at VideoFunction::Run", mode);
+                this->vga->SetInfo(width, height, vram);
+                return;
+            case 0x4F00:
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+4, (uint16_t)0xe004);
+                cpu->SetR8H(EAX, 0x00);
+                cpu->SetR8L(EAX, 0x4F);
+                return;
+            case 0x4F01:
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI), (uint16_t)0x00BB);//0x100 :  640 x  400 x 8bitカラー
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x19, (uint8_t)0x08);
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x1b, (uint8_t)0x04);
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x12, (uint16_t)640);
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x14, (uint16_t)400);
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x28, (uint32_t)0xfd000000);
+                cpu->SetR8H(EAX, 0x00);
+                cpu->SetR8L(EAX, 0x4F);
+                return;
+            default:
+                this->Error("Not implemented: vesa_mode=0x%04X at VideoFunction::Run", mode);
+        }
     }
+    /***
     unsigned char color;
     unsigned char ascii_code;
     
@@ -74,6 +96,7 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
         bright = 0;
     }
     fprintf(stderr, "%c", ascii_code);
+    ***/
 }
 
 FloppyFunction::FloppyFunction(char* file_name):BiosFunction(){

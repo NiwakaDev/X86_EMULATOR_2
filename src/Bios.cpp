@@ -4,11 +4,11 @@
 #include "BiosFunction.h"
 #define IPL_SIZE 512
 
-Bios::Bios(char* file_name){
+Bios::Bios(char* file_name, Vga* vga){
     for(int i=0; i<BIOS_FUNCTION_SIZE; i++){
         this->bios_functions[i] = NULL;
     }
-    this->bios_functions[0x10] = new VideoFunction();
+    this->bios_functions[0x10] = new VideoFunction(vga);
     this->bios_functions[0x13] = new FloppyFunction(file_name);
     this->bios_functions[0x16] = new KeyFunction();
 }

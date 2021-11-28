@@ -5,12 +5,13 @@
 class Memory;
 class Cpu;
 class BiosFunction;
+class Vga;
 
 class Bios:public Object{
     private:
         BiosFunction *bios_functions[BIOS_FUNCTION_SIZE];
     public:
-        Bios(char* file_name);
+        Bios(char* file_name, Vga* vga);
         void LoadIpl(char* file_name, Memory* mem);
         void CallFunction(Cpu *cpu, Memory* mem, uint8_t bios_number);
 };
