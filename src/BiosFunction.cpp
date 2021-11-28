@@ -36,14 +36,14 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 if((mode&0x00FF)==0x13){
                     this->vga->SetInfo(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_VRAM_START_ADDR);
                 }else{
-                    this->Error("Not implemented: video mode=0x%02X at VideoFunction::Run", mode&0x00FF);
+                    this->Error("Not implemented: video mode=0x%02X at VideoFunction::Run", (uint8_t)(mode&0x00FF));
                 }
                 return;
             case 0x13:
                 this->vga->SetInfo(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_VRAM_START_ADDR);
                 return;
             default:
-                this->Error("Not implemented: vga_mode=0x%02X at VideoFunction::Run", mode);
+                this->Error("Not implemented: vga_mode=0x%02X at VideoFunction::Run", vga_mode);
         }
     }else{//VESAサービス
         switch(mode){
