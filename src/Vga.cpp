@@ -39,6 +39,7 @@ void Vga::Out8(uint16_t addr, uint8_t data){
     switch(addr){
         case 0x3C8:
             this->now_palette_number = data;
+            internal_cnt             = 0;
             break;
         case 0x3C9:
             if(internal_cnt==3){
