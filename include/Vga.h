@@ -7,6 +7,14 @@ class Memory;
 #define DEFAULT_WIDTH 320
 #define DEFAULT_VRAM_START_ADDR 0x000a0000
 
+/***
+テキストモードのメモ
+１フォントのサイズ : 8x8
+解像度           : 640x200
+VRAM_START_ADDR : 0x000B8000
+文字数           : 80x25
+***/
+
 class Vga:public Object{
     public:
         void Execute();

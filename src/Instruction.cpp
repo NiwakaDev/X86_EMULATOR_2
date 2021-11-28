@@ -2830,15 +2830,15 @@ IdivRm32::IdivRm32(string code_name):Instruction(code_name){
 
 void IdivRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
-        int32_t rm32;
+        int64_t rm32;
         int64_t r64;
         int32_t edx, eax;
         edx = cpu->GetR32(EDX);
         eax = cpu->GetR32(EAX);
-        rm32 = this->GetRM32(cpu, mem);
+        rm32 = (int64_t)(int32_t)this->GetRM32(cpu, mem);
         r64  = (((int64_t)edx)<<((int64_t)32))| ((int64_t)eax);
-        cpu->SetR32(EAX, r64/((int64_t)rm32));
-        cpu->SetR32(EDX, r64%(int64_t)rm32);
+        cpu->SetR32(EAX, r64/rm32);
+        cpu->SetR32(EDX, r64%rm32);
         return;
     }
     this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
