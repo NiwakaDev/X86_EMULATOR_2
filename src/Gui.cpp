@@ -5,7 +5,7 @@
 #include "Mouse.h"
 
 #define MOVE_SCALE 5
-#define DISPLAY_SCALE 1
+#define DISPLAY_SCALE 2
 
 #define MAX_WIDTH 1280
 #define MAX_HEIGHT 1024
