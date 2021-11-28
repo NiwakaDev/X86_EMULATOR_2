@@ -18,7 +18,6 @@ VRAM_START_ADDR : 0x000B8000
 class Vga:public Object{
     public:
         void Execute();
-        void GetVramMode();
         Pixel* GetPixel(int x, int y);
         Vga(Memory *mem);
         uint8_t now_palette_idx;

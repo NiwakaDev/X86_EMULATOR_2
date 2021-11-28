@@ -589,7 +589,8 @@ void Instruction::SetRM16(Cpu* cpu, Memory* mem, uint16_t data){
                 return;
             }
             if(this->modrm.rm==4){
-                this->Error("Stopped at Instruction::SetRM16");
+                mem->Write(cpu->GetLinearAddrForDataAccess(addr), data);
+                return;
             }
             addr = cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm);
             addr = cpu->GetLinearAddrForDataAccess(addr);
@@ -597,13 +598,26 @@ void Instruction::SetRM16(Cpu* cpu, Memory* mem, uint16_t data){
             return;
         }
         if(this->modrm.mod==1){
+            if(this->modrm.rm==4){
+                addr = addr + (int32_t)this->modrm.disp8;
+                mem->Write(cpu->GetLinearAddrForDataAccess(addr), data);
+                return;
+            }
             disp8 = (int32_t)this->modrm.disp8;
             addr = cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm)+disp8;
             addr = cpu->GetLinearAddrForDataAccess(addr);
             mem->Write(addr, data);
+            if(addr==(0x00475000+0x000037bc)){
+                fprintf(stderr, "asdf");
+            }
             return;
         }
         if(this->modrm.mod==2){
+            if(this->modrm.rm==4){
+                addr = addr + (int32_t)this->modrm.disp32;
+                mem->Write(cpu->GetLinearAddrForDataAccess(addr), data);
+                return;
+            }
             disp32 = this->modrm.disp32;
             addr = cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm)+disp32;
             addr = cpu->GetLinearAddrForDataAccess(addr);
