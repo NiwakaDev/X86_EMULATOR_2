@@ -25,6 +25,7 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
     uint16_t height;
     uint16_t width;
     uint32_t vram;
+    uint8_t ascii_code;
     mode = cpu->GetR16(EAX);
     //画面サイズを変更する処理を実装予定だが、
     //とりあえず、何もせずにreturn
@@ -42,6 +43,10 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
             case 0x13:
                 this->vga->SetInfo(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_VRAM_START_ADDR);
                 return;
+            case 0x0E:
+                ascii_code = cpu->GetR8L(EAX);
+                fprintf(stderr, "%c", ascii_code);
+                break;
             default:
                 this->Error("Not implemented: vga_mode=0x%02X at VideoFunction::Run", vga_mode);
         }
