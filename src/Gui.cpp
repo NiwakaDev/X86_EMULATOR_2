@@ -10,16 +10,6 @@
 #define MAX_WIDTH 1280
 #define MAX_HEIGHT 1024
 
-/***resize方法
-    this->SCREEN_HEIGHT = this->SCREEN_HEIGHT*2;
-    this->SCREEN_WIDTH  = this->SCREEN_WIDTH*2;
-    SDL_SetWindowSize(this->window, this->SCREEN_WIDTH, this->SCREEN_HEIGHT);
-    SDL_RenderSetLogicalSize(this->renderer,
-                             this->SCREEN_WIDTH,
-                             this->SCREEN_HEIGHT);
-    this->texture       = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->SCREEN_WIDTH, this->SCREEN_HEIGHT); 
-***/
-
 Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
     this->vga = vga;
     assert(this->vga!=NULL);
@@ -200,6 +190,7 @@ void Gui::InitFontAscii(){
 void Gui::Resize(){
     SDL_SetWindowSize(this->window, this->SCREEN_WIDTH, this->SCREEN_HEIGHT);
     SDL_RenderSetLogicalSize(this->renderer,this->SCREEN_WIDTH,this->SCREEN_HEIGHT);
+    SDL_DestroyTexture(this->texture);
     this->texture = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->SCREEN_WIDTH, this->SCREEN_HEIGHT); 
 }
 
