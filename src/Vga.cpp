@@ -38,15 +38,15 @@ void Vga::Out8(uint16_t addr, uint8_t data){
     static int internal_cnt = 0;
     switch(addr){
         case 0x3C8:
-            this->now_palette_number = data;
+            this->now_palette_idx = data;
             internal_cnt             = 0;
             break;
         case 0x3C9:
             if(internal_cnt==3){
-                this->now_palette_number++;
+                this->now_palette_idx++;
                 internal_cnt = 0;
             }
-            this->palette[this->now_palette_number][internal_cnt+RGB_OFFSET] = data<<2;
+            this->palette[this->now_palette_idx][internal_cnt+RGB_OFFSET] = data<<2;
             internal_cnt++;
             break;
         default:

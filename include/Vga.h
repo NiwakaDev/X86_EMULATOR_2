@@ -21,7 +21,7 @@ class Vga:public Object{
         void GetVramMode();
         Pixel* GetPixel(int x, int y);
         Vga(Memory *mem);
-        uint8_t now_palette_number;
+        uint8_t now_palette_idx;
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);
         mutex vga_mtx;
