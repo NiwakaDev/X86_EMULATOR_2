@@ -2,6 +2,7 @@
 #include "Cpu.h"
 #include "Memory.h"
 #include "IoPort.h"
+using namespace std;
 
 Instruction::Instruction(string code_name){
     this->code_name = code_name;

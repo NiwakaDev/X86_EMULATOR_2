@@ -1,5 +1,6 @@
 #include "Pic.h"
 #include "Mouse.h"
+using namespace std;
 
 Mouse::Mouse(Pic* pic){
     this->pic = pic;

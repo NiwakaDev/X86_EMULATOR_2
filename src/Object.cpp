@@ -1,4 +1,5 @@
 #include "Object.h"
+using namespace std;
 
 void Object::Error(const char* message, ...){
     char* message_with_ln = (char*)malloc(strlen(message)+2);

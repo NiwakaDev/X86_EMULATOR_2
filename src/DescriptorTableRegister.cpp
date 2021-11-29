@@ -1,4 +1,5 @@
 #include "DescriptorTableRegister.h"
+using namespace std;
 
 DescriptorTableRegister::DescriptorTableRegister(string name, uint16_t limit, uint32_t base){
     this->limit = limit;

@@ -23,7 +23,7 @@ class Emulator:public Object{
         Kbc* kbc        = NULL;
         Mouse* mouse    = NULL;
         Timer* timer    = NULL;
-        thread* emu_thread = NULL;
+        std::thread* emu_thread = NULL;
         int ParseArgv(int argc, char* argv[]);
         char* disk_image_name = NULL;
         bool    debug   = false;

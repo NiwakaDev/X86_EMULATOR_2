@@ -70,8 +70,8 @@ class Cpu:public Object{
         SEGMENT_REGISTER default_code_selector;
         SEGMENT_REGISTER default_data_selector;
         SEGMENT_REGISTER default_stack_selector;
-        map<uint8_t, bool> prefix_table;//1byteがprefixかどうかを示すテーブル
-        map<uint8_t, bool> prefix_flgs;//現在実行中の機械語命令で使用しているプレフィックスを管理
+        std::map<uint8_t, bool> prefix_table;//1byteがprefixかどうかを示すテーブル
+        std::map<uint8_t, bool> prefix_flgs;//現在実行中の機械語命令で使用しているプレフィックスを管理
         //bool prefix_flgs[PREFIX_FLG_KIND_COUNT];
         //制御レジスタ : 「IA-32 インテル® アーキテクチャソフトウェア・デベロッパーズ・マニュアル下巻：システム・プログラミング・ガイド」2.5節を参照
         union{

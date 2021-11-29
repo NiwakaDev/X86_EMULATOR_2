@@ -8,6 +8,8 @@
 #include "Ldtr.h"
 #include "TaskRegister.h"
 
+using namespace std;
+
 #define SIGN_FLG 0x80000000//いずれ消す予定
 #define BYTE 8
 

@@ -1,6 +1,7 @@
 
 #include "Cpu.h"
 #include "TaskRegister.h"
+using namespace std;
 
 TaskRegister::TaskRegister(uint16_t data):SegmentRegister(data){
     this->selector.raw = data;

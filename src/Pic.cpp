@@ -2,6 +2,7 @@
 #include "Kbc.h"
 #include "Timer.h"
 #include "Fifo.h"
+using namespace std;
 
 Pic::Pic(){
     for(int i=0; i<16; i++){

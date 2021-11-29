@@ -4,6 +4,7 @@
 #include "Pic.h"
 #include "Kbc.h"
 #include "Timer.h"
+using namespace std;
 
 //io_map : http://oswiki.osask.jp/?%28AT%29iomap
 

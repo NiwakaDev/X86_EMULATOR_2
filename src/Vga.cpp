@@ -1,5 +1,6 @@
 #include "Memory.h"
 #include "Vga.h"
+using namespace std;
 
 #define ALPHA_IDX 0
 #define RED_IDX   1

@@ -32,34 +32,34 @@ class Instruction:public Object{
         uint16_t Pop16(Cpu* cpu, Memory* mem);
         uint32_t Pop32(Cpu* cpu, Memory* mem);
     public:
-        string code_name;
+        std::string code_name;
         virtual void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
         void Show();
-        Instruction(string code_name);
+        Instruction(std::string code_name);
         void SetModRM(ModRM modrm, Sib* sib);
 };
 
 class JmpRel8:public Instruction{
     public: 
-        JmpRel8(string code_name);
+        JmpRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovR32Imm32:public Instruction{
     public: 
-        MovR32Imm32(string code_name);
+        MovR32Imm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovSregRm16:public Instruction{
     public: 
-        MovSregRm16(string code_name);
+        MovSregRm16(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovR8Rm8:public Instruction{
     public: 
-        MovR8Rm8(string code_name);
+        MovR8Rm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -67,7 +67,7 @@ class CodeC0:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        CodeC0(string code_name);
+        CodeC0(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -75,7 +75,7 @@ class CodeC6:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        CodeC6(string code_name);
+        CodeC6(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -83,7 +83,7 @@ class Code80:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        Code80(string code_name);
+        Code80(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -91,7 +91,7 @@ class Code81:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        Code81(string code_name);
+        Code81(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -99,7 +99,7 @@ class Code83:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        Code83(string code_name);
+        Code83(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -107,7 +107,7 @@ class CodeF7:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        CodeF7(string code_name);
+        CodeF7(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -115,7 +115,7 @@ class CodeFE:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        CodeFE(string code_name);
+        CodeFE(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -123,7 +123,7 @@ class CodeD2:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        CodeD2(string code_name);
+        CodeD2(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -131,7 +131,7 @@ class CodeFF:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        CodeFF(string code_name);
+        CodeFF(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -139,7 +139,7 @@ class CodeD1:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        CodeD1(string code_name);
+        CodeD1(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -147,7 +147,7 @@ class CodeD3:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        CodeD3(string code_name);
+        CodeD3(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -155,7 +155,7 @@ class CodeF6:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        CodeF6(string code_name);
+        CodeF6(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -163,7 +163,7 @@ class Code0F00:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        Code0F00(string code_name);
+        Code0F00(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -171,7 +171,7 @@ class Code0F01:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        Code0F01(string code_name);
+        Code0F01(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -179,7 +179,7 @@ class Code0F:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SIZE];
     public: 
-        Code0F(string code_name);
+        Code0F(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -187,1015 +187,1015 @@ class CodeC1:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SIZE];
     public: 
-        CodeC1(string code_name);
+        CodeC1(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AddRm8Imm8:public Instruction{
     public: 
-        AddRm8Imm8(string code_name);
+        AddRm8Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AddRm32Imm8:public Instruction{
     public: 
-        AddRm32Imm8(string code_name);
+        AddRm32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CmpAlImm8:public Instruction{
     public: 
-        CmpAlImm8(string code_name);
+        CmpAlImm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JaeRel8:public Instruction{
     public: 
-        JaeRel8(string code_name);
+        JaeRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JzRel8:public Instruction{
     public: 
-        JzRel8(string code_name);
+        JzRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovR8Imm8:public Instruction{
     public: 
-        MovR8Imm8(string code_name);
+        MovR8Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class IntImm8:public Instruction{
     public: 
-        IntImm8(string code_name);
+        IntImm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Hlt:public Instruction{
     public: 
-        Hlt(string code_name);
+        Hlt(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovRm16Sreg:public Instruction{
     public: 
-        MovRm16Sreg(string code_name);
+        MovRm16Sreg(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AddEaxImm32:public Instruction{
     public: 
-        AddEaxImm32(string code_name);
+        AddEaxImm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CmpRm8Imm8:public Instruction{
     public: 
-        CmpRm8Imm8(string code_name);
+        CmpRm8Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JbeRel8:public Instruction{
     public: 
-        JbeRel8(string code_name);
+        JbeRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JnzRel8:public Instruction{
     public: 
-        JnzRel8(string code_name);
+        JnzRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JcRel8:public Instruction{
     public: 
-        JcRel8(string code_name);
+        JcRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovRm8R8:public Instruction{
     public: 
-        MovRm8R8(string code_name);
+        MovRm8R8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JmpRel32:public Instruction{
     public: 
-        JmpRel32(string code_name);
+        JmpRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovRm8Imm8:public Instruction{
     public: 
-        MovRm8Imm8(string code_name);
+        MovRm8Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovRm32Imm32:public Instruction{
     public: 
-        MovRm32Imm32(string code_name);
+        MovRm32Imm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovMoffs8Al:public Instruction{
     public: 
-        MovMoffs8Al(string code_name);
+        MovMoffs8Al(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class OutImm8:public Instruction{
     public: 
-        OutImm8(string code_name);
+        OutImm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Nop:public Instruction{
     public: 
-        Nop(string code_name);
+        Nop(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Cli:public Instruction{
     public: 
-        Cli(string code_name);
+        Cli(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CallRel32:public Instruction{
     public: 
-        CallRel32(string code_name);
+        CallRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class InAlImm8:public Instruction{
     public: 
-        InAlImm8(string code_name);
+        InAlImm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AndAlImm8:public Instruction{
     public: 
-        AndAlImm8(string code_name);
+        AndAlImm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Ret32Near:public Instruction{
     public: 
-        Ret32Near(string code_name);
+        Ret32Near(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Lgdt:public Instruction{
     public: 
-        Lgdt(string code_name);
+        Lgdt(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovR32CRX:public Instruction{
     public: 
-        MovR32CRX(string code_name);
+        MovR32CRX(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AndEaxImm32:public Instruction{
     public: 
-        AndEaxImm32(string code_name);
+        AndEaxImm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class OrRm32Imm8:public Instruction{
     public: 
-        OrRm32Imm8(string code_name);
+        OrRm32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovCRXR32:public Instruction{
     public: 
-        MovCRXR32(string code_name);
+        MovCRXR32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovR32Rm32:public Instruction{
     public: 
-        MovR32Rm32(string code_name);
+        MovR32Rm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovRm32R32:public Instruction{
     public: 
-        MovRm32R32(string code_name);
+        MovRm32R32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SubRm32Imm8:public Instruction{
     public: 
-        SubRm32Imm8(string code_name);
+        SubRm32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class ImulR32Rm32Imm32:public Instruction{
     public: 
-        ImulR32Rm32Imm32(string code_name);
+        ImulR32Rm32Imm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SubRm32Imm32:public Instruction{
     public: 
-        SubRm32Imm32(string code_name);
+        SubRm32Imm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class ShrRm32Imm8:public Instruction{
     public: 
-        ShrRm32Imm8(string code_name);
+        ShrRm32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JmpPtr1632:public Instruction{
     public: 
-        JmpPtr1632(string code_name);
+        JmpPtr1632(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PushR32:public Instruction{
     public: 
-        PushR32(string code_name);
+        PushR32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PopR32:public Instruction{
     public: 
-        PopR32(string code_name);
+        PopR32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PushImm8:public Instruction{
     public: 
-        PushImm8(string code_name);
+        PushImm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class IncR32:public Instruction{
     public: 
-        IncR32(string code_name);
+        IncR32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CmpRm32Imm32:public Instruction{
     public: 
-        CmpRm32Imm32(string code_name);
+        CmpRm32Imm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JleRel8:public Instruction{
     public: 
-        JleRel8(string code_name);
+        JleRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AndRm32Imm8:public Instruction{
     public: 
-        AndRm32Imm8(string code_name);
+        AndRm32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class XorRm32R32:public Instruction{
     public: 
-        XorRm32R32(string code_name);
+        XorRm32R32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class RorRm8Cl:public Instruction{
     public: 
-        RorRm8Cl(string code_name);
+        RorRm8Cl(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AddRm32R32:public Instruction{
     public: 
-        AddRm32R32(string code_name);
+        AddRm32R32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PushImm32:public Instruction{
     public: 
-        PushImm32(string code_name);
+        PushImm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PushFd:public Instruction{
     public: 
-        PushFd(string code_name);
+        PushFd(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class OutDxAl:public Instruction{
     public: 
-        OutDxAl(string code_name);
+        OutDxAl(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CmpRm32R32:public Instruction{
     public: 
-        CmpRm32R32(string code_name);
+        CmpRm32R32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class ShrRm8Imm8:public Instruction{
     public: 
-        ShrRm8Imm8(string code_name);
+        ShrRm8Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovzxR32Rm8:public Instruction{
     public: 
-        MovzxR32Rm8(string code_name);
+        MovzxR32Rm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class LeaR32M:public Instruction{
     public: 
-        LeaR32M(string code_name);
+        LeaR32M(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PopFd:public Instruction{
     public: 
-        PopFd(string code_name);
+        PopFd(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Leave:public Instruction{
     public: 
-        Leave(string code_name);
+        Leave(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CmpR32Rm32:public Instruction{
     public: 
-        CmpR32Rm32(string code_name);
+        CmpR32Rm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JgRel8:public Instruction{
     public: 
-        JgRel8(string code_name);
+        JgRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class ImulR32Rm32:public Instruction{
     public: 
-        ImulR32Rm32(string code_name);
+        ImulR32Rm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AddR32Rm32:public Instruction{
     public: 
-        AddR32Rm32(string code_name);
+        AddR32Rm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovsxR32Rm16:public Instruction{
     public: 
-        MovsxR32Rm16(string code_name);
+        MovsxR32Rm16(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PushRm32:public Instruction{
     public: 
-        PushRm32(string code_name);
+        PushRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class IncRm32:public Instruction{
     public: 
-        IncRm32(string code_name);
+        IncRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class DecR32:public Instruction{
     public: 
-        DecR32(string code_name);
+        DecR32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class TestRm8R8:public Instruction{
     public: 
-        TestRm8R8(string code_name);
+        TestRm8R8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JnsRel8:public Instruction{
     public: 
-        JnsRel8(string code_name);
+        JnsRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CmpRm32Imm8:public Instruction{
     public: 
-        CmpRm32Imm8(string code_name);
+        CmpRm32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AndRm32Imm32:public Instruction{
     public: 
-        AndRm32Imm32(string code_name);
+        AndRm32Imm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SalRm32Imm8:public Instruction{
     public: 
-        SalRm32Imm8(string code_name);
+        SalRm32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovsxR32Rm8:public Instruction{
     public: 
-        MovsxR32Rm8(string code_name);
+        MovsxR32Rm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AndR8Rm8:public Instruction{
     public: 
-        AndR8Rm8(string code_name);
+        AndR8Rm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class XchgR32Rm32:public Instruction{
     public: 
-        XchgR32Rm32(string code_name);
+        XchgR32Rm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JneRel32:public Instruction{
     public: 
-        JneRel32(string code_name);
+        JneRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JeRel32:public Instruction{
     public: 
-        JeRel32(string code_name);
+        JeRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JnaRel32:public Instruction{
     public: 
-        JnaRel32(string code_name);
+        JnaRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class TestRm32R32:public Instruction{
     public: 
-        TestRm32R32(string code_name);
+        TestRm32R32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JsRel8:public Instruction{
     public: 
-        JsRel8(string code_name);
+        JsRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class DivRm32:public Instruction{
     public: 
-        DivRm32(string code_name);
+        DivRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class NotRm32:public Instruction{
     public: 
-        NotRm32(string code_name);
+        NotRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JgeRel8:public Instruction{
     public: 
-        JgeRel8(string code_name);
+        JgeRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SubRm32R32:public Instruction{
     public: 
-        SubRm32R32(string code_name);
+        SubRm32R32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JleRel32:public Instruction{
     public: 
-        JleRel32(string code_name);
+        JleRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SarRm32Imm8:public Instruction{
     public: 
-        SarRm32Imm8(string code_name);
+        SarRm32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class OrRm32R32:public Instruction{
     public: 
-        OrRm32R32(string code_name);
+        OrRm32R32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Lidt:public Instruction{
     public: 
-        Lidt(string code_name);
+        Lidt(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Cdq:public Instruction{
     public: 
-        Cdq(string code_name);
+        Cdq(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class IdivRm32:public Instruction{
     public: 
-        IdivRm32(string code_name);
+        IdivRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JlRel8:public Instruction{
     public: 
-        JlRel8(string code_name);
+        JlRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Sti:public Instruction{
     public: 
-        Sti(string code_name);
+        Sti(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PushEs:public Instruction{
     public: 
-        PushEs(string code_name);
+        PushEs(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PushDs:public Instruction{
     public: 
-        PushDs(string code_name);
+        PushDs(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PushAd:public Instruction{
     public: 
-        PushAd(string code_name);
+        PushAd(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class InAlDx:public Instruction{
     public: 
-        InAlDx(string code_name);
+        InAlDx(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class DecRm32:public Instruction{
     public: 
-        DecRm32(string code_name);
+        DecRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JaRel8:public Instruction{
     public: 
-        JaRel8(string code_name);
+        JaRel8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PopAd:public Instruction{
     public: 
-        PopAd(string code_name);
+        PopAd(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PopDs:public Instruction{
     public: 
-        PopDs(string code_name);
+        PopDs(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PopEs:public Instruction{
     public: 
-        PopEs(string code_name);
+        PopEs(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Iretd:public Instruction{
     public: 
-        Iretd(string code_name);
+        Iretd(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovEaxMoffs32:public Instruction{
     public: 
-        MovEaxMoffs32(string code_name);
+        MovEaxMoffs32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovMoffs32Eax:public Instruction{
     public: 
-        MovMoffs32Eax(string code_name);
+        MovMoffs32Eax(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SubR32Rm32:public Instruction{
     public: 
-        SubR32Rm32(string code_name);
+        SubR32Rm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class DecRm8:public Instruction{
     public: 
-        DecRm8(string code_name);
+        DecRm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class OrRm32Imm32:public Instruction{
     public: 
-        OrRm32Imm32(string code_name);
+        OrRm32Imm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class NegRm32:public Instruction{
     public: 
-        NegRm32(string code_name);
+        NegRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class TestEaxImm32:public Instruction{
     public: 
-        TestEaxImm32(string code_name);
+        TestEaxImm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JsRel32:public Instruction{
     public: 
-        JsRel32(string code_name);
+        JsRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class OrEaxImm32:public Instruction{
     public: 
-        OrEaxImm32(string code_name);
+        OrEaxImm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AddRm32Imm32:public Instruction{
     public: 
-        AddRm32Imm32(string code_name);
+        AddRm32Imm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class XorRm32Imm8:public Instruction{
     public: 
-        XorRm32Imm8(string code_name);
+        XorRm32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SubEaxImm32:public Instruction{
     public: 
-        SubEaxImm32(string code_name);
+        SubEaxImm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JgRel32:public Instruction{
     public: 
-        JgRel32(string code_name);
+        JgRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class ImulR32Rm32Imm8:public Instruction{
     public: 
-        ImulR32Rm32Imm8(string code_name);
+        ImulR32Rm32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SetneRm8:public Instruction{
     public: 
-        SetneRm8(string code_name);
+        SetneRm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SubRm8R8:public Instruction{
     public: 
-        SubRm8R8(string code_name);
+        SubRm8R8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AdcRm8R8:public Instruction{
     public: 
-        AdcRm8R8(string code_name);
+        AdcRm8R8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Clc:public Instruction{
     public: 
-        Clc(string code_name);
+        Clc(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AddR8Rm8:public Instruction{
     public: 
-        AddR8Rm8(string code_name);
+        AddR8Rm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SbbRm8R8:public Instruction{
     public: 
-        SbbRm8R8(string code_name);
+        SbbRm8R8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class ShrRm32Cl:public Instruction{
     public: 
-        ShrRm32Cl(string code_name);
+        ShrRm32Cl(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Xlatb:public Instruction{
     public: 
-        Xlatb(string code_name);
+        Xlatb(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CmpRm8R8:public Instruction{
     public: 
-        CmpRm8R8(string code_name);
+        CmpRm8R8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CmpEaxImm32:public Instruction{
     public: 
-        CmpEaxImm32(string code_name);
+        CmpEaxImm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class TestRm32Imm32:public Instruction{
     public: 
-        TestRm32Imm32(string code_name);
+        TestRm32Imm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class LtrRm16:public Instruction{
     public: 
-        LtrRm16(string code_name);
+        LtrRm16(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AndRm8R8:public Instruction{
     public: 
-        AndRm8R8(string code_name);
+        AndRm8R8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JmpM1632:public Instruction{
     public: 
-        JmpM1632(string code_name);
+        JmpM1632(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SeteRm8:public Instruction{
     public: 
-        SeteRm8(string code_name);
+        SeteRm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovAlMoffs8:public Instruction{
     public: 
-        MovAlMoffs8(string code_name);
+        MovAlMoffs8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class RcrRm8Imm8:public Instruction{
     public: 
-        RcrRm8Imm8(string code_name);
+        RcrRm8Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SarRm8Imm8:public Instruction{
     public: 
-        SarRm8Imm8(string code_name);
+        SarRm8Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Cld:public Instruction{
     public: 
-        Cld(string code_name);
+        Cld(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CmpsM8M8:public Instruction{
     public: 
-        CmpsM8M8(string code_name);
+        CmpsM8M8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SetaRm8:public Instruction{
     public: 
-        SetaRm8(string code_name);
+        SetaRm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SetbRm8:public Instruction{
     public: 
-        SetbRm8(string code_name);
+        SetbRm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class TestRm8Imm8:public Instruction{
     public: 
-        TestRm8Imm8(string code_name);
+        TestRm8Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovzxR32Rm16:public Instruction{
     public: 
-        MovzxR32Rm16(string code_name);
+        MovzxR32Rm16(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SbbR8Rm8:public Instruction{
     public: 
-        SbbR8Rm8(string code_name);
+        SbbR8Rm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JgeRel32:public Instruction{
     public: 
-        JgeRel32(string code_name);
+        JgeRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CallPtr1632:public Instruction{
     public: 
-        CallPtr1632(string code_name);
+        CallPtr1632(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Ret32Far:public Instruction{
     public: 
-        Ret32Far(string code_name);
+        Ret32Far(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CallM1632:public Instruction{
     public: 
-        CallM1632(string code_name);
+        CallM1632(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class PushSs:public Instruction{
     public: 
-        PushSs(string code_name);
+        PushSs(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CmpR8Rm8:public Instruction{
     public: 
-        CmpR8Rm8(string code_name);
+        CmpR8Rm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MulRm32:public Instruction{
     public: 
-        MulRm32(string code_name);
+        MulRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JnsRel32:public Instruction{
     public: 
-        JnsRel32(string code_name);
+        JnsRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JaRel32:public Instruction{
     public: 
-        JaRel32(string code_name);
+        JaRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JlRel32:public Instruction{
     public: 
-        JlRel32(string code_name);
+        JlRel32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AddRm8R8:public Instruction{
     public: 
-        AddRm8R8(string code_name);
+        AddRm8R8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class JmpRm32:public Instruction{
     public: 
-        JmpRm32(string code_name);
+        JmpRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class ShrRm32:public Instruction{
     public: 
-        ShrRm32(string code_name);
+        ShrRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SalRm32Cl:public Instruction{
     public: 
-        SalRm32Cl(string code_name);
+        SalRm32Cl(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SetgRm8:public Instruction{
     public: 
-        SetgRm8(string code_name);
+        SetgRm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SarRm32Cl:public Instruction{
     public: 
-        SarRm32Cl(string code_name);
+        SarRm32Cl(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AndRm32R32:public Instruction{
     public: 
-        AndRm32R32(string code_name);
+        AndRm32R32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SalRm32:public Instruction{
     public: 
-        SalRm32(string code_name);
+        SalRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AndR32Rm32:public Instruction{
     public: 
-        AndR32Rm32(string code_name);
+        AndR32Rm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class ShrdRm32R32Imm8:public Instruction{
     public: 
-        ShrdRm32R32Imm8(string code_name);
+        ShrdRm32R32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SarRm32:public Instruction{
     public: 
-        SarRm32(string code_name);
+        SarRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class SetgeRm8:public Instruction{
     public: 
-        SetgeRm8(string code_name);
+        SetgeRm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Scasb:public Instruction{
     public: 
-        Scasb(string code_name);
+        Scasb(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class CallRm32:public Instruction{
     public: 
-        CallRm32(string code_name);
+        CallRm32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class MovM32M32:public Instruction{
     public: 
-        MovM32M32(string code_name);
+        MovM32M32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AdcRm32Imm8:public Instruction{
     public: 
-        AdcRm32Imm8(string code_name);
+        AdcRm32Imm8(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class Cwde:public Instruction{
     public: 
-        Cwde(string code_name);
+        Cwde(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
 class AdcRm32R32:public Instruction{
     public: 
-        AdcRm32R32(string code_name);
+        AdcRm32R32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 /***
 class PopM32:public Instruction{
     public: 
-        PopM32(string code_name);
+        PopM32(std::string code_name);
         inline void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 ***/

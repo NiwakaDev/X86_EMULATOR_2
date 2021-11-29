@@ -18,7 +18,6 @@
 #include <cstdint>
 #include <queue>
 #include "Object.h"
-using namespace std;
 
 struct _Pixel{
     uint8_t a;

@@ -9,6 +9,7 @@
 #include "Kbc.h"
 #include "Mouse.h"
 #include "Timer.h"
+using namespace std;
 
 Emulator::Emulator(int argc, char* argv[]){
     int parse_result;

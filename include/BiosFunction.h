@@ -6,7 +6,7 @@ class Vga;
 
 class BiosFunction:public Object{
     protected:
-        string function_name;
+        std::string function_name;
     public:
         BiosFunction();
         virtual void Run(Cpu *cpu, Memory* mem);

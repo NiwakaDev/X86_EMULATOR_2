@@ -3,6 +3,7 @@
 #include "Cpu.h"
 #include "BiosFunction.h"
 #define IPL_SIZE 512
+using namespace std;
 
 Bios::Bios(char* file_name, Vga* vga){
     for(int i=0; i<BIOS_FUNCTION_SIZE; i++){

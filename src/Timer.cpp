@@ -1,5 +1,6 @@
 #include "Timer.h"
 #include "Pic.h"
+using namespace std;
 
 Timer::Timer(Pic* pic){
     this->enable = false;

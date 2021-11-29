@@ -1,5 +1,6 @@
 #include "Sib.h"
 #include "Cpu.h"
+using namespace std;
 
 void Sib::ParseSib(uint8_t sib_byte, uint8_t mod){
     assert(this!=NULL);

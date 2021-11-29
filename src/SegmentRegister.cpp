@@ -1,5 +1,6 @@
 #include "SegmentRegister.h"
 #include "Cpu.h"
+using namespace std;
 
 SegmentRegister::SegmentRegister(uint16_t data){
     this->selector.raw = data;

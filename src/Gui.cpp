@@ -3,6 +3,7 @@
 #include "Gui.h"
 #include "Font.h"
 #include "Mouse.h"
+using namespace std;
 
 #define MOVE_SCALE 5
 #define DISPLAY_SCALE 2

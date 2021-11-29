@@ -2,6 +2,7 @@
 #include "Cpu.h"
 #include "Memory.h"
 #include "Vga.h"
+using namespace std;
 
 BiosFunction::BiosFunction(){
 
