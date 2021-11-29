@@ -2799,8 +2799,8 @@ void SarRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
                 cpu->ClearFlag(CF);
             }
             rm32 = rm32 >> 1;
+            rm32 = rm32 | ((flg)?SIGN_FLG4:0);//最上位bitを補う
         }
-        rm32 = rm32 | ((flg)?SIGN_FLG4:0);
         this->SetRM32(cpu, mem, rm32);
         cpu->UpdateEflagsForShr(rm32);//shrと同じ
         return;
