@@ -3744,8 +3744,8 @@ void SarRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
             cpu->ClearFlag(CF);
         }
         rm8 = rm8 >> 1;
+        rm8 = rm8 | ((flg)?SIGN_FLG1:0);
     }
-    rm8 = rm8 | ((flg)?SIGN_FLG1:0);
     this->SetRM8(cpu, mem, rm8);
     cpu->UpdateEflagsForShr(rm8);
     return;
