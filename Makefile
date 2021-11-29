@@ -2,16 +2,13 @@
 
 EMULATOR = x86
 
-CC = g++
+CC = clang++
 G++_OPTIONS = -Wall -std=c++11 -O2 -I ${INCLUDE_DIR}
 #G++_OPTIONS = -Wall -std=c++11 -O0 -g -I ${INCLUDE_DIR}
-G++_OPTIONS += -lSDL2
+LD_FLGS += -lSDL2
 
 SOURCE_DIR      = ./src/
 INCLUDE_DIR     = ./include/
-
-vpath %.h ${INCLUDE_DIR}
-vpath %.cpp ${SOURCE_DIR}
 
 HEADERS = $(wildcard ${INCLUDE_DIR}*.h)
 SOURCES = $(wildcard ${SOURCE_DIR}*.cpp)
@@ -23,7 +20,7 @@ all:${EMULATOR}
 	${CC} ${G++_OPTIONS} -o $@ -c $<
 
 ${EMULATOR} : ${OBJECTS} 
-	${CC} ${LD_FLGS} ${G++_OPTIONS} -o ${OUTPUTS_DIR}${EMULATOR} $^
+	${CC} ${LD_FLGS} -o ${OUTPUTS_DIR}${EMULATOR} $^
 
 clean :
 	rm ${OUTPUTS_DIR}${EMULATOR}
