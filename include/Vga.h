@@ -23,11 +23,13 @@ class Vga:public Object{
         uint8_t now_palette_idx;
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);
-        std::mutex vga_mtx;
         void SetInfo(int width, int height, int vram_start_add);
         int GetWidth();
         int GetHeight();
+        void LockVga();
+        void UnlockVga();
     private:
+        std::mutex vga_mtx;
         uint8_t palette[256][4];
         Memory* mem;
         int height;

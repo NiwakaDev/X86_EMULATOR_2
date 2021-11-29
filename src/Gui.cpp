@@ -238,7 +238,7 @@ void Gui::Display(){
                 this->HandleMouseButton(&e);
             }
         }
-        this->vga->vga_mtx.lock();
+        this->vga->LockVga();
         if((this->vga->GetHeight()!=this->SCREEN_HEIGHT)||(this->vga->GetWidth()!=this->SCREEN_WIDTH)){
             this->SCREEN_HEIGHT = this->vga->GetHeight();
             this->SCREEN_WIDTH  = this->vga->GetWidth();
@@ -249,7 +249,7 @@ void Gui::Display(){
                 this->image[x+y*this->SCREEN_WIDTH] = *(this->vga->GetPixel(x, y));
             }
         }
-        this->vga->vga_mtx.unlock();
+        this->vga->UnlockVga();
         end = SDL_GetTicks();
         end = end - start;
         if(16>end){
