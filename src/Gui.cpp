@@ -200,6 +200,7 @@ void Gui::Update(){
     SDL_RenderPresent(this->renderer);
 }
 
+//この関数はVgaクラスのvga_mutexをロックします。
 void Gui::Display(){
     SDL_Event e;
     bool quit = false;

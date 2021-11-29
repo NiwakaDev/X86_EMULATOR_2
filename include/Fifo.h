@@ -2,16 +2,16 @@
 #include "common.h"
 using namespace std;
 
-template<typename TYPE>class Fifo{
+template<typename type>class Fifo{
     private:
-        queue<TYPE> q;
+        queue<type> q;
     public:
         bool IsEmpty(){
-            lock_guard<std::mutex> lock(this->fifo_mtx);
+            lock_guard<mutex> lock(this->fifo_mtx);
             return this->q.empty();
         }
-        TYPE Pop(){
-            TYPE element;
+        type Pop(){
+            type element;
             if(this->IsEmpty()){
                 return element;
             }
@@ -20,7 +20,7 @@ template<typename TYPE>class Fifo{
             this->q.pop();
             return element;
         }
-        void Push(TYPE data){
+        void Push(type data){
             lock_guard<mutex> lock(this->fifo_mtx);
             this->q.push(data);
             return;

@@ -18,6 +18,7 @@ Vga::Vga(Memory* mem){
     this->InitPalette();
 }
 
+//この関数はVgaクラスのvga_mutexをロックします。
 void Vga::SetInfo(int width, int height, int vram_start_addr){
     this->vga_mtx.lock();
     this->width = width;
