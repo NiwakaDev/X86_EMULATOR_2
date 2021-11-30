@@ -344,7 +344,7 @@ uint16_t Instruction::GetRM16(Cpu* cpu, Memory* mem){
                 return rm16;
             }
             if(this->modrm.rm==4){
-                rm16 = mem->Read8(cpu->GetLinearAddrForDataAccess(addr));
+                rm16 = mem->Read16(cpu->GetLinearAddrForDataAccess(addr));
                 return rm16;
             }
             addr = cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm);
@@ -355,7 +355,7 @@ uint16_t Instruction::GetRM16(Cpu* cpu, Memory* mem){
         if(this->modrm.mod==1){
             if(this->modrm.rm==4){
                 addr = addr + (int32_t)this->modrm.disp8;
-                rm16 = mem->Read8(cpu->GetLinearAddrForDataAccess(addr));
+                rm16 = mem->Read16(cpu->GetLinearAddrForDataAccess(addr));
                 return rm16;
             }
             disp8 = (int32_t)this->modrm.disp8;
@@ -367,7 +367,7 @@ uint16_t Instruction::GetRM16(Cpu* cpu, Memory* mem){
         if(this->modrm.mod==2){
             if(this->modrm.rm==4){
                 addr = addr + (int32_t)this->modrm.disp32;
-                rm16 = mem->Read8(cpu->GetLinearAddrForDataAccess(addr));
+                rm16 = mem->Read16(cpu->GetLinearAddrForDataAccess(addr));
                 return rm16;
             }
             disp32 = (int32_t)this->modrm.disp32;
