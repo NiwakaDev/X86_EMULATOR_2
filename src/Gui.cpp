@@ -201,64 +201,6 @@ void Gui::Update(){
     SDL_RenderPresent(this->renderer);
 }
 
-//この関数はVgaクラスのvga_mutexをロックします。
-void Gui::Display(){
-    SDL_Event e;
-    bool quit = false;
-    unsigned int start;
-    unsigned int end;
-
-    //SDL_WarpMouseInWindow(this->window, guest_x, guest_y);
-    while (!quit){
-        start = SDL_GetTicks();
-        while (SDL_PollEvent(&e)){
-            if (e.type == SDL_QUIT){
-                quit = true;
-            }
-            if(e.type==SDL_KEYDOWN){
-                this->HandleKeyDown(&e);
-                break;
-            }
-            if(e.type==SDL_KEYUP){
-                this->HandleKeyUp(&e);
-                break;
-            }
-            if(e.type==SDL_MOUSEMOTION){
-                if(!this->mouse->IsEnable()){
-                    break;
-                }
-                this->HandleMouseMotion(&e);
-                break;
-            }
-            if(e.type==SDL_MOUSEBUTTONDOWN){
-                if(!this->mouse->IsEnable()){
-                    break;
-                }
-                this->HideCursor();
-                this->HandleMouseButton(&e);
-            }
-        }
-        this->vga->LockVga();
-        if((this->vga->GetHeight()!=this->SCREEN_HEIGHT)||(this->vga->GetWidth()!=this->SCREEN_WIDTH)){
-            this->SCREEN_HEIGHT = this->vga->GetHeight();
-            this->SCREEN_WIDTH  = this->vga->GetWidth();
-            this->Resize();
-        }
-        for(int y=0; y<this->SCREEN_HEIGHT; y++){
-            for(int x=0; x<this->SCREEN_WIDTH; x++){
-                this->image[x+y*this->SCREEN_WIDTH] = *(this->vga->GetPixel(x, y));
-            }
-        }
-        this->vga->UnlockVga();
-        end = SDL_GetTicks();
-        end = end - start;
-        if(16>end){
-            SDL_Delay(16-end);
-        }   
-        this->Update();
-    }
-}
-
 uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
     uint8_t key_code;
     switch (e->key.keysym.sym){
@@ -512,4 +454,62 @@ void Gui::HandleMouseButton(SDL_Event *e){
     this->mouse->Send(DEFAULT_PACKET_BYTE0|LEFT_BUTTON);
     this->mouse->Send(0);
     this->mouse->Send(0);
+}
+
+//この関数はVgaクラスのvga_mutexをロックします。
+void Gui::Display(){
+    SDL_Event e;
+    bool quit = false;
+    unsigned int start;
+    unsigned int end;
+
+    //SDL_WarpMouseInWindow(this->window, guest_x, guest_y);
+    while (!quit){
+        start = SDL_GetTicks();
+        while (SDL_PollEvent(&e)){
+            if (e.type == SDL_QUIT){
+                quit = true;
+            }
+            if(e.type==SDL_KEYDOWN){
+                this->HandleKeyDown(&e);
+                break;
+            }
+            if(e.type==SDL_KEYUP){
+                this->HandleKeyUp(&e);
+                break;
+            }
+            if(e.type==SDL_MOUSEMOTION){
+                if(!this->mouse->IsEnable()){
+                    break;
+                }
+                this->HandleMouseMotion(&e);
+                break;
+            }
+            if(e.type==SDL_MOUSEBUTTONDOWN){
+                if(!this->mouse->IsEnable()){
+                    break;
+                }
+                this->HideCursor();
+                this->HandleMouseButton(&e);
+            }
+        }
+        this->vga->LockVga();
+        if((this->vga->GetHeight()!=this->SCREEN_HEIGHT)||(this->vga->GetWidth()!=this->SCREEN_WIDTH)){
+            this->SCREEN_HEIGHT = this->vga->GetHeight();
+            this->SCREEN_WIDTH  = this->vga->GetWidth();
+            this->Resize();
+        }
+        for(int y=0; y<this->SCREEN_HEIGHT; y++){
+            for(int x=0; x<this->SCREEN_WIDTH; x++){
+                this->image[x+y*this->SCREEN_WIDTH] = *(this->vga->GetPixel(x, y));
+            }
+        }
+        this->vga->UnlockVga();
+        end = SDL_GetTicks();
+        end = end - start;
+        if(16>end){
+            SDL_Delay(16-end);
+        }   
+        this->Update();
+    }
 }
