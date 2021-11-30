@@ -28,8 +28,6 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
     uint32_t vram;
     uint8_t ascii_code;
     mode = cpu->GetR16(EAX);
-    //画面サイズを変更する処理を実装予定だが、
-    //とりあえず、何もせずにreturn
     if(cpu->GetR8H(EAX)!=0x4F){
         //VGAサービス
         vga_mode = (mode>>8);
@@ -53,8 +51,6 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
         }
     }else{//VESAサービス
         switch(mode){
-            case 0x0000:
-                return;
             case 0x4F02:
                 video_mode = cpu->GetR16(EBX);
                 height = 400;
@@ -86,23 +82,6 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 this->Error("Not implemented: vesa_mode=0x%04X at VideoFunction::Run", mode);
         }
     }
-    /***
-    unsigned char color;
-    unsigned char ascii_code;
-    
-    int bright;
-    int len;
-    unsigned char data;
-    color      = ((uint8_t)cpu->GetR32(EBX))&0x0F;
-    ascii_code = cpu->GetR8L(EAX);
-    color = this->color_table[color&0x07];
-    if(color&0x08){
-        bright = 1;
-    }else{
-        bright = 0;
-    }
-    fprintf(stderr, "%c", ascii_code);
-    ***/
 }
 
 FloppyFunction::FloppyFunction(char* file_name):BiosFunction(){
