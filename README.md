@@ -1,6 +1,9 @@
 # X86_EMULATOR_2
 ![スクリーンショット 2021-11-22 9 56 41](https://user-images.githubusercontent.com/61189782/142801566-46440b1e-ad22-402d-baef-45e24ce638dd.png)
 
+![富士山](https://user-images.githubusercontent.com/61189782/143998297-d17dd067-b59a-4762-8bde-caebc8ca174b.png)
+
+
 ![スクリーンショット 2021-11-15 21 01 06](https://user-images.githubusercontent.com/61189782/141778695-87a2b344-9fb3-47f3-8804-2589154f0339.png)
 
 ![スクリーンショット 2021-11-15 21 03 21](https://user-images.githubusercontent.com/61189782/141778925-09c88b8d-ee9a-4aef-912a-65d7e3062d32.png)
