@@ -18,21 +18,21 @@ Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
     assert(this->kbc!=NULL);
     this->mouse = mouse;
     assert(this->mouse!=NULL);
-    this->SCREEN_HEIGHT = DEFAULT_HEIGHT;
-    this->SCREEN_WIDTH  = DEFAULT_WIDTH;
+    this->screen_height = DEFAULT_HEIGHT;
+    this->screen_width  = DEFAULT_WIDTH;
     this->InitFontAscii();
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
         cerr << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
     }
-    this->window = SDL_CreateWindow("EMULATOR", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, this->SCREEN_WIDTH*DISPLAY_SCALE, this->SCREEN_HEIGHT*DISPLAY_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    this->window = SDL_CreateWindow("EMULATOR", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, this->screen_width*DISPLAY_SCALE, this->screen_height*DISPLAY_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     if(this->window==NULL){
         cout << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
     }
     this->renderer      = SDL_CreateRenderer(this->window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
-    this->texture       = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->SCREEN_WIDTH, this->SCREEN_HEIGHT); 
-    if(SDL_RenderSetLogicalSize(this->renderer, this->SCREEN_WIDTH, this->SCREEN_HEIGHT)<0){
+    this->texture       = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->screen_width, this->screen_height); 
+    if(SDL_RenderSetLogicalSize(this->renderer, this->screen_width, this->screen_height)<0){
         cout << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
     }
@@ -189,14 +189,14 @@ void Gui::InitFontAscii(){
 }
 
 void Gui::Resize(){
-    SDL_SetWindowSize(this->window, this->SCREEN_WIDTH, this->SCREEN_HEIGHT);
-    SDL_RenderSetLogicalSize(this->renderer,this->SCREEN_WIDTH,this->SCREEN_HEIGHT);
+    SDL_SetWindowSize(this->window, this->screen_width, this->screen_height);
+    SDL_RenderSetLogicalSize(this->renderer,this->screen_width,this->screen_height);
     SDL_DestroyTexture(this->texture);
-    this->texture = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->SCREEN_WIDTH, this->SCREEN_HEIGHT); 
+    this->texture = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->screen_width, this->screen_height); 
 }
 
 void Gui::Update(){
-    SDL_UpdateTexture(this->texture, NULL, this->image, this->SCREEN_WIDTH * sizeof(Pixel));
+    SDL_UpdateTexture(this->texture, NULL, this->image, this->screen_width * sizeof(Pixel));
     SDL_RenderCopy(this->renderer, this->texture, NULL, NULL);
     SDL_RenderPresent(this->renderer);
 }
@@ -462,7 +462,6 @@ void Gui::Display(){
     bool quit = false;
     unsigned int start;
     unsigned int end;
-
     //SDL_WarpMouseInWindow(this->window, guest_x, guest_y);
     while (!quit){
         start = SDL_GetTicks();
@@ -494,14 +493,14 @@ void Gui::Display(){
             }
         }
         this->vga->LockVga();
-        if((this->vga->GetHeight()!=this->SCREEN_HEIGHT)||(this->vga->GetWidth()!=this->SCREEN_WIDTH)){
-            this->SCREEN_HEIGHT = this->vga->GetHeight();
-            this->SCREEN_WIDTH  = this->vga->GetWidth();
+        if((this->vga->GetHeight()!=this->screen_height)||(this->vga->GetWidth()!=this->screen_width)){
+            this->screen_height = this->vga->GetHeight();
+            this->screen_width  = this->vga->GetWidth();
             this->Resize();
         }
-        for(int y=0; y<this->SCREEN_HEIGHT; y++){
-            for(int x=0; x<this->SCREEN_WIDTH; x++){
-                this->image[x+y*this->SCREEN_WIDTH] = *(this->vga->GetPixel(x, y));
+        for(int y=0; y<this->screen_height; y++){
+            for(int x=0; x<this->screen_width; x++){
+                this->image[x+y*this->screen_width] = *(this->vga->GetPixel(x, y));
             }
         }
         this->vga->UnlockVga();

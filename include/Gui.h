@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+
 class Vga;
 class Kbc;
 class Mouse;
@@ -20,8 +21,8 @@ class Gui:public Object{
         Mouse* mouse = NULL;
         Pixel* vram_mem = NULL;
         void InitFontAscii();
-        int SCREEN_WIDTH;
-        int SCREEN_HEIGHT;
+        int screen_width;
+        int screen_height;
         SDL_Window* window = NULL;
         SDL_Surface* screenSurface = NULL;
         SDL_Renderer *renderer = NULL;
