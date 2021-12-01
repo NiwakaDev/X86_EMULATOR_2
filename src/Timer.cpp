@@ -1,17 +1,24 @@
 #include "Timer.h"
 #include "Pic.h"
 using namespace std;
+using namespace chrono;
 
 Timer::Timer(Pic* pic){
     this->enable = false;
     this->pic    = pic;
     this->clock =  119318;
+    this->timer_thread = nullptr;
 }
 
 void Timer::Out8(uint16_t addr, uint8_t data){
     switch (addr){
         case 0x43:
             this->mode = 0;
+            this->enable = false;
+            if(this->timer_thread!=nullptr){
+                this->timer_thread->join();//それまでのタイマースレッドを終了させる。
+                delete this->timer_thread;
+            }
             break;
         case 0x40:
             if(this->mode==0){
@@ -35,11 +42,12 @@ void Timer::Out8(uint16_t addr, uint8_t data){
 
 uint8_t Timer::In8(uint16_t addr){
     this->Error("Not implemented: Timer::In8");
+    return 0;
 }
 
 void Timer::Run(){
     while(this->enable){
-        this_thread::sleep_for(std::chrono::milliseconds(this->cycle));
+        this_thread::sleep_for(milliseconds(this->cycle));
         this->pic->SetTimer();
     }
 }

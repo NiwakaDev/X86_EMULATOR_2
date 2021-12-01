@@ -4545,6 +4545,25 @@ void AdcRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     this->SetRM16(cpu, mem, result);
     cpu->UpdateEflagsForAdd(result, rm16, (uint16_t)(r16+cf));
 }
+
+LodsM8::LodsM8(string code_name):Instruction(code_name){
+
+}
+
+void LodsM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint32_t ds, es;
+    uint16_t si, di;
+    uint16_t d;
+    ds = cpu->GetR16(DS)*16;
+    si = cpu->GetR16(ESI);
+    es = cpu->GetR16(ES)*16;
+    di = cpu->GetR16(EDI);
+    mem->Write(es+di, mem->Read32(ds+si));
+    d = cpu->IsFlag(DF)? -2:1;
+    cpu->SetR16(EDI, di+d);
+    cpu->SetR16(ESI, si+d);
+    this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 

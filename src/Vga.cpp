@@ -68,6 +68,7 @@ uint8_t Vga::In8(uint16_t addr){
         default:
             this->Error("Not implemented: io_port = %04X at Vga::In8", addr);
     }
+    return 0;
 }
 
 Pixel* Vga::GetPixel(int x, int y){

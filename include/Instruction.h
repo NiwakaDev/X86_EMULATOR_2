@@ -1192,6 +1192,12 @@ class AdcRm32R32:public Instruction{
         AdcRm32R32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class LodsM8:public Instruction{
+    public: 
+        LodsM8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 
