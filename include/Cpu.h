@@ -28,19 +28,19 @@ class TaskRegister;
 #define GET_DPL(data) (data&DPL)>>5
 #define GET_RPL(data) (data&0x03)
 
-typedef struct _GdtGate{
+struct _GdtGate{
     uint16_t limit_low, base_low;
     uint8_t base_mid, access_right;
     uint8_t limit_high, base_high;
 }__attribute__((__packed__));
 
-typedef struct _IdtGate{
+struct _IdtGate{
     uint16_t offset_low, selector;
     uint8_t dw_cnt, access_right;
     uint16_t offset_high;
 }__attribute__((__packed__));  
 
-typedef struct _Tss{
+struct _Tss{
 	uint32_t backlink, esp0, ss0, esp1, ss1, esp2, ss2, cr3;
 	uint32_t eip, eflags, eax, ecx, edx, ebx, esp, ebp, esi, edi;
 	uint32_t es, cs, ss, ds, fs, gs;

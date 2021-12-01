@@ -1167,7 +1167,6 @@ AddRm8Imm8::AddRm8Imm8(string code_name):Instruction(code_name){
 void AddRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint8_t rm8;
     uint8_t imm8;
-    GENERAL_PURPOSE_REGISTER32 register_type;
     imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
     cpu->AddEip(1);
     rm8  = this->GetRM8(cpu, mem);

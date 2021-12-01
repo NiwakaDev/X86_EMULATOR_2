@@ -11,7 +11,6 @@ using namespace std;
 #define ALPHA_MAX 0xFF
 
 Vga::Vga(Memory* mem){
-    Pixel pixel;
     this->mem = mem;
     this->height = DEFAULT_HEIGHT;
     this->width  = DEFAULT_WIDTH;
