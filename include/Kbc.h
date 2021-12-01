@@ -82,7 +82,6 @@ class Kbc:public Object{
     private:
         Pic* pic = NULL;
         Mouse* mouse = NULL;
-        uint8_t data;
         Fifo<uint8_t>* fifo = NULL;
         void ProcessCommand(uint8_t command);
     public:

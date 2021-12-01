@@ -1,5 +1,6 @@
 #include "Timer.h"
 #include "Pic.h"
+#include "IoSpace.h"
 using namespace std;
 using namespace chrono;
 
@@ -12,7 +13,7 @@ Timer::Timer(Pic* pic){
 
 void Timer::Out8(uint16_t addr, uint8_t data){
     switch (addr){
-        case 0x43:
+        case PIT_MODE_COMMAND_REGISTER:
             this->mode = 0;
             this->enable = false;
             if(this->timer_thread!=nullptr){
@@ -20,7 +21,7 @@ void Timer::Out8(uint16_t addr, uint8_t data){
                 delete this->timer_thread;
             }
             break;
-        case 0x40:
+        case PIT_CHANNEL_0:
             if(this->mode==0){
                 this->cycle = 0;
                 this->cycle = data;

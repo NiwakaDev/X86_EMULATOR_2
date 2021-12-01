@@ -4,6 +4,7 @@
 #include "Pic.h"
 #include "Kbc.h"
 #include "Timer.h"
+#include "IoSpace.h"
 using namespace std;
 
 //io_map : http://oswiki.osask.jp/?%28AT%29iomap
@@ -17,12 +18,12 @@ IoPort::IoPort(Vga* vga, Pic* pic, Kbc* kbc, Timer* timer){
 
 void IoPort::Out8(uint16_t addr, uint8_t data){
     switch(addr){
-        case 0x42:
-            break;
         case 0x61:
             break;
-        case 0x40:
-        case 0x43:
+        case PIT_CHANNEL_2:
+            break;
+        case PIT_CHANNEL_0:
+        case PIT_MODE_COMMAND_REGISTER:
             this->timer->Out8(addr, data);
             break;
         case 0x60:

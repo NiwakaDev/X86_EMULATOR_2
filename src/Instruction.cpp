@@ -126,7 +126,6 @@ void Instruction::ParseRegIdx(Cpu* cpu, Memory* mem){
 }
 
 uint32_t Instruction::GetEffectiveAddr(Cpu* cpu, Memory* mem){
-    uint32_t rm32;
     uint32_t disp8;
     uint32_t disp32;
     uint32_t addr = 0;
@@ -809,7 +808,6 @@ MovR8Rm8::MovR8Rm8(string code_name):Instruction(code_name){
 }
 
 void MovR8Rm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint8_t r8;
     uint8_t rm8;
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
@@ -1338,11 +1336,8 @@ IntImm8::IntImm8(string code_name):Instruction(code_name){
 
 }
 
-
-//ADD命令のフラグレジスタ更新処理を今後やる。
 void IntImm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     IdtGate* idt_gate;
-    Tss* tss;
     uint16_t selector, cs, ss;
     uint32_t eip, eflags, esp;
     uint32_t offset_addr;
@@ -4473,7 +4468,7 @@ void MovM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         return;
     }else{
         if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
-            this->Error("Not implemented: op_size=16bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+            this->Error("Not implemented: op_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
         }else{
             uint32_t ds, es;
             uint16_t si, di;
@@ -4482,11 +4477,10 @@ void MovM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
             si = cpu->GetR16(ESI);
             es = cpu->GetR16(ES)*16;
             di = cpu->GetR16(EDI);
-            mem->Write(es+di, mem->Read32(ds+si));
-            d = cpu->IsFlag(DF)? -2:1;
+            mem->Write(es+di, mem->Read16(ds+si));
+            d = cpu->IsFlag(DF)? -2:2;
             cpu->SetR16(EDI, di+d);
             cpu->SetR16(ESI, si+d);
-    
         }
         return;
     }
@@ -4551,18 +4545,17 @@ LodsM8::LodsM8(string code_name):Instruction(code_name){
 }
 
 void LodsM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint32_t ds, es;
-    uint16_t si, di;
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+        this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
+    }
+    uint32_t ds;
+    uint16_t si;
     uint16_t d;
     ds = cpu->GetR16(DS)*16;
     si = cpu->GetR16(ESI);
-    es = cpu->GetR16(ES)*16;
-    di = cpu->GetR16(EDI);
-    mem->Write(es+di, mem->Read32(ds+si));
-    d = cpu->IsFlag(DF)? -2:1;
-    cpu->SetR16(EDI, di+d);
+    cpu->SetR8L(EAX, mem->Read8(ds+si));
+    d = cpu->IsFlag(DF)? -1:1;
     cpu->SetR16(ESI, si+d);
-    this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
 }
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
