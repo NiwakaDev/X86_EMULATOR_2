@@ -2034,7 +2034,7 @@ void PopR32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->SetR32(register_type, this->Pop32(cpu, mem));
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    cpu->SetR16(register_type, this->Pop16(cpu, mem));
     return;
 }
 
