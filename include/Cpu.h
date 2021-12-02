@@ -171,6 +171,7 @@ class Cpu:public Object{
         void UpdateEflagsForSub8(uint32_t result, uint8_t d1, uint8_t d2);
         void UpdateEflagsForSub16(uint32_t result, uint16_t d1, uint16_t d2);
         void UpdateEflagsForInc(uint32_t result, uint32_t d1, uint32_t d2);
+        void UpdateEflagsForInc8(uint8_t result, uint8_t d1, uint8_t d2);
         template<typename type>void UpdateEflagsForDec(type result, type d1, type d2){
             this->UpdateZF(result);
             this->UpdateSF(result);

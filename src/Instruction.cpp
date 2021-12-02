@@ -1045,6 +1045,7 @@ CodeFE::CodeFE(string code_name):Instruction(code_name){
     for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
+    this->instructions[0] = new IncRm8("IncRm8");
     this->instructions[1] = new DecRm8("DecRm8");
 }
 
@@ -1052,7 +1053,7 @@ void CodeFE::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code FE /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: FE /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -4696,6 +4697,19 @@ void RorRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     return;
 }
 
+IncRm8::IncRm8(string code_name):Instruction(code_name){
+
+}
+
+void IncRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t r8;
+    uint8_t result;
+    uint8_t d = 0x01;
+    r8 = this->GetRM8(cpu, mem);
+    result = r8 + d;
+    this->SetRM8(cpu, mem, result);
+    cpu->UpdateEflagsForInc8(result, r8, d);
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 

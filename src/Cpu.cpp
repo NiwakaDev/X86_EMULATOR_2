@@ -553,6 +553,13 @@ void Cpu::UpdateEflagsForInc(uint32_t result, uint32_t d1, uint32_t d2){
     this->UpdateOF_Add(result, d1, d2);
 }
 
+void Cpu::UpdateEflagsForInc8(uint8_t result, uint8_t d1, uint8_t d2){
+    this->UpdateZF(result);
+    this->UpdateSF(result);
+    this->UpdatePF(result);
+    this->UpdateOF_Add(result, d1, d2);
+}
+
 bool Cpu::IsFlag(EFLAGS_KIND eflags_kind){
     switch (eflags_kind){
         case CF:

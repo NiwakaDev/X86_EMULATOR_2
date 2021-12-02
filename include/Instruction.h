@@ -1242,6 +1242,12 @@ class RorRm8:public Instruction{
         RorRm8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class IncRm8:public Instruction{
+    public: 
+        IncRm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 
