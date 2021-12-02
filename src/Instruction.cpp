@@ -1063,13 +1063,14 @@ CodeD0::CodeD0(string code_name):Instruction(code_name){
     for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
+    this->instructions[1] = new RorRm8("RorRm8");
 }
 
 void CodeD0::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code D2 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("code D0 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -4667,6 +4668,37 @@ void XchgRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     this->SetRM8(cpu, mem, r8);
     cpu->SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, rm8);
 }
+
+RorRm8::RorRm8(string code_name):Instruction(code_name){
+
+}
+
+void RorRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t rm8;
+    bool flg;
+    rm8 = this->GetRM8(cpu, mem);
+    if(rm8&0x01){
+        flg = true;
+    }else{
+        flg = false;
+    }
+    if(rm8&0x01){
+        cpu->SetFlag(CF);
+    }else{
+        cpu->ClearFlag(CF);
+    }
+    rm8 = rm8 >> 1;
+    rm8 = flg?(0x80|rm8):rm8;
+    this->SetRM8(cpu, mem, rm8);
+    uint8_t msb = rm8>>7;
+    if(msb^cpu->IsFlag(CF)){
+        cpu->SetFlag(OF);
+    }else{
+        cpu->SetFlag(OF);
+    }
+    return;
+}
+
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 
