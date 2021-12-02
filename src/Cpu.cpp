@@ -477,6 +477,10 @@ void Cpu::CheckPrefixCode(Memory* mem){
                 this->prefix_flgs[FLG_26] = true;
                 this->default_data_selector = ES;
                 break;
+            //case FLG_65:
+                //this->prefix_flgs[FLG_65] = true;
+                //this->default_data_selector = GS;
+                //break;
             default:
                 this->Error("prefix_code : 0x%02X is not implemented at Cpu::CheckPrefixCode\n", op_code);
         }

@@ -1974,6 +1974,9 @@ JmpPtr1632::JmpPtr1632(string code_name):Instruction(code_name){
 void JmpPtr1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     GdtGate* gdt_gate;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        if(!cpu->IsProtectedMode()){
+            this->Error("Not implemented: readl mode(op_size=32) at JmpPtr1632::Run");
+        }
         uint32_t offset;
         uint16_t selector;
         cpu->AddEip(1);
@@ -1990,14 +1993,17 @@ void JmpPtr1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->SetEip(offset);
         return;
     }
-    uint32_t offset;
+    if(cpu->IsProtectedMode()){
+        this->Error("Not implemented: readl mode(op_size=16) at JmpPtr1632::Run");
+    }
+    uint16_t offset;
     uint16_t selector;
     cpu->AddEip(1);
-    offset = mem->Read32(cpu->GetLinearAddrForCodeAccess());
+    offset = mem->Read16(cpu->GetLinearAddrForCodeAccess());
     cpu->AddEip(4);
     selector = mem->Read16(cpu->GetLinearAddrForCodeAccess());
     cpu->SetR16(CS, selector);
-    cpu->SetEip(offset&0x0000FFFF);
+    cpu->SetEip(offset);
     return;
 }
 
@@ -2013,7 +2019,7 @@ void PushR32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         this->Push32(cpu, mem, cpu->GetR32(register_type));
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    this->Push16(cpu, mem, cpu->GetR16(register_type));
     return;
 }
 
@@ -4462,6 +4468,9 @@ MovM32M32::MovM32M32(string code_name):Instruction(code_name){
 }
 
 void MovM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->IsPrefixRepnz()){
+        this->Error("Not implemented: repnz at %s::Run", this->code_name.c_str());
+    }
     cpu->AddEip(1);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
@@ -4470,17 +4479,26 @@ void MovM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
             this->Error("Not implemented: op_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
         }else{
-            uint32_t ds, es;
-            uint16_t si, di;
-            uint16_t d;
-            ds = cpu->GetR16(DS)*16;
-            si = cpu->GetR16(ESI);
-            es = cpu->GetR16(ES)*16;
-            di = cpu->GetR16(EDI);
-            mem->Write(es+di, mem->Read16(ds+si));
-            d = cpu->IsFlag(DF)? -2:2;
-            cpu->SetR16(EDI, di+d);
-            cpu->SetR16(ESI, si+d);
+            uint16_t cx = 1;
+            if(cpu->IsPrefixRep()){
+                cx = cpu->GetR16(ECX);
+            }
+            for(uint16_t i = 0; i<cx; i++){
+                uint32_t ds, es;
+                uint16_t si, di;
+                uint16_t d;
+                ds = cpu->GetR16(DS)*16;
+                si = cpu->GetR16(ESI);
+                es = cpu->GetR16(ES)*16;
+                di = cpu->GetR16(EDI);
+                mem->Write(es+di, mem->Read16(ds+si));
+                d = cpu->IsFlag(DF)? -2:2;
+                cpu->SetR16(EDI, di+d);
+                cpu->SetR16(ESI, si+d);
+                if(cpu->IsPrefixRep()){
+                    cpu->SetR32(ECX, cpu->GetR32(ECX)-1);
+                }
+            }
         }
         return;
     }
@@ -4545,6 +4563,7 @@ LodsM8::LodsM8(string code_name):Instruction(code_name){
 }
 
 void LodsM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
         this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
     }
