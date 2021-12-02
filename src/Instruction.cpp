@@ -4576,6 +4576,26 @@ void LodsM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     d = cpu->IsFlag(DF)? -1:1;
     cpu->SetR16(ESI, si+d);
 }
+
+LesR32M1632::LesR32M1632(string code_name):Instruction(code_name){
+
+}
+
+void LesR32M1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    if(cpu->IsProtectedMode()){
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }else{
+        if(cpu->Is32bitsMode()^cpu->IsPrefixOpSize()){
+            this->Error("Not implmented: op_size=32bit on read mode at %s::Run", this->code_name.c_str());
+        }
+        uint16_t effective_addr;
+        effective_addr = this->GetEffectiveAddr(cpu, mem);
+        cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr)));
+        cpu->SetR16(ES, mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr+2)));
+    }
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 

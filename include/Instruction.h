@@ -1198,6 +1198,12 @@ class LodsM8:public Instruction{
         LodsM8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class LesR32M1632:public Instruction{
+    public: 
+        LesR32M1632(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

@@ -153,6 +153,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0xC0] = new CodeC0("CodeC0");
     this->instructions[0xC1] = new CodeC1("CodeC1");
     this->instructions[0xC3] = new Ret32Near("Ret32Near");
+    this->instructions[0xC4] = new LesR32M1632("LesR32M1632");
     this->instructions[0xC6] = new CodeC6("CodeC6");
     this->instructions[0xC7] = new MovRm32Imm32("MovRm32Imm32");
     this->instructions[0xC9] = new Leave("Leave");
