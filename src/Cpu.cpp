@@ -768,6 +768,6 @@ void Cpu::Run(IoPort* io_port){
         this->Error("Not implemented: op_code = 0x%02X Cpu::Run", op_code);
     }
     this->instructions[op_code]->Run(this, this->mem, io_port);
-    fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
+    //fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
     return;
 }

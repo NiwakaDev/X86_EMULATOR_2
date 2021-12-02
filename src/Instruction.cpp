@@ -1052,7 +1052,7 @@ void CodeFE::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code F7 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("code FE /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
