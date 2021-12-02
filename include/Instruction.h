@@ -1210,6 +1210,12 @@ class MulRm8:public Instruction{
         MulRm8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class XchgEaxR32:public Instruction{
+    public: 
+        XchgEaxR32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 
