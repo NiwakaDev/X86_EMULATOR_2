@@ -4617,8 +4617,9 @@ void XchgEaxR32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(cpu->Is32bitsMode()^cpu->IsPrefixOpSize()){
         this->Error("Not implmented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
-    uint16_t ax = cpu->GetR16(EAX);
     GENERAL_PURPOSE_REGISTER32 register_type = (GENERAL_PURPOSE_REGISTER32)((uint32_t)mem->Read8(cpu->GetLinearAddrForCodeAccess())-(uint32_t)0x90);
+    cpu->AddEip(1);
+    uint16_t ax = cpu->GetR16(EAX);
     uint16_t r16 = cpu->GetR16(register_type);
     cpu->SetR16(EAX, r16);
     cpu->SetR16(register_type, ax);
