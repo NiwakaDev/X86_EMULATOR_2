@@ -164,6 +164,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0xCB] = new Ret32Far("Ret32Far");
     this->instructions[0xCD] = new IntImm8("IntImm8");
     this->instructions[0xCF] = new Iretd("Iretd");
+    this->instructions[0xD0] = new CodeD0("CodeD0");
     this->instructions[0xD1] = new CodeD1("CodeD1");
     this->instructions[0xD2] = new CodeD2("CodeD2");
     this->instructions[0xD3] = new CodeD3("CodeD3");

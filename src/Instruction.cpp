@@ -1059,6 +1059,23 @@ void CodeFE::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     return;
 }
 
+CodeD0::CodeD0(string code_name):Instruction(code_name){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        this->instructions[i] = NULL;
+    }
+}
+
+void CodeD0::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    if(this->instructions[this->modrm.reg_index]==NULL){
+            this->Error("code D2 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+    }
+    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
+    return;
+}
+
 CodeD2::CodeD2(string code_name):Instruction(code_name){
     for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;

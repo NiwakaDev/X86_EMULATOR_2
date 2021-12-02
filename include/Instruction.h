@@ -135,6 +135,14 @@ class CodeFF:public Instruction{
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
+class CodeD0:public Instruction{
+    private:
+        Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
+    public: 
+        CodeD0(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
 class CodeD1:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
