@@ -1222,6 +1222,12 @@ class DivRm8:public Instruction{
         DivRm8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class XchgRm8R8:public Instruction{
+    public: 
+        XchgRm8R8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

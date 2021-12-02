@@ -126,6 +126,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0x83] = new Code83("Code83");
     this->instructions[0x84] = new TestRm8R8("TestRm8R8");
     this->instructions[0x85] = new TestRm32R32("TestRm32R32");
+    this->instructions[0x86] = new XchgRm8R8("XchgRm8R8");
     this->instructions[0x87] = new XchgR32Rm32("XchgR32Rm32");
     this->instructions[0x88] = new MovRm8R8("MovRm8R8");
     this->instructions[0x89] = new MovRm32R32("MovRm32R32");

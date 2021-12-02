@@ -4636,6 +4636,20 @@ void DivRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->SetR8L(EAX, ax/rm8);
     cpu->SetR8H(EAX, ax%rm8);
 }
+
+XchgRm8R8::XchgRm8R8(string code_name):Instruction(code_name){
+
+}
+
+void XchgRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    uint8_t rm8, r8;
+    rm8 = this->GetRM8(cpu, mem);
+    r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    this->SetRM8(cpu, mem, r8);
+    cpu->SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, rm8);
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 
