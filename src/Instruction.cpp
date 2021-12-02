@@ -4710,6 +4710,24 @@ void IncRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     this->SetRM8(cpu, mem, result);
     cpu->UpdateEflagsForInc8(result, r8, d);
 }
+
+OrRm8R8::OrRm8R8(string code_name):Instruction(code_name){
+
+}
+
+void OrRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    uint8_t rm8;
+    uint8_t r8;
+    uint8_t result;
+    rm8 = this->GetRM8(cpu, mem);
+    r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = rm8|r8;
+    this->SetRM8(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    return;
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 

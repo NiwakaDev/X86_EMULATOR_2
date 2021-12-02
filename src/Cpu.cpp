@@ -64,6 +64,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0x05] = new AddEaxImm32("AddEaxImm32");
     this->instructions[0x06] = new PushEs("PushEs");
     this->instructions[0x07] = new PopEs("PopEs");
+    this->instructions[0x08] = new OrRm8R8("OrRm8R8");
     this->instructions[0x09] = new OrRm32R32("OrRm32R32");
     this->instructions[0x10] = new AdcRm8R8("AdcRm8R8");
     this->instructions[0x11] = new AdcRm32R32("AdcRm32R32");
