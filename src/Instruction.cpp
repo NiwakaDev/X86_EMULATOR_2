@@ -3432,16 +3432,13 @@ SubRm8R8::SubRm8R8(string code_name):Instruction(code_name){
 void SubRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
-    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
-        uint8_t rm8, r8;
-        rm8 = this->GetRM8(cpu, mem);
-        r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-        uint32_t result = (uint32_t)rm8- (uint32_t)r8;
-        this->SetRM8(cpu, mem, result);
-        cpu->UpdateEflagsForSub8(result, rm8, r8);
-        return;
-    }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint8_t rm8, r8;
+    rm8 = this->GetRM8(cpu, mem);
+    r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint32_t result = (uint32_t)rm8- (uint32_t)r8;
+    this->SetRM8(cpu, mem, result);
+    cpu->UpdateEflagsForSub8(result, rm8, r8);
+    return;
 }
 
 AdcRm8R8::AdcRm8R8(string code_name):Instruction(code_name){
