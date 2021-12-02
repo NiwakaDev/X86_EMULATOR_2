@@ -1216,6 +1216,12 @@ class XchgEaxR32:public Instruction{
         XchgEaxR32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class DivRm8:public Instruction{
+    public: 
+        DivRm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

@@ -1147,6 +1147,7 @@ CodeF6::CodeF6(string code_name):Instruction(code_name){
     }
     this->instructions[0] = new TestRm8Imm8("TestRm8Imm8");
     this->instructions[4] = new MulRm8("MulRm8");
+    this->instructions[6] = new DivRm8("DivRm8");
 }
 
 void CodeF6::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
@@ -4623,6 +4624,17 @@ void XchgEaxR32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint16_t r16 = cpu->GetR16(register_type);
     cpu->SetR16(EAX, r16);
     cpu->SetR16(register_type, ax);
+}
+
+DivRm8::DivRm8(string code_name):Instruction(code_name){
+
+}
+
+void DivRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint16_t ax  = cpu->GetR16(EAX);
+    uint16_t rm8 = this->GetRM8(cpu, mem);
+    cpu->SetR8L(EAX, ax/rm8);
+    cpu->SetR8H(EAX, ax%rm8);
 }
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
