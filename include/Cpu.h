@@ -274,6 +274,15 @@ class Cpu:public Object{
             this->UpdateZF(data);
             this->UpdatePF(data);
         }
+        template<typename type>void UpdateEflagsForUnsignedMul(type data){
+            if(data==0){
+                this->ClearFlag(OF);
+                this->ClearFlag(CF);
+            }else{
+                this->SetFlag(OF);
+                this->SetFlag(CF);
+            }
+        }
         void CallFunctionOnRealMode(Memory* mem, uint8_t selector);
         void HandleInterrupt(int irq_num);
         void SaveTask(uint16_t selector);

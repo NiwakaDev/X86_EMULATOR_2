@@ -1204,6 +1204,12 @@ class LesR32M1632:public Instruction{
         LesR32M1632(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class MulRm8:public Instruction{
+    public: 
+        MulRm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

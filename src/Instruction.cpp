@@ -1146,6 +1146,7 @@ CodeF6::CodeF6(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new TestRm8Imm8("TestRm8Imm8");
+    this->instructions[4] = new MulRm8("MulRm8");
 }
 
 void CodeF6::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
@@ -4595,6 +4596,17 @@ void LesR32M1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr)));
         cpu->SetR16(ES, mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr+2)));
     }
+}
+
+MulRm8::MulRm8(string code_name):Instruction(code_name){
+
+}
+
+void MulRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint16_t rm8 = this->GetRM8(cpu, mem);
+    uint16_t al  = cpu->GetR8L(EAX);
+    cpu->SetR16(EAX, rm8*al);
+    cpu->UpdateEflagsForUnsignedMul(cpu->GetR8H(EAX));
 }
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
