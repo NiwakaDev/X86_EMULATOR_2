@@ -3082,9 +3082,9 @@ void PopEs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         es = this->Pop32(cpu, mem);
         cpu->SetR16(ES, es);
         return;
-    }else{
-        this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
     }
+    es = this->Pop16(cpu, mem);
+    cpu->SetR16(ES, es);
     return;
 }
 
