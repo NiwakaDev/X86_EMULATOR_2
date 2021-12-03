@@ -34,6 +34,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     for(int i=0; i<GENERAL_PURPOSE_REGISTER32_COUNT; i++){
         this->gprs[i] = 0x00000000;
     }
+    /***
     this->gprs[EAX] = 0x01;
     this->gprs[ECX] = 0x01;
     this->gprs[EBX] = 0x00007C00;
@@ -42,6 +43,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->gprs[EDI] = 0x00000FA0;
     this->segment_registers[DS]->Set(0x0000F000, this);
     this->segment_registers[SS]->Set(0x0000F000, this);
+    ***/
 
     this->prefix_flgs[FLG_67] = false;
     this->prefix_flgs[FLG_66] = false;
@@ -208,8 +210,8 @@ Cpu::Cpu(Bios* bios, Memory* mem){
 }
 
 void Cpu::SetR16(SEGMENT_REGISTER register_type, uint16_t data){
-    if(SS==register_type&&data==0x35){
-        fprintf(stderr, "cc");
+    if(ECX==register_type&&data==0x00003993){
+        fprintf(stderr, "sadfdsfdsfcc\n");
     }
     this->segment_registers[register_type]->Set(data, this);
 }

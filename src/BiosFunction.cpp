@@ -122,8 +122,9 @@ void FloppyFunction::Read(Cpu* cpu, Memory* mem){
     this->head_number  = (uint32_t)cpu->GetR8H(EDX);
     this->sector_number = 0x0000003F&((uint32_t)cpu->GetR8L(ECX));
     this->cylinder_number = (uint32_t)cpu->GetR8H(ECX);
+
     if(this->sector_number==0x00 || this->sector_number>0x12){
-        fprintf(stderr, "sector_numberは0x01~0x12の範囲内で指定してください(sector_number=%d) at FloppyFunction::ExecuteSelf\n", this->sector_number);
+        this->Error("invalid sector_number: 0x%02X at FloppyFunction::Read\n", this->sector_number);
     }  
     this->processed_sector_number = (uint32_t)cpu->GetR8L(EAX);
 
@@ -134,7 +135,8 @@ void FloppyFunction::Read(Cpu* cpu, Memory* mem){
             mem->Write(buff_addr+j+i*SECTOR_SIZE, data);
         }
     }
-
+    cnt++;
+    cpu->SetR8H(EAX, 0x00);
     cpu->ClearFlag(CF);//エラーなし
 }
 
