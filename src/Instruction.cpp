@@ -4226,7 +4226,23 @@ void ShrRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForShr(rm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint32_t rm16;
+    uint32_t temp_rm16;
+    rm16 = this->GetRM32(cpu, mem);
+    temp_rm16 = rm16;
+    if(rm16&1){
+        cpu->SetFlag(CF);
+    }else{
+        cpu->ClearFlag(CF);
+    }
+    rm16 = rm16 >> 1;
+    this->SetRM16(cpu, mem, rm16);
+    if(temp_rm16&SIGN_FLG2){
+        cpu->SetFlag(OF);
+    }else{
+        cpu->ClearFlag(OF);
+    }
+    cpu->UpdateEflagsForShr(rm16);
     return;
 }
 
