@@ -122,6 +122,7 @@ class Cpu:public Object{
         void ResetPrefixFlg();
         void CheckPrefixCode(Memory* mem);
         void Push32(uint32_t data);
+        bool segment_override;
     public:
         Cpu(Bios* bios, Memory* mem);
         void Run(IoPort* io_port);
@@ -297,4 +298,5 @@ class Cpu:public Object{
         void SetRpl(SEGMENT_REGISTER register_type, uint8_t rpl);
         void SetCpl(SEGMENT_REGISTER register_type, uint8_t cpl);
         void On32bitMode();
+        bool IsSegmentOverride();
 };

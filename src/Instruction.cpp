@@ -3790,6 +3790,9 @@ CmpsM8M8::CmpsM8M8(string code_name):Instruction(code_name){
 
 void CmpsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint32_t ecx = 1;
+    if(cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
+    }
     cpu->AddEip(1);
     if(cpu->IsPrefixRep()){
         ecx = cpu->GetR32(ECX);
@@ -3827,7 +3830,33 @@ void CmpsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         }
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint32_t base_ds, base_es;
+    uint16_t si, di;
+    uint32_t base_ds_si, base_es_di;
+    uint8_t m1, m2;
+    uint32_t result;
+    uint16_t d;
+    base_ds = cpu->GetBaseAddr(DS);
+    base_es = cpu->GetBaseAddr(ES);
+    for(int i=0; i<ecx; i++){
+        si     = cpu->GetR16(ESI);
+        di     = cpu->GetR16(EDI);
+        base_ds_si = base_ds+si;
+        base_es_di = base_es+di;
+        m1      = mem->Read8(base_ds_si);
+        m2      = mem->Read8(base_es_di);
+        result = (uint32_t)m1 - (uint32_t)m2;
+        cpu->UpdateEflagsForSub8(result, m1, m2);
+        d = cpu->IsFlag(DF)? 0xFFFF:0x0001;
+        cpu->SetR16(ESI, si+d);
+        cpu->SetR16(EDI, di+d);
+        if(cpu->IsPrefixRep()){
+            cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
+            if(!cpu->IsFlag(ZF)){
+                return;
+            }
+        }
+    }
     return;
 }
 

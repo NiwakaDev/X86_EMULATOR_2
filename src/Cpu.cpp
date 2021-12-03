@@ -441,7 +441,12 @@ Tss* Cpu::GetCurrentTss(){
     return (Tss*)this->mem->GetPointer(this->task_register->GetBaseAddr());
 }
 
+bool Cpu::IsSegmentOverride(){
+    return this->segment_override;
+}
+
 void Cpu::InitSelector(){
+    this->segment_override = false;
     this->default_code_selector = CS;
     this->default_data_selector = DS;
     this->default_stack_selector = SS;
@@ -491,10 +496,12 @@ void Cpu::CheckPrefixCode(Memory* mem){
             case FLG_2E:
                 this->prefix_flgs[FLG_2E] = true;
                 this->default_data_selector = CS;
+                this->segment_override = true;
                 break;
             case FLG_26:
                 this->prefix_flgs[FLG_26] = true;
                 this->default_data_selector = ES;
+                this->segment_override = true;
                 break;
             //case FLG_65:
                 //this->prefix_flgs[FLG_65] = true;
