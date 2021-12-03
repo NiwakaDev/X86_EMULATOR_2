@@ -130,9 +130,6 @@ void FloppyFunction::Read(Cpu* cpu, Memory* mem){
     buff_addr = this->es*16 + this->bx;
     for(int i=0; i<this->processed_sector_number; i++){
         for(int j=0; j<SECTOR_SIZE; j++){
-            if(buff_addr+j+i*SECTOR_SIZE==0xc220){
-                buff = buff;
-            }
             data = (uint8_t)this->buff[this->head_number*18*SECTOR_SIZE+this->cylinder_number*18*2*SECTOR_SIZE+(this->sector_number-1)*SECTOR_SIZE+j];
             mem->Write(buff_addr+j+i*SECTOR_SIZE, data);
         }

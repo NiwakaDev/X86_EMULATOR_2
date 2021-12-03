@@ -3,6 +3,7 @@
 #include "IoSpace.h"
 using namespace std;
 using namespace chrono;
+using namespace this_thread;
 
 Timer::Timer(Pic* pic){
     this->enable = false;
@@ -48,7 +49,7 @@ uint8_t Timer::In8(uint16_t addr){
 
 void Timer::Run(){
     while(this->enable){
-        this_thread::sleep_for(milliseconds(this->cycle));
+        sleep_for(milliseconds(this->cycle));
         this->pic->SetTimer();
     }
 }

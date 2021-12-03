@@ -13,7 +13,11 @@ using namespace std;
 #define SIGN_FLG 0x80000000//いずれ消す予定
 #define BYTE 8
 
+
+//static FILE* output_file;//テスト用
+
 Cpu::Cpu(Bios* bios, Memory* mem){
+    //output_file = fopen("output_file", "wb");
     this->bios = bios;
     this->mem  = mem;
     this->eflags.raw = 0x00000002;
@@ -30,6 +34,14 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     for(int i=0; i<GENERAL_PURPOSE_REGISTER32_COUNT; i++){
         this->gprs[i] = 0x00000000;
     }
+    this->gprs[EAX] = 0x01;
+    this->gprs[ECX] = 0x01;
+    this->gprs[EBX] = 0x00007C00;
+    this->gprs[ESP] = 0x0000F000;
+    this->gprs[ESI] = 0x000015DA;
+    this->gprs[EDI] = 0x00000FA0;
+    this->segment_registers[DS]->Set(0x0000F000, this);
+    this->segment_registers[SS]->Set(0x0000F000, this);
 
     this->prefix_flgs[FLG_67] = false;
     this->prefix_flgs[FLG_66] = false;
@@ -751,6 +763,8 @@ static void Dump(Memory* mem, uint32_t start, uint32_t size){
     fprintf(stderr, "\n");
 }
 
+
+
 void Cpu::ShowRegisters(){
     fprintf(stderr, "EAX=%08X EBX=%08X ECX=%08X EDX=%08X\n", this->gprs[EAX], this->gprs[EBX], this->gprs[ECX], this->gprs[EDX]);
     fprintf(stderr, "ESI=%08X EDI=%08X EBP=%08X ESP=%08X\n", this->gprs[ESI], this->gprs[EDI], this->gprs[EBP], this->gprs[ESP]);
@@ -767,7 +781,49 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "GDT=%08X\n", this->idtr->GetBase());
 }
 
+/***
+void ShowRegistersBefore(Cpu* cpu){
+	static int idx = 0;
+    if(idx==16){
+        fprintf(stderr, "HHHHHHHHH");
+    }
+	fprintf(output_file, "idx = %d\n", idx);
+	fprintf(output_file,"before: AX = %04X\n", cpu->GetR16(EAX));
+	fprintf(output_file,"before: CX = %04X\n", cpu->GetR16(ECX));
+	fprintf(output_file,"before: DX = %04X\n", cpu->GetR16(EDX));
+	fprintf(output_file,"before: BX = %04X\n", cpu->GetR16(EBX));
+	fprintf(output_file,"before: SP = %04X\n", cpu->GetR16(ESP));
+	fprintf(output_file,"before: BP = %04X\n", cpu->GetR16(EBP));
+	fprintf(output_file,"before: SI = %04X\n", cpu->GetR16(ESI));
+	fprintf(output_file,"before: DI = %04X\n", cpu->GetR16(EDI));
+	fprintf(output_file,"before: ES = %04X\n", cpu->GetR16(ES));
+	fprintf(output_file,"before: CS = %04X\n", cpu->GetR16(CS));
+	fprintf(output_file,"before: DS = %04X\n", cpu->GetR16(DS));
+	fprintf(output_file,"before: SS = %04X\n", cpu->GetR16(SS));
+	fprintf(output_file,"before: ip = %04X\n", cpu->GetIp());
+	idx++;
+}
+
+void ShowRegistersAfter(Cpu* cpu){
+	fprintf(output_file,"After: AX = %04X\n", cpu->GetR16(EAX));
+	fprintf(output_file,"After: CX = %04X\n", cpu->GetR16(ECX));
+	fprintf(output_file,"After: DX = %04X\n", cpu->GetR16(EDX));
+	fprintf(output_file,"After: BX = %04X\n", cpu->GetR16(EBX));
+	fprintf(output_file,"After: SP = %04X\n", cpu->GetR16(ESP));
+	fprintf(output_file,"After: BP = %04X\n", cpu->GetR16(EBP));
+	fprintf(output_file,"After: SI = %04X\n", cpu->GetR16(ESI));
+	fprintf(output_file,"After: DI = %04X\n", cpu->GetR16(EDI));
+	fprintf(output_file,"After: ES = %04X\n", cpu->GetR16(ES));
+	fprintf(output_file,"After: CS = %04X\n", cpu->GetR16(CS));
+	fprintf(output_file,"After: DS = %04X\n", cpu->GetR16(DS));
+	fprintf(output_file,"After: SS = %04X\n", cpu->GetR16(SS));
+	fprintf(output_file,"After: ip = %04X\n", cpu->GetIp());
+}
+***/
+
 void Cpu::Run(IoPort* io_port){
+    //static int idx = 0;
+    //ShowRegistersBefore(this);
     this->InitSelector();
     this->ResetPrefixFlg();
     this->CheckPrefixCode(this->mem);
@@ -776,6 +832,7 @@ void Cpu::Run(IoPort* io_port){
         this->Error("Not implemented: op_code = 0x%02X Cpu::Run", op_code);
     }
     this->instructions[op_code]->Run(this, this->mem, io_port);
+    //ShowRegistersAfter(this);
     //fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
     return;
 }

@@ -65,6 +65,8 @@ int Emulator::ParseArgv(int argc, char* argv[]){
             argv += 1;
             continue;
         }
+        //プログラムを動かしてみたい時のオプション
+        //私のために用意しているオプションなので、指定しないことをお勧めします。
         if ((strcmp("-headstart", argv[0])==0) || (strcmp("-h", argv[0])==0)) {//バイナリファイルの先頭から実行する。
             this->head_start = true;
             argc -= 1;

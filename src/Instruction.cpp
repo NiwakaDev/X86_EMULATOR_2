@@ -3,6 +3,7 @@
 #include "Memory.h"
 #include "IoPort.h"
 using namespace std;
+using namespace chrono;
 
 Instruction::Instruction(string code_name){
     this->code_name = code_name;
@@ -640,11 +641,11 @@ void Instruction::SetRM16(Cpu* cpu, Memory* mem, uint16_t data){
             return;
         }
     }else{
-        uint16_t addr;
         uint16_t disp8;
         uint16_t disp16;
         if(this->modrm.mod==0){
             if(this->modrm.rm==6){
+                this->Error("Not implemented: mod==0, rm==6 at %s::Run", this->code_name.c_str());
                 /***
                 addr = this->modrm.disp16;
                 addr = cpu->GetLinearAddrForDataAccess(addr);
@@ -654,21 +655,21 @@ void Instruction::SetRM16(Cpu* cpu, Memory* mem, uint16_t data){
             }
             addr = this->GetR16ForEffectiveAddr(cpu);
             addr = cpu->GetLinearAddrForDataAccess(addr);
-            mem->Write(addr&0x0000FFFF, data);
+            mem->Write(addr, data);
             return;
         }
         if(this->modrm.mod==1){
             disp8 = (int16_t)this->modrm.disp8;
             addr  = disp8 + this->GetR16ForEffectiveAddr(cpu);
             addr = cpu->GetLinearAddrForDataAccess(addr);
-            mem->Write(addr&0x0000FFFF, data);
+            mem->Write(addr, data);
             return;
         }
         if(this->modrm.mod==2){
             disp16 = this->modrm.disp16;
             addr  = disp16 + this->GetR16ForEffectiveAddr(cpu);
             addr = cpu->GetLinearAddrForDataAccess(addr);
-            mem->Write(addr&0x0000FFFF, data);
+            mem->Write(addr, data);
             return;
         }
         cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.rm, data);
@@ -1447,7 +1448,7 @@ Hlt::Hlt(string code_name):Instruction(code_name){
 
 void Hlt::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
-    this_thread::sleep_for(std::chrono::milliseconds(10));
+    this_thread::sleep_for(milliseconds(10));
 }
 
 JaeRel8::JaeRel8(string code_name):Instruction(code_name){
@@ -2021,7 +2022,7 @@ void JmpPtr1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint16_t selector;
     cpu->AddEip(1);
     offset = mem->Read16(cpu->GetLinearAddrForCodeAccess());
-    cpu->AddEip(4);
+    cpu->AddEip(2);
     selector = mem->Read16(cpu->GetLinearAddrForCodeAccess());
     cpu->SetR16(CS, selector);
     cpu->SetEip(offset);
@@ -2722,7 +2723,6 @@ void DivRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     dx = cpu->GetR16(EDX);
     ax = cpu->GetR16(EAX);
     rm16 = this->GetRM16(cpu, mem);
-
     r32  = (((uint32_t)dx)<<((uint32_t)16))| ((uint32_t)ax);
     cpu->SetR16(EAX, r32/((uint32_t)rm16));
     cpu->SetR16(EDX, r32%(uint32_t)rm16);
@@ -4514,7 +4514,7 @@ void MovM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
                 cpu->SetR16(EDI, di+d);
                 cpu->SetR16(ESI, si+d);
                 if(cpu->IsPrefixRep()){
-                    cpu->SetR32(ECX, cpu->GetR32(ECX)-1);
+                    cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
                 }
             }
         }
@@ -4649,6 +4649,9 @@ DivRm8::DivRm8(string code_name):Instruction(code_name){
 void DivRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint16_t ax  = cpu->GetR16(EAX);
     uint16_t rm8 = this->GetRM8(cpu, mem);
+    if(rm8==0){
+        this->Error("Divide by 0: rm8=0 at %s::Run", this->code_name.c_str());
+    }
     cpu->SetR8L(EAX, ax/rm8);
     cpu->SetR8H(EAX, ax%rm8);
 }
