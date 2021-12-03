@@ -856,6 +856,7 @@ Code80::Code80(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new AddRm8Imm8("AddRm8Imm8");
+    this->instructions[4] = new AndRm8Imm8("AndRm8Imm8");
     this->instructions[7] = new CmpRm8Imm8("CmpRm8Imm8");
 }
 
@@ -4838,6 +4839,22 @@ void LodsM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
             }
         }
     }
+    return;
+}
+
+AndRm8Imm8::AndRm8Imm8(string code_name):Instruction(code_name){
+
+}
+
+void AndRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t rm8, imm8;
+    uint8_t result;
+    rm8 = this->GetRM8(cpu, mem);
+    imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    result = rm8&imm8;
+    this->SetRM8(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);
     return;
 }
 /***

@@ -29,6 +29,9 @@ class Instruction:public Object{
         void SetRM32(Cpu* cpu, Memory* mem, uint32_t data);
         void Push16(Cpu* cpu, Memory* mem, uint16_t data);
         void Push32(Cpu* cpu, Memory* mem, uint32_t data);
+        template<typename type>void Push(Cpu* cpu, Memory* mem, type data){
+            //スタックのアドレスサイズ
+        }
         uint16_t Pop16(Cpu* cpu, Memory* mem);
         uint32_t Pop32(Cpu* cpu, Memory* mem);
     public:
@@ -745,6 +748,13 @@ class PushEs:public Instruction{
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
+class PushCs:public Instruction{
+    public: 
+        PushCs(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
+
 class PushDs:public Instruction{
     public: 
         PushDs(std::string code_name);
@@ -1264,6 +1274,12 @@ class StosM32:public Instruction{
 class LodsM32:public Instruction{
     public: 
         LodsM32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
+class AndRm8Imm8:public Instruction{
+    public: 
+        AndRm8Imm8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 /***
