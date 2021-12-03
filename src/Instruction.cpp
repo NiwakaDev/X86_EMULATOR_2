@@ -645,12 +645,9 @@ void Instruction::SetRM16(Cpu* cpu, Memory* mem, uint16_t data){
         uint16_t disp16;
         if(this->modrm.mod==0){
             if(this->modrm.rm==6){
-                this->Error("Not implemented: mod==0, rm==6 at %s::Run", this->code_name.c_str());
-                /***
                 addr = this->modrm.disp16;
-                addr = cpu->GetLinearAddrForDataAccess(addr);
-                ***/
-                mem->Write(this->modrm.disp16, data);
+                addr = cpu->GetLinearAddrForDataAccess(addr); 
+                mem->Write(addr, data);
                 return;
             }
             addr = this->GetR16ForEffectiveAddr(cpu);
