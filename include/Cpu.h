@@ -180,6 +180,9 @@ class Cpu:public Object{
                 case 1:
                     this->UpdateOF_Sub8(result, d1, d2);
                     break;
+                case 2:
+                    this->UpdateOF_Sub16(result, d1, d2);
+                    break;
                 case 4:
                     this->UpdateOF_Sub(result, d1, d2);
                     break;

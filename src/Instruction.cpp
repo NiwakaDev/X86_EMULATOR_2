@@ -2465,7 +2465,14 @@ void DecR32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForDec(result, r32, (uint32_t)0xFFFFFFFF);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t r16;
+    uint16_t result;
+    GENERAL_PURPOSE_REGISTER32 register_type = (GENERAL_PURPOSE_REGISTER32)(mem->Read8(cpu->GetLinearAddrForCodeAccess())-0x48);
+    cpu->AddEip(1);
+    r16 = cpu->GetR16(register_type);
+    result = r16 - 1;
+    cpu->SetR16(register_type, result);
+    cpu->UpdateEflagsForDec(result, r16, (uint16_t)0xFFFF);
     return;
 }
 
