@@ -1254,6 +1254,12 @@ class OrRm8R8:public Instruction{
         OrRm8R8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class StosM32:public Instruction{
+    public: 
+        StosM32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

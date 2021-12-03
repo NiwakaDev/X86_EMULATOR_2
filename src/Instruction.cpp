@@ -4341,7 +4341,6 @@ SalRm32::SalRm32(string code_name):Instruction(code_name){
 void SalRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         uint32_t rm32;
-        bool change_of_flg;
         uint32_t msb_dest;
         rm32 = this->GetRM32(cpu, mem);
         if(rm32&0x80000000){
@@ -4505,7 +4504,6 @@ CallRm32::CallRm32(string code_name):Instruction(code_name){
 }
 
 void CallRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint32_t rm32 = this->GetRM32(cpu, mem);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
             this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
         return;
@@ -4762,6 +4760,34 @@ void OrRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     result = rm8|r8;
     this->SetRM8(cpu, mem, result);
     cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    return;
+}
+
+StosM32::StosM32(string code_name):Instruction(code_name){
+
+}
+
+void StosM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(cpu->IsPrefixRepnz()||cpu->IsPrefixRep()){
+        this->Error("Not implemented: REPNZ and REP at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+        this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
+    }else{
+        uint16_t cx = 1;
+        for(uint16_t i = 0; i<cx; i++){
+            uint32_t es;
+            uint16_t di;
+            uint16_t d;
+            es = cpu->GetR16(ES)*16;
+            di = cpu->GetR16(EDI);
+            mem->Write(es+di, cpu->GetR16(EAX));
+            d = cpu->IsFlag(DF)? -2:2;
+            cpu->SetR16(EDI, di+d);
+        }
+    }
+
     return;
 }
 /***
