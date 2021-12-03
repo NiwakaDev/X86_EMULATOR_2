@@ -4806,6 +4806,40 @@ void StosM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
 
     return;
 }
+
+LodsM32::LodsM32(string code_name):Instruction(code_name){
+
+}
+
+void LodsM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->IsPrefixRepnz()||cpu->IsPrefixRep()){
+        this->Error("Not implemented: REPNZ and REP at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }else{
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+            this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
+        }else{
+            uint16_t cx = 1;
+            for(uint16_t i = 0; i<cx; i++){
+                uint32_t ds;
+                uint16_t si;
+                uint16_t d;
+                ds = cpu->GetR16(DS)*16;
+                si = cpu->GetR16(ESI);
+                cpu->SetR16(EAX, mem->Read16(ds+si));
+                d = cpu->IsFlag(DF)? -2:2;
+                cpu->SetR16(ESI, si+d);
+            }
+        }
+    }
+    return;
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 

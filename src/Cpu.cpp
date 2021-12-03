@@ -174,6 +174,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0xA9] = new TestEaxImm32("TestEaxImm32");
     this->instructions[0xAB] = new StosM32("StosM32");
     this->instructions[0xAC] = new LodsM8("LodsM8");
+    this->instructions[0xAD] = new LodsM32("LodsM32");
     this->instructions[0xAE] = new Scasb("Scasb");
     this->instructions[0xC0] = new CodeC0("CodeC0");
     this->instructions[0xC1] = new CodeC1("CodeC1");

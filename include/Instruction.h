@@ -1260,6 +1260,12 @@ class StosM32:public Instruction{
         StosM32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class LodsM32:public Instruction{
+    public: 
+        LodsM32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 
