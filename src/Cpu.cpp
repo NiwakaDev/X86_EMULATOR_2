@@ -13,6 +13,11 @@ using namespace std;
 #define SIGN_FLG 0x80000000//いずれ消す予定
 #define BYTE 8
 
+#define EFLAGS_INIT_VALUE 0x00000002
+#define EIP_INIT_VALUE    0x0000FFF0
+#define CR0_INIT_VALUE    0x60000010
+#define CR2_INIT_VALUE    0x00000000
+#define CS_INIT_VALUE     0x0000F000
 
 //static FILE* output_file;//テスト用
 
@@ -20,8 +25,8 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     //output_file = fopen("output_file", "wb");
     this->bios = bios;
     this->mem  = mem;
-    this->eflags.raw = 0x00000002;
-    this->cr0.raw = 0;
+    this->eflags.raw = EFLAGS_INIT_VALUE;
+    this->cr0.raw = CR0_INIT_VALUE;
     this->cr0.flgs.PE  = REAL_MODE;
     for(int i=0; i<SEGMENT_REGISTER_COUNT; i++){
         this->segment_registers[i] = new SegmentRegister(0x0000);
