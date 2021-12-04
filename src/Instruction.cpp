@@ -2563,7 +2563,16 @@ void AndRm32Imm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAnd(result);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t imm16;
+    uint16_t result;
+    uint16_t rm16;
+    imm16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    rm16 = this->GetRM16(cpu, mem);
+    result = rm16 & imm16;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);
+    return;
 }
 
 SalRm32Imm8::SalRm32Imm8(string code_name):Instruction(code_name){
