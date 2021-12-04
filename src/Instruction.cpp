@@ -2871,7 +2871,16 @@ void OrRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    uint16_t r16;
+    uint16_t result;
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    rm16 = this->GetRM16(cpu, mem);
+    r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = rm16 | r16;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
     return;
 }
 
@@ -3107,15 +3116,15 @@ PopDs::PopDs(string code_name):Instruction(code_name){
 }
 
 void PopDs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint32_t ds = 0;
+    uint32_t ds;
     cpu->AddEip(1);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         ds = this->Pop32(cpu, mem);
         cpu->SetR16(DS, ds);
         return;
-    }else{
-        this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
     }
+    ds = this->Pop16(cpu, mem);
+    cpu->SetR16(DS, ds);
     return;
 }
 
