@@ -454,6 +454,10 @@ bool Cpu::IsSegmentOverride(){
     return this->segment_override;
 }
 
+bool Cpu::IsBflg(SEGMENT_REGISTER register_type){//セグメントディスクリプタのBフラグ
+    return this->segment_registers[register_type]->Is32bitsMode();
+}
+
 void Cpu::InitSelector(){
     this->segment_override = false;
     this->default_code_selector = CS;

@@ -13,6 +13,21 @@ void Instruction::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     this->Error("Not implemented: Instruction::Run");
 }
 
+/***
+ * このコードは3代目x86エミュレータに組み込む予定
+ * 無理やりこのコードを今のエミュレータに使うのは怖い。
+ * 理由：
+template<typename type>void Instruction::Push(Cpu* cpu, Memory* mem, type data){
+    //スタックのアドレスサイズはスタックセグメントのBフラグで決定される。
+    if(cpu->IsBflg(SS)){//セットされていたら32bitサイズ
+        cpu->SetR32(ESP, cpu->GetR32(ESP)-4);
+        mem->Write(cpu->GetLinearStackAddr(), data);
+    }  
+    cpu->SetR16(ESP, cpu->GetR16(ESP)-2);
+    mem->Write(cpu->GetLinearStackAddr(), data);
+}
+***/
+
 void Instruction::Push16(Cpu* cpu, Memory* mem, uint16_t data){
     cpu->SetR16(ESP, cpu->GetR16(ESP)-2);
     mem->Write(cpu->GetLinearStackAddr(), data);
@@ -210,11 +225,13 @@ uint16_t Instruction::GetR16ForEffectiveAddr(Cpu* cpu){
             data = r1+r2;
             return data;
         case 2:
+            cpu->SetDataSelector(SS);
             r1   = (uint16_t)cpu->GetR32(EBP);
             r2   = (uint16_t)cpu->GetR32(ESI);
             data = r1+r2;
             return data;
         case 3:
+            cpu->SetDataSelector(SS);
             r1   = (uint16_t)cpu->GetR32(EBP);
             r2   = (uint16_t)cpu->GetR32(EDI);
             data = r1+r2;
@@ -228,6 +245,7 @@ uint16_t Instruction::GetR16ForEffectiveAddr(Cpu* cpu){
             data = r1;
             return data;
         case 6:
+            cpu->SetDataSelector(SS);
             r1   = (uint16_t)cpu->GetR32(EBP);
             data = r1;
             return data;

@@ -29,9 +29,7 @@ class Instruction:public Object{
         void SetRM32(Cpu* cpu, Memory* mem, uint32_t data);
         void Push16(Cpu* cpu, Memory* mem, uint16_t data);
         void Push32(Cpu* cpu, Memory* mem, uint32_t data);
-        template<typename type>void Push(Cpu* cpu, Memory* mem, type data){
-            //スタックのアドレスサイズ
-        }
+        //template<typename type>void Push(Cpu* cpu, Memory* mem, type data);
         uint16_t Pop16(Cpu* cpu, Memory* mem);
         uint32_t Pop32(Cpu* cpu, Memory* mem);
     public:

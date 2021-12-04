@@ -299,4 +299,5 @@ class Cpu:public Object{
         void SetCpl(SEGMENT_REGISTER register_type, uint8_t cpl);
         void On32bitMode();
         bool IsSegmentOverride();
+        bool IsBflg(SEGMENT_REGISTER register_type);//セグメントディスクリプタのBフラグ
 };
