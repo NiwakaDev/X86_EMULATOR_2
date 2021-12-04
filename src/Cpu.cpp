@@ -88,6 +88,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0x10] = new AdcRm8R8("AdcRm8R8");
     this->instructions[0x11] = new AdcRm32R32("AdcRm32R32");
     this->instructions[0x0D] = new OrEaxImm32("OrEaxImm32");
+    this->instructions[0x0E] = new PushCs("PushCs");
     this->instructions[0x0F] = new Code0F("Code0F");
     this->instructions[0x16] = new PushSs("PushSs");
     this->instructions[0x18] = new SbbRm8R8("SbbRm8R8");
@@ -853,6 +854,6 @@ void Cpu::Run(IoPort* io_port){
     }
     this->instructions[op_code]->Run(this, this->mem, io_port);
     //ShowRegistersAfter(this);
-    //fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
+    fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
     return;
 }

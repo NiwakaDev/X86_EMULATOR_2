@@ -2945,11 +2945,14 @@ PushEs::PushEs(string code_name):Instruction(code_name){
 }
 
 void PushEs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint32_t es = 0;
-    cpu->AddEip(1);
-    es = (uint32_t)cpu->GetR16(ES);
-    this->Push32(cpu, mem, es);
-    return;
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        uint32_t es = 0;
+        cpu->AddEip(1);
+        es = (uint32_t)cpu->GetR16(ES);
+        this->Push32(cpu, mem, es);
+        return;
+    }
+    this->Error("Not implemented: 16bit mode at %s::Run", this->code_name.c_str());
 }
 
 PushDs::PushDs(string code_name):Instruction(code_name){
@@ -2957,10 +2960,36 @@ PushDs::PushDs(string code_name):Instruction(code_name){
 }
 
 void PushDs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint32_t ds = 0;
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        uint32_t ds = 0;
+        cpu->AddEip(1);
+        ds = (uint32_t)cpu->GetR16(DS);
+        this->Push32(cpu, mem, ds);
+        return;
+    }
+    uint16_t ds = 0;
     cpu->AddEip(1);
-    ds = (uint32_t)cpu->GetR16(DS);
-    this->Push32(cpu, mem, ds);
+    ds = cpu->GetR16(DS);
+    this->Push16(cpu, mem, ds);
+    return;
+}
+
+PushCs::PushCs(string code_name):Instruction(code_name){
+
+}
+
+void PushCs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        uint32_t cs = 0;
+        cpu->AddEip(1);
+        cs = (uint32_t)cpu->GetR16(CS);
+        this->Push32(cpu, mem, cs);
+        return;
+    }
+    uint16_t cs = 0;
+    cpu->AddEip(1);
+    cs = cpu->GetR16(CS);
+    this->Push16(cpu, mem, cs);
     return;
 }
 
@@ -4066,10 +4095,17 @@ PushSs::PushSs(string code_name):Instruction(code_name){
 }
 
 void PushSs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint32_t es = 0;
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        uint32_t ss = 0;
+        cpu->AddEip(1);
+        ss = (uint32_t)cpu->GetR16(SS);
+        this->Push32(cpu, mem, ss);
+        return;
+    }
+    uint32_t ss = 0;
     cpu->AddEip(1);
-    es = (uint32_t)cpu->GetR16(SS);
-    this->Push32(cpu, mem, es);
+    ss = cpu->GetR16(SS);
+    this->Push16(cpu, mem, ss);
     return;
 }
 
