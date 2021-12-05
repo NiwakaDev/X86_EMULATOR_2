@@ -20,7 +20,7 @@ C++11, SDL2.0
 <h3>Grab mouse on x86 emulator</h3>
 click mouse on x86 emulator
 
-<h3>Release mouse out of x86 emulator</h3>
+<h3>Release mouse from x86 emulator</h3>
 press lef-ctrl+left-alt+g
 
 <h2>OS on x86 emulator</h2>
