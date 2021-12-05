@@ -409,12 +409,24 @@ uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
 
 void Gui::HandleKeyDown(SDL_Event *e){
     uint8_t key_code;
+    switch (e->key.keysym.sym){//使うことのないキーコードはここでスルーする
+        case SDLK_LGUI: 
+            return;
+        case SDLK_RGUI:
+            return;
+    }
     key_code = this->SdlScancode2KeyCode(e);
     this->kbc->Send(key_code);
 }
 
 void Gui::HandleKeyUp(SDL_Event *e){
     uint8_t key_code;
+    switch (e->key.keysym.sym){//使うことのないキーコードはここでスルーする
+        case SDLK_LGUI: 
+            return;
+        case SDLK_RGUI:
+            return;
+    }
     key_code = KEY_CODE_BREAK | this->SdlScancode2KeyCode(e);
     this->kbc->Send(key_code);
 }
