@@ -537,6 +537,7 @@ void Gui::Display(){
                 this->image[x+y*this->screen_width] = *(this->vga->GetPixel(x, y));
             }
         }
+        
         this->vga->UnlockVga();
         end = SDL_GetTicks();
         end = end - start;
