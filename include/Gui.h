@@ -35,5 +35,8 @@ class Gui:public Object{
         void HandleMouseMotion(SDL_Event *e);
         void HandleMouseButton(SDL_Event *e);
         void HideCursor();
+        void ShowCursor();
+        int  GetModState();//左ctrl、左altの状態を得る。
         void Resize();
+        bool grab;
 };

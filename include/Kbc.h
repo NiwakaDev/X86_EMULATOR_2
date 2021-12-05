@@ -52,6 +52,7 @@ class Mouse;
 #define KEY_CODE_BACKSPACE 0x0E
 #define KEY_CODE_LSHIFT 0x2A
 #define KEY_CODE_RSHIFT 0x36
+#define KEY_CODE_LALT 0x38
 #define KEY_CODE_TAB 0x0F
 #define KEY_CODE_LCTRL 0x1D
 #define KEY_CODE_MINUS 0x4A
