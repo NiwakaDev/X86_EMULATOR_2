@@ -201,6 +201,8 @@ void Gui::Update(){
     SDL_RenderPresent(this->renderer);
 }
 
+int gui_sys = 0;
+
 uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
     uint8_t key_code;
     switch (e->key.keysym.sym){
@@ -260,6 +262,9 @@ uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
             key_code = KEY_CODE_S;
             break;
         case SDLK_g:
+            if(gui_sys==1){
+                gui_sys = 2;
+            }
             key_code = KEY_CODE_G;
             break;
         case SDLK_q:
@@ -354,6 +359,7 @@ uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
             break;
         case SDLK_LCTRL:
             key_code = KEY_CODE_LCTRL;
+            gui_sys = 1;
             break;
         case SDLK_MINUS:
             key_code = KEY_CODE_MINUS;
@@ -491,6 +497,11 @@ void Gui::Display(){
                 this->HideCursor();
                 this->HandleMouseButton(&e);
             }
+        }
+        if(gui_sys==2){
+            gui_sys = 0;
+            SDL_SetRelativeMouseMode(SDL_FALSE);
+            SDL_ShowCursor(SDL_ENABLE);
         }
         this->vga->LockVga();
         if((this->vga->GetHeight()!=this->screen_height)||(this->vga->GetWidth()!=this->screen_width)){
