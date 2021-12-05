@@ -752,7 +752,6 @@ class PushCs:public Instruction{
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
-
 class PushDs:public Instruction{
     public: 
         PushDs(std::string code_name);
@@ -1278,6 +1277,12 @@ class LodsM32:public Instruction{
 class AndRm8Imm8:public Instruction{
     public: 
         AndRm8Imm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
+class AdcR32Rm32:public Instruction{
+    public: 
+        AdcR32Rm32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 /***

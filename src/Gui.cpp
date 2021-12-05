@@ -37,6 +37,7 @@ Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
         this->Error("at Gui::Gui");
     }
     this->image = (Pixel*)malloc(MAX_WIDTH*MAX_HEIGHT*sizeof(Pixel));//最大領域の場合のサイズで確保しておく。
+    this->grab  = false;
 }
 
 Gui::~Gui(){
@@ -201,8 +202,6 @@ void Gui::Update(){
     SDL_RenderPresent(this->renderer);
 }
 
-int gui_sys = 0;
-
 uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
     uint8_t key_code;
     switch (e->key.keysym.sym){
@@ -262,10 +261,10 @@ uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
             key_code = KEY_CODE_S;
             break;
         case SDLK_g:
-            if(gui_sys==1){
-                gui_sys = 2;
-            }
             key_code = KEY_CODE_G;
+            if(this->grab&&this->GetModState()&&(!e->key.repeat)){//ctrlを押しているならば、画面外に出す。
+                this->ShowCursor();
+            }
             break;
         case SDLK_q:
             key_code = KEY_CODE_Q;
@@ -359,7 +358,6 @@ uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
             break;
         case SDLK_LCTRL:
             key_code = KEY_CODE_LCTRL;
-            gui_sys = 1;
             break;
         case SDLK_MINUS:
             key_code = KEY_CODE_MINUS;
@@ -400,6 +398,9 @@ uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
         case SDLK_F12:
             key_code = KEY_CODE_F12;
             break;
+        case SDLK_LALT:
+            key_code = KEY_CODE_LALT;
+            break;
         default:
             this->Error("Not implemented: SDL_Keycode = %08X(http://sdl2referencejp.osdn.jp/SDLKeycodeLookup.html) at Gui::HandleKeyDown", e->key.keysym.sym);
     }
@@ -419,8 +420,21 @@ void Gui::HandleKeyUp(SDL_Event *e){
 }
 
 void Gui::HideCursor(){
+    this->grab = true;
     SDL_ShowCursor(SDL_DISABLE);
     SDL_SetRelativeMouseMode(SDL_TRUE);//http://sdl2referencejp.osdn.jp/SDL_SetRelativeMouseMode.html
+}
+
+void Gui::ShowCursor(){
+    this->grab = false;
+    SDL_ShowCursor(SDL_ENABLE);
+    SDL_SetRelativeMouseMode(SDL_FALSE);
+}
+
+int Gui::GetModState(){//左ctrl、左altの状態を得る。
+    int mod_state = SDL_GetModState();
+    int ctrl_alt_state = KMOD_LALT|KMOD_LCTRL;
+    return (mod_state&ctrl_alt_state)==ctrl_alt_state;
 }
 
 void Gui::HandleMouseMotion(SDL_Event *e){
@@ -494,14 +508,11 @@ void Gui::Display(){
                 if(!this->mouse->IsEnable()){
                     break;
                 }
-                this->HideCursor();
+                if(!this->grab){//画面にマウスが取り込まれていない時。
+                    this->HideCursor();
+                }
                 this->HandleMouseButton(&e);
             }
-        }
-        if(gui_sys==2){
-            gui_sys = 0;
-            SDL_SetRelativeMouseMode(SDL_FALSE);
-            SDL_ShowCursor(SDL_ENABLE);
         }
         this->vga->LockVga();
         if((this->vga->GetHeight()!=this->screen_height)||(this->vga->GetWidth()!=this->screen_width)){

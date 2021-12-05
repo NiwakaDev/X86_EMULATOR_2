@@ -4929,6 +4929,28 @@ void AndRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->UpdateEflagsForAnd(result);
     return;
 }
+
+AdcR32Rm32::AdcR32Rm32(string code_name):Instruction(code_name){
+
+}
+
+void AdcR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bit at %s::Run");
+    }
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    uint16_t r16;
+    uint16_t rm16;
+    uint32_t result;
+    uint16_t cf = cpu->IsFlag(CF)?1:0;
+    r16 = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    rm16 = this->GetRM16(cpu, mem);
+    result = (uint32_t)r16+ (uint32_t)rm16+(uint32_t)cf;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAdd(result, r16, (uint16_t)(rm16+cf));
+    return;
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 
