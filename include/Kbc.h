@@ -43,6 +43,7 @@ class Mouse;
 #define KEY_CODE_Z 0x2C
 #define KEY_CODE_SEMICOLON 0x27
 #define KEY_CODE_COLON 0x28
+#define KEY_CODE_CAPSLOCK 0x3A
 #define KEY_CODE_SPACE 0x39
 #define KEY_CODE_ENTER 0x1C
 #define KEY_CODE_PERIOD 0x34

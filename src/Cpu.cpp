@@ -219,9 +219,6 @@ Cpu::Cpu(Bios* bios, Memory* mem){
 }
 
 void Cpu::SetR16(SEGMENT_REGISTER register_type, uint16_t data){
-    if(ECX==register_type&&data==0x00003993){
-        fprintf(stderr, "sadfdsfdsfcc\n");
-    }
     this->segment_registers[register_type]->Set(data, this);
 }
 
@@ -844,17 +841,15 @@ void ShowRegistersAfter(Cpu* cpu){
 ***/
 
 void Cpu::Run(IoPort* io_port){
-    //static int idx = 0;
-    //ShowRegistersBefore(this);
     this->InitSelector();
     this->ResetPrefixFlg();
     this->CheckPrefixCode(this->mem);
     uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
     if(this->instructions[op_code]==NULL){
+        Dump(this->mem, this->GetLinearAddrForCodeAccess(), 512);
         this->Error("Not implemented: op_code = 0x%02X Cpu::Run", op_code);
     }
     this->instructions[op_code]->Run(this, this->mem, io_port);
-    //ShowRegistersAfter(this);
     //fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
     return;
 }

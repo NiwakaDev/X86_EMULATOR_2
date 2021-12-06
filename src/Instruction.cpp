@@ -16,7 +16,6 @@ void Instruction::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
 /***
  * このコードは3代目x86エミュレータに組み込む予定
  * 無理やりこのコードを今のエミュレータに使うのは怖い。
- * 理由：
 template<typename type>void Instruction::Push(Cpu* cpu, Memory* mem, type data){
     //スタックのアドレスサイズはスタックセグメントのBフラグで決定される。
     if(cpu->IsBflg(SS)){//セットされていたら32bitサイズ
@@ -2013,7 +2012,7 @@ void JmpPtr1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     GdtGate* gdt_gate;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         if(!cpu->IsProtectedMode()){
-            this->Error("Not implemented: readl mode(op_size=32) at JmpPtr1632::Run");
+            this->Error("Not implemented: real mode(op_size=32) at JmpPtr1632::Run");
         }
         uint32_t offset;
         uint16_t selector;
@@ -2031,17 +2030,18 @@ void JmpPtr1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->SetEip(offset);
         return;
     }
-    if(cpu->IsProtectedMode()){
-        this->Error("Not implemented: readl mode(op_size=16) at JmpPtr1632::Run");
+    if(!cpu->IsProtectedMode()){
+        uint16_t offset;
+        uint16_t selector;
+        cpu->AddEip(1);
+        offset = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+        cpu->AddEip(2);
+        selector = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+        cpu->SetR16(CS, selector);
+        cpu->SetEip(offset);
+    }else{
+        this->Error("Not implemented: protected mode at %s::Run");
     }
-    uint16_t offset;
-    uint16_t selector;
-    cpu->AddEip(1);
-    offset = mem->Read16(cpu->GetLinearAddrForCodeAccess());
-    cpu->AddEip(2);
-    selector = mem->Read16(cpu->GetLinearAddrForCodeAccess());
-    cpu->SetR16(CS, selector);
-    cpu->SetEip(offset);
     return;
 }
 
@@ -3621,7 +3621,7 @@ void ShrRm32Cl::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         }
         rm16 = rm16 >> 1;
     }
-    this->SetRM32(cpu, mem, rm16);
+    this->SetRM16(cpu, mem, rm16);
     cpu->UpdateEflagsForShr(rm16);
     return;
 }
@@ -3732,7 +3732,23 @@ JmpM1632::JmpM1632(string code_name):Instruction(code_name){
 
 }
 
+//Farジャンプはプロテクトモードかリアルモードかで挙動が変わる。
+//プロテクトモードな
 void JmpM1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(!cpu->IsProtectedMode()){//real mode
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+            this->Error("Not implemented: op_size=32bit on real mode at %s::Run");
+        }
+        uint32_t addr;
+        uint16_t offset_addr;
+        uint16_t selector;
+        addr = this->GetEffectiveAddr(cpu, mem);
+        offset_addr = mem->Read16(cpu->GetLinearAddrForDataAccess(addr));
+        selector = mem->Read16(cpu->GetLinearAddrForDataAccess(addr+2));
+        cpu->SetR16(CS, selector);
+        cpu->SetEip((uint32_t)offset_addr);
+        return;
+    }
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         uint32_t addr;
         uint32_t offset_addr;
