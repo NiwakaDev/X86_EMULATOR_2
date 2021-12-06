@@ -16,7 +16,7 @@ make
 <h2>Language and Library</h2>
 C++11, SDL2.0
 
-<h2>How to use mouse</h2>
+<h2>How to use mouse on x86 emulator</h2>
 <h3>Grab mouse on x86 emulator</h3>
 
 ```
