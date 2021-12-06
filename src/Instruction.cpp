@@ -3555,7 +3555,7 @@ void ShrRm32Cl::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         }
         rm16 = rm16 >> 1;
     }
-    this->SetRM32(cpu, mem, rm16);
+    this->SetRM16(cpu, mem, rm16);
     cpu->UpdateEflagsForShr(rm16);
     return;
 }
