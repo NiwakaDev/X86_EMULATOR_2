@@ -7,29 +7,29 @@
 ![富士山](https://user-images.githubusercontent.com/61189782/143998297-d17dd067-b59a-4762-8bde-caebc8ca174b.png)
 
 
-<h2>ビルド</h2>
+<h2>1.ビルド</h2>
 
 ```
 make
 ```
 
-<h2>実行</h2>
+<h2>2.実行</h2>
 ./x86 -i haribote.img
 
-<h2>言語とライブラリ</h2>
+<h2>3.言語とライブラリ</h2>
 C++11, SDL2.0
 
-<h2>マウス使用方法</h2>
+<h2>4.マウス使用方法</h2>
 
-<h3>マウスをエミュレータに取り込みたい時</h3>
+<h3>4-1.マウスをエミュレータに取り込みたい時</h3>
 エミュレータ上でマウスをクリック
 
-<h3>エミュレータに取り込んだマウスを外に出したい時</h3>
+<h3>4-2.エミュレータに取り込んだマウスを外に出したい時</h3>
 
 ```
 left-ctrl+left-alt+g
 ```
 と押す。
 
-<h2>エミュレータ上のOS</h2>
+<h2>5.エミュレータ上のOS</h2>
 <h3><a href="https://www.amazon.co.jp/30%E6%97%A5%E3%81%A7%E3%81%A7%E3%81%8D%E3%82%8B-OS%E8%87%AA%E4%BD%9C%E5%85%A5%E9%96%80-%E5%B7%9D%E5%90%88-%E7%A7%80%E5%AE%9F/dp/4839919844/ref=pd_vtp_5/356-0188609-1667566?pd_rd_w=qrIxz&pf_rd_p=949e26f5-c2ef-4c96-bfde-49d7614d0317&pf_rd_r=FQQA4209JZRMHNABD541&pd_rd_r=2bdba9dc-9d7d-401a-b66c-053b098be917&pd_rd_wg=dpohq&pd_rd_i=4839919844&psc=1">30日でできる! OS自作入門</a></h3>
