@@ -315,7 +315,7 @@ uint8_t Instruction::GetRM8(Cpu* cpu, Memory* mem){
             if(this->modrm.rm==6){
                 addr = this->modrm.disp16;
                 addr = cpu->GetLinearAddrForDataAccess(addr);
-                rm8   = mem->Read8(this->modrm.disp16);
+                rm8   = mem->Read8(addr);
                 return rm8;
             }
             addr = this->GetR16ForEffectiveAddr(cpu);
@@ -404,7 +404,7 @@ uint16_t Instruction::GetRM16(Cpu* cpu, Memory* mem){
             if(this->modrm.rm==6){
                 addr = this->modrm.disp16;
                 addr = cpu->GetLinearAddrForDataAccess(addr);
-                rm16   = mem->Read16(this->modrm.disp16);
+                rm16   = mem->Read16(addr);
                 return rm16;
             }
             addr = this->GetR16ForEffectiveAddr(cpu);
@@ -492,7 +492,7 @@ uint32_t Instruction::GetRM32(Cpu* cpu, Memory* mem){
             if(this->modrm.rm==6){
                 addr = this->modrm.disp16;
                 addr = cpu->GetLinearAddrForDataAccess(addr);
-                rm32   = mem->Read32(this->modrm.disp16);
+                rm32   = mem->Read32(addr);
                 return rm32;
             }
             addr = this->GetR16ForEffectiveAddr(cpu);
@@ -576,7 +576,7 @@ void Instruction::SetRM8(Cpu* cpu, Memory* mem, uint8_t data){
             if(this->modrm.rm==6){
                 addr = this->modrm.disp16;
                 addr = cpu->GetLinearAddrForDataAccess(addr);
-                mem->Write(this->modrm.disp16, data);
+                mem->Write(addr, data);
                 return;
             }
             addr = this->GetR16ForEffectiveAddr(cpu);
