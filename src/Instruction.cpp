@@ -899,6 +899,7 @@ Code81::Code81(string code_name):Instruction(code_name){
     this->instructions[1] = new OrRm32Imm32("OrRm32Imm32");
     this->instructions[4] = new AndRm32Imm32("AndRm32Imm32");
     this->instructions[5] = new SubRm32Imm32("SubRm32Imm32");
+    this->instructions[6] = new XorRm32Imm32("XorRm32Imm32");
     this->instructions[7] = new CmpRm32Imm32("CmpRm32Imm32");
 }
 
@@ -5464,6 +5465,22 @@ void XorRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     result = rm8^imm8;
     this->SetRM8(cpu, mem, result);
     cpu->UpdateEflagsForAnd(result);
+    return;
+}
+
+XorRm32Imm32::XorRm32Imm32(string code_name):Instruction(code_name){
+
+}
+
+void XorRm32Imm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: 32bit=op_size at %s::Run", this->code_name.c_str());
+    }
+    uint16_t result;
+    result = this->GetRM16(cpu, mem)^mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);  
     return;
 }
 /***
