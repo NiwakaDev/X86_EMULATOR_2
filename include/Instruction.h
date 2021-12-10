@@ -1505,3 +1505,9 @@ class JcxzRel8:public Instruction{
         JcxzRel8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class RepMovsM8M8:public Instruction{
+    public: 
+        RepMovsM8M8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
