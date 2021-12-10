@@ -1420,3 +1420,9 @@ class PopM32:public Instruction{
         PopM32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class Lahf:public Instruction{
+    public: 
+        Lahf(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

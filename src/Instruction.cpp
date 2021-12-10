@@ -5601,3 +5601,14 @@ void PopM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     mem->Write(cpu->GetLinearAddrForDataAccess(effective_addr), this->Pop16(cpu, mem));
     return;
 }
+
+Lahf::Lahf(string code_name):Instruction(code_name){
+
+}
+
+void Lahf::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    uint8_t eflags = cpu->GetEflgs();
+    eflags = eflags | 0x02;
+    cpu->SetR8H(EAX, eflags);
+}
