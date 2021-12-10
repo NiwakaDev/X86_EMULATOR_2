@@ -2883,7 +2883,11 @@ void NotRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         this->SetRM32(cpu, mem, rm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    rm16 = this->GetRM16(cpu, mem);
+    rm16 = ~rm16;
+    this->SetRM16(cpu, mem, rm16);
+    return;
 }
 
 JgeRel8::JgeRel8(string code_name):Instruction(code_name){
