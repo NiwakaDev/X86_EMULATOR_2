@@ -4246,12 +4246,24 @@ Ret32Far::Ret32Far(string code_name):Instruction(code_name){
 }
 
 void Ret32Far::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(!cpu->IsProtectedMode()){//リアルモードのRET FAR
+        uint32_t eip;
+        uint16_t cs;
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+            this->Error("Not implemented: op_size=32 at on real_mode at %s::Run", this->code_name.c_str());
+        }
+        eip     = this->Pop16(cpu, mem);
+        cs      = this->Pop16(cpu, mem);
+        cpu->SetEip(eip);
+        cpu->SetR16(CS, cs);
+        return;
+    }
     uint32_t eip;
     uint16_t cs;
     uint32_t esp;
     uint16_t ss;
     uint8_t cpl, rpl;
-    cpu->AddEip(1);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         eip     = this->Pop32(cpu, mem);
         cs      = this->Pop32(cpu, mem);
@@ -5846,4 +5858,29 @@ void LdsR32M1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         //fprintf(stderr, "ES=%04X\n", mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr+2)));
         cpu->SetR16(DS, mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr+2)));
     }
+}
+
+RetFarImm16::RetFarImm16(string code_name):Instruction(code_name){
+  
+}
+
+void RetFarImm16::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(cpu->IsProtectedMode()){
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }
+    uint16_t ip, cs;
+    ip = this->Pop16(cpu, mem);
+    cs = this->Pop16(cpu, mem);
+    uint16_t imm16 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    cpu->SetEip(ip);
+    cpu->SetR16(CS, cs);
+    for(uint16_t i=0; i<imm16; i++){
+        this->Pop8(cpu, mem);//指定された回数だけPop
+    }
+    return;
 }
