@@ -3491,7 +3491,19 @@ void NegRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForDec(result, zero, rm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t result;
+    uint16_t rm16;
+    uint16_t zero = 0;
+    rm16 = this->GetRM16(cpu, mem);
+    if(rm16==0){
+        cpu->ClearFlag(CF);
+    }else{
+        cpu->SetFlag(CF);
+    }
+    result = zero - rm16;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForDec(result, zero, rm16);
+    return;
 }
 
 TestEaxImm32::TestEaxImm32(string code_name):Instruction(code_name){
