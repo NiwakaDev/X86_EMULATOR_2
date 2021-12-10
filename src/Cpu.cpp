@@ -383,7 +383,7 @@ uint32_t Cpu::GetLinearAddrForCodeAccess(){
     }
     base_addr = ((uint32_t)this->segment_registers[CS]->GetData())*16;
     offset    = 0x0000FFFF & this->eip;
-    return base_addr + offset;
+    return (base_addr + offset)&0x000FFFFF;//下位20bitがリアルモードにおいてのリニアアドレス
 }
 
 uint32_t Cpu::GetLinearAddrForDataAccess(uint32_t offset){
@@ -394,7 +394,7 @@ uint32_t Cpu::GetLinearAddrForDataAccess(uint32_t offset){
     }
     base_addr = ((uint32_t)this->segment_registers[this->default_data_selector]->GetData())*16;
     offset    = 0x0000FFFF & offset;
-    return base_addr + offset;
+    return (base_addr + offset)&0x000FFFFF;//下位20bitがリアルモードにおいてのリニアアドレス
 }
 
 uint32_t Cpu::GetLinearStackAddr(){
@@ -404,17 +404,10 @@ uint32_t Cpu::GetLinearStackAddr(){
         offset    = this->gprs[ESP];
         base_addr = this->segment_registers[this->default_stack_selector]->GetBaseAddr();
         return offset + base_addr;
-    }else{
-        if(this->Is32bitsMode() ^ this->IsPrefixAddrSize()){
-            offset    = this->gprs[ESP];
-        }else{
-            offset = (uint32_t)this->GetR16(ESP);
-            offset    = 0x0000FFFF & offset;
-        }
-        base_addr = ((uint32_t)this->segment_registers[this->default_stack_selector]->GetData())*16;
-        offset    = 0x0000FFFF & offset;
     }
-    return base_addr + offset;
+    offset    = 0x0000FFFF & this->gprs[ESP];
+    base_addr = ((uint32_t)this->segment_registers[this->default_stack_selector]->GetData())*16;
+    return (base_addr + offset)&0x000FFFFF;//下位20bitがリアルモードにおいてのリニアアドレス
 }
 
 uint32_t Cpu::GetBaseAddr(SEGMENT_REGISTER register_type){

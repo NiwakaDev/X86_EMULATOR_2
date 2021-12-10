@@ -1284,8 +1284,9 @@ void AddRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint32_t result;
     rm16 = this->GetRM16(cpu, mem);
     r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = rm16+r16;
+    result = (uint32_t)rm16+(uint32_t)r16;
     this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAdd(result, rm16, r16);
     return;
 }
 
