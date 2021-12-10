@@ -30,7 +30,7 @@ void Mouse::SetEnable(){
     this->enable_flg = true;
 }
 
-void Mouse::Send(uint8_t data){
+void Mouse::Push(uint8_t data){
     this->fifo->Push(data);
 }
 

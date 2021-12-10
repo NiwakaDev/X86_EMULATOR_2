@@ -15,6 +15,6 @@ class Mouse:public Object{
         uint8_t In8(uint16_t addr);
         bool IsEnable();
         void SetEnable();
-        void Send(uint8_t data);
+        void Push(uint8_t data);
         int IsEmpty();
 };

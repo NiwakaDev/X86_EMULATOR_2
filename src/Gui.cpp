@@ -779,15 +779,15 @@ void Gui::HandleMouseMotion(SDL_Event *e){
     if(rel_y < 0){
         data0 = data0 | Y_SIGN_BIT;
     }
-    this->mouse->Send(data0);
-    this->mouse->Send((uint8_t)rel_x);
-    this->mouse->Send((uint8_t)rel_y);
+    this->mouse->Push(data0);
+    this->mouse->Push((uint8_t)rel_x);
+    this->mouse->Push((uint8_t)rel_y);
 }
 
 void Gui::HandleMouseButton(SDL_Event *e){
-    this->mouse->Send(DEFAULT_PACKET_BYTE0|LEFT_BUTTON);
-    this->mouse->Send(0);
-    this->mouse->Send(0);
+    this->mouse->Push(DEFAULT_PACKET_BYTE0|LEFT_BUTTON);
+    this->mouse->Push(0);
+    this->mouse->Push(0);
 }
 
 //この関数はVgaクラスのvga_mutexをロックします。
