@@ -4659,7 +4659,24 @@ void SalRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         }
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    bool msb_dest;
+    rm16 = this->GetRM16(cpu, mem);
+    if(rm16&SIGN_FLG2){
+        cpu->SetFlag(CF);
+    }else{
+        cpu->ClearFlag(CF);
+    }
+    rm16 = rm16 << 1;
+    this->SetRM16(cpu, mem, rm16);
+    cpu->UpdateEflagsForShr(rm16);
+    msb_dest = (SIGN_FLG2&rm16)?true:false;
+    if(msb_dest^cpu->IsFlag(CF)){
+        cpu->SetFlag(OF);
+    }else{
+        cpu->ClearFlag(OF);
+    }
+    return;
 }
 
 AndR32Rm32::AndR32Rm32(string code_name):Instruction(code_name){
