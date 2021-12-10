@@ -3345,9 +3345,14 @@ void MovEaxMoffs32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->SetR32(EAX, mem->Read32(cpu->GetLinearAddrForDataAccess(mem->Read32(cpu->GetLinearAddrForCodeAccess()))));
         cpu->AddEip(4);
         return;
+    }else{
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bit_addr
+            this->Error("Not implemented: addr_size=32bit at %s::Run", this->code_name.c_str());
+        }else{//16bit_addr
+            cpu->SetR16(EAX, mem->Read16(cpu->GetLinearAddrForDataAccess(mem->Read16(cpu->GetLinearAddrForCodeAccess()))));
+            cpu->AddEip(2);
+        }
     }
-    
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
     return;
 }
 
