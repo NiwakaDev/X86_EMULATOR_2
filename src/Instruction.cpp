@@ -3949,10 +3949,15 @@ void MovAlMoffs8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint32_t offset32;
     uint8_t data;
     cpu->AddEip(1);
-    offset32 = mem->Read32(cpu->GetLinearAddrForCodeAccess());
-    cpu->AddEip(4);
-    data     = mem->Read8(cpu->GetLinearAddrForDataAccess(offset32));
-    cpu->SetR8L(EAX, data);
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bit_addr
+        offset32 = mem->Read32(cpu->GetLinearAddrForCodeAccess());
+        cpu->AddEip(4);
+        data     = mem->Read8(cpu->GetLinearAddrForDataAccess(offset32));
+        cpu->SetR8L(EAX, data);
+        return;
+    }
+    cpu->SetR8L(EAX, mem->Read8(cpu->GetLinearAddrForDataAccess(mem->Read16(cpu->GetLinearAddrForCodeAccess()))));
+    cpu->AddEip(2);
     return;
 }
 
