@@ -6033,3 +6033,27 @@ void SalRm8Cl::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         }
     }   
 }
+
+LoopeRel8::LoopeRel8(string code_name):Instruction(code_name){
+
+}
+
+void LoopeRel8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    uint16_t cx;
+    uint16_t rel8;
+    //アドレスサイズによって、カウンタの値が決まる。
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+        this->Error("Not implemented: addr_size=32bit at %s::Run", this->code_name.c_str());
+    }else{
+        cx = cpu->GetR16(ECX);
+    }
+    cx = cx - 1;
+    cpu->SetR16(ECX, cx);
+    rel8 = (int16_t)((int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess()));
+    cpu->AddEip(1);
+    if(cx&&cpu->IsFlag(ZF)){
+        cpu->AddEip(rel8);
+    }
+    return;
+}

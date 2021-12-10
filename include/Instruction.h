@@ -1487,3 +1487,9 @@ class SalRm8Cl:public Instruction{
         SalRm8Cl(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class LoopeRel8:public Instruction{
+    public: 
+        LoopeRel8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
