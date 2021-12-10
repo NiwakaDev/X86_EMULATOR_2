@@ -4974,23 +4974,20 @@ RorRm8::RorRm8(string code_name):Instruction(code_name){
 
 void RorRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint8_t rm8;
-    bool flg;
     rm8 = this->GetRM8(cpu, mem);
-    if(rm8&0x01){
-        flg = true;
-    }else{
-        flg = false;
-    }
-    if(rm8&0x01){
+    uint8_t temp_cf = (rm8&LSB_8)?MSB_8:0;
+    rm8 = (rm8>>1) + temp_cf;
+    this->SetRM8(cpu, mem, rm8);
+    if(MSB_8&rm8){
         cpu->SetFlag(CF);
     }else{
         cpu->ClearFlag(CF);
     }
-    rm8 = rm8 >> 1;
-    rm8 = flg?(0x80|rm8):rm8;
-    this->SetRM8(cpu, mem, rm8);
-    uint8_t msb = rm8>>7;
-    if(msb^cpu->IsFlag(CF)){
+    //結果の最上位2ビットの排他的論理和
+    bool bit7, bit6;
+    bit7 = (rm8&0x80)?true:false;
+    bit6 = (rm8&0x40)?true:false;
+    if(bit7^bit6){
         cpu->SetFlag(OF);
     }else{
         cpu->SetFlag(OF);
