@@ -2785,7 +2785,13 @@ void TestRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAnd(result);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t r16;
+    uint16_t rm16;
+    uint16_t result;
+    rm16 = this->GetRM16(cpu, mem);
+    r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index); 
+    result = rm16 & r16;
+    cpu->UpdateEflagsForAnd(result);
     return;
 }
 
