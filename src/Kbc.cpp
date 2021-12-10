@@ -56,8 +56,16 @@ uint8_t Kbc::In8(uint16_t addr){
     }
     return data;
 }
-void Kbc::Send(uint8_t data){
+void Kbc::Push(uint8_t data){
     this->fifo->Push(data);
+}
+
+uint8_t Kbc::Pop(){
+    return this->fifo->Pop();
+}
+
+uint8_t Kbc::Front(){
+    return this->fifo->Front();
 }
 
 int Kbc::IsEmpty(){

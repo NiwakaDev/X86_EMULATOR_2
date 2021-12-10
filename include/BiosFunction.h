@@ -4,6 +4,7 @@
 class Cpu;
 class Memory;
 class Vga;
+class Kbc;
 
 class BiosFunction:public Object{
     protected:
@@ -60,11 +61,9 @@ class EquipmentListFunction:public BiosFunction{
 
 class KeyFunction:public BiosFunction{
     private:
-        Fifo<uint16_t>* fifo;//AL == ASCIIコード, AH == キーボードスキャンコード
-        //キーボードスキャンコード : http://oswiki.osask.jp/?%28AT%29keyboard
-        std::thread* kb_thread = NULL;
+        Kbc* kbc;
     public:
-        KeyFunction();
+        KeyFunction(Kbc* kbc);
         void Run(Cpu *cpu, Memory* mem);
         void In();
 };

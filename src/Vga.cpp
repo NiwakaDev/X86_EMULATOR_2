@@ -16,6 +16,8 @@ Vga::Vga(Memory* mem){
     this->width  = DEFAULT_WIDTH;
     this->vram_start_addr = DEFAULT_VRAM_START_ADDR;
     this->InitPalette();
+    this->vga_mode = TEXT_MODE;
+    this->image_text_mode = (Pixel*)malloc(this->height*this->width*sizeof(Pixel));//最大領域の場合のサイズで確保しておく。
 }
 
 //この関数はVgaクラスのvga_mutexをロックします。
@@ -24,6 +26,7 @@ void Vga::SetInfo(int width, int height, int vram_start_addr){
     this->width = width;
     this->height = height;
     this->vram_start_addr = vram_start_addr;
+    this->vga_mode = GRAPHIC_MODE;
     this->vga_mtx.unlock();
 }
 
@@ -71,7 +74,60 @@ uint8_t Vga::In8(uint16_t addr){
     return 0;
 }
 
+extern uint8_t hankaku[4096];
+
+VGA_MODE Vga::GetMode(){
+    return this->vga_mode;
+}
+
+void Vga::SetText(uint8_t ascii_code, int w, int h){
+    //テキストモード用変数領域の始まり  後でメンバ化予定
+    int row = 0;
+    int col = 0;
+    int x, y;
+    x = w*8;
+    y = h*16;
+    char data;
+    uint8_t *font = hankaku+ascii_code*16;
+    Pixel pixel;
+    pixel.r = 0xFF;
+    pixel.g = 0xFF;
+    pixel.b = 0xFF;
+    //テキストモード用変数領域の終わり
+
+    for(int i=0; i < 16; i++){
+        data = font[i];
+        if((data & 0x80) != 0){
+            this->image_text_mode[x+0+(y+i)*this->width] = pixel; 
+        }
+        if((data & 0x40) != 0){
+            this->image_text_mode[x+1+(y+i)*this->width] = pixel;    
+        }
+        if((data & 0x20) != 0){
+            this->image_text_mode[x+2+(y+i)*this->width] = pixel;      
+        }
+        if((data & 0x10) != 0){
+            this->image_text_mode[x+3+(y+i)*this->width] = pixel;     
+        }
+        if((data & 0x08) != 0){
+            this->image_text_mode[x+4+(y+i)*this->width] = pixel;     
+        }
+        if((data & 0x04) != 0){
+            this->image_text_mode[x+5+(y+i)*this->width] = pixel;    
+        }
+        if((data & 0x02) != 0){
+            this->image_text_mode[x+6+(y+i)*this->width] = pixel; 
+        }
+        if((data & 0x01) != 0){
+            this->image_text_mode[x+7+(y+i)*this->width] = pixel;  
+        }
+    }
+}
+
 Pixel* Vga::GetPixel(int x, int y){
+    if(this->vga_mode==TEXT_MODE){
+        return &this->image_text_mode[x+y*this->width];
+    }
     uint32_t addr = this->vram_start_addr+x+y*this->width;
     return (Pixel*)(this->palette+this->mem->Read8(addr));
 }

@@ -3,9 +3,11 @@
 
 class Memory;
 
+/***
 #define DEFAULT_HEIGHT 200
 #define DEFAULT_WIDTH 320
 #define DEFAULT_VRAM_START_ADDR 0x000a0000
+***/
 
 /***
 テキストモードのメモ
@@ -15,8 +17,16 @@ VRAM_START_ADDR : 0x000B8000
 文字数           : 80x25
 ***/
 
+#define DEFAULT_HEIGHT 200
+#define DEFAULT_WIDTH 320
+#define DEFAULT_VRAM_START_ADDR 0x000B8000
+
+enum VGA_MODE {GRAPHIC_MODE, TEXT_MODE};
+
 class Vga:public Object{
     public:
+        VGA_MODE vga_mode;
+        Pixel* image_text_mode=NULL;
         void Execute();
         Pixel* GetPixel(int x, int y);
         Vga(Memory *mem);
@@ -28,6 +38,8 @@ class Vga:public Object{
         int GetHeight();
         void LockVga();
         void UnlockVga();
+        void SetText(uint8_t ascii_code, int w, int h);//テキストモードのための関数
+        VGA_MODE GetMode();
     private:
         std::mutex vga_mtx;
         uint8_t palette[256][4];

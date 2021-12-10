@@ -39,4 +39,5 @@ class Gui:public Object{
         int  GetModState();//左ctrl、左altの状態を得る。
         void Resize();
         bool grab;
+        void SetFont();//一時的に追加、後で消します。
 };

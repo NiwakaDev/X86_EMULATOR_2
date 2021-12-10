@@ -90,6 +90,8 @@ class Kbc:public Object{
         Kbc(Pic* pic, Mouse* mouse);
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);
-        void Send(uint8_t data);
         int IsEmpty();
+        void Push(uint8_t data);
+        uint8_t Pop();//リアルモードで使用する
+        uint8_t Front();//読み込むだけ。リアルモードで使用する
 };

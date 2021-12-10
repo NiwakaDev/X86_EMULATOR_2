@@ -21,13 +21,13 @@ Emulator::Emulator(int argc, char* argv[]){
         exit(EXIT_FAILURE);
     }
     this->mem     = new Memory();
-    this->vga     = new Vga(this->mem);
-    this->bios    = new Bios(this->disk_image_name, this->vga);
-    this->cpu     = new Cpu(this->bios, this->mem);
     this->pic     = new Pic();
     this->timer   = new Timer(this->pic);
     this->mouse   = new Mouse(this->pic);
     this->kbc     = new Kbc(this->pic, this->mouse);
+    this->vga     = new Vga(this->mem);
+    this->bios    = new Bios(this->disk_image_name, this->vga, this->kbc);
+    this->cpu     = new Cpu(this->bios, this->mem);
     this->io_port = new IoPort(this->vga, this->pic, this->kbc, this->timer);
     this->gui     = new Gui(this->vga, this->kbc, this->mouse);
     this->bios->LoadIpl(this->disk_image_name, this->mem);

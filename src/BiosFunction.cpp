@@ -2,6 +2,7 @@
 #include "Cpu.h"
 #include "Memory.h"
 #include "Vga.h"
+#include "Kbc.h"
 using namespace std;
 
 BiosFunction::BiosFunction(){
@@ -20,6 +21,10 @@ void MemoryFunction::Run(Cpu *cpu, Memory* mem){
     cpu->SetR16(EAX, 640);
 }
 
+#define TEXT_MODE_WIDTH 640
+#define TEXT_MODE_HEIGHT 200
+extern uint8_t hankaku[4096];
+
 VideoFunction::VideoFunction(Vga* vga):BiosFunction(){
     this->function_name = "VideoFunction";
     this->vga = vga;
@@ -36,8 +41,13 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
     uint8_t ascii_code;
     mode = cpu->GetR16(EAX);
     uint8_t ah = cpu->GetR8H(EAX);
+    
     if(ah!=0x4F){
         //VGAサービス
+        static int row = 0;
+        static int col = 0;
+        static bool stop = false;
+        static int cnt = 0;
         switch(ah){
             case 0x00:
                 if((mode&0x00FF)==0x13){
@@ -54,7 +64,21 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 return;
             case 0x0E:
                 ascii_code = cpu->GetR8L(EAX);
+                if(isascii(ascii_code)){
+                    fprintf(stderr, "%c", ascii_code);
+                }
+                return;
                 fprintf(stderr, "%c", ascii_code);
+                return;
+                this->vga->SetText(ascii_code, col, row);
+                col++;
+                if(col==80){
+                    row++;
+                    col = 0;
+                }
+                if(cnt==25){
+                    stop = true;
+                }
                 return;
             case 0x03:
             case 0x08:
@@ -192,48 +216,44 @@ void EquipmentListFunction::Run(Cpu *cpu, Memory* mem){
     cpu->SetR16(EAX, 1);
 }
 
-KeyFunction::KeyFunction():BiosFunction(){
+KeyFunction::KeyFunction(Kbc* kbc):BiosFunction(){
     this->function_name = "KeyFunction";
-    this->fifo          = new Fifo<uint16_t>();
-    this->kb_thread     = new thread(&KeyFunction::In, this);
+    this->kbc           = kbc;
 }
 
-void KeyFunction::In(){
-        uint16_t ch;
-        for (;;){
-            ch = getchar();
-            if (ch == '\n'){//改行だけ反応する。
-                ch = ((0x1C)<<8)|0x0d;
-                this->fifo->Push(ch);
-            }
-            if (ch == 'd'){//改行だけ反応する。
-                ch = ((0x20)<<8)|0x64;
-                this->fifo->Push(ch);
-            }
-            if (ch == 'i'){//改行だけ反応する。
-                ch = ((0x17)<<8)|0x69;
-                this->fifo->Push(ch);
-            }
-            if (ch == 'r'){//改行だけ反応する。
-                ch = ((0x13)<<8)|0x72;
-                this->fifo->Push(ch);
-            }
-        }
-}
-
+//fifoにプッシュすべき値
+//AL == ASCIIコード, AH == キーボードスキャンコード
+//キーボードスキャンコード : http://oswiki.osask.jp/?%28AT%29keyboard
 void KeyFunction::Run(Cpu* cpu, Memory* mem){
     uint8_t ah;
     uint8_t al;
     ah = cpu->GetR8H(EAX);
+    uint16_t ch;
     switch (ah){
         case 0x00:
-            while(this->fifo->IsEmpty()){
+            while(this->kbc->IsEmpty()==-1){
 
             }
-            cpu->SetR16(EAX, this->fifo->Pop());
+            if (ch == '\n'){//改行だけ反応する。
+                ch = ((0x1C)<<8)|0x0d;
+                this->kbc->Push(ch);
+            }
+            if (ch == 'd'){
+                ch = ((0x20)<<8)|0x64;
+                this->kbc->Push(ch);
+            }
+            if (ch == 'i'){
+                ch = ((0x17)<<8)|0x69;
+                this->kbc->Push(ch);
+            }
+            if (ch == 'r'){
+                ch = ((0x13)<<8)|0x72;
+                this->kbc->Push(ch);
+            }
+            cpu->SetR16(EAX, this->kbc->Pop());
             break;
         case 0x01:
-            if(this->fifo->IsEmpty()){
+            if(this->kbc->IsEmpty()==-1){
                 cpu->SetFlag(ZF);
                 //空の場合は、8086runのbios.cppの実装だとAXに0を入れている。
                 cpu->SetR16(EAX, 0x0000);
@@ -241,7 +261,7 @@ void KeyFunction::Run(Cpu* cpu, Memory* mem){
             }
             //空でない
             cpu->ClearFlag(ZF);
-            cpu->SetR16(EAX, this->fifo->Front());
+            cpu->SetR16(EAX, this->kbc->Front());
             break;
         case 0x02:
             al = 0x00;
