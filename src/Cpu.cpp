@@ -74,7 +74,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     for(int i=0; i<INSTRUCTION_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    //this->instructions[0x00] = new AddRm8R8("AddRm8R8");
+    this->instructions[0x00] = new AddRm8R8("AddRm8R8");
     this->instructions[0x01] = new AddRm32R32("AddRm32R32");
     this->instructions[0x02] = new AddR8Rm8("AddR8Rm8");
     this->instructions[0x03] = new AddR32Rm32("AddR32Rm32");

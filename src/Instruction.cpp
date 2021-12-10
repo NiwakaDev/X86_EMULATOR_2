@@ -4203,16 +4203,16 @@ AddRm8R8::AddRm8R8(string code_name):Instruction(code_name){
 }
 
 void AddRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint8_t rm8, r8;
-    uint8_t cf;
+    uint8_t r8;
+    uint8_t rm8;
     uint16_t result;
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     rm8 = this->GetRM8(cpu, mem);
-    r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    r8  = cpu->GetR8(this->modrm.reg_index); 
     result = (uint16_t)rm8+(uint16_t)r8;
     this->SetRM8(cpu, mem, result);
-    cpu->UpdateEflagsForAdd(result, r8, rm8);
+    cpu->UpdateEflagsForAdd(result, rm8, r8);
     return;
 }
 
