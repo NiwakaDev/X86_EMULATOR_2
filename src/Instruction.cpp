@@ -3871,17 +3871,10 @@ CmpsM8M8::CmpsM8M8(string code_name):Instruction(code_name){
 }
 
 void CmpsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint32_t ecx = 1;
     if(cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
     }
     cpu->AddEip(1);
-    if(cpu->IsPrefixRep()){
-        ecx = cpu->GetR32(ECX);
-    }
-    if(cpu->IsPrefixRepnz()){
-        this->Error("Not implemented: REPNZ at %s::Run", this->code_name.c_str());
-    }
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//アドレスで場合分け
         uint32_t base_ds, base_es;
         uint32_t esi, edi;
@@ -3891,25 +3884,18 @@ void CmpsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         uint32_t d;
         base_ds = cpu->GetBaseAddr(DS);
         base_es = cpu->GetBaseAddr(ES);
-        for(int i=0; i<ecx; i++){
-            esi     = cpu->GetR32(ESI);
-            edi     = cpu->GetR32(EDI);
-            base_ds_esi = base_ds+esi;
-            base_es_edi = base_es+edi;
-            m1      = mem->Read8(base_ds_esi);
-            m2      = mem->Read8(base_es_edi);
-            result = (uint32_t)m1 - (uint32_t)m2;
-            cpu->UpdateEflagsForSub8(result, m1, m2);
-            d = cpu->IsFlag(DF)? 0xFFFFFFFF:0x00000001;
-            cpu->SetR32(ESI, esi+d);
-            cpu->SetR32(EDI, edi+d);
-            if(cpu->IsPrefixRep()){
-                cpu->SetR32(ECX, cpu->GetR32(ECX)-1);
-                if(!cpu->IsFlag(ZF)){
-                    return;
-                }
-            }
-        }
+        esi     = cpu->GetR32(ESI);
+        edi     = cpu->GetR32(EDI);
+        base_ds_esi = base_ds+esi;
+        base_es_edi = base_es+edi;
+        m1      = mem->Read8(base_ds_esi);
+        m2      = mem->Read8(base_es_edi);
+        result = (uint32_t)m1 - (uint32_t)m2;
+        cpu->UpdateEflagsForSub8(result, m1, m2);
+        d = cpu->IsFlag(DF)? 0xFFFFFFFF:0x00000001;
+        cpu->SetR32(ESI, esi+d);
+        cpu->SetR32(EDI, edi+d);
+
         return;
     }
     uint32_t base_ds, base_es;
@@ -3920,25 +3906,17 @@ void CmpsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint16_t d;
     base_ds = cpu->GetBaseAddr(DS);
     base_es = cpu->GetBaseAddr(ES);
-    for(int i=0; i<ecx; i++){
-        si     = cpu->GetR16(ESI);
-        di     = cpu->GetR16(EDI);
-        base_ds_si = base_ds+si;
-        base_es_di = base_es+di;
-        m1      = mem->Read8(base_ds_si);
-        m2      = mem->Read8(base_es_di);
-        result = (uint32_t)m1 - (uint32_t)m2;
-        cpu->UpdateEflagsForSub8(result, m1, m2);
-        d = cpu->IsFlag(DF)? 0xFFFF:0x0001;
-        cpu->SetR16(ESI, si+d);
-        cpu->SetR16(EDI, di+d);
-        if(cpu->IsPrefixRep()){
-            cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
-            if(!cpu->IsFlag(ZF)){
-                return;
-            }
-        }
-    }
+    si     = cpu->GetR16(ESI);
+    di     = cpu->GetR16(EDI);
+    base_ds_si = base_ds+si;
+    base_es_di = base_es+di;
+    m1      = mem->Read8(base_ds_si);
+    m2      = mem->Read8(base_es_di);
+    result = (uint32_t)m1 - (uint32_t)m2;
+    cpu->UpdateEflagsForSub8(result, m1, m2);
+    d = cpu->IsFlag(DF)? 0xFFFF:0x0001;
+    cpu->SetR16(ESI, si+d);
+    cpu->SetR16(EDI, di+d);
     return;
 }
 
