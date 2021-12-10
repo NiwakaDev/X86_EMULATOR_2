@@ -3886,7 +3886,15 @@ void TestRm32Imm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAnd(rm32&imm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    uint16_t imm16;
+    uint16_t result;
+    rm16 = this->GetRM16(cpu, mem);
+    imm16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    result = rm16&imm16;
+    cpu->UpdateEflagsForAnd(result);
+    return;
 }
 
 LtrRm16::LtrRm16(string code_name):Instruction(code_name){
@@ -5034,9 +5042,6 @@ DivRm8::DivRm8(string code_name):Instruction(code_name){
 void DivRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint16_t ax  = cpu->GetR16(EAX);
     uint16_t rm8 = this->GetRM8(cpu, mem);
-    if(rm8==0){
-        this->Error("Divide by 0: rm8=0 at %s::Run", this->code_name.c_str());
-    }
     cpu->SetR8L(EAX, ax/rm8);
     cpu->SetR8H(EAX, ax%rm8);
 }
