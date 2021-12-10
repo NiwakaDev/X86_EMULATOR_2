@@ -5002,7 +5002,13 @@ void MulRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint16_t rm8 = this->GetRM8(cpu, mem);
     uint16_t al  = cpu->GetR8L(EAX);
     cpu->SetR16(EAX, rm8*al);
-    cpu->UpdateEflagsForUnsignedMul(cpu->GetR8H(EAX));
+    if(!cpu->GetR8H(EAX)){
+        cpu->ClearFlag(OF);
+        cpu->ClearFlag(CF);
+    }else{
+        cpu->SetFlag(OF);
+        cpu->SetFlag(CF);
+    }
 }
 
 XchgEaxR32::XchgEaxR32(string code_name):Instruction(code_name){
