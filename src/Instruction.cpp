@@ -1202,10 +1202,13 @@ AddRm8Imm8::AddRm8Imm8(string code_name):Instruction(code_name){
 void AddRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint8_t rm8;
     uint8_t imm8;
+    uint16_t result;
     imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
     cpu->AddEip(1);
     rm8  = this->GetRM8(cpu, mem);
-    this->SetRM8(cpu, mem, rm8+imm8);
+    result = rm8+imm8;
+    this->SetRM8(cpu, mem, result);
+    cpu->UpdateEflagsForAdd(result, rm8, imm8);
     return;
 }
 
