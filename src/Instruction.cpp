@@ -6057,3 +6057,27 @@ void LoopeRel8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     }
     return;
 }
+
+LoopRel8::LoopRel8(string code_name):Instruction(code_name){
+
+}
+
+void LoopRel8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    uint16_t cx;
+    uint16_t rel8;
+    //アドレスサイズによって、カウンタの値が決まる。
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+        this->Error("Not implemented: addr_size=32bit at %s::Run", this->code_name.c_str());
+    }else{
+        cx = cpu->GetR16(ECX);
+    }
+    cx = cx - 1;
+    cpu->SetR16(ECX, cx);
+    rel8 = (int16_t)((int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess()));
+    cpu->AddEip(1);
+    if(cx){
+        cpu->AddEip(rel8);
+    }
+    return;
+}
