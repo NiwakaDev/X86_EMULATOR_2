@@ -3791,6 +3791,9 @@ void ShrRm32Cl::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint8_t cl;
     rm16 = this->GetRM16(cpu, mem);
     cl = cpu->GetR8L(ECX);
+    if(cl==0){//cl==0の時、何もしない。
+        return;
+    }
     if(cl==1){
         if(rm16&SIGN_FLG2){
             cpu->SetFlag(OF);
