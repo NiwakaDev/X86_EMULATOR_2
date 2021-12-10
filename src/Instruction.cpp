@@ -4900,7 +4900,9 @@ void CallRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
             this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16 = this->GetRM16(cpu, mem);
+    this->Push16(cpu, mem, cpu->GetEip());
+    cpu->SetEip(rm16);
     return;
 }
 
