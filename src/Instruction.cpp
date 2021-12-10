@@ -1725,8 +1725,8 @@ void CallRel32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     }
     uint16_t rel16;
     rel16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
-    this->Push16(cpu, mem, cpu->GetIp()+2);
-    cpu->AddIp(rel16+2);
+    this->Push16(cpu, mem, cpu->GetEip()+2);
+    cpu->AddEip(rel16+2);
     return;
 }
 
