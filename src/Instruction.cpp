@@ -1060,6 +1060,7 @@ CodeF7::CodeF7(string code_name):Instruction(code_name){
     this->instructions[2] = new NotRm32("NotRm32");
     this->instructions[3] = new NegRm32("NegRm32");
     this->instructions[4] = new MulRm32("MulRm32");
+    this->instructions[5] = new ImulRm16("ImulRm16");
     this->instructions[6] = new DivRm32("DivRm32");
     this->instructions[7] = new IdivRm32("IdivRm32");
 }
@@ -6285,5 +6286,31 @@ void NotRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     rm32 = this->GetRM8(cpu, mem);
     rm32 = ~rm32;
     this->SetRM8(cpu, mem, rm32);
+    return;
+}
+
+ImulRm16::ImulRm16(string code_name):Instruction(code_name){
+
+}
+
+void ImulRm16::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){//32bit_op
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }
+    uint32_t rm16;
+    uint32_t ax;
+    uint32_t result;
+    ax    = (int32_t)(int16_t)cpu->GetR16(EAX);
+    rm16   = (int32_t)(int16_t)this->GetRM16(cpu, mem);
+    result = ax*rm16;
+    cpu->SetR16(EAX, result&0x0000FFFF);
+    cpu->SetR16(EDX, (result&0xFFFF0000)>>16);
+    if(!cpu->GetR16(EDX)){
+        cpu->ClearFlag(OF);
+        cpu->ClearFlag(CF);
+    }else{
+        cpu->SetFlag(OF);
+        cpu->SetFlag(CF);
+    }
     return;
 }

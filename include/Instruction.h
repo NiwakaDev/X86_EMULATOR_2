@@ -1535,3 +1535,9 @@ class NotRm8:public Instruction{
         NotRm8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class ImulRm16:public Instruction{
+    public: 
+        ImulRm16(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
