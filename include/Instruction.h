@@ -1481,3 +1481,9 @@ class RclRm32:public Instruction{
         RclRm32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class SalRm8Cl:public Instruction{
+    public: 
+        SalRm8Cl(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

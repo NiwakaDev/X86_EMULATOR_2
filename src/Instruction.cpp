@@ -1116,14 +1116,14 @@ CodeD2::CodeD2(string code_name):Instruction(code_name){
     for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    //this->instructions[1] = new RorRm8Cl("RorRm8Cl");
+    this->instructions[4] = new SalRm8Cl("SalRm8Cl");
 }
 
 void CodeD2::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code D2 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: D2 /%02X at %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -5947,4 +5947,38 @@ void RclRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     }else{
         cpu->ClearFlag(OF);
     }
+}
+
+SalRm8Cl::SalRm8Cl(string code_name):Instruction(code_name){
+
+}
+
+void SalRm8Cl::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t rm8;
+    uint8_t cl;
+    bool flg;
+    rm8 = this->GetRM8(cpu, mem);
+    cl = cpu->GetR8L(ECX);
+    flg = cl==1;
+    if(cl==0){//cl==0の時、何もしない。
+        return;
+    }
+    for(uint16_t i=0; i<cl; i++){
+        if(rm8&SIGN_FLG1){
+            cpu->SetFlag(CF);
+        }else{
+            cpu->ClearFlag(CF);
+        }
+        rm8 = rm8 << 1;
+    }
+    this->SetRM8(cpu, mem, rm8);
+    cpu->UpdateEflagsForShr(rm8);
+    if(flg){
+        bool msb_dest= (SIGN_FLG1&rm8)?true:false;
+        if(msb_dest^cpu->IsFlag(CF)){
+            cpu->SetFlag(OF);
+        }else{
+            cpu->ClearFlag(OF);
+        }
+    }   
 }
