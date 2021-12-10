@@ -2318,7 +2318,8 @@ void PushFd::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         this->Push32(cpu, mem, eflgs);
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    uint16_t eflgs = cpu->GetEflgs();
+    this->Push16(cpu, mem, eflgs);
     return;
 }
 
