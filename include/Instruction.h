@@ -1475,3 +1475,9 @@ class RetFarImm16:public Instruction{
         RetFarImm16(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class RclRm32:public Instruction{
+    public: 
+        RclRm32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

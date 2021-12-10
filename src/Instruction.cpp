@@ -1158,6 +1158,7 @@ CodeD1::CodeD1(string code_name):Instruction(code_name){
     for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
+    this->instructions[2] = new RclRm32("RclRm32");
     this->instructions[4] = new SalRm32("SalRm32");
     this->instructions[5] = new ShrRm32("ShrRm32");
     this->instructions[7] = new SarRm32("SarRm32");
@@ -5887,4 +5888,33 @@ void RetFarImm16::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         this->Pop8(cpu, mem);//指定された回数だけPop
     }
     return;
+}
+
+//左回転
+RclRm32::RclRm32(string code_name):Instruction(code_name){
+
+}
+
+void RclRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }
+    uint16_t rm16;
+    bool temp_cf;
+    bool result_msb;
+    rm16    = this->GetRM16(cpu, mem);
+    temp_cf = (rm16&MSB_16)?true:false;
+    rm16    = (rm16<<1) + (cpu->IsFlag(CF)?1:0);
+    this->SetRM16(cpu, mem , rm16);
+    if(temp_cf){
+        cpu->SetFlag(CF);
+    }else{
+        cpu->ClearFlag(CF);
+    }
+    result_msb = (rm16&MSB_16)?true:false;
+    if(result_msb^cpu->IsFlag(CF)){
+        cpu->SetFlag(OF);
+    }else{
+        cpu->ClearFlag(OF);
+    }
 }
