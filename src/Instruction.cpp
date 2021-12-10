@@ -2994,7 +2994,7 @@ void PushDs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         this->Push32(cpu, mem, ds);
         return;
     }
-    uint16_t ds = 0;
+    uint16_t ds;
     cpu->AddEip(1);
     ds = cpu->GetR16(DS);
     this->Push16(cpu, mem, ds);
@@ -3730,14 +3730,13 @@ AndRm8R8::AndRm8R8(string code_name):Instruction(code_name){
 }
 
 void AndRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint8_t rm8;
-    uint8_t r8;
-    uint8_t result;
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
+    uint8_t rm8, r8;
+    uint8_t result;
     rm8 = this->GetRM8(cpu, mem);
-    r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = rm8 & r8;
+    r8 = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = rm8&r8;
     this->SetRM8(cpu, mem, result);
     cpu->UpdateEflagsForAnd(result);
     return;
@@ -4477,7 +4476,15 @@ void AndR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAnd(result);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t r16;
+    uint16_t result;
+    uint16_t rm16;
+    r16 = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    rm16 = this->GetRM16(cpu, mem);
+    result = rm16 & r16;
+    cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
+    cpu->UpdateEflagsForAnd(result);
+    return;
 }
 
 ShrdRm32R32Imm8::ShrdRm32R32Imm8(string code_name):Instruction(code_name){
