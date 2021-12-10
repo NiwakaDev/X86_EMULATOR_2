@@ -1285,6 +1285,20 @@ class AdcR32Rm32:public Instruction{
         AdcR32Rm32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class CodeF3:public Instruction{
+    private:
+        Instruction* instructions[INSTRUCTION_SIZE];
+    public: 
+        CodeF3(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
+class RepeCmpsM8M8:public Instruction{
+    public: 
+        RepeCmpsM8M8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

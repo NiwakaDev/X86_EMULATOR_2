@@ -4967,6 +4967,101 @@ void AdcR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->UpdateEflagsForAdd(result, r16, (uint16_t)(rm16+cf));
     return;
 }
+
+CodeF3::CodeF3(string code_name):Instruction(code_name){
+    for(int i=0; i<INSTRUCTION_SIZE; i++){
+        this->instructions[i] = NULL;
+    }
+    //this->instructions[0xA4] = new RepMovsM8M8("RepMovsM8M8");
+    //this->instructions[0xA5] = new RepMovsM32M32("RepMovsM32M32");
+    this->instructions[0xA6] = new RepeCmpsM8M8("RepeCmpsM8M8");
+    //this->instructions[0xAA] = new RepStosM8("RepStosM8");
+    //this->instructions[0xAB] = new RepStosM32("RepStosM32");
+}
+
+void CodeF3::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    uint8_t op_code = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    if(this->instructions[op_code]==NULL){
+        this->Error("Not implemented: F3 %02X at %s::Run", op_code, this->code_name.c_str());
+    }
+    this->instructions[op_code]->Run(cpu, mem, io_port);
+    return;
+}
+
+RepeCmpsM8M8::RepeCmpsM8M8(string code_name):Instruction(code_name){
+
+}
+
+void RepeCmpsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){//32bit op_size
+        if((!cpu->Is32bitsMode()) ^ cpu->IsPrefixAddrSize()){//16bit addr_size
+            this->Error("Not implemented: op_size=32bit&&addr_size=16bits at %s::Run", this->code_name.c_str());
+        }
+        uint32_t base_ds, base_es;
+        uint32_t base_ds_esi, base_es_edi;
+        uint32_t esi, edi;
+        uint32_t d;
+        uint8_t m1, m2;
+        uint32_t result;
+        uint32_t ecx = cpu->GetR32(ECX);
+        base_ds = cpu->GetBaseAddr(DS);
+        base_es = cpu->GetBaseAddr(ES);
+        for(uint32_t i = 0; i<ecx; i++){
+            esi = cpu->GetR32(ESI);
+            edi = cpu->GetR32(EDI);
+            base_ds_esi = base_ds+esi;
+            base_es_edi = base_es+edi;
+            m1      = mem->Read8(base_ds_esi);
+            m2      = mem->Read8(base_es_edi);
+            result = (uint32_t)m1 - (uint32_t)m2;
+            cpu->UpdateEflagsForSub8(result, m1, m2);
+            d = cpu->IsFlag(DF)? -1:1;
+            cpu->SetR32(ESI, esi+d);
+            cpu->SetR32(EDI, edi+d);
+            cpu->SetR32(ECX, cpu->GetR32(ECX)-1);
+            if(!cpu->IsFlag(ZF)){
+                return;
+            }
+        }
+        return;
+    }else{//16bit op_size
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+            this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+        }
+        uint16_t cx = cpu->GetR16(ECX);
+        for(uint16_t i = 0; i<cx; i++){
+            uint32_t base_ds, base_es;
+            uint32_t base_ds_si, base_es_di;
+            uint16_t si, di;
+            uint16_t d;
+            uint8_t m1, m2;
+            uint32_t result;
+            base_ds = cpu->GetR16(DS)*16;
+            si = cpu->GetR16(ESI);
+            base_es = cpu->GetR16(ES)*16;
+            di = cpu->GetR16(EDI);
+            base_ds_si = base_ds+si;
+            base_es_di = base_es+di;
+            m1      = mem->Read8(base_ds_si);
+            m2      = mem->Read8(base_es_di);
+            result = (uint32_t)m1 - (uint32_t)m2;
+            cpu->UpdateEflagsForSub8(result, m1, m2);
+            d = cpu->IsFlag(DF)? 0xFFFF:0x0001;
+            cpu->SetR16(ESI, si+d);
+            cpu->SetR16(EDI, di+d);
+            cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
+            if(!cpu->IsFlag(ZF)){
+                return;
+            }
+        }
+    }
+    return;
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 

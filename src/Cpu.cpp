@@ -50,11 +50,11 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->segment_registers[SS]->Set(0x0000F000, this);
     ***/
 
+    //FLG_F3は命令化した。
+    //FLG_F2は命令化した。
     this->prefix_flgs[FLG_67] = false;
     this->prefix_flgs[FLG_66] = false;
     this->prefix_flgs[FLG_F0] = false;
-    this->prefix_flgs[FLG_F2] = false;
-    this->prefix_flgs[FLG_F3] = false;
     this->prefix_flgs[FLG_2E] = false;
     this->prefix_flgs[FLG_36] = false;
     this->prefix_flgs[FLG_26] = false;
@@ -63,8 +63,6 @@ Cpu::Cpu(Bios* bios, Memory* mem){
 
 
     this->prefix_table[0xF0] = true;
-    this->prefix_table[0xF2] = true;
-    this->prefix_table[0xF3] = true;
     this->prefix_table[0x26] = true;
     this->prefix_table[0x2E] = true;
     this->prefix_table[0x36] = true;
@@ -73,6 +71,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->prefix_table[0x65] = true;
     this->prefix_table[0x66] = true;
     this->prefix_table[0x67] = true;
+
     for(int i=0; i<INSTRUCTION_SIZE; i++){
         this->instructions[i] = NULL;
     }
@@ -201,6 +200,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0xEB] = new JmpRel8("JmpRel8");
     this->instructions[0xEC] = new InAlDx("InAlDx");
     this->instructions[0xEE] = new OutDxAl("OutDxAl");
+    this->instructions[0xF3] = new CodeF3("CodeF3");
     this->instructions[0xF4] = new Hlt("Hlt");
     this->instructions[0xF6] = new CodeF6("CodeF6");
     this->instructions[0xF7] = new CodeF7("CodeF7");
@@ -480,8 +480,6 @@ void Cpu::ResetPrefixFlg(){
     this->prefix_flgs[FLG_67] = false;
     this->prefix_flgs[FLG_66] = false;
     this->prefix_flgs[FLG_F0] = false;
-    this->prefix_flgs[FLG_F2] = false;
-    this->prefix_flgs[FLG_F3] = false;
     this->prefix_flgs[FLG_2E] = false;
     this->prefix_flgs[FLG_36] = false;
     this->prefix_flgs[FLG_26] = false;
@@ -498,12 +496,6 @@ void Cpu::CheckPrefixCode(Memory* mem){
                 break;
             case FLG_67:
                 this->prefix_flgs[FLG_67] = true;
-                break;
-            case FLG_F2:
-                this->prefix_flgs[FLG_F2] = true;
-                break;
-            case FLG_F3:
-                this->prefix_flgs[FLG_F3] = true;
                 break;
             case FLG_2E:
                 this->prefix_flgs[FLG_2E] = true;
@@ -562,6 +554,7 @@ void Cpu::UpdateEflagsForSub8(uint32_t result, uint8_t d1, uint8_t d2){
     this->UpdateZF((uint32_t)result);
     this->UpdateOF_Sub8((uint32_t)result, d1, d2);
     this->UpdateSF((uint8_t)result);
+    this->UpdatePF(result);
 }
 
 void Cpu::UpdateEflagsForSub16(uint32_t result, uint16_t d1, uint16_t d2){
