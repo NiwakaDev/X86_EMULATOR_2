@@ -3457,11 +3457,11 @@ SubEaxImm32::SubEaxImm32(string code_name):Instruction(code_name){
 
 //フラグレジスタの更新が未実装
 void SubEaxImm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint64_t result;
-    uint32_t eax;
-    uint32_t imm32;
     cpu->AddEip(1);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        uint64_t result;
+        uint32_t eax;
+        uint32_t imm32;
         eax = cpu->GetR32(EAX);
         imm32 = mem->Read32(cpu->GetLinearAddrForCodeAccess());
         cpu->AddEip(4);
@@ -3470,7 +3470,15 @@ void SubEaxImm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForSub(result, eax, imm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint32_t result;
+    uint16_t ax;
+    uint16_t imm16;
+    ax = cpu->GetR16(EAX);
+    imm16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    result = (uint32_t)ax - (uint32_t)imm16;
+    cpu->SetR16(EAX, result);
+    cpu->UpdateEflagsForSub16(result, ax, imm16);
     return;
 }
 
@@ -5282,6 +5290,42 @@ void SubR8Rm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     result = (uint16_t)r8-(uint16_t)rm8;
     cpu->SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
     cpu->UpdateEflagsForSub8(result, r8, rm8);
+}
+
+SubAlImm8::SubAlImm8(string code_name):Instruction(code_name){
+
+}
+
+void SubAlImm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    uint8_t imm8;
+    uint8_t al;
+    uint32_t result;
+    imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    al  = cpu->GetR8L(EAX);
+    result = (uint32_t)al - (uint32_t)imm8;
+    cpu->SetR8L(EAX, result);
+    cpu->UpdateEflagsForSub8(result, al, imm8);
+    return;
+}
+
+XorRm8R8::XorRm8R8(string code_name):Instruction(code_name){
+
+}
+
+void XorRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t rm8;
+    uint8_t r8;
+    uint8_t result;
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    rm8 = this->GetRM8(cpu, mem);
+    r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = rm8^r8;
+    this->SetRM8(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
+    return;
 }
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
