@@ -4542,7 +4542,8 @@ void JmpRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->SetEip(rm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint32_t rm16 = this->GetRM16(cpu, mem);
+    cpu->SetEip(rm16);
     return;
 }
 
