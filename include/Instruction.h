@@ -30,6 +30,7 @@ class Instruction:public Object{
         void Push16(Cpu* cpu, Memory* mem, uint16_t data);
         void Push32(Cpu* cpu, Memory* mem, uint32_t data);
         //template<typename type>void Push(Cpu* cpu, Memory* mem, type data);
+        uint8_t  Pop8(Cpu* cpu, Memory* mem);
         uint16_t Pop16(Cpu* cpu, Memory* mem);
         uint32_t Pop32(Cpu* cpu, Memory* mem);
     public:
@@ -1454,5 +1455,11 @@ class ScasD:public Instruction{
 class RclRm32Imm8:public Instruction{
     public: 
         RclRm32Imm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
+class RetImm16:public Instruction{
+    public: 
+        RetImm16(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
