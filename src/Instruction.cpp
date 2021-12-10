@@ -5144,6 +5144,27 @@ void OrR8Rm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
     return;
 }
+
+OrR32Rm32::OrR32Rm32(string code_name):Instruction(code_name){
+
+}
+
+void OrR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }
+    uint16_t rm16;
+    uint16_t r16;
+    uint16_t result;
+    rm16 = this->GetRM16(cpu, mem);
+    r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = rm16 | r16;
+    cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
+    cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    return;
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 
