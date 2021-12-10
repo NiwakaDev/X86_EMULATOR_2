@@ -3481,7 +3481,12 @@ void TestEaxImm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->AddEip(4);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t ax = cpu->GetR16(EAX);
+    uint16_t imm16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    uint16_t result = ax&imm16;
+    cpu->UpdateEflagsForAnd(result);
+    cpu->AddEip(2);
+    return;
 }
 
 JsRel32::JsRel32(string code_name):Instruction(code_name){
