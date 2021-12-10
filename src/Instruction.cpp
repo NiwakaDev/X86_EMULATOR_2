@@ -6322,3 +6322,12 @@ void ImulRm16::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     }
     return;
 }
+
+Stc::Stc(string code_name):Instruction(code_name){
+  
+}
+
+void Stc::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    cpu->SetFlag(CF);
+}

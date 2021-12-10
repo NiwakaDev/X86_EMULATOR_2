@@ -1541,3 +1541,9 @@ class ImulRm16:public Instruction{
         ImulRm16(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class Stc:public Instruction{
+    public: 
+        Stc(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

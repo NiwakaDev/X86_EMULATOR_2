@@ -228,6 +228,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0xF6] = new CodeF6("CodeF6");
     this->instructions[0xF7] = new CodeF7("CodeF7");
     this->instructions[0xF8] = new Clc("Clc");
+    this->instructions[0xF9] = new Stc("Stc");
     this->instructions[0xFA] = new Cli("Cli");
     this->instructions[0xFB] = new Sti("Sti");
     this->instructions[0xFC] = new Cld("Cld");
