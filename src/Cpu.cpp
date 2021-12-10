@@ -213,6 +213,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0xD7] = new Xlatb("Xlatb");
     this->instructions[0xE1] = new LoopeRel8("LoopeRel8");
     this->instructions[0xE2] = new LoopRel8("LoopRel8");
+    this->instructions[0xE3] = new JcxzRel8("JcxzRel8");
     this->instructions[0xE4] = new InAlImm8("InAlImm8");
     this->instructions[0xE6] = new OutImm8("OutImm8");
     this->instructions[0xE8] = new CallRel32("CallRel32");

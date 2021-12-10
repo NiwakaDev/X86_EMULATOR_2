@@ -1499,3 +1499,9 @@ class LoopRel8:public Instruction{
         LoopRel8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class JcxzRel8:public Instruction{
+    public: 
+        JcxzRel8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
