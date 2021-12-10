@@ -873,7 +873,10 @@ Code80::Code80(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new AddRm8Imm8("AddRm8Imm8");
+    this->instructions[1] = new OrRm8Imm8("OrRm8Imm8");
     this->instructions[4] = new AndRm8Imm8("AndRm8Imm8");
+    this->instructions[5] = new SubRm8Imm8("SubRm8Imm8");
+    this->instructions[6] = new XorRm8Imm8("XorRm8Imm8");
     this->instructions[7] = new CmpRm8Imm8("CmpRm8Imm8");
 }
 
@@ -1195,6 +1198,7 @@ void CodeF6::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
+
 AddRm8Imm8::AddRm8Imm8(string code_name):Instruction(code_name){
 
 }
@@ -1514,11 +1518,11 @@ CmpRm8Imm8::CmpRm8Imm8(string code_name):Instruction(code_name){
 void CmpRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint8_t imm8;
     uint8_t rm8;
-    uint64_t result;
+    uint32_t result;
     imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
     cpu->AddEip(1);
     rm8  = this->GetRM8(cpu, mem);
-    result = (uint64_t)rm8 - (uint64_t)imm8;
+    result = (uint32_t)rm8 - (uint32_t)imm8;
     cpu->UpdateEflagsForSub8(result, rm8, imm8);
     return;
 }
@@ -5390,6 +5394,54 @@ void XorR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     return;
 }
 
+OrRm8Imm8::OrRm8Imm8(string code_name):Instruction(code_name){
+
+}
+
+void OrRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t rm8, imm8;
+    uint8_t result;
+    rm8 = this->GetRM8(cpu, mem);
+    imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    result = rm8|imm8;
+    this->SetRM8(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);
+    return;
+}
+
+SubRm8Imm8::SubRm8Imm8(string code_name):Instruction(code_name){
+
+}
+
+void SubRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t imm8;
+    uint8_t rm8;
+    uint32_t result;
+    imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    rm8  = this->GetRM8(cpu, mem);
+    result = (uint32_t)rm8 - (uint32_t)imm8;
+    cpu->UpdateEflagsForSub8(result, rm8, imm8);
+    this->SetRM8(cpu, mem, result);
+    return;
+}
+
+XorRm8Imm8::XorRm8Imm8(string code_name):Instruction(code_name){
+
+}
+
+void XorRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t rm8, imm8;
+    uint8_t result;
+    rm8 = this->GetRM8(cpu, mem);
+    imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    result = rm8^imm8;
+    this->SetRM8(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);
+    return;
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 
