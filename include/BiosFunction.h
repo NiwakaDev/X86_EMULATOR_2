@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include "Fifo.h"
 class Cpu;
 class Memory;
 class Vga;
@@ -41,8 +42,35 @@ class FloppyFunction:public BiosFunction{
         FloppyFunction(char* file_name);
 };  
 
+class MemoryFunction:public BiosFunction{
+    private:
+        void out8(uint16_t addr, uint8_t value);
+    public:
+        MemoryFunction();
+        void Run(Cpu *cpu, Memory* mem);
+};
+
+class EquipmentListFunction:public BiosFunction{
+    private:
+        void out8(uint16_t addr, uint8_t value);
+    public:
+        EquipmentListFunction();
+        void Run(Cpu *cpu, Memory* mem);
+};
+
 class KeyFunction:public BiosFunction{
+    private:
+        Fifo<uint16_t>* fifo;//AL == ASCIIコード, AH == キーボードスキャンコード
+        //キーボードスキャンコード : http://oswiki.osask.jp/?%28AT%29keyboard
+        std::thread* kb_thread = NULL;
     public:
         KeyFunction();
+        void Run(Cpu *cpu, Memory* mem);
+        void In();
+};
+
+class TimerFunction:public BiosFunction{
+    public:
+        TimerFunction();
         void Run(Cpu *cpu, Memory* mem);
 };

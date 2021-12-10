@@ -10,8 +10,11 @@ Bios::Bios(char* file_name, Vga* vga){
         this->bios_functions[i] = NULL;
     }
     this->bios_functions[0x10] = new VideoFunction(vga);
+    this->bios_functions[0x11] = new EquipmentListFunction();
+    this->bios_functions[0x12] = new MemoryFunction();
     this->bios_functions[0x13] = new FloppyFunction(file_name);
     this->bios_functions[0x16] = new KeyFunction();
+    this->bios_functions[0x1A] = new TimerFunction();
 }
 
 void Bios::CallFunction(Cpu *cpu, Memory* mem, uint8_t bios_number){

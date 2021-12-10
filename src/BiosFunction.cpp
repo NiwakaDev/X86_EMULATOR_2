@@ -12,6 +12,13 @@ void BiosFunction::Run(Cpu* cpu, Memory* mem){
     this->Error("Not implemented: BiosFunction::Run");
 }
 
+MemoryFunction::MemoryFunction():BiosFunction(){
+    this->function_name = "MemoryFunction";
+}
+
+void MemoryFunction::Run(Cpu *cpu, Memory* mem){
+    cpu->SetR16(EAX, 640);
+}
 
 VideoFunction::VideoFunction(Vga* vga):BiosFunction(){
     this->function_name = "VideoFunction";
@@ -28,10 +35,10 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
     uint32_t vram;
     uint8_t ascii_code;
     mode = cpu->GetR16(EAX);
-    if(cpu->GetR8H(EAX)!=0x4F){
+    uint8_t ah = cpu->GetR8H(EAX);
+    if(ah!=0x4F){
         //VGAサービス
-        vga_mode = (mode>>8);
-        switch(vga_mode){
+        switch(ah){
             case 0x00:
                 if((mode&0x00FF)==0x13){
                     this->vga->SetInfo(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_VRAM_START_ADDR);
@@ -39,13 +46,21 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                     this->Error("Not implemented: video mode=0x%02X at VideoFunction::Run", (uint8_t)(mode&0x00FF));
                 }
                 return;
+            case 0x01:
+                //本来はカーソル位置を指定するが、今は無視
+                return;
             case 0x13:
                 this->vga->SetInfo(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_VRAM_START_ADDR);
                 return;
             case 0x0E:
                 ascii_code = cpu->GetR8L(EAX);
                 fprintf(stderr, "%c", ascii_code);
-                break;
+                return;
+            case 0x03:
+            case 0x08:
+            case 0x0F:
+            case 0x12:
+                break;//とりあえず無視
             default:
                 this->Error("Not implemented: vga_mode=0x%02X at VideoFunction::Run", vga_mode);
         }
@@ -101,10 +116,42 @@ void FloppyFunction::Init(char* file_name){
 void FloppyFunction::Run(Cpu* cpu, Memory* mem){
     uint8_t ah;
     ah = cpu->GetR8H(EAX);
+    switch (ah) { // ORIGINAL EXTENSIONS
+        case 0xfe: // hopen
+            this->Error("Not implemented: ah=%02X at FloppyFunction::Run\n", ah);
+            break;
+        case 0xff: // hcopy
+            this->Error("Not implemented: ah=%02X at FloppyFunction::Run\n", ah);
+            break;
+    }
+    if (cpu->GetR8L(EDX) >= 1) {//ドライブ番号は0しかない。フロッピーだけ
+        cpu->SetFlag(CF);
+        cpu->SetR8H(EAX, 1);
+        return;
+    }
     switch (ah){
+        case 0x00: 
+            cpu->SetR8H(EAX, 0x00);
+            cpu->ClearFlag(CF);
+            return;
         case 0x02:
             this->Read(cpu, mem);
             break;
+        case 0x08: 
+            cpu->SetR16(EAX, 0x0000);
+            cpu->SetR8L(EBX, 4);
+            cpu->SetR8H(ECX, 0x4F);
+            cpu->SetR8L(ECX, 0x12);
+            cpu->SetR8H(EDX, 1);
+            cpu->SetR8L(EDX, 1);
+            cpu->SetR16(ES, 0);
+            cpu->SetR16(EDI, 0);
+            cpu->ClearFlag(CF);
+            break;
+        case 0x15: // get disk type
+            cpu->SetR8H(EAX, 1);
+            cpu->ClearFlag(CF);
+            return;
         default:
             this->Error("Not implemented: ah=%02X at FloppyFunction::Run\n", ah);
             break;
@@ -112,8 +159,8 @@ void FloppyFunction::Run(Cpu* cpu, Memory* mem){
 }
 
 void FloppyFunction::Read(Cpu* cpu, Memory* mem){
+    static int total=0;
     static int cnt=0;
-    //this->Error("stopped at FloppyFunction::Read");
     uint32_t buff_addr;
     uint8_t data;
     this->es = (uint32_t)cpu->GetR16(ES);
@@ -122,40 +169,151 @@ void FloppyFunction::Read(Cpu* cpu, Memory* mem){
     this->head_number  = (uint32_t)cpu->GetR8H(EDX);
     this->sector_number = 0x0000003F&((uint32_t)cpu->GetR8L(ECX));
     this->cylinder_number = (uint32_t)cpu->GetR8H(ECX);
-
-    if(this->sector_number==0x00 || this->sector_number>0x12){
-        this->Error("invalid sector_number: 0x%02X at FloppyFunction::Read\n", this->sector_number);
-    }  
+    this->cylinder_number = ((((uint16_t)cpu->GetR8L(ECX))&0xC0)<<2)|this->cylinder_number;
     this->processed_sector_number = (uint32_t)cpu->GetR8L(EAX);
-
     buff_addr = this->es*16 + this->bx;
+    total = total + 512;
+    cnt++;
     for(int i=0; i<this->processed_sector_number; i++){
         for(int j=0; j<SECTOR_SIZE; j++){
-            data = (uint8_t)this->buff[this->head_number*18*SECTOR_SIZE+this->cylinder_number*18*2*SECTOR_SIZE+(this->sector_number-1)*SECTOR_SIZE+j];
+            data = (uint8_t)this->buff[this->head_number*18*SECTOR_SIZE+this->cylinder_number*18*2*SECTOR_SIZE+((this->sector_number+i)-1)*SECTOR_SIZE+j];
             mem->Write(buff_addr+j+i*SECTOR_SIZE, data);
         }
     }
-    cnt++;
     cpu->SetR8H(EAX, 0x00);
     cpu->ClearFlag(CF);//エラーなし
 }
 
+EquipmentListFunction::EquipmentListFunction():BiosFunction(){
+    this->function_name = "EquipmentListFunction";
+}
+
+void EquipmentListFunction::Run(Cpu *cpu, Memory* mem){
+    cpu->SetR16(EAX, 1);
+}
+
 KeyFunction::KeyFunction():BiosFunction(){
     this->function_name = "KeyFunction";
+    this->fifo          = new Fifo<uint16_t>();
+    this->kb_thread     = new thread(&KeyFunction::In, this);
+}
+
+void KeyFunction::In(){
+        uint16_t ch;
+        for (;;){
+            ch = getchar();
+            if (ch == '\n'){//改行だけ反応する。
+                ch = ((0x1C)<<8)|0x0d;
+                this->fifo->Push(ch);
+            }
+            if (ch == 'd'){//改行だけ反応する。
+                ch = ((0x20)<<8)|0x64;
+                this->fifo->Push(ch);
+            }
+            if (ch == 'i'){//改行だけ反応する。
+                ch = ((0x17)<<8)|0x69;
+                this->fifo->Push(ch);
+            }
+            if (ch == 'r'){//改行だけ反応する。
+                ch = ((0x13)<<8)|0x72;
+                this->fifo->Push(ch);
+            }
+        }
 }
 
 void KeyFunction::Run(Cpu* cpu, Memory* mem){
     uint8_t ah;
     uint8_t al;
     ah = cpu->GetR8H(EAX);
-
     switch (ah){
+        case 0x00:
+            while(this->fifo->IsEmpty()){
+
+            }
+            cpu->SetR16(EAX, this->fifo->Pop());
+            break;
+        case 0x01:
+            if(this->fifo->IsEmpty()){
+                cpu->SetFlag(ZF);
+                //空の場合は、8086runのbios.cppの実装だとAXに0を入れている。
+                cpu->SetR16(EAX, 0x0000);
+                break;
+            }
+            //空でない
+            cpu->ClearFlag(ZF);
+            cpu->SetR16(EAX, this->fifo->Front());
+            break;
         case 0x02:
             al = 0x00;
             cpu->SetR8L(EAX, al);
             return;
         default:
-            this->Error("Not implemented: ah = 0x%02X at KeyFunction::ExecuteSelf", ah);
+            this->Error("Not implemented: ah = 0x%02X at KeyFunction::Run", ah);
+            break;
+    }
+}
+
+TimerFunction::TimerFunction():BiosFunction(){
+    this->function_name = "TimerFunction";
+}
+
+void TimerFunction::Run(Cpu* cpu, Memory* mem){
+    uint8_t ah;
+    uint8_t al;
+    ah = cpu->GetR8H(EAX);
+    time_t t;
+    tm* lt;
+    switch (ah){
+        /***
+        case 0x02://8086runのbios.cppを参考
+            t = time(NULL);
+            lt = localtime(&t);
+            cpu->SetR8H(ECX, bcd(lt->tm_hour));
+            cpu->SetR8L(ECX, bcd(lt->tm_min));
+            cpu->SetR8H(EDX, bcd(lt->tm_sec));
+            cpu->SetR8L(EDX, lt->tm_isdst == 1 ? 1 : 0);
+            cpu->ClearFlag(CF);
+            break;
+        case 0x04:
+            cpu->SetR8H(ECX, bcd(lt->tm_year / 100 + 19));
+            cpu->SetR8L(ECX, bcd(lt->tm_year % 100));
+            cpu->SetR8H(EDX, bcd(lt->tm_mon + 1));
+            cpu->SetR8L(EDX, bcd(lt->tm_mday));
+            cpu->ClearFlag(CF);
+            break;
+        ***/
+        case 0x00:
+            mem->Write(0x470, (uint8_t)0x00);
+            cpu->SetR8L(EAX, 0x00);
+            cpu->SetR16(ECX, 0x00);
+            cpu->SetR16(EDX, 0x00);
+            break;
+        case 0x01: 
+            mem->Write(0x46e, (uint16_t)0x00);
+            mem->Write(0x46c, (uint16_t)0x00);
+            mem->Write(0x470, (uint8_t)0x00);
+            break;
+        case 0x02://8086runのbios.cppを参考
+            t = time(NULL);
+            lt = localtime(&t);
+            cpu->SetR8H(ECX, 10);
+            cpu->SetR8L(ECX, 10);
+            cpu->SetR8H(EDX, 10);
+            cpu->SetR8L(EDX, 1);
+            cpu->ClearFlag(CF);
+            break;
+        case 0x04:
+            cpu->SetR8H(ECX, 10);
+            cpu->SetR8L(ECX, 10);
+            cpu->SetR8H(EDX, 10);
+            cpu->SetR8L(EDX, 1);
+            cpu->ClearFlag(CF);
+            break;
+        case 0x03: // set RTC time
+        case 0x05: // set RTC date
+            return; // ignore
+        default:
+            this->Error("Not implemented: ah = 0x%02X at TimerFunction::Run", ah);
             break;
     }
 }

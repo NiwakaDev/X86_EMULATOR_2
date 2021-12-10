@@ -5,11 +5,11 @@ template<typename type>class Fifo{
     private:
         std::queue<type> q;
     public:
-        bool IsEmpty(){
+        inline bool IsEmpty(){
             std::lock_guard<std::mutex> lock(this->fifo_mtx);
             return this->q.empty();
         }
-        type Pop(){
+        inline type Pop(){
             type element;
             if(this->IsEmpty()){
                 return element;
@@ -19,10 +19,19 @@ template<typename type>class Fifo{
             this->q.pop();
             return element;
         }
-        void Push(type data){
+        inline void Push(type data){
             std::lock_guard<std::mutex> lock(this->fifo_mtx);
             this->q.push(data);
             return;
+        }
+        inline type Front(){//読み込むだけ
+            type element;
+            if(this->IsEmpty()){
+                return element;
+            }
+            std::lock_guard<std::mutex> lock(this->fifo_mtx);
+            element = this->q.front();
+            return element;
         }
         std::mutex fifo_mtx;
 };
