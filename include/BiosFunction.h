@@ -66,6 +66,7 @@ class KeyFunction:public BiosFunction{
         KeyFunction(Kbc* kbc);
         void Run(Cpu *cpu, Memory* mem);
         void In();
+        uint16_t Decode(uint16_t scan_code);
 };
 
 class TimerFunction:public BiosFunction{

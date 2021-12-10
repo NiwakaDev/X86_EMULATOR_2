@@ -221,6 +221,20 @@ KeyFunction::KeyFunction(Kbc* kbc):BiosFunction(){
     this->kbc           = kbc;
 }
 
+uint16_t KeyFunction::Decode(uint16_t scan_code){
+    //私のエミュレータではKEY_CODE_BREAKはリアルモードでは伝えないようにしてます。
+    scan_code = scan_code&~KEY_CODE_BREAK;
+    uint16_t decoded_code;
+    switch (scan_code){
+        case KEY_CODE_ENTER:
+            decoded_code = ((KEY_CODE_ENTER)<<8)|0x0d;
+            break;
+        default:
+            break;
+    }
+    return decoded_code;
+}
+
 //fifoにプッシュすべき値
 //AL == ASCIIコード, AH == キーボードスキャンコード
 //キーボードスキャンコード : http://oswiki.osask.jp/?%28AT%29keyboard
@@ -229,15 +243,14 @@ void KeyFunction::Run(Cpu* cpu, Memory* mem){
     uint8_t al;
     ah = cpu->GetR8H(EAX);
     uint16_t ch;
+    int d;
     switch (ah){
         case 0x00:
             while(this->kbc->IsEmpty()==-1){
 
             }
-            if (ch == '\n'){//改行だけ反応する。
-                ch = ((0x1C)<<8)|0x0d;
-                this->kbc->Push(ch);
-            }
+            ch = this->Decode(this->kbc->Pop());
+            /***
             if (ch == 'd'){
                 ch = ((0x20)<<8)|0x64;
                 this->kbc->Push(ch);
@@ -250,7 +263,8 @@ void KeyFunction::Run(Cpu* cpu, Memory* mem){
                 ch = ((0x13)<<8)|0x72;
                 this->kbc->Push(ch);
             }
-            cpu->SetR16(EAX, this->kbc->Pop());
+            ***/
+            cpu->SetR16(EAX, ch);
             break;
         case 0x01:
             if(this->kbc->IsEmpty()==-1){
@@ -259,9 +273,10 @@ void KeyFunction::Run(Cpu* cpu, Memory* mem){
                 cpu->SetR16(EAX, 0x0000);
                 break;
             }
-            //空でない
+            //Popでない理由は、この機能ではバッファに残したままにしておく仕様だから。
+            ch = this->Decode(this->kbc->Front());
             cpu->ClearFlag(ZF);
-            cpu->SetR16(EAX, this->kbc->Front());
+            cpu->SetR16(EAX, ch);
             break;
         case 0x02:
             al = 0x00;
