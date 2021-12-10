@@ -1021,6 +1021,7 @@ Code83::Code83(string code_name):Instruction(code_name){
     this->instructions[1] = new OrRm32Imm8("OrRm32Imm8");
     this->instructions[0] = new AddRm32Imm8("AddRm32Imm8");
     this->instructions[2] = new AdcRm32Imm8("AdcRm32Imm8");
+    this->instructions[3] = new SbbRm32Imm8("SbbRm32Imm8");
     this->instructions[4] = new AndRm32Imm8("AndRm32Imm8");
     this->instructions[5] = new SubRm32Imm8("SubRm32Imm8");
     this->instructions[6] = new XorRm32Imm8("XorRm32Imm8");
@@ -4743,6 +4744,7 @@ void AdcRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     this->SetRM16(cpu, mem, result);
     cpu->UpdateEflagsForAdd(result, rm16, (uint16_t)(imm8+cf));
     cpu->AddEip(1);
+    return;
 }
 
 Cwde::Cwde(string code_name):Instruction(code_name){
@@ -5490,6 +5492,25 @@ void XorRm32Imm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(2);
     this->SetRM16(cpu, mem, result);
     cpu->UpdateEflagsForAnd(result);  
+    return;
+}
+
+SbbRm32Imm8::SbbRm32Imm8(string code_name):Instruction(code_name){
+
+}
+
+void SbbRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }
+    uint16_t rm16, imm8;
+    uint8_t cf = cpu->IsFlag(CF)?1:0;
+    rm16 = this->GetRM16(cpu, mem);
+    imm8 = (int16_t)(int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    uint32_t result = (uint32_t)rm16- ((uint32_t)imm8+(uint32_t)cf);
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForSub16(result, rm16, (uint16_t)imm8+(uint16_t)cf);
     return;
 }
 /***
