@@ -5294,9 +5294,6 @@ RepeCmpsM8M8::RepeCmpsM8M8(string code_name):Instruction(code_name){
 }
 
 void RepeCmpsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
-    }
     cpu->AddEip(1);
     if(cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
@@ -5333,6 +5330,9 @@ void RepeCmpsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         }
         return;
     }else{//16bit op_size
+        if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+            this->Error("Not implemented: op_size=16bit protected mode at %s::Run", this->code_name.c_str());
+        }
         if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
             this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
         }
