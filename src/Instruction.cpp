@@ -3352,15 +3352,20 @@ OrRm32Imm32::OrRm32Imm32(string code_name):Instruction(code_name){
 }
 
 void OrRm32Imm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint32_t result;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        uint32_t result;
         result = this->GetRM32(cpu, mem)|mem->Read32(cpu->GetLinearAddrForCodeAccess());
         cpu->AddEip(4);
         this->SetRM32(cpu, mem, result);
         cpu->UpdateEflagsForAnd(result);  
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t result;
+    result = this->GetRM16(cpu, mem)|mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);  
+    return;
 }
 
 NegRm32::NegRm32(string code_name):Instruction(code_name){
