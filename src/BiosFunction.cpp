@@ -64,11 +64,11 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 col++;
                 if(col==80){
                     row++;
+                    fprintf(stderr, "row=%d\n", row);
                     col = 0;
-                }
-                cnt++;
-                if(cnt==1000){
-                    stop = true;
+                    if(row==25){
+                        row = 0;
+                    }
                 }
                 return;
             case 0x03:

@@ -10,8 +10,6 @@ class Gui:public Object{
         Gui(Vga* vga, Kbc* kbc, Mouse* mouse);
         ~Gui();
         void Display();
-        void SetFont(unsigned char ascii_code, int row, int col);
-        void SetFont(unsigned char ascii_code);
         void Update();
     private:    
         int mouse_x, mouse_y;

@@ -11,46 +11,6 @@ using namespace std;
 #define MAX_WIDTH 1280
 #define MAX_HEIGHT 1024
 
-void Gui::SetFont(){
-    int x, y;
-    char data;
-    uint8_t* font = hankaku+'k'*16;
-    x = 0;
-    y = 0;
-    Pixel pixel;
-    pixel.r = 0xFF;
-    pixel.g = 0xFF;
-    pixel.b = 0xFF;
-
-    for(int i=0; i < 16; i++){
-        data = font[i];
-		if((data & 0x80) != 0){
-            this->image[x+0+(y+i)*this->screen_width] = pixel; 
-		}
-		if((data & 0x40) != 0){
-            this->image[x+1+(y+i)*this->screen_width] = pixel;    
-		}
-		if((data & 0x20) != 0){
-            this->image[x+2+(y+i)*this->screen_width] = pixel;      
-		}
-		if((data & 0x10) != 0){
-            this->image[x+3+(y+i)*this->screen_width] = pixel;     
-		}
-		if((data & 0x08) != 0){
-            this->image[x+4+(y+i)*this->screen_width] = pixel;     
-		}
-		if((data & 0x04) != 0){
-            this->image[x+5+(y+i)*this->screen_width] = pixel;    
-		}
-		if((data & 0x02) != 0){
-            this->image[x+6+(y+i)*this->screen_width] = pixel; 
-		}
-		if((data & 0x01) != 0){
-            this->image[x+7+(y+i)*this->screen_width] = pixel;  
-		}
-    }
-}
-
 Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
     this->vga = vga;
     assert(this->vga!=NULL);

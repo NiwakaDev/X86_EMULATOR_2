@@ -1,5 +1,7 @@
 #include "Memory.h"
 #include "Vga.h"
+
+extern uint8_t font8x8_basic[128][8];
 using namespace std;
 
 #define ALPHA_IDX 0
@@ -9,6 +11,7 @@ using namespace std;
 #define RGB_OFFSET 1
 #define PALETTE_SIZE 16
 #define ALPHA_MAX 0xFF
+
 
 Vga::Vga(Memory* mem){
     this->mem = mem;
@@ -74,8 +77,6 @@ uint8_t Vga::In8(uint16_t addr){
     return 0;
 }
 
-extern uint8_t hankaku[4096];
-
 VGA_MODE Vga::GetMode(){
     return this->vga_mode;
 }
@@ -86,40 +87,40 @@ void Vga::SetText(uint8_t ascii_code, int w, int h){
     int col = 0;
     int x, y;
     x = w*8;
-    y = h*16;
+    y = h*8;
     char data;
-    uint8_t *font = hankaku+ascii_code*16;
+    uint8_t *font = font8x8_basic[ascii_code];
     Pixel pixel;
     pixel.r = 0xFF;
     pixel.g = 0xFF;
     pixel.b = 0xFF;
     //テキストモード用変数領域の終わり
 
-    for(int i=0; i < 16; i++){
+    for(int i=0; i < 8; i++){
         data = font[i];
         if((data & 0x80) != 0){
-            this->image_text_mode[x+0+(y+i)*this->width] = pixel; 
+            this->image_text_mode[x+7+(y+i)*this->width] = pixel; 
         }
         if((data & 0x40) != 0){
-            this->image_text_mode[x+1+(y+i)*this->width] = pixel;    
+            this->image_text_mode[x+6+(y+i)*this->width] = pixel;    
         }
         if((data & 0x20) != 0){
-            this->image_text_mode[x+2+(y+i)*this->width] = pixel;      
+            this->image_text_mode[x+5+(y+i)*this->width] = pixel;      
         }
         if((data & 0x10) != 0){
-            this->image_text_mode[x+3+(y+i)*this->width] = pixel;     
-        }
-        if((data & 0x08) != 0){
             this->image_text_mode[x+4+(y+i)*this->width] = pixel;     
         }
+        if((data & 0x08) != 0){
+            this->image_text_mode[x+3+(y+i)*this->width] = pixel;     
+        }
         if((data & 0x04) != 0){
-            this->image_text_mode[x+5+(y+i)*this->width] = pixel;    
+            this->image_text_mode[x+2+(y+i)*this->width] = pixel;    
         }
         if((data & 0x02) != 0){
-            this->image_text_mode[x+6+(y+i)*this->width] = pixel; 
+            this->image_text_mode[x+1+(y+i)*this->width] = pixel; 
         }
         if((data & 0x01) != 0){
-            this->image_text_mode[x+7+(y+i)*this->width] = pixel;  
+            this->image_text_mode[x+0+(y+i)*this->width] = pixel;  
         }
     }
 }
