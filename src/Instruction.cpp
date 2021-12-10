@@ -5649,3 +5649,20 @@ void MovsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->SetR16(ESI, si+d);
     return;
 }
+
+TestAlImm8::TestAlImm8(string code_name):Instruction(code_name){
+
+}
+
+void TestAlImm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t al;
+    uint8_t imm8;
+    uint8_t result;
+    cpu->AddEip(1);
+    al = cpu->GetR8L(EAX);
+    imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    result = al & imm8;
+    cpu->UpdateEflagsForAnd(result);
+    return;
+}

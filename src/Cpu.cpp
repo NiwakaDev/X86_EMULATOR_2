@@ -185,6 +185,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0xA4] = new MovsM8M8("MovsM8M8");
     //this->instructions[0xA5] = new MovM32M32("MovM32M32");
     //this->instructions[0xA6] = new CmpsM8M8("CmpsM8M8");
+    this->instructions[0xA8] = new TestAlImm8("TestAlImm8");
     this->instructions[0xA9] = new TestEaxImm32("TestEaxImm32");
     //this->instructions[0xAB] = new StosM32("StosM32");
     //this->instructions[0xAC] = new LodsM8("LodsM8");

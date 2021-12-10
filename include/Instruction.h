@@ -1432,3 +1432,9 @@ class MovsM8M8:public Instruction{
         MovsM8M8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class TestAlImm8:public Instruction{
+    public: 
+        TestAlImm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
