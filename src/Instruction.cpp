@@ -2292,19 +2292,26 @@ CmpRm32R32::CmpRm32R32(string code_name):Instruction(code_name){
 }
 
 void CmpRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint64_t result;
-    uint32_t r32;
-    uint32_t rm32;
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        uint64_t result;
+        uint32_t r32;
+        uint32_t rm32;
         r32    = cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
         rm32   = this->GetRM32(cpu, mem);
         result = (uint64_t)rm32 - (uint64_t)r32;
         cpu->UpdateEflagsForSub(result, rm32, r32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint32_t result;
+    uint16_t r16;
+    uint16_t rm16;
+    r16    = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    rm16   = this->GetRM16(cpu, mem);
+    result = (uint32_t)rm16 - (uint32_t)r16;
+    cpu->UpdateEflagsForSub16(result, rm16, r16);
+    return;
 }
 
 ShrRm8Imm8::ShrRm8Imm8(string code_name):Instruction(code_name){
@@ -2395,8 +2402,14 @@ void CmpR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForSub(result, r32, rm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
-
+    uint16_t r16;
+    uint16_t rm16;
+    uint32_t result;
+    r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    rm16 = this->GetRM16(cpu, mem);
+    result = (uint32_t)r16 - (uint32_t)rm16;
+    cpu->UpdateEflagsForSub16(result, r16, rm16);
+    return;
 }
 
 JgRel8::JgRel8(string code_name):Instruction(code_name){
@@ -3687,8 +3700,8 @@ CmpRm8R8::CmpRm8R8(string code_name):Instruction(code_name){
 void CmpRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
-    uint32_t r8;
-    uint32_t rm8;
+    uint8_t r8;
+    uint8_t rm8;
     uint32_t result;
     r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     rm8 = this->GetRM8(cpu, mem);
@@ -4166,8 +4179,8 @@ CmpR8Rm8::CmpR8Rm8(string code_name):Instruction(code_name){
 void CmpR8Rm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
-    uint32_t r8;
-    uint32_t rm8;
+    uint8_t r8;
+    uint8_t rm8;
     uint32_t result;
     r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     rm8 = this->GetRM8(cpu, mem);
