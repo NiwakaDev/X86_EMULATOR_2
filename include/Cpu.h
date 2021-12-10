@@ -208,6 +208,7 @@ class Cpu:public Object{
                     this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(result));
             }
         }
+        void UpdateEflagsForInc16(uint16_t result, uint16_t d1, uint16_t d2);
         template<typename type>void UpdateEflagsForShr(type result){
             this->UpdateZF((uint32_t)result);
             this->UpdateSF(result);

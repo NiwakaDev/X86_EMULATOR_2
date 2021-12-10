@@ -1333,12 +1333,12 @@ CmpAlImm8::CmpAlImm8(string code_name):Instruction(code_name){
 void CmpAlImm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint8_t imm8;
     uint8_t al;
-    uint64_t result;
+    uint32_t result;
     cpu->AddEip(1);
     imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
     cpu->AddEip(1);
     al  = cpu->GetR8L(EAX);
-    result = (uint64_t)al - (uint64_t)imm8;
+    result = (uint32_t)al - (uint32_t)imm8;
     cpu->UpdateEflagsForSub8(result, al, imm8);
     return;
 }
@@ -2118,7 +2118,12 @@ void IncR32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForInc(r32+1, r32, 1);
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    uint16_t r16;
+    uint16_t result;
+    r16 = cpu->GetR16(register_type);
+    result = r16 + 1;
+    cpu->SetR16(register_type, result);
+    cpu->UpdateEflagsForInc16(result, r16, (uint16_t)1);
     return;
 }
 
@@ -3734,6 +3739,7 @@ void CmpEaxImm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     ax  = cpu->GetR16(EAX);
     result = (uint32_t)ax - (uint32_t)imm16;
     cpu->UpdateEflagsForSub16(result, ax, imm16);
+    return;
 }
 
 TestRm32Imm32::TestRm32Imm32(string code_name):Instruction(code_name){

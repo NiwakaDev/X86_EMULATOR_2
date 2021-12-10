@@ -230,6 +230,13 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     }
 }
 
+void Cpu::UpdateEflagsForInc16(uint16_t result, uint16_t d1, uint16_t d2){
+    this->UpdateZF(result);
+    this->UpdateSF(result);
+    this->UpdatePF(result);
+    this->UpdateOF_Add(result, d1, d2);
+}
+
 void Cpu::SetR16(SEGMENT_REGISTER register_type, uint16_t data){
     this->segment_registers[register_type]->Set(data, this);
 }
