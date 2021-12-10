@@ -3055,7 +3055,15 @@ void IdivRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->SetR32(EDX, r64%rm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    int32_t rm16;
+    int32_t r32;
+    int16_t dx, ax;
+    dx = cpu->GetR16(EDX);
+    ax = cpu->GetR16(EAX);
+    rm16 = (int32_t)(int16_t)this->GetRM16(cpu, mem);
+    r32  = (((int32_t)dx)<<((int32_t)32))| ((int32_t)ax);
+    cpu->SetR16(EAX, r32/rm16);
+    cpu->SetR16(EDX, r32%rm16);
     return;
 }
 
