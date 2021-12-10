@@ -60,8 +60,6 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->prefix_flgs[FLG_26] = false;
     this->prefix_flgs[FLG_64] = false;
     this->prefix_flgs[FLG_65] = false;
-    this->prefix_flgs[FLG_F3] = false;
-    this->prefix_flgs[FLG_F2] = false;
 
     this->prefix_table[0xF0] = true;
     this->prefix_table[0x26] = true;
@@ -171,13 +169,13 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0xA1] = new MovEaxMoffs32("MovEaxMoffs32");
     this->instructions[0xA2] = new MovMoffs8Al("MovMoffs8Al");
     this->instructions[0xA3] = new MovMoffs32Eax("MovMoffs32Eax");
-    this->instructions[0xA5] = new MovM32M32("MovM32M32");
-    this->instructions[0xA6] = new CmpsM8M8("CmpsM8M8");
+    //this->instructions[0xA5] = new MovM32M32("MovM32M32");
+    //this->instructions[0xA6] = new CmpsM8M8("CmpsM8M8");
     this->instructions[0xA9] = new TestEaxImm32("TestEaxImm32");
-    this->instructions[0xAB] = new StosM32("StosM32");
-    this->instructions[0xAC] = new LodsM8("LodsM8");
-    this->instructions[0xAD] = new LodsM32("LodsM32");
-    this->instructions[0xAE] = new Scasb("Scasb");
+    //this->instructions[0xAB] = new StosM32("StosM32");
+    //this->instructions[0xAC] = new LodsM8("LodsM8");
+    //this->instructions[0xAD] = new LodsM32("LodsM32");
+    //this->instructions[0xAE] = new Scasb("Scasb");
     this->instructions[0xC0] = new CodeC0("CodeC0");
     this->instructions[0xC1] = new CodeC1("CodeC1");
     this->instructions[0xC3] = new Ret32Near("Ret32Near");
@@ -284,14 +282,6 @@ bool Cpu::IsPrefixAddrSize(){
 
 bool Cpu::IsPrefixOpSize(){
     return this->prefix_flgs[FLG_66];
-}
-
-bool Cpu::IsPrefixRep(){
-    return this->prefix_flgs[FLG_F3];
-}
-
-bool Cpu::IsPrefixRepnz(){
-    return this->prefix_flgs[FLG_F2];
 }
 
 bool Cpu::IsProtectedMode(){
@@ -564,6 +554,7 @@ void Cpu::UpdateEflagsForSub16(uint32_t result, uint16_t d1, uint16_t d2){
     this->UpdateZF((uint32_t)result);
     this->UpdateOF_Sub16((uint32_t)result, d1, d2);
     this->UpdateSF((uint16_t)result);
+    this->UpdatePF(result);
 }
 
 void Cpu::UpdateEflagsForSub(uint64_t result, uint32_t d1, uint32_t d2){
@@ -571,6 +562,7 @@ void Cpu::UpdateEflagsForSub(uint64_t result, uint32_t d1, uint32_t d2){
     this->UpdateZF((uint32_t)result);
     this->UpdateOF_Sub((uint32_t)result, d1, d2);
     this->UpdateSF((uint32_t)result);
+    this->UpdatePF(result);
 }
 
 void Cpu::UpdateEflagsForInc(uint32_t result, uint32_t d1, uint32_t d2){

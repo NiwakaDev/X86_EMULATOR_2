@@ -4548,12 +4548,6 @@ void Scasb::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     this->Error("Not implemented: %s::Run", this->code_name.c_str());
     uint32_t ecx = 1;
     cpu->AddEip(1);
-    if(cpu->IsPrefixRep()){
-        this->Error("Not implemented: REP at %s::Run", this->code_name.c_str());
-    }
-    if(cpu->IsPrefixRepnz()){
-        ecx = cpu->GetR32(ECX);
-    }
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//アドレスで場合分け
         uint32_t base_es;
         uint32_t edi;
@@ -4571,12 +4565,6 @@ void Scasb::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
             cpu->UpdateEflagsForSub8(result, al, m);
             d = cpu->IsFlag(DF)? 0xFFFFFFFF:0x00000001;
             cpu->SetR32(EDI, edi+d);
-            if(cpu->IsPrefixRepnz()){
-                cpu->SetR32(ECX, cpu->GetR32(ECX)-1);
-                if(cpu->IsFlag(ZF)){
-                    return;
-                }
-            }
         }
         return;
     }
@@ -4602,9 +4590,7 @@ MovM32M32::MovM32M32(string code_name):Instruction(code_name){
 }
 
 void MovM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    if(cpu->IsPrefixRepnz()){
-        this->Error("Not implemented: repnz at %s::Run", this->code_name.c_str());
-    }
+    this->Error("Not implemented: %s::Run", this->code_name.c_str());
     cpu->AddEip(1);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
@@ -4614,9 +4600,6 @@ void MovM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
             this->Error("Not implemented: op_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
         }else{
             uint16_t cx = 1;
-            if(cpu->IsPrefixRep()){
-                cx = cpu->GetR16(ECX);
-            }
             for(uint16_t i = 0; i<cx; i++){
                 uint32_t ds, es;
                 uint16_t si, di;
@@ -4629,9 +4612,6 @@ void MovM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
                 d = cpu->IsFlag(DF)? -2:2;
                 cpu->SetR16(EDI, di+d);
                 cpu->SetR16(ESI, si+d);
-                if(cpu->IsPrefixRep()){
-                    cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
-                }
             }
         }
         return;
@@ -4853,10 +4833,8 @@ StosM32::StosM32(string code_name):Instruction(code_name){
 }
 
 void StosM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    this->Error("Not implemented: %s::Run", this->code_name.c_str());
     cpu->AddEip(1);
-    if(cpu->IsPrefixRepnz()||cpu->IsPrefixRep()){
-        this->Error("Not implemented: REPNZ and REP at %s::Run", this->code_name.c_str());
-    }
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
         this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
     }else{
@@ -4884,9 +4862,6 @@ void LodsM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     if(cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
-    }
-    if(cpu->IsPrefixRepnz()||cpu->IsPrefixRep()){
-        this->Error("Not implemented: REPNZ and REP at %s::Run", this->code_name.c_str());
     }
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());

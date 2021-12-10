@@ -136,8 +136,6 @@ class Cpu:public Object{
         bool Is32bitsMode();
         bool IsPrefixAddrSize();
         bool IsPrefixOpSize();
-        bool IsPrefixRep();
-        bool IsPrefixRepnz();
         void SetR8L(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data);
         void SetR8H(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data);
         void SetR8(uint32_t register_type, uint8_t data);
