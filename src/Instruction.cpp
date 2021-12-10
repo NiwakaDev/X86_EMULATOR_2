@@ -2535,7 +2535,7 @@ void PushRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         this->Push32(cpu, mem, this->GetRM32(cpu, mem));
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->Push16(cpu, mem, this->GetRM16(cpu, mem));
     return;
 }
 

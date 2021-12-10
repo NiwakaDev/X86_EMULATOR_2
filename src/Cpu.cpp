@@ -530,10 +530,11 @@ void Cpu::CheckPrefixCode(Memory* mem){
                 this->default_data_selector = ES;
                 this->segment_override = true;
                 break;
-            //case FLG_65:
-                //this->prefix_flgs[FLG_65] = true;
-                //this->default_data_selector = GS;
-                //break;
+            case FLG_36:
+                this->prefix_flgs[FLG_36] = true;
+                this->default_data_selector = SS;
+                this->segment_override = true;
+                break;
             default:
                 this->Error("prefix_code : 0x%02X is not implemented at Cpu::CheckPrefixCode\n", op_code);
         }
@@ -640,8 +641,11 @@ void Cpu::SetFlag(EFLAGS_KIND eflags_kind){
         case OF:
             this->eflags.flgs.OF = 1;
             return;
+        case DF:
+            this->eflags.flgs.DF = 1;
+            return;
         default:
-            this->Error("Not implemented: %d Cpu::ClearFlag", eflags_kind);
+            this->Error("Not implemented: %d Cpu::SetFlag", eflags_kind);
     }
 }
 
@@ -658,6 +662,12 @@ void Cpu::ClearFlag(EFLAGS_KIND eflags_kind){
             return;
         case DF:
             this->eflags.flgs.DF = 0;
+            return;
+        case TF:
+            this->eflags.flgs.TF = 0;
+            return;
+        case AC:
+            this->eflags.flgs.AC = 0;
             return;
         default:
             this->Error("Not implemented: %d Cpu::ClearFlag", eflags_kind);
