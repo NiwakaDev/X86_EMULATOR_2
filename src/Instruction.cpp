@@ -4640,7 +4640,29 @@ void SarRm32Cl::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForShr(rm32);//shr命令と同じ
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    uint16_t cl;
+    rm16 = this->GetRM16(cpu, mem);
+    cl = cpu->GetR8L(ECX);
+    if(cl==0){//cl==0の時、何もしない。
+        return;
+    }
+    bool flg = (rm16&SIGN_FLG2)? true:false;
+    if(cl==1){
+        cpu->ClearFlag(OF);
+    }
+    for(uint32_t i=0; i<cl; i++){
+        if(rm16&0x01){
+            cpu->SetFlag(CF);
+        }else{
+            cpu->ClearFlag(CF);
+        }
+        rm16 = rm16 >> 1;
+        rm16 = rm16 | ((flg)?SIGN_FLG2:0);
+    }
+    this->SetRM16(cpu, mem, rm16);
+    cpu->UpdateEflagsForShr(rm16);//shr命令と同じ
+    return;
 }
 
 AndRm32R32::AndRm32R32(string code_name):Instruction(code_name){
