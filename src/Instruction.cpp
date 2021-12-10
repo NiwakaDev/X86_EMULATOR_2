@@ -5203,6 +5203,27 @@ void PopSs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->SetR16(SS, ss);
     return;
 }
+
+SbbRm32R32::SbbRm32R32(string code_name):Instruction(code_name){
+
+}
+
+void SbbRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }
+    uint16_t rm16, r16;
+    uint8_t cf = cpu->IsFlag(CF)?1:0;
+    rm16 = this->GetRM16(cpu, mem);
+    r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint32_t result = (uint32_t)rm16- ((uint32_t)r16+(uint32_t)cf);
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForSub16(result, rm16, (uint16_t)r16+(uint16_t)cf);
+    return;
+}
+
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 

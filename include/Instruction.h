@@ -1342,6 +1342,12 @@ class PopSs:public Instruction{
         PopSs(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class SbbRm32R32:public Instruction{
+    public: 
+        SbbRm32R32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 
