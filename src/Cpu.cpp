@@ -60,7 +60,8 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->prefix_flgs[FLG_26] = false;
     this->prefix_flgs[FLG_64] = false;
     this->prefix_flgs[FLG_65] = false;
-
+    this->prefix_flgs[FLG_F3] = false;
+    this->prefix_flgs[FLG_F2] = false;
 
     this->prefix_table[0xF0] = true;
     this->prefix_table[0x26] = true;
@@ -200,6 +201,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0xEB] = new JmpRel8("JmpRel8");
     this->instructions[0xEC] = new InAlDx("InAlDx");
     this->instructions[0xEE] = new OutDxAl("OutDxAl");
+    this->instructions[0xF2] = new CodeF2("CodeF2");
     this->instructions[0xF3] = new CodeF3("CodeF3");
     this->instructions[0xF4] = new Hlt("Hlt");
     this->instructions[0xF6] = new CodeF6("CodeF6");

@@ -1299,6 +1299,19 @@ class RepeCmpsM8M8:public Instruction{
         RepeCmpsM8M8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class CodeF2:public Instruction{
+    private:
+        Instruction* instructions[INSTRUCTION_SIZE];
+    public: 
+        CodeF2(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+class RepneScasM8:public Instruction{
+    public: 
+        RepneScasM8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

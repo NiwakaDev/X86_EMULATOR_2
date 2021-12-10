@@ -3871,6 +3871,7 @@ CmpsM8M8::CmpsM8M8(string code_name):Instruction(code_name){
 }
 
 void CmpsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    this->Error("Not implemented: at %s::Run", this->code_name.c_str());
     if(cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
     }
@@ -3895,7 +3896,6 @@ void CmpsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         d = cpu->IsFlag(DF)? 0xFFFFFFFF:0x00000001;
         cpu->SetR32(ESI, esi+d);
         cpu->SetR32(EDI, edi+d);
-
         return;
     }
     uint32_t base_ds, base_es;
@@ -4544,6 +4544,8 @@ Scasb::Scasb(string code_name):Instruction(code_name){
 }
 
 void Scasb::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    //エラーにする理由は8086実装をここに移植するため、今はここで止めておく。
+    this->Error("Not implemented: %s::Run", this->code_name.c_str());
     uint32_t ecx = 1;
     cpu->AddEip(1);
     if(cpu->IsPrefixRep()){
@@ -5035,6 +5037,88 @@ void RepeCmpsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
             cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
             if(!cpu->IsFlag(ZF)){
                 return;
+            }
+        }
+    }
+    return;
+}
+
+CodeF2::CodeF2(string code_name):Instruction(code_name){
+    for(int i=0; i<INSTRUCTION_SIZE; i++){
+        this->instructions[i] = NULL;
+    }
+    this->instructions[0xAE] = new RepneScasM8("RepneScasM8");
+}
+
+void CodeF2::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    uint8_t op_code = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    if(this->instructions[op_code]==NULL){
+        this->Error("Not implemented: F2 %02X at %s::Run", op_code, this->code_name.c_str());
+    }
+    this->instructions[op_code]->Run(cpu, mem, io_port);
+    return;
+}
+
+RepneScasM8::RepneScasM8(string code_name):Instruction(code_name){
+
+}
+
+void RepneScasM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){//32bit op_size
+        if((!cpu->Is32bitsMode()) ^ cpu->IsPrefixAddrSize()){
+            this->Error("Not implemented: op_size=32bits && addr_size=16bits at %s::Run", this->code_name.c_str());
+        }
+        uint32_t cx = cpu->GetR32(ECX);
+        for(uint32_t i = 0; i<cx; i++){
+            uint32_t base_es;
+            uint32_t edi;
+            uint32_t base_es_edi;
+            uint8_t al, m8;
+            uint32_t result;
+            uint32_t d;
+            base_es = cpu->GetBaseAddr(ES);
+            edi     = cpu->GetR32(EDI);
+            base_es_edi = base_es+edi;
+            m8      = mem->Read8(base_es_edi);
+            al = cpu->GetR8L(EAX);
+            result = (uint32_t)al - (uint32_t)m8;
+            cpu->UpdateEflagsForSub8(result, al, m8);
+            d = cpu->IsFlag(DF)? -1:1;
+            cpu->SetR32(EDI, edi+d);
+            cpu->SetR32(ECX, cpu->GetR32(ECX)-1);
+            if(cpu->IsFlag(ZF)){//等しくなったら終了
+                break;
+            }
+        }
+    }else{//16bit op_size
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+            this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+        }
+        uint16_t cx = cpu->GetR16(ECX);
+        for(uint16_t i = 0; i<cx; i++){
+            uint32_t base_es;
+            uint32_t di;
+            uint32_t base_es_di;
+            uint8_t al, m8;
+            uint32_t result;
+            uint16_t d;
+            base_es = cpu->GetR16(ES)*16;
+            di     = cpu->GetR16(EDI);
+            base_es_di = base_es+di;
+            m8      = mem->Read8(base_es_di);
+            al = cpu->GetR8L(EAX);
+            result = (uint32_t)al - (uint32_t)m8;
+            cpu->UpdateEflagsForSub8(result, al, m8);
+            d = cpu->IsFlag(DF)? -1:1;
+            cpu->SetR16(EDI, di+d);
+            cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
+            if(cpu->IsFlag(ZF)){//等しくなったら終了
+                break;
             }
         }
     }
