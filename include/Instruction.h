@@ -1318,6 +1318,12 @@ class AddAlImm8:public Instruction{
         AddAlImm8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class OrR8Rm8:public Instruction{
+    public: 
+        OrR8Rm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 
