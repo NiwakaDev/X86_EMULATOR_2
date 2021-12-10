@@ -1952,7 +1952,15 @@ void SubRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForSub(result, rm32, imm8);
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    uint32_t result;
+    uint16_t imm8;
+    uint16_t rm16;
+    imm8 = (int16_t)((int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess()));
+    cpu->AddEip(1);
+    rm16  = this->GetRM16(cpu, mem);
+    result = (uint32_t)rm16 - (uint32_t)imm8;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForSub16(result, rm16, imm8);
     return;
 }
 
