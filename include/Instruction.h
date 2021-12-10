@@ -1529,3 +1529,9 @@ class RepStosM32:public Instruction{
         RepStosM32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class NotRm8:public Instruction{
+    public: 
+        NotRm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

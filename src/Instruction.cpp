@@ -1200,6 +1200,7 @@ CodeF6::CodeF6(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new TestRm8Imm8("TestRm8Imm8");
+    this->instructions[2] = new NotRm8("NotRm8");
     this->instructions[4] = new MulRm8("MulRm8");
     this->instructions[6] = new DivRm8("DivRm8");
 }
@@ -4155,11 +4156,12 @@ void TestRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint8_t rm8;
     uint8_t imm8;
     uint8_t result;
-    rm8 = this->GetRM8(cpu, mem);
     imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
     cpu->AddEip(1);
+    rm8  = this->GetRM8(cpu, mem);
     result = rm8 & imm8;
     cpu->UpdateEflagsForAnd(result);
+    return;
 }
 
 MovzxR32Rm16::MovzxR32Rm16(string code_name):Instruction(code_name){
@@ -6244,5 +6246,17 @@ void RepStosM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
             cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
         }
     }
+    return;
+}
+
+NotRm8::NotRm8(string code_name):Instruction(code_name){
+
+}
+
+void NotRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint32_t rm32;
+    rm32 = this->GetRM8(cpu, mem);
+    rm32 = ~rm32;
+    this->SetRM8(cpu, mem, rm32);
     return;
 }
