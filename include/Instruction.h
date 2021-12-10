@@ -1312,6 +1312,12 @@ class RepneScasM8:public Instruction{
         RepneScasM8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class AddAlImm8:public Instruction{
+    public: 
+        AddAlImm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

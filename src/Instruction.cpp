@@ -5100,6 +5100,24 @@ void RepneScasM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     }
     return;
 }
+
+AddAlImm8::AddAlImm8(string code_name):Instruction(code_name){
+
+}
+
+void AddAlImm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    uint8_t al;
+    uint8_t imm8;
+    uint16_t result;
+    al = cpu->GetR8L(EAX);
+    imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    result = al+imm8;
+    cpu->SetR8L(EAX, result);
+    cpu->UpdateEflagsForAdd(result, al, imm8);
+    return;
+}
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 
