@@ -644,6 +644,9 @@ void Cpu::SetFlag(EFLAGS_KIND eflags_kind){
         case DF:
             this->eflags.flgs.DF = 1;
             return;
+        case ZF:
+            this->eflags.flgs.ZF = 1;
+            return;
         default:
             this->Error("Not implemented: %d Cpu::SetFlag", eflags_kind);
     }
@@ -669,6 +672,9 @@ void Cpu::ClearFlag(EFLAGS_KIND eflags_kind){
         case AC:
             this->eflags.flgs.AC = 0;
             return;
+        case ZF:
+            this->eflags.flgs.ZF = 0;
+            break;
         default:
             this->Error("Not implemented: %d Cpu::ClearFlag", eflags_kind);
     }

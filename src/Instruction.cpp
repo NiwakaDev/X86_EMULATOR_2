@@ -4927,7 +4927,6 @@ void MovM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
         this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
     }
-    this->Error("Not implemented: %s::Run", this->code_name.c_str());
     cpu->AddEip(1);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
