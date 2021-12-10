@@ -222,14 +222,22 @@ KeyFunction::KeyFunction(Kbc* kbc):BiosFunction(){
 }
 
 uint16_t KeyFunction::Decode(uint16_t scan_code){
-    //私のエミュレータではKEY_CODE_BREAKはリアルモードでは伝えないようにしてます。
-    scan_code = scan_code&~KEY_CODE_BREAK;
     uint16_t decoded_code;
     switch (scan_code){
         case KEY_CODE_ENTER:
             decoded_code = ((KEY_CODE_ENTER)<<8)|0x0d;
             break;
+        case KEY_CODE_D:
+            decoded_code = ((KEY_CODE_D)<<8)|0x64;
+            break;
+        case KEY_CODE_I:
+            decoded_code = ((KEY_CODE_I)<<8)|0x69;
+            break;
+        case KEY_CODE_R:
+            decoded_code = ((KEY_CODE_R)<<8)|0x72;
+            break;
         default:
+            this->Error("Not implemented: scan_code=%04X at KeyFunction::Decode\n", scan_code);
             break;
     }
     return decoded_code;
@@ -250,26 +258,21 @@ void KeyFunction::Run(Cpu* cpu, Memory* mem){
 
             }
             ch = this->Decode(this->kbc->Pop());
-            /***
-            if (ch == 'd'){
-                ch = ((0x20)<<8)|0x64;
-                this->kbc->Push(ch);
-            }
-            if (ch == 'i'){
-                ch = ((0x17)<<8)|0x69;
-                this->kbc->Push(ch);
-            }
-            if (ch == 'r'){
-                ch = ((0x13)<<8)|0x72;
-                this->kbc->Push(ch);
-            }
-            ***/
             cpu->SetR16(EAX, ch);
             break;
         case 0x01:
             if(this->kbc->IsEmpty()==-1){
                 cpu->SetFlag(ZF);
                 //空の場合は、8086runのbios.cppの実装だとAXに0を入れている。
+                cpu->SetR16(EAX, 0x0000);
+                break;
+            }
+            //KEY_CODE_BREAKに該当する場合はPopして、渡さないようにする。
+            //KEY_CODE_MAKEとKEY_CODE_BREAKの両方がリアルモードで渡されると
+            //2回文字が表示されてしまうから。
+            if((this->kbc->Front()&KEY_CODE_BREAK)!=0){
+                this->kbc->Pop();
+                cpu->SetFlag(ZF);
                 cpu->SetR16(EAX, 0x0000);
                 break;
             }
@@ -292,31 +295,13 @@ TimerFunction::TimerFunction():BiosFunction(){
     this->function_name = "TimerFunction";
 }
 
+//リアルモードで使用するTimerFunctionの値は全部固定(デバッグが大変になるから。)
+//8086runを参考に実装予定
 void TimerFunction::Run(Cpu* cpu, Memory* mem){
     uint8_t ah;
     uint8_t al;
     ah = cpu->GetR8H(EAX);
-    time_t t;
-    tm* lt;
     switch (ah){
-        /***
-        case 0x02://8086runのbios.cppを参考
-            t = time(NULL);
-            lt = localtime(&t);
-            cpu->SetR8H(ECX, bcd(lt->tm_hour));
-            cpu->SetR8L(ECX, bcd(lt->tm_min));
-            cpu->SetR8H(EDX, bcd(lt->tm_sec));
-            cpu->SetR8L(EDX, lt->tm_isdst == 1 ? 1 : 0);
-            cpu->ClearFlag(CF);
-            break;
-        case 0x04:
-            cpu->SetR8H(ECX, bcd(lt->tm_year / 100 + 19));
-            cpu->SetR8L(ECX, bcd(lt->tm_year % 100));
-            cpu->SetR8H(EDX, bcd(lt->tm_mon + 1));
-            cpu->SetR8L(EDX, bcd(lt->tm_mday));
-            cpu->ClearFlag(CF);
-            break;
-        ***/
         case 0x00:
             mem->Write(0x470, (uint8_t)0x00);
             cpu->SetR8L(EAX, 0x00);
@@ -329,8 +314,6 @@ void TimerFunction::Run(Cpu* cpu, Memory* mem){
             mem->Write(0x470, (uint8_t)0x00);
             break;
         case 0x02://8086runのbios.cppを参考
-            t = time(NULL);
-            lt = localtime(&t);
             cpu->SetR8H(ECX, 10);
             cpu->SetR8L(ECX, 10);
             cpu->SetR8H(EDX, 10);
@@ -344,9 +327,9 @@ void TimerFunction::Run(Cpu* cpu, Memory* mem){
             cpu->SetR8L(EDX, 1);
             cpu->ClearFlag(CF);
             break;
-        case 0x03: // set RTC time
-        case 0x05: // set RTC date
-            return; // ignore
+        case 0x03: 
+        case 0x05: 
+            return; 
         default:
             this->Error("Not implemented: ah = 0x%02X at TimerFunction::Run", ah);
             break;
