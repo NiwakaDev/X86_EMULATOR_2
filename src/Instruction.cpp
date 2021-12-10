@@ -4563,7 +4563,33 @@ void SalRm32Cl::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         }   
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    uint16_t cl;
+    bool flg;
+    rm16 = this->GetRM16(cpu, mem);
+    cl = cpu->GetR8L(ECX);
+    flg = cl==1;
+    if(cl==0){//cl==0の時、何もしない。
+        return;
+    }
+    for(uint16_t i=0; i<cl; i++){
+        if(rm16&SIGN_FLG2){
+            cpu->SetFlag(CF);
+        }else{
+            cpu->ClearFlag(CF);
+        }
+        rm16 = rm16 << 1;
+    }
+    this->SetRM16(cpu, mem, rm16);
+    cpu->UpdateEflagsForShr(rm16);
+    if(flg){
+        bool msb_dest= (SIGN_FLG2&rm16)?true:false;
+        if(msb_dest^cpu->IsFlag(CF)){
+            cpu->SetFlag(OF);
+        }else{
+            cpu->ClearFlag(OF);
+        }
+    }   
 }
 
 SetgRm8::SetgRm8(string code_name):Instruction(code_name){
