@@ -2061,10 +2061,7 @@ JmpPtr1632::JmpPtr1632(string code_name):Instruction(code_name){
 
 void JmpPtr1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     GdtGate* gdt_gate;
-    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
-        if(!cpu->IsProtectedMode()){
-            this->Error("Not implemented: real mode(op_size=32) at JmpPtr1632::Run");
-        }
+    if(cpu->IsProtectedMode()){
         uint32_t offset;
         uint16_t selector;
         cpu->AddEip(1);
@@ -2081,18 +2078,19 @@ void JmpPtr1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->SetEip(offset);
         return;
     }
-    if(!cpu->IsProtectedMode()){
-        uint16_t offset;
-        uint16_t selector;
-        cpu->AddEip(1);
-        offset = mem->Read16(cpu->GetLinearAddrForCodeAccess());
-        cpu->AddEip(2);
-        selector = mem->Read16(cpu->GetLinearAddrForCodeAccess());
-        cpu->SetR16(CS, selector);
-        cpu->SetEip(offset);
-    }else{
-        this->Error("Not implemented: protected mode at %s::Run");
+    //リアルモード処理
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32 at JmpPtr1632::Run");
+        return;
     }
+    uint16_t offset;
+    uint16_t selector;
+    cpu->AddEip(1);
+    offset = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    selector = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->SetR16(CS, selector);
+    cpu->SetEip(offset);
     return;
 }
 
