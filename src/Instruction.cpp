@@ -3297,7 +3297,15 @@ void SubR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForSub(result, r32, rm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint32_t result;
+    uint16_t rm16;
+    uint16_t r16;
+    rm16 = this->GetRM16(cpu, mem);
+    r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = (uint32_t)r16 - (uint32_t)rm16;
+    cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
+    cpu->UpdateEflagsForSub16(result, r16, rm16);
+    return;
 }
 
 DecRm8::DecRm8(string code_name):Instruction(code_name){
@@ -5257,6 +5265,23 @@ void SbbR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
     cpu->UpdateEflagsForSub16(result, r16, (uint16_t)rm16+(uint16_t)cf);
     return;
+}
+
+SubR8Rm8::SubR8Rm8(string code_name):Instruction(code_name){
+
+}
+
+void SubR8Rm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t rm8, r8;
+    uint8_t cf;
+    uint16_t result;
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    rm8 = this->GetRM8(cpu, mem);
+    r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = (uint16_t)r8-(uint16_t)rm8;
+    cpu->SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
+    cpu->UpdateEflagsForSub8(result, r8, rm8);
 }
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
