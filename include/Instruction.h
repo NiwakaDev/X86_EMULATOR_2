@@ -1348,6 +1348,12 @@ class SbbRm32R32:public Instruction{
         SbbRm32R32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class SbbR32Rm32:public Instruction{
+    public: 
+        SbbR32Rm32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

@@ -98,6 +98,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0x18] = new SbbRm8R8("SbbRm8R8");
     this->instructions[0x19] = new SbbRm32R32("SbbRm32R32");
     this->instructions[0x1A] = new SbbR8Rm8("SbbR8Rm8");
+    this->instructions[0x1B] = new SbbR32Rm32("SbbR32Rm32");
     this->instructions[0x1E] = new PushDs("PushDs");
     this->instructions[0x1F] = new PopDs("PopDs");
     this->instructions[0x20] = new AndRm8R8("AndRm8R8");
