@@ -4348,24 +4348,36 @@ CallM1632::CallM1632(string code_name):Instruction(code_name){
 void CallM1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     GdtGate* gdt_gate;
     uint16_t selector;
-    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
-        uint32_t effective_addr;
-        uint32_t offset_addr;
-        effective_addr = this->GetEffectiveAddr(cpu, mem);
-        offset_addr = mem->Read32(cpu->GetLinearAddrForDataAccess(effective_addr));
-        selector = mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr+4));
-        gdt_gate = cpu->GetGdtGate(selector);
-        if((gdt_gate->access_right&SEGMENT_DESC_TYPE_FLG)!=0){
-            this->Push32(cpu, mem, cpu->GetR16(CS));
-            this->Push32(cpu, mem, cpu->GetEip());
-            cpu->SetEip(offset_addr);
-            cpu->SetR16(CS, selector);
+    if(cpu->IsProtectedMode()){
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+            uint32_t effective_addr;
+            uint32_t offset_addr;
+            effective_addr = this->GetEffectiveAddr(cpu, mem);
+            offset_addr = mem->Read32(cpu->GetLinearAddrForDataAccess(effective_addr));
+            selector = mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr+4));
+            gdt_gate = cpu->GetGdtGate(selector);
+            if((gdt_gate->access_right&SEGMENT_DESC_TYPE_FLG)!=0){
+                this->Push32(cpu, mem, cpu->GetR16(CS));
+                this->Push32(cpu, mem, cpu->GetEip());
+                cpu->SetEip(offset_addr);
+                cpu->SetR16(CS, selector);
+                return;
+            }
+            this->Error("Not implemented: TSS at %s::Run", this->code_name.c_str());
             return;
         }
-        this->Error("Not implemented: TSS at %s::Run", this->code_name.c_str());
+        this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t effective_addr;
+    uint16_t eip;
+    effective_addr = this->GetEffectiveAddr(cpu, mem);
+    eip      = mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr));
+    selector = mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr+2));
+    this->Push16(cpu, mem, cpu->GetR16(CS));
+    this->Push16(cpu, mem, (uint16_t)cpu->GetEip());
+    cpu->SetEip(eip);
+    cpu->SetR16(CS, selector);
 }
 
 PushSs::PushSs(string code_name):Instruction(code_name){
