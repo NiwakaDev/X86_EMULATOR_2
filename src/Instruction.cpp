@@ -1248,18 +1248,24 @@ void AddEaxImm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         uint32_t imm32;
         uint32_t eax;
+        uint64_t result;
         imm32 = mem->Read32(cpu->GetLinearAddrForCodeAccess());
         cpu->AddEip(4);
         eax   = cpu->GetR32(EAX);
-        cpu->SetR32(EAX, eax+imm32);
+        result = eax+imm32;
+        cpu->SetR32(EAX, result);
+        cpu->UpdateEflagsForAdd(result, eax, imm32);
         return;
     }
     uint16_t imm16;
     uint16_t ax;
+    uint32_t result;
     imm16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
     cpu->AddEip(2);
     ax   = cpu->GetR16(EAX);
-    cpu->SetR16(EAX, ax+imm16);
+    result = (uint32_t)ax+(uint32_t)imm16;
+    cpu->SetR16(EAX, result);
+    cpu->UpdateEflagsForAdd(result, ax, imm16);
     return;
 }
 
@@ -2971,7 +2977,11 @@ void PushEs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         this->Push32(cpu, mem, es);
         return;
     }
-    this->Error("Not implemented: 16bit mode at %s::Run", this->code_name.c_str());
+    uint16_t es;
+    cpu->AddEip(1);
+    es = cpu->GetR16(ES);
+    this->Push16(cpu, mem, es);
+    return;
 }
 
 PushDs::PushDs(string code_name):Instruction(code_name){
