@@ -3448,14 +3448,25 @@ void AddRm32Imm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         uint32_t rm32;
         uint32_t imm32;
-        uint32_t result;
+        uint64_t result;
         rm32  = this->GetRM32(cpu, mem);
         imm32 = mem->Read32(cpu->GetLinearAddrForCodeAccess());
         cpu->AddEip(4);
-        this->SetRM32(cpu, mem, rm32+imm32);
+        result = rm32+imm32;
+        this->SetRM32(cpu, mem, result);
+        cpu->UpdateEflagsForAdd(result, rm32, imm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint32_t result;
+    uint16_t rm16;
+    uint16_t imm16;
+    rm16 = this->GetRM16(cpu, mem);
+    imm16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    result = (uint32_t)rm16 + (uint32_t)imm16;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAdd(result, rm16, imm16);
+    return;
 }
 
 XorRm32Imm8::XorRm32Imm8(string code_name):Instruction(code_name){
