@@ -2812,11 +2812,19 @@ void SubRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         rm32 = this->GetRM32(cpu, mem);
         r32  = cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
         result = (uint64_t)rm32 - (uint64_t)r32;
-        this->SetRM32(cpu, mem, rm32-r32);
+        this->SetRM32(cpu, mem, result);
         cpu->UpdateEflagsForSub(result, rm32, r32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint32_t result;
+    uint16_t rm16;
+    uint16_t r16;
+    rm16 = this->GetRM16(cpu, mem);
+    r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = (uint32_t)rm16 - (uint32_t)r16;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForSub16(result, rm16, r16);
+    return;
 }
 
 JleRel32::JleRel32(string code_name):Instruction(code_name){
