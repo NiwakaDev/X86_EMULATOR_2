@@ -2210,7 +2210,13 @@ void AndRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAnd(result);
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    uint16_t imm8;
+    uint16_t result;
+    imm8 = (int16_t)((int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess()));
+    cpu->AddEip(1);
+    result = imm8 & this->GetRM16(cpu, mem);
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);
     return;
 }
 
