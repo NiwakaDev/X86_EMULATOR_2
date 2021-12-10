@@ -2874,12 +2874,12 @@ OrRm32R32::OrRm32R32(string code_name):Instruction(code_name){
 }
 
 void OrRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         uint32_t rm32;
         uint32_t r32;
         uint32_t result;
-        cpu->AddEip(1);
-        this->ParseModRM(cpu, mem);
         rm32 = this->GetRM32(cpu, mem);
         r32  = cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
         result = rm32 | r32;
@@ -2890,8 +2890,6 @@ void OrRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint16_t rm16;
     uint16_t r16;
     uint16_t result;
-    cpu->AddEip(1);
-    this->ParseModRM(cpu, mem);
     rm16 = this->GetRM16(cpu, mem);
     r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     result = rm16 | r16;
