@@ -1372,6 +1372,18 @@ class XorRm8R8:public Instruction{
         XorRm8R8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class XorR8Rm8:public Instruction{
+    public: 
+        XorR8Rm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
+class XorR32Rm32:public Instruction{
+    public: 
+        XorR32Rm32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

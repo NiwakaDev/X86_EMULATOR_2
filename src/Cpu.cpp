@@ -115,6 +115,8 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0x2D] = new SubEaxImm32("SubEaxImm32");
     this->instructions[0x30] = new XorRm8R8("XorRm8R8");
     this->instructions[0x31] = new XorRm32R32("XorRm32R32");
+    this->instructions[0x32] = new XorR8Rm8("XorR8Rm8");
+    this->instructions[0x33] = new XorR32Rm32("XorR32Rm32");
     this->instructions[0x38] = new CmpRm8R8("CmpRm8R8");
     this->instructions[0x39] = new CmpRm32R32("CmpRm32R32");
     this->instructions[0x3A] = new CmpR8Rm8("CmpR8Rm8");

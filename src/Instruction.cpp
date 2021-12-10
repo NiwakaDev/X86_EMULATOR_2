@@ -2205,7 +2205,7 @@ void XorRm32R32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     uint16_t r16;
     uint16_t result;
     rm16 = this->GetRM16(cpu, mem);
-    r16  = cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     result = rm16^r16;
     this->SetRM16(cpu, mem, result);
     cpu->UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
@@ -5327,6 +5327,47 @@ void XorRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
     return;
 }
+
+XorR8Rm8::XorR8Rm8(string code_name):Instruction(code_name){
+
+}
+
+void XorR8Rm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t rm8;
+    uint8_t r8;
+    uint8_t result;
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    rm8 = this->GetRM8(cpu, mem);
+    r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = rm8^r8;
+    cpu->SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
+    cpu->UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
+    return;
+}
+
+XorR32Rm32::XorR32Rm32(string code_name):Instruction(code_name){
+
+}
+
+void XorR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        return;
+    }
+    uint16_t rm16;
+    uint16_t r16;
+    uint16_t result;
+    rm16 = this->GetRM16(cpu, mem);
+    r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    result = rm16^r16;
+    cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
+    cpu->UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
+    return;
+}
+
 /***
 PopM32::PopM32(string code_name):Instruction(code_name){
 
