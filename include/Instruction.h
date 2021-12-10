@@ -1426,3 +1426,9 @@ class Lahf:public Instruction{
         Lahf(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class MovsM8M8:public Instruction{
+    public: 
+        MovsM8M8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

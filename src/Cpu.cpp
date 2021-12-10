@@ -182,6 +182,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0xA1] = new MovEaxMoffs32("MovEaxMoffs32");
     this->instructions[0xA2] = new MovMoffs8Al("MovMoffs8Al");
     this->instructions[0xA3] = new MovMoffs32Eax("MovMoffs32Eax");
+    this->instructions[0xA4] = new MovsM8M8("MovsM8M8");
     //this->instructions[0xA5] = new MovM32M32("MovM32M32");
     //this->instructions[0xA6] = new CmpsM8M8("CmpsM8M8");
     this->instructions[0xA9] = new TestEaxImm32("TestEaxImm32");
