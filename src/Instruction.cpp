@@ -2714,13 +2714,23 @@ XchgR32Rm32::XchgR32Rm32(string code_name):Instruction(code_name){
 }
 
 void XchgR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    //fprintf(stderr, "task_a->flags = %02X\ntask_a->level = %02X\n", mem->Read8(0x00014FF8+4), mem->Read8(0x000015000));
-    uint32_t rm32;
-    uint32_t r32;
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
-    rm32 = this->GetRM32(cpu, mem);
-    cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, rm32);
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        uint32_t rm32;
+        uint32_t r32;
+        cpu->AddEip(1);
+        this->ParseModRM(cpu, mem);
+        rm32 = this->GetRM32(cpu, mem);
+        cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, rm32);
+        return;
+    }
+    uint32_t rm16;
+    uint32_t r16;
+    rm16 = this->GetRM16(cpu, mem);
+    r16  = cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    this->SetRM16(cpu, mem, r16);
+    cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, rm16);
 }
 
 JneRel32::JneRel32(string code_name):Instruction(code_name){
@@ -4900,6 +4910,7 @@ void XchgRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     r8  = cpu->GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     this->SetRM8(cpu, mem, r8);
     cpu->SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, rm8);
+    return;
 }
 
 RorRm8::RorRm8(string code_name):Instruction(code_name){
