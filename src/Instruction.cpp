@@ -2597,10 +2597,10 @@ CmpRm32Imm8::CmpRm32Imm8(string code_name):Instruction(code_name){
 }
 
 void CmpRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint64_t result;
-    uint32_t imm8;
-    uint32_t rm32;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        uint64_t result;
+        uint32_t imm8;
+        uint32_t rm32;
         imm8 = (int32_t)(int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess());
         cpu->AddEip(1);
         rm32  = this->GetRM32(cpu, mem);
@@ -2608,7 +2608,15 @@ void CmpRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForSub(result, rm32, imm8);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t imm8;
+    uint16_t rm16;
+    uint32_t result;
+    imm8 = (int16_t)(int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    rm16  = this->GetRM16(cpu, mem);
+    result = (uint32_t)rm16 - (uint32_t)imm8;
+    cpu->UpdateEflagsForSub16(result, rm16, imm8);
+    return;
 }
 
 AndRm32Imm32::AndRm32Imm32(string code_name):Instruction(code_name){
