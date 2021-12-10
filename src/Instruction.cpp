@@ -1453,37 +1453,33 @@ void IntImm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         }else{//dpl>cpl
             this->Error("Not implemented: dest_code_segment_dpl>cpl at %s::Run", this->code_name.c_str());
         }
-        /***
-        if(!outer_privilege_level){
-            this->Push32(cpu, mem, cpu->GetEflgs());
-            this->Push32(cpu, mem, cpu->GetR16(CS));
-            this->Push32(cpu, mem, cpu->GetEip());
-            cpu->SetEip(offset_addr);
-            cpu->SetR16(CS, idt_gate->selector);
-            cpu->ClearFlag(IF);//割り込みゲートではClearする
-            return;
-        }else{
-            ss = cpu->GetR16(SS);
-            eflags = cpu->GetEflgs();
-            esp = cpu->GetR32(ESP);
-            cs  = cpu->GetR16(CS);
-            eip = cpu->GetEip();
-            tss = cpu->GetCurrentTss();
-            cpu->SetR16(SS, tss->ss0);
-            cpu->SetR32(ESP, tss->esp0);
-            this->Push32(cpu, mem, ss);
-            this->Push32(cpu, mem, esp);
-            this->Push32(cpu, mem, eflags);
-            this->Push32(cpu, mem, cs);
-            this->Push32(cpu, mem, eip);
-            cpu->SetEip(offset_addr);
-            cpu->SetR16(CS, idt_gate->selector);
-            cpu->ClearFlag(IF);//割り込みゲートではClearする
-        }
-        ***/
         return;
     }
-    cpu->CallFunctionOnRealMode(mem, selector);
+    if(selector<0x20){
+        cpu->CallFunctionOnRealMode(mem, selector);
+    }else{
+        //PUSH EFLAGSの下位16bit
+        //IFをクリア
+        //TFをクリア
+        //ACをクリア
+        //PUSH CS
+        //PUSH IP
+        //割り込みテーブルからCSとIPを取り出す
+        //割り込みテーブルでは、IP、CSの順に並んでいる。
+        uint16_t eflags = cpu->GetEflgs();
+        uint16_t ip     = cpu->GetEip();
+        uint16_t new_ip, new_cs;
+        this->Push16(cpu, mem, eflags);
+        cpu->ClearFlag(IF);
+        cpu->ClearFlag(TF);
+        cpu->ClearFlag(AC);
+        this->Push16(cpu, mem, cpu->GetR16(CS));
+        this->Push16(cpu, mem, ip);
+        new_ip = mem->Read16((selector<<2));
+        new_cs = mem->Read16((selector<<2)+2);
+        cpu->SetR16(CS, new_cs);
+        cpu->SetEip(new_ip);
+    }
     return;
 }
 
@@ -3289,14 +3285,25 @@ Iretd::Iretd(string code_name):Instruction(code_name){
 
 void Iretd::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
-    bool outer_privilege_level;
-    uint16_t cs, ss;
-    uint32_t eip, eflags, esp;
-    uint8_t cpl, rpl;
     if(!cpu->IsProtectedMode()){
-        this->Error("Not implemented: real mode at %s::Run", this->code_name.c_str());
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+            this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        }else{
+            uint16_t cs, ip, eflags;
+            ip = this->Pop16(cpu, mem);
+            cs = this->Pop16(cpu, mem);
+            eflags = this->Pop16(cpu, mem);
+            cpu->SetEip(ip);
+            cpu->SetR16(CS, cs);
+            cpu->SetEflgs(eflags);
+        }
+        return;
     }
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        bool outer_privilege_level;
+        uint16_t cs, ss;
+        uint32_t eip, eflags, esp;
+        uint8_t cpl, rpl;
         eip    = this->Pop32(cpu, mem);
         cs     = this->Pop32(cpu, mem);
         eflags = this->Pop32(cpu, mem);
