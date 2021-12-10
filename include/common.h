@@ -29,3 +29,6 @@ struct _Pixel{
 typedef struct _Pixel Pixel;
 
 #define SECTOR_SIZE 512
+#define BYTE 8
+#define WORD 16
+#define DWORD 32

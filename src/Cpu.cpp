@@ -11,7 +11,6 @@
 using namespace std;
 
 #define SIGN_FLG 0x80000000//いずれ消す予定
-#define BYTE 8
 
 #define EFLAGS_INIT_VALUE 0x00000002
 #define EIP_INIT_VALUE    0x0000FFF0

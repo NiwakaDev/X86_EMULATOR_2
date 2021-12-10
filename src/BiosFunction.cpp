@@ -21,10 +21,6 @@ void MemoryFunction::Run(Cpu *cpu, Memory* mem){
     cpu->SetR16(EAX, 640);
 }
 
-#define TEXT_MODE_WIDTH 640
-#define TEXT_MODE_HEIGHT 200
-extern uint8_t hankaku[4096];
-
 VideoFunction::VideoFunction(Vga* vga):BiosFunction(){
     this->function_name = "VideoFunction";
     this->vga = vga;
@@ -41,7 +37,6 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
     uint8_t ascii_code;
     mode = cpu->GetR16(EAX);
     uint8_t ah = cpu->GetR8H(EAX);
-    
     if(ah!=0x4F){
         //VGAサービス
         static int row = 0;
@@ -63,20 +58,16 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 this->vga->SetInfo(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_VRAM_START_ADDR);
                 return;
             case 0x0E:
+                if(stop)return;
                 ascii_code = cpu->GetR8L(EAX);
-                if(isascii(ascii_code)){
-                    fprintf(stderr, "%c", ascii_code);
-                }
-                return;
-                fprintf(stderr, "%c", ascii_code);
-                return;
                 this->vga->SetText(ascii_code, col, row);
                 col++;
                 if(col==80){
                     row++;
                     col = 0;
                 }
-                if(cnt==25){
+                cnt++;
+                if(cnt==1000){
                     stop = true;
                 }
                 return;
@@ -225,16 +216,16 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
     uint16_t decoded_code;
     switch (scan_code){
         case KEY_CODE_ENTER:
-            decoded_code = ((KEY_CODE_ENTER)<<8)|0x0d;
+            decoded_code = ((KEY_CODE_ENTER)<<BYTE)|0x0d;
             break;
         case KEY_CODE_D:
-            decoded_code = ((KEY_CODE_D)<<8)|0x64;
+            decoded_code = ((KEY_CODE_D)<<BYTE)|'d';
             break;
         case KEY_CODE_I:
-            decoded_code = ((KEY_CODE_I)<<8)|0x69;
+            decoded_code = ((KEY_CODE_I)<<BYTE)|'i';
             break;
         case KEY_CODE_R:
-            decoded_code = ((KEY_CODE_R)<<8)|0x72;
+            decoded_code = ((KEY_CODE_R)<<BYTE)|'r';
             break;
         default:
             this->Error("Not implemented: scan_code=%04X at KeyFunction::Decode\n", scan_code);
