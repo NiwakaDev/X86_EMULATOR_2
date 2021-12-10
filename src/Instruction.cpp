@@ -4511,9 +4511,9 @@ void ShrRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForShr(rm32);
         return;
     }
-    uint32_t rm16;
-    uint32_t temp_rm16;
-    rm16 = this->GetRM32(cpu, mem);
+    uint16_t rm16;
+    uint16_t temp_rm16;
+    rm16 = this->GetRM16(cpu, mem);
     temp_rm16 = rm16;
     if(rm16&1){
         cpu->SetFlag(CF);
