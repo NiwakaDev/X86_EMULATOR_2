@@ -452,6 +452,9 @@ void Cpu::InitSelector(){
 
 void Cpu::AddEip(uint32_t data){
     this->eip += data;
+    if(!this->IsProtectedMode()){
+        this->eip = this->eip & 0x0000FFFF;
+    }
 }
 
 void Cpu::AddIp(uint16_t data){
@@ -459,6 +462,9 @@ void Cpu::AddIp(uint16_t data){
 }
 
 void Cpu::SetEip(uint32_t addr){
+    if(!this->IsProtectedMode()){
+        this->eip = this->eip & 0x0000FFFF;
+    }
     this->eip = addr;
 }
 
