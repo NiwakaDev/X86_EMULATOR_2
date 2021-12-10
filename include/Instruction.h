@@ -1547,3 +1547,9 @@ class Stc:public Instruction{
         Stc(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class Std:public Instruction{
+    public: 
+        Std(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

@@ -2551,7 +2551,13 @@ void IncRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForInc(rm32+1, rm32, 1);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    uint16_t result;
+    uint16_t d = 1;
+    rm16 = this->GetRM16(cpu, mem);
+    result = rm16+d;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForInc16(result, rm16, d);
     return;
 }
 
@@ -3208,7 +3214,13 @@ void DecRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForDec(result, rm32, (uint32_t)0xFFFFFFFF);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    uint16_t result;
+    uint16_t d = 0xFFFF;
+    rm16 = this->GetRM16(cpu, mem);
+    result = rm16+d;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForDec(result, rm16, d);
     return;
 }
 
@@ -5118,13 +5130,14 @@ IncRm8::IncRm8(string code_name):Instruction(code_name){
 }
 
 void IncRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint8_t r8;
+    uint8_t rm8;
     uint8_t result;
     uint8_t d = 0x01;
-    r8 = this->GetRM8(cpu, mem);
-    result = r8 + d;
+    rm8 = this->GetRM8(cpu, mem);
+    result = rm8 + d;
     this->SetRM8(cpu, mem, result);
-    cpu->UpdateEflagsForInc8(result, r8, d);
+    cpu->UpdateEflagsForInc8(result, rm8, d);
+    return;
 }
 
 OrRm8R8::OrRm8R8(string code_name):Instruction(code_name){
@@ -6330,4 +6343,14 @@ Stc::Stc(string code_name):Instruction(code_name){
 void Stc::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     cpu->SetFlag(CF);
+}
+
+Std::Std(string code_name):Instruction(code_name){
+
+}
+
+void Std::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    cpu->SetFlag(DF);
+    return;
 }

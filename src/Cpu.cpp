@@ -232,6 +232,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0xFA] = new Cli("Cli");
     this->instructions[0xFB] = new Sti("Sti");
     this->instructions[0xFC] = new Cld("Cld");
+    this->instructions[0xFD] = new Std("Std");
     this->instructions[0xFE] = new CodeFE("CodeFE");
     this->instructions[0xFF] = new CodeFF("CodeFF");
     for(int i=0; i<GENERAL_PURPOSE_REGISTER32_COUNT; i++){
