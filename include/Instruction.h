@@ -1330,6 +1330,12 @@ class OrR32Rm32:public Instruction{
         OrR32Rm32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class OrAlImm8:public Instruction{
+    public: 
+        OrAlImm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

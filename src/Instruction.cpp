@@ -3013,7 +3013,7 @@ void PushCs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         this->Push32(cpu, mem, cs);
         return;
     }
-    uint16_t cs = 0;
+    uint16_t cs;
     cpu->AddEip(1);
     cs = cpu->GetR16(CS);
     this->Push16(cpu, mem, cs);
@@ -3391,7 +3391,12 @@ void OrEaxImm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t result;
+    result = cpu->GetR16(EAX) | mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    cpu->SetR16(EAX, result);
+    cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    return;
 }
 
 AddRm32Imm32::AddRm32Imm32(string code_name):Instruction(code_name){
@@ -5163,6 +5168,23 @@ void OrR32Rm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     result = rm16 | r16;
     cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
     cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    return;
+}
+
+OrAlImm8::OrAlImm8(string code_name):Instruction(code_name){
+
+}
+
+void OrAlImm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    uint8_t al, imm8;
+    uint8_t result;
+    al = cpu->GetR8L(EAX);
+    imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    result = al|imm8;
+    cpu->SetR8L(EAX, result);
+    cpu->UpdateEflagsForAnd(result);
     return;
 }
 /***
