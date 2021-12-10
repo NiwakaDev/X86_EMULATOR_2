@@ -1972,10 +1972,10 @@ SubRm32Imm32::SubRm32Imm32(string code_name):Instruction(code_name){
 
 //フラグレジスタの更新が未実装
 void SubRm32Imm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    uint64_t result;
-    uint32_t rm32;
-    uint32_t imm32;
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        uint64_t result;
+        uint32_t rm32;
+        uint32_t imm32;
         rm32 = this->GetRM32(cpu, mem);
         imm32 = mem->Read32(cpu->GetLinearAddrForCodeAccess());
         cpu->AddEip(4);
@@ -1984,7 +1984,15 @@ void SubRm32Imm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForSub(result, rm32, imm32);
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    uint32_t result;
+    uint16_t rm16;
+    uint16_t imm16;
+    rm16 = this->GetRM16(cpu, mem);
+    imm16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    result = (uint32_t)rm16 - (uint32_t)imm16;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForSub16(result, rm16, imm16);
     return;
 }
 
