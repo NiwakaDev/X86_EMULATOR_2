@@ -5208,9 +5208,9 @@ CodeF3::CodeF3(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     this->instructions[0xA4] = new RepMovsM8M8("RepMovsM8M8");
-    //this->instructions[0xA5] = new RepMovsM32M32("RepMovsM32M32");
+    this->instructions[0xA5] = new RepMovsM32M32("RepMovsM32M32");
     this->instructions[0xA6] = new RepeCmpsM8M8("RepeCmpsM8M8");
-    //this->instructions[0xAA] = new RepStosM8("RepStosM8");
+    this->instructions[0xAA] = new RepStosM8("RepStosM8");
     //this->instructions[0xAB] = new RepStosM32("RepStosM32");
 }
 
@@ -6137,6 +6137,75 @@ void RepMovsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
             cpu->SetR16(ESI, si+d);
             cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
         }
+    }
+    return;
+}
+
+RepMovsM32M32::RepMovsM32M32(string code_name):Instruction(code_name){
+
+}
+
+void RepMovsM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }
+    cpu->AddEip(1);
+    if(cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){//32bit op_size
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        return;
+    }else{//16bit op_size
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+            this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+        }
+        uint16_t cx = cpu->GetR16(ECX);
+        for(uint16_t i = 0; i<cx; i++){
+            uint32_t ds, es;
+            uint16_t si, di;
+            uint16_t d;
+            ds = cpu->GetR16(DS)*16;
+            si = cpu->GetR16(ESI);
+            es = cpu->GetR16(ES)*16;
+            di = cpu->GetR16(EDI);
+            mem->Write(es+di, mem->Read16(ds+si));
+            d = cpu->IsFlag(DF)? -2:2;
+            cpu->SetR16(EDI, di+d);
+            cpu->SetR16(ESI, si+d);
+            cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
+        }
+    }
+    return;
+}
+
+RepStosM8::RepStosM8(string code_name):Instruction(code_name){
+
+}
+
+void RepStosM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }
+    cpu->AddEip(1);
+    if(cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+        this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+    }
+    uint16_t cx = cpu->GetR16(ECX);
+    uint8_t al = cpu->GetR8L(EAX);
+    for(uint16_t i = 0; i<cx; i++){
+        uint32_t es;
+        uint16_t di;
+        uint16_t d;
+        es = cpu->GetR16(ES)*16;
+        di = cpu->GetR16(EDI);
+        mem->Write(es+di, al);
+        d = cpu->IsFlag(DF)? -1:1;
+        cpu->SetR16(EDI, di+d);
+        cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
     }
     return;
 }

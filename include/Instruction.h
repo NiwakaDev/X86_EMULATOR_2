@@ -1511,3 +1511,15 @@ class RepMovsM8M8:public Instruction{
         RepMovsM8M8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class RepMovsM32M32:public Instruction{
+    public: 
+        RepMovsM32M32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
+class RepStosM8:public Instruction{
+    public: 
+        RepStosM8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
