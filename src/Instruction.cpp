@@ -4171,10 +4171,26 @@ CallPtr1632::CallPtr1632(string code_name):Instruction(code_name){
 }
 
 void CallPtr1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(!cpu->IsProtectedMode()){//リアルモード
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+            this->Error("Not implemented: op_size=32bit on real_mode at %s::Run", this->code_name.c_str());
+        }
+        uint16_t offset;
+        uint16_t selector;
+        offset = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+        cpu->AddEip(2);
+        selector = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+        cpu->AddEip(2);
+        this->Push16(cpu, mem, cpu->GetR16(CS));
+        this->Push16(cpu, mem, (uint16_t)cpu->GetEip());
+        cpu->SetR16(CS, selector);
+        cpu->SetEip(offset);
+        return;
+    }
     GdtGate* gdt_gate;
     uint32_t imm32;
     uint16_t selector;
-    cpu->AddEip(1);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
         imm32    = mem->Read32(cpu->GetLinearAddrForCodeAccess());
         selector = mem->Read16(cpu->GetLinearAddrForCodeAccess()+4);
