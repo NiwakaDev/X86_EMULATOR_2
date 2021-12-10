@@ -4764,7 +4764,20 @@ void SarRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForShr(rm32);//shr命令と同じ
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    rm16 = this->GetRM16(cpu, mem);
+    bool flg = (rm16&SIGN_FLG2)? true:false;
+    cpu->ClearFlag(OF);
+    if(rm16&0x01){
+        cpu->SetFlag(CF);
+    }else{
+        cpu->ClearFlag(CF);
+    }
+    rm16 = rm16 >> 1;
+    rm16 = rm16 | ((flg)?SIGN_FLG2:0);
+    this->SetRM16(cpu, mem, rm16);
+    cpu->UpdateEflagsForShr(rm16);//shr命令と同じ
+    return;
 }
 
 SetgeRm8::SetgeRm8(string code_name):Instruction(code_name){
