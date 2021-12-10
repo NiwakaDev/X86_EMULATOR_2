@@ -167,7 +167,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0x8C] = new MovRm16Sreg("MovRm16Sreg");
     this->instructions[0x8D] = new LeaR32M("LeaR32M");
     this->instructions[0x8E] = new MovSregRm16("MovSregRm16");
-    //this->instructions[0x8F] = new PopM32("PopM32");
+    this->instructions[0x8F] = new PopM32("PopM32");
     this->instructions[0x90] = new Nop("Nop");
     for(int i=1; i<GENERAL_PURPOSE_REGISTER32_COUNT; i++){//i=1から始める理由は0x90にはNopを割り当てているから。
         this->instructions[0x90+i] = new XchgEaxR32("XchgEaxR32");

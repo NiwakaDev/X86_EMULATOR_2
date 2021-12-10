@@ -2388,6 +2388,7 @@ LeaR32M::LeaR32M(string code_name):Instruction(code_name){
 
 }
 
+//この機械語命令はオペランドサイズとアドレスサイズを考慮する必要があります。
 void LeaR32M::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
@@ -3010,7 +3011,12 @@ void Cdq::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         }
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    bool sign_flg = (cpu->GetR16(EAX)&SIGN_FLG2)?true:false;
+    if(sign_flg){
+        cpu->SetR16(EDX, 0xFFFF);
+    }else{
+        cpu->SetR16(EDX, 0x0000);
+    }
     return;
 }
 
@@ -5559,7 +5565,7 @@ void SbbRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->UpdateEflagsForSub16(result, rm16, (uint16_t)imm8+(uint16_t)cf);
     return;
 }
-/***
+
 PopM32::PopM32(string code_name):Instruction(code_name){
 
 }
@@ -5568,12 +5574,10 @@ void PopM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
-        uint32_t effective_addr;
-        effective_addr        = this->GetEffectiveAddr(cpu, mem);
-        this->Error("32bits Mode is not implemented at %s::Run", this->code_name.c_str());
-        return;
+        this->Error("Not implemented: op_size=16bit at %s::Run", this->code_name.c_str());
     }
-    this->Error("16bits Mode is not implemented at %s::Run", this->code_name.c_str());
+    uint16_t effective_addr;
+    effective_addr        = this->GetEffectiveAddr(cpu, mem);
+    mem->Write(cpu->GetLinearAddrForDataAccess(effective_addr), this->Pop16(cpu, mem));
     return;
 }
-***/

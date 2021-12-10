@@ -1414,10 +1414,9 @@ class SbbRm32Imm8:public Instruction{
         SbbRm32Imm8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
-/***
+
 class PopM32:public Instruction{
     public: 
         PopM32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
-***/
