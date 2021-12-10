@@ -1018,9 +1018,9 @@ Code83::Code83(string code_name):Instruction(code_name){
     for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
+    this->instructions[1] = new OrRm32Imm8("OrRm32Imm8");
     this->instructions[0] = new AddRm32Imm8("AddRm32Imm8");
     this->instructions[2] = new AdcRm32Imm8("AdcRm32Imm8");
-    this->instructions[1] = new OrRm32Imm8("OrRm32Imm8");
     this->instructions[4] = new AndRm32Imm8("AndRm32Imm8");
     this->instructions[5] = new SubRm32Imm8("SubRm32Imm8");
     this->instructions[6] = new XorRm32Imm8("XorRm32Imm8");
@@ -1236,13 +1236,14 @@ void AddRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAdd(result, rm32, imm8_32bits);
         return;
     }
-    uint16_t imm8_16bits;
+    uint16_t imm8;
     uint16_t rm16;
     uint32_t result;
     rm16 = this->GetRM16(cpu, mem);
-    imm8_16bits = (int16_t)((int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess()));
-    this->SetRM16(cpu, mem, rm16+imm8_16bits);
-    cpu->UpdateEflagsForAdd(result, rm16, imm8_16bits);
+    imm8 = (int16_t)((int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess()));
+    result = (uint32_t)rm16+(uint32_t)imm8;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAdd(result, rm16, imm8);
     cpu->AddEip(1);
     return;
 }
@@ -1865,7 +1866,15 @@ void OrRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    uint16_t imm8;
+    uint16_t result;
+    rm16 = this->GetRM16(cpu, mem);
+    imm8 = (int16_t)((int8_t)mem->Read8(cpu->GetLinearAddrForCodeAccess()));
+    cpu->AddEip(1);
+    result = rm16|imm8;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
     return;
 }
 
