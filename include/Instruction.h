@@ -1172,9 +1172,9 @@ class SetgeRm8:public Instruction{
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
-class Scasb:public Instruction{
+class ScasM8:public Instruction{
     public: 
-        Scasb(std::string code_name);
+        ScasM8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
 
@@ -1436,5 +1436,23 @@ class MovsM8M8:public Instruction{
 class TestAlImm8:public Instruction{
     public: 
         TestAlImm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
+class StosM8:public Instruction{
+    public: 
+        StosM8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
+class ScasD:public Instruction{
+    public: 
+        ScasD(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
+class RclRm32Imm8:public Instruction{
+    public: 
+        RclRm32Imm8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };

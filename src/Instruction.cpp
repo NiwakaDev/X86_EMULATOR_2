@@ -4,6 +4,9 @@
 #include "IoPort.h"
 using namespace std;
 using namespace chrono;
+#define MSB_8 0x80
+#define MSB_16 0x8000
+#define LSB_8 0x01
 
 Instruction::Instruction(string code_name){
     this->code_name = code_name;
@@ -961,6 +964,7 @@ CodeC1::CodeC1(string code_name):Instruction(code_name){
     for(int i=0; i<256; i++){
         this->instructions[i] = NULL;
     }
+    this->instructions[2] = new RclRm32Imm8("RclRm32Imm8");
     this->instructions[4] = new SalRm32Imm8("SalRm32Imm8");
     this->instructions[5] = new ShrRm32Imm8("ShrRm32Imm8");
     this->instructions[7] = new SarRm32Imm8("SarRm32Imm8");
@@ -4732,39 +4736,6 @@ void SetgeRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     return;
 }
 
-Scasb::Scasb(string code_name):Instruction(code_name){
-
-}
-
-void Scasb::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    //エラーにする理由は8086実装をここに移植するため、今はここで止めておく。
-    this->Error("Not implemented: %s::Run", this->code_name.c_str());
-    uint32_t ecx = 1;
-    cpu->AddEip(1);
-    if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//アドレスで場合分け
-        uint32_t base_es;
-        uint32_t edi;
-        uint32_t base_es_edi;
-        uint8_t al, m;
-        uint32_t result;
-        uint32_t d;
-        base_es = cpu->GetBaseAddr(ES);
-        for(int i=0; i<ecx; i++){
-            edi     = cpu->GetR32(EDI);
-            base_es_edi = base_es+edi;
-            m      = mem->Read8(base_es_edi);
-            al = cpu->GetR8L(EAX);
-            result = (uint32_t)al - (uint32_t)m;
-            cpu->UpdateEflagsForSub8(result, al, m);
-            d = cpu->IsFlag(DF)? 0xFFFFFFFF:0x00000001;
-            cpu->SetR32(EDI, edi+d);
-        }
-        return;
-    }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
-    return;
-}
-
 CallRm32::CallRm32(string code_name):Instruction(code_name){
 
 }
@@ -4783,6 +4754,9 @@ MovM32M32::MovM32M32(string code_name):Instruction(code_name){
 }
 
 void MovM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }
     this->Error("Not implemented: %s::Run", this->code_name.c_str());
     cpu->AddEip(1);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
@@ -4871,6 +4845,9 @@ LodsM8::LodsM8(string code_name):Instruction(code_name){
 }
 
 void LodsM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }
     cpu->AddEip(1);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
         this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
@@ -4883,6 +4860,7 @@ void LodsM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->SetR8L(EAX, mem->Read8(ds+si));
     d = cpu->IsFlag(DF)? -1:1;
     cpu->SetR16(ESI, si+d);
+    return;
 }
 
 LesR32M1632::LesR32M1632(string code_name):Instruction(code_name){
@@ -5028,24 +5006,25 @@ StosM32::StosM32(string code_name):Instruction(code_name){
 }
 
 void StosM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
-    this->Error("Not implemented: %s::Run", this->code_name.c_str());
     cpu->AddEip(1);
-    if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
-        this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
-    }else{
-        uint16_t cx = 1;
-        for(uint16_t i = 0; i<cx; i++){
-            uint32_t es;
-            uint16_t di;
-            uint16_t d;
-            es = cpu->GetR16(ES)*16;
-            di = cpu->GetR16(EDI);
-            mem->Write(es+di, cpu->GetR16(EAX));
-            d = cpu->IsFlag(DF)? -2:2;
-            cpu->SetR16(EDI, di+d);
-        }
+    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
     }
-
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bits at %s::Run", this->code_name.c_str());
+    }else{
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+            this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
+        }
+        uint32_t es;
+        uint16_t di;
+        uint16_t d;
+        es = cpu->GetR16(ES)*16;
+        di = cpu->GetR16(EDI);
+        mem->Write(es+di, cpu->GetR16(EAX));
+        d = cpu->IsFlag(DF)? -2:2;
+        cpu->SetR16(EDI, di+d);
+    }
     return;
 }
 
@@ -5054,27 +5033,27 @@ LodsM32::LodsM32(string code_name):Instruction(code_name){
 }
 
 void LodsM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }
     cpu->AddEip(1);
     if(cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
+        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
-    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
-    }else{
-        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){//32bitオペランドサイズ
+        this->Error("Not implemented: op_size=32bits at %s::Run", this->code_name.c_str());
+    }else{//16bitオペランドサイズ
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
             this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
         }else{
-            uint16_t cx = 1;
-            for(uint16_t i = 0; i<cx; i++){
-                uint32_t ds;
-                uint16_t si;
-                uint16_t d;
-                ds = cpu->GetR16(DS)*16;
-                si = cpu->GetR16(ESI);
-                cpu->SetR16(EAX, mem->Read16(ds+si));
-                d = cpu->IsFlag(DF)? -2:2;
-                cpu->SetR16(ESI, si+d);
-            }
+            uint32_t ds;
+            uint16_t si;
+            uint16_t d;
+            ds = cpu->GetR16(DS)*16;
+            si = cpu->GetR16(ESI);
+            cpu->SetR16(EAX, mem->Read16(ds+si));
+            d = cpu->IsFlag(DF)? -2:2;
+            cpu->SetR16(ESI, si+d);
         }
     }
     return;
@@ -5633,6 +5612,9 @@ MovsM8M8::MovsM8M8(string code_name):Instruction(code_name){
 }
 
 void MovsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }
     cpu->AddEip(1);
     if(cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
@@ -5640,6 +5622,9 @@ void MovsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     //16bit addr_size
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
         this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
     }
     uint32_t ds, es;
     uint16_t si, di;
@@ -5670,4 +5655,140 @@ void TestAlImm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     result = al & imm8;
     cpu->UpdateEflagsForAnd(result);
     return;
+}
+
+StosM8::StosM8(string code_name):Instruction(code_name){
+
+}
+
+void StosM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bits at %s::Run", this->code_name.c_str());
+    }else{
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+            this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
+        }
+        uint32_t es;
+        uint16_t di;
+        uint16_t d;
+        es = cpu->GetR16(ES)*16;
+        di = cpu->GetR16(EDI);
+        mem->Write(es+di, cpu->GetR8L(EAX));
+        d = cpu->IsFlag(DF)? -1:1;
+        cpu->SetR16(EDI, di+d);
+    }
+    return;
+}
+
+ScasM8::ScasM8(string code_name):Instruction(code_name){
+
+}
+
+void ScasM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }
+    cpu->AddEip(1);
+    if(cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+        this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+    }
+    uint32_t base_es;
+    uint32_t di;
+    uint32_t base_es_di;
+    uint8_t al, m8;
+    uint32_t result;
+    uint16_t d;
+    base_es = cpu->GetR16(ES)*16;
+    di     = cpu->GetR16(EDI);
+    base_es_di = base_es+di;
+    m8      = mem->Read8(base_es_di);
+    al = cpu->GetR8L(EAX);
+    result = (uint32_t)al - (uint32_t)m8;
+    cpu->UpdateEflagsForSub8(result, al, m8);
+    d = cpu->IsFlag(DF)? -1:1;
+    cpu->SetR16(EDI, di+d);
+    return;
+}
+
+ScasD::ScasD(string code_name):Instruction(code_name){
+
+}
+
+void ScasD::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }
+    cpu->AddEip(1);
+    if(cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){//32bitオペランドサイズ
+        this->Error("Not implemented: op_size=32bits at %s::Run", this->code_name.c_str());
+    }else{//16bitオペランドサイズ
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
+            this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
+        }else{
+            uint32_t base_es;
+            uint32_t di;
+            uint32_t base_es_di;
+            uint16_t ax, m16;
+            uint32_t result;
+            uint16_t d;
+            base_es = cpu->GetR16(ES)*16;
+            di     = cpu->GetR16(EDI);
+            base_es_di = base_es+di;
+            m16      = mem->Read16(base_es_di);
+            ax = cpu->GetR16(EAX);
+            result = (uint32_t)ax - (uint32_t)m16;
+            cpu->UpdateEflagsForSub16(result, ax, m16);
+            d = cpu->IsFlag(DF)? -2:2;
+            cpu->SetR16(EDI, di+d);
+        }
+    }
+    return;
+}
+
+//左回転
+RclRm32Imm8::RclRm32Imm8(string code_name):Instruction(code_name){
+
+}
+
+void RclRm32Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }
+    uint8_t imm8 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    uint16_t rm16;
+    bool temp_cf;
+    bool result_msb;
+    rm16    = this->GetRM16(cpu, mem);
+    for(uint8_t i=0; i<imm8; i++){
+        temp_cf = (rm16&MSB_16)?true:false;
+        rm16    = (rm16<<1) + (cpu->IsFlag(CF)?1:0);
+        if(temp_cf){
+            cpu->SetFlag(CF);
+        }else{
+            cpu->ClearFlag(CF);
+        }
+    }
+    this->SetRM16(cpu, mem , rm16);
+    if(imm8==1){
+        result_msb = (rm16&MSB_16)?true:false;
+        if(result_msb^cpu->IsFlag(CF)){
+            cpu->SetFlag(OF);
+        }else{
+            cpu->ClearFlag(OF);
+        }
+    }
 }
