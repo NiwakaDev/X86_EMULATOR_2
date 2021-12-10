@@ -2392,13 +2392,20 @@ void LeaR32M::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        if((!cpu->Is32bitsMode()) ^ cpu->IsPrefixAddrSize()){//16bit addr_size
+            this->Error("Not implemented: addr_size=16 at %s::Run", this->code_name.c_str());
+        }
         uint32_t effective_addr = this->GetEffectiveAddr(cpu, mem);
         cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, effective_addr);
         return;
     }else{
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){//32bit addr_size
+            this->Error("Not implemented: addr_size=32 at %s::Run", this->code_name.c_str());
+        }
         uint16_t effective_addr = this->GetEffectiveAddr(cpu, mem);
         cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, effective_addr);
     }
+    return;
 }
 
 PopFd::PopFd(string code_name):Instruction(code_name){
