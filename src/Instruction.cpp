@@ -2422,7 +2422,10 @@ void PopFd::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         cpu->SetEflgs(eflgs);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint32_t eflgs;
+    eflgs = this->Pop16(cpu, mem);
+    cpu->SetEflgs((cpu->GetEflgs()&0xFFFF0000)|eflgs);
+    return;
 }
 
 Leave::Leave(string code_name):Instruction(code_name){
