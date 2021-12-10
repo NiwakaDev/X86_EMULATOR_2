@@ -5825,3 +5825,25 @@ void RetImm16::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     }
     return;
 }
+
+
+LdsR32M1632::LdsR32M1632(string code_name):Instruction(code_name){
+
+}
+
+void LdsR32M1632::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    this->ParseModRM(cpu, mem);
+    if(cpu->IsProtectedMode()){
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }else{
+        if(cpu->Is32bitsMode()^cpu->IsPrefixOpSize()){
+            this->Error("Not implmented: op_size=32bit on read mode at %s::Run", this->code_name.c_str());
+        }
+        uint16_t effective_addr;
+        effective_addr = this->GetEffectiveAddr(cpu, mem);
+        cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr)));
+        //fprintf(stderr, "ES=%04X\n", mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr+2)));
+        cpu->SetR16(DS, mem->Read16(cpu->GetLinearAddrForDataAccess(effective_addr+2)));
+    }
+}

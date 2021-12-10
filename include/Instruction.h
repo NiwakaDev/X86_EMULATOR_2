@@ -1463,3 +1463,9 @@ class RetImm16:public Instruction{
         RetImm16(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class LdsR32M1632:public Instruction{
+    public: 
+        LdsR32M1632(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
