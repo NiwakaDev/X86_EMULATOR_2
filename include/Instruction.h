@@ -1336,6 +1336,12 @@ class OrAlImm8:public Instruction{
         OrAlImm8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class PopSs:public Instruction{
+    public: 
+        PopSs(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
 /***
 class PopM32:public Instruction{
     public: 

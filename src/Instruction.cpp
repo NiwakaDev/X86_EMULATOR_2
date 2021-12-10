@@ -3542,6 +3542,7 @@ void AdcRm8R8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     result = (uint16_t)rm8+(uint16_t)r8+(uint16_t)cf;
     this->SetRM8(cpu, mem, result);
     cpu->UpdateEflagsForAdd((uint16_t)result, (uint8_t)rm8, (uint8_t)(r8+cf));
+    return;
 }
 
 Clc::Clc(string code_name):Instruction(code_name){
@@ -4128,7 +4129,7 @@ void PushSs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
         this->Push32(cpu, mem, ss);
         return;
     }
-    uint32_t ss = 0;
+    uint16_t ss;
     cpu->AddEip(1);
     ss = cpu->GetR16(SS);
     this->Push16(cpu, mem, ss);
@@ -5185,6 +5186,21 @@ void OrAlImm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     result = al|imm8;
     cpu->SetR8L(EAX, result);
     cpu->UpdateEflagsForAnd(result);
+    return;
+}
+
+PopSs::PopSs(string code_name):Instruction(code_name){
+
+}
+
+void PopSs::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }
+    uint16_t ss = 0;
+    ss = this->Pop16(cpu, mem);
+    cpu->SetR16(SS, ss);
     return;
 }
 /***
