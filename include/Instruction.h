@@ -1559,3 +1559,9 @@ class ShrRm8:public Instruction{
         ShrRm8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class AdcRm8Imm8:public Instruction{
+    public: 
+        AdcRm8Imm8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

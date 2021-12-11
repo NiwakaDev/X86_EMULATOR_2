@@ -888,6 +888,7 @@ Code80::Code80(string code_name):Instruction(code_name){
     }
     this->instructions[0] = new AddRm8Imm8("AddRm8Imm8");
     this->instructions[1] = new OrRm8Imm8("OrRm8Imm8");
+    this->instructions[2] = new AdcRm8Imm8("AdcRm8Imm8");
     this->instructions[4] = new AndRm8Imm8("AndRm8Imm8");
     this->instructions[5] = new SubRm8Imm8("SubRm8Imm8");
     this->instructions[6] = new XorRm8Imm8("XorRm8Imm8");
@@ -6394,4 +6395,22 @@ void ShrRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     }else{
         cpu->SetFlag(OF);
     }
+}
+
+AdcRm8Imm8::AdcRm8Imm8(string code_name):Instruction(code_name){
+
+}
+
+void AdcRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t rm8, imm8;
+    uint8_t cf;
+    uint16_t result;
+    rm8 = this->GetRM8(cpu, mem);
+    imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(1);
+    cf  = cpu->IsFlag(CF)?1:0;
+    result = (uint16_t)rm8+(uint16_t)imm8+(uint16_t)cf;
+    this->SetRM8(cpu, mem, result);
+    cpu->UpdateEflagsForAdd((uint16_t)result, (uint8_t)rm8, (uint8_t)(imm8+cf));
+    return;
 }
