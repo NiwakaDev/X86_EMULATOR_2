@@ -873,7 +873,7 @@ void CodeC6::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code C6 %02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: C6 %02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -896,7 +896,7 @@ void Code80::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code 80 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: 80 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -919,7 +919,7 @@ void Code81::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code 81 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: 81 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -963,7 +963,7 @@ void Code0F::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     op_code = mem->Read8(cpu->GetLinearAddrForCodeAccess());
     if(this->instructions[op_code]==NULL){
-        this->Error("code 0F %02X is not implemented %s::ExecuteSelf", op_code, this->code_name.c_str());
+        this->Error("Not implemented: 0F %02X at %s::Run", op_code, this->code_name.c_str());
     }
     this->instructions[op_code]->Run(cpu, mem, io_port);
     return;
@@ -983,7 +983,7 @@ void CodeC1::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code C1 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: C1 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -1001,7 +1001,7 @@ void Code0F00::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code 0F 00 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: 0F 00 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -1020,7 +1020,7 @@ void Code0F01::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code 0F 01 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: 0F 01 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -1069,7 +1069,7 @@ void CodeF7::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code F7 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: F7 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -1106,7 +1106,7 @@ void CodeD0::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code D0 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: D0 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -1124,7 +1124,7 @@ void CodeD2::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("Not implemented: D2 /%02X at %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: D2 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -1148,7 +1148,7 @@ void CodeFF::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code FF /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: FF /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -1189,7 +1189,7 @@ void CodeD3::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code D3 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: D3 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -1210,7 +1210,7 @@ void CodeF6::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     this->ParseModRM(cpu, mem);
     if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("code F6 /%02X is not implemented %s::ExecuteSelf", this->modrm.reg_index, this->code_name.c_str());
+            this->Error("Not implemented: F6 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
@@ -2381,7 +2381,7 @@ void ShrRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     imm8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
     cpu->AddEip(1);
     if(imm8==1){
-        this->Error("Not implemented: imm8==1 at %s::ExecuteSelf", this->code_name.c_str());
+        this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
     }
     for(unsigned int i=0; i<imm8; i++){
         if(rm8&0x01){
