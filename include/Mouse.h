@@ -12,7 +12,12 @@ class Mouse:public IoDevice{
         Mouse();
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);
-        bool IsEnable();
-        void SetEnable();
         int IsEmpty();
+        bool IsEnable(){
+            return this->enable_flg;
+        }
+
+        void SetEnable(){
+            this->enable_flg = true;
+        }
 };

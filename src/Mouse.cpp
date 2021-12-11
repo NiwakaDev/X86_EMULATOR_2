@@ -19,14 +19,6 @@ uint8_t Mouse::In8(uint16_t addr){
     }
 }
 
-bool Mouse::IsEnable(){
-    return this->enable_flg;
-}
-
-void Mouse::SetEnable(){
-    this->enable_flg = true;
-}
-
 int Mouse::IsEmpty(){
     return this->fifo->IsEmpty()? -1:0x0C;
 }

@@ -32,16 +32,22 @@ class Vga:public Object{
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);
         void SetInfo(int width, int height, int vram_start_add);
-        int GetWidth();
-        int GetHeight();
+        void SetText(uint8_t ascii_code, int w, int h);//テキストモードのための関数
+        int GetWidth(){
+            return this->width;
+        }
+        int GetHeight(){
+            return this->height;
+        }
         void LockVga(){
             this->vga_mtx.lock();
         }
         void UnlockVga(){
             this->vga_mtx.unlock();
         }
-        void SetText(uint8_t ascii_code, int w, int h);//テキストモードのための関数
-        VGA_MODE GetMode();
+        VGA_MODE GetMode(){
+            return this->vga_mode;
+        }
     private:
         std::mutex vga_mtx;
         uint8_t palette[256][4];

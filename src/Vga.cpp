@@ -33,14 +33,6 @@ void Vga::SetInfo(int width, int height, int vram_start_addr){
     this->vga_mtx.unlock();
 }
 
-int Vga::GetWidth(){
-    return this->width;
-}
-
-int Vga::GetHeight(){
-    return this->height;
-}
-
 void Vga::Out8(uint16_t addr, uint8_t data){
     static int internal_cnt = 0;
     static uint8_t now_palette_idx;
@@ -68,10 +60,6 @@ uint8_t Vga::In8(uint16_t addr){
             this->Error("Not implemented: io_port = %04X at Vga::In8", addr);
     }
     return 0;
-}
-
-VGA_MODE Vga::GetMode(){
-    return this->vga_mode;
 }
 
 void Vga::SetText(uint8_t ascii_code, int w, int h){
