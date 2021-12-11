@@ -1,5 +1,4 @@
 # X86_EMULATOR_2
-<<<<<<< HEAD
 
 ![demo](https://user-images.githubusercontent.com/61189782/144729289-fe16a09d-d5dd-4b7d-8583-3b19e9381b3d.gif)
 
@@ -7,14 +6,11 @@
 
 ![富士山](https://user-images.githubusercontent.com/61189782/143998297-d17dd067-b59a-4762-8bde-caebc8ca174b.png)
 
-=======
-
 ![demo](https://user-images.githubusercontent.com/61189782/144729289-fe16a09d-d5dd-4b7d-8583-3b19e9381b3d.gif)
 
 ![スクリーンショット 2021-12-01 8.35.34.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/373549/39b0e3eb-4877-4f96-b63b-30673e38221f.png)
 
 ![富士山](https://user-images.githubusercontent.com/61189782/143998297-d17dd067-b59a-4762-8bde-caebc8ca174b.png)
->>>>>>> main
 
 <h2>1.ビルド</h2>
 
@@ -31,9 +27,8 @@ make
 <h2>3.言語とライブラリ</h2>
 C++11, SDL2.0
 
-<<<<<<< HEAD
 <h2>4.マウス使用方法</h2>
-=======
+
 <h2>Language and Library</h2>
 C++11, SDL2.0
 
@@ -43,7 +38,6 @@ click mouse on x86 emulator
 
 <h3>Release mouse out of x86 emulator</h3>
 press lef-ctrl+left-alt+g
->>>>>>> main
 
 <h3>4-1.マウスをエミュレータに取り込みたい時</h3>
 エミュレータ上でマウスをクリック

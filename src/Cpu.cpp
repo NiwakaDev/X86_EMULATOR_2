@@ -10,8 +10,6 @@
 
 using namespace std;
 
-#define SIGN_FLG 0x80000000//いずれ消す予定
-
 #define EFLAGS_INIT_VALUE 0x00000002
 #define EIP_INIT_VALUE    0x0000FFF0
 #define CR0_INIT_VALUE    0x60000010
@@ -551,7 +549,7 @@ void Cpu::UpdateOF_Sub8(uint8_t result, uint8_t d1, uint8_t d2){
 }
 
 void Cpu::UpdateOF_Sub(uint32_t result, uint32_t d1, uint32_t d2){
-    this->eflags.flgs.OF = ((d1&SIGN_FLG)!=(d2&SIGN_FLG)) && ((result&SIGN_FLG)!=(d1&SIGN_FLG));
+    this->eflags.flgs.OF = ((d1&SIGN_FLG4)!=(d2&SIGN_FLG4)) && ((result&SIGN_FLG4)!=(d1&SIGN_FLG4));
 }
 
 void Cpu::UpdateZF(uint32_t result){
