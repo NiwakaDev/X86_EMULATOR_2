@@ -11,7 +11,9 @@ class Gui:public Object{
         ~Gui();
         void Display();
         void Update();
+        bool IsQuit();
     private:    
+        bool quit = false;
         int mouse_x, mouse_y;
         Vga* vga = NULL;
         Kbc* kbc = NULL;

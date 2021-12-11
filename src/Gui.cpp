@@ -6,7 +6,8 @@
 using namespace std;
 
 #define MOVE_SCALE 5
-#define DISPLAY_SCALE 2
+#define WIDTH_DISPLAY_SCALE  2
+#define HEIGHT_DISPLAY_SCALE 2
 
 #define MAX_WIDTH 1280
 #define MAX_HEIGHT 1024
@@ -24,7 +25,7 @@ Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
         cerr << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
     }
-    this->window = SDL_CreateWindow("EMULATOR", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, this->screen_width*DISPLAY_SCALE, this->screen_height*DISPLAY_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    this->window = SDL_CreateWindow("EMULATOR", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, this->screen_width*WIDTH_DISPLAY_SCALE, this->screen_height*HEIGHT_DISPLAY_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     if(this->window==NULL){
         cout << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
@@ -40,7 +41,8 @@ Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
 }
 
 Gui::~Gui(){
-    //SDL_DestroyRenderer(this->renderer);
+    SDL_DestroyTexture(this->texture);
+    SDL_DestroyRenderer(this->renderer);
     SDL_DestroyWindow(this->window);
     SDL_Quit();
 }
@@ -347,18 +349,21 @@ void Gui::HandleMouseButton(SDL_Event *e){
     this->mouse->Push(0);
 }
 
+bool Gui::IsQuit(){
+    return this->quit;
+}
+
 //この関数はVgaクラスのvga_mutexをロックします。
 void Gui::Display(){
     SDL_Event e;
-    bool quit = false;
     unsigned int start;
     unsigned int end;
     //SDL_WarpMouseInWindow(this->window, guest_x, guest_y);
-    while (!quit){
+    while (!this->quit){
         start = SDL_GetTicks();
         while (SDL_PollEvent(&e)){
             if (e.type == SDL_QUIT){
-                quit = true;
+                this->quit = true;
             }
             if(e.type==SDL_KEYDOWN){
                 this->HandleKeyDown(&e);
@@ -391,17 +396,19 @@ void Gui::Display(){
             this->screen_width  = this->vga->GetWidth();
             this->Resize();
         }
-        for(int y=0; y<this->screen_height; y++){
-            for(int x=0; x<this->screen_width; x++){
-                this->image[x+y*this->screen_width] = *(this->vga->GetPixel(x, y));
+        //vramの領域が変更されているかどうかで描画するかどうか決定する。
+        //if(memcmp(this->vram, )!=0)
+            for(int y=0; y<this->screen_height; y++){
+                for(int x=0; x<this->screen_width; x++){
+                    this->image[x+y*this->screen_width] = *(this->vga->GetPixel(x, y));
+                }
             }
-        }
+            this->Update();
         this->vga->UnlockVga();
         end = SDL_GetTicks();
         end = end - start;
         if(16>end){
             SDL_Delay(16-end);
         }   
-        this->Update();
     }
 }

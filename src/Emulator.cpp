@@ -37,13 +37,6 @@ Emulator::Emulator(int argc, char* argv[]){
     this->io_port = new IoPort(this->vga, this->pic, this->kbc, this->timer);
     this->gui     = new Gui(this->vga, this->kbc, this->mouse);
     this->bios->LoadIpl(this->disk_image_name, this->mem);
-
-    if(!this->debug){
-        this->emu_thread = new thread(&Emulator::Run, this);
-        this->gui->Display();
-    }else{
-        this->Run();
-    }
 }
 
 int Emulator::ParseArgv(int argc, char* argv[]){
@@ -77,9 +70,22 @@ int Emulator::ParseArgv(int argc, char* argv[]){
    return parse_result;
 }
 
+void Emulator::Join(){
+    this->emu_thread->join();
+}
+
+void Emulator::Start(){
+    if(!this->debug){
+        this->emu_thread = new thread(&Emulator::Run, this);
+        this->gui->Display();
+    }else{
+        this->Run();
+    }
+}
+
 void Emulator::Run(){
     int irq_num;
-    while(1){
+    while(!this->gui->IsQuit()){
         if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
             if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
                 this->cpu->HandleInterrupt(irq_num);                

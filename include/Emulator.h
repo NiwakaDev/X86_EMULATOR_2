@@ -33,4 +33,6 @@ class Emulator:public Object{
     public:
         Emulator(int argc, char* argv[]);
         void Run();
+        void Join();
+        void Start();
 };

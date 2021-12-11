@@ -819,8 +819,6 @@ static void Dump(Memory* mem, uint32_t start, uint32_t size){
     fprintf(stderr, "\n");
 }
 
-
-
 void Cpu::ShowRegisters(){
     fprintf(stderr, "EAX=%08X EBX=%08X ECX=%08X EDX=%08X\n", this->gprs[EAX], this->gprs[EBX], this->gprs[ECX], this->gprs[EDX]);
     fprintf(stderr, "ESI=%08X EDI=%08X EBP=%08X ESP=%08X\n", this->gprs[ESI], this->gprs[EDI], this->gprs[EBP], this->gprs[ESP]);
@@ -836,46 +834,6 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "GDT=%08X\n", this->gdtr->GetBase());
     fprintf(stderr, "GDT=%08X\n", this->idtr->GetBase());
 }
-
-/***
-void ShowRegistersBefore(Cpu* cpu){
-	static int idx = 0;
-    if(idx==16){
-        fprintf(stderr, "HHHHHHHHH");
-    }
-	fprintf(output_file, "idx = %d\n", idx);
-	fprintf(output_file,"before: AX = %04X\n", cpu->GetR16(EAX));
-	fprintf(output_file,"before: CX = %04X\n", cpu->GetR16(ECX));
-	fprintf(output_file,"before: DX = %04X\n", cpu->GetR16(EDX));
-	fprintf(output_file,"before: BX = %04X\n", cpu->GetR16(EBX));
-	fprintf(output_file,"before: SP = %04X\n", cpu->GetR16(ESP));
-	fprintf(output_file,"before: BP = %04X\n", cpu->GetR16(EBP));
-	fprintf(output_file,"before: SI = %04X\n", cpu->GetR16(ESI));
-	fprintf(output_file,"before: DI = %04X\n", cpu->GetR16(EDI));
-	fprintf(output_file,"before: ES = %04X\n", cpu->GetR16(ES));
-	fprintf(output_file,"before: CS = %04X\n", cpu->GetR16(CS));
-	fprintf(output_file,"before: DS = %04X\n", cpu->GetR16(DS));
-	fprintf(output_file,"before: SS = %04X\n", cpu->GetR16(SS));
-	fprintf(output_file,"before: ip = %04X\n", cpu->GetIp());
-	idx++;
-}
-
-void ShowRegistersAfter(Cpu* cpu){
-	fprintf(output_file,"After: AX = %04X\n", cpu->GetR16(EAX));
-	fprintf(output_file,"After: CX = %04X\n", cpu->GetR16(ECX));
-	fprintf(output_file,"After: DX = %04X\n", cpu->GetR16(EDX));
-	fprintf(output_file,"After: BX = %04X\n", cpu->GetR16(EBX));
-	fprintf(output_file,"After: SP = %04X\n", cpu->GetR16(ESP));
-	fprintf(output_file,"After: BP = %04X\n", cpu->GetR16(EBP));
-	fprintf(output_file,"After: SI = %04X\n", cpu->GetR16(ESI));
-	fprintf(output_file,"After: DI = %04X\n", cpu->GetR16(EDI));
-	fprintf(output_file,"After: ES = %04X\n", cpu->GetR16(ES));
-	fprintf(output_file,"After: CS = %04X\n", cpu->GetR16(CS));
-	fprintf(output_file,"After: DS = %04X\n", cpu->GetR16(DS));
-	fprintf(output_file,"After: SS = %04X\n", cpu->GetR16(SS));
-	fprintf(output_file,"After: ip = %04X\n", cpu->GetIp());
-}
-***/
 
 void Cpu::Run(IoPort* io_port){
     this->InitSelector();

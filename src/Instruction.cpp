@@ -92,7 +92,6 @@ void Instruction::ParseModRM_32bitsMode(Cpu* cpu, Memory* mem){
     if(this->modrm.mod!=3 && this->modrm.rm==4){
         this->modrm.sib = mem->Read8(cpu->GetLinearAddrForCodeAccess());
         cpu->AddEip(1);
-        //this->sib = new Sib();//メモリ不足になるかも毎回ここで確保
         this->sib.ParseSib(this->modrm.sib, this->modrm.mod);
         if((this->sib.GetBase()==5 && this->modrm.mod==0x00)){
             this->modrm.disp32 = mem->Read32(cpu->GetLinearAddrForCodeAccess());
