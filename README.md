@@ -1,7 +1,8 @@
 # X86_EMULATOR_2
 
 
-はりぼてOS
+<p>はりぼてOS</p>
+
 ![demo](https://user-images.githubusercontent.com/61189782/144729289-fe16a09d-d5dd-4b7d-8583-3b19e9381b3d.gif)
 
 ![スクリーンショット 2021-12-01 8.35.34.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/373549/39b0e3eb-4877-4f96-b63b-30673e38221f.png)
@@ -10,7 +11,8 @@
 
 ![demo](https://user-images.githubusercontent.com/61189782/144729289-fe16a09d-d5dd-4b7d-8583-3b19e9381b3d.gif)
 
-FreeDOS
+<p>FreeDOS</p>
+
 ![FreeDOS](https://user-images.githubusercontent.com/61189782/145657637-3331b9cf-021e-4a1e-867c-b1b49b31a852.png)
 
 <h2>1.ビルド</h2>
