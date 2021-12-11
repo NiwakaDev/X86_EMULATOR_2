@@ -46,14 +46,27 @@ void Pic::SetTimer(){
     return;
 }
 
+
 int Pic::HasIrq(Kbc* kbc, Timer* timer){
+
+    /***
+    for(int i=0; i<16; i++){
+        if((!this->irq_list[i])){
+            continue;
+        }
+        if(this->device[i]->IsEmpty()){
+            continue;
+        }
+        return this->irq_num[i];
+    }
+    ***/
+   
     if(this->irq_list[0]){
         if(!this->fifo->IsEmpty()){
             this->fifo->Pop();
             return 0;
         }
     }
-
     if(!this->irq_list[1]){
         return -1;
     }

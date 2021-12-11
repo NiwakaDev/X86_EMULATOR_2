@@ -1,6 +1,7 @@
 #pragma once
 #include "common.h"
 #include "Fifo.h"
+#include "IoDevice.h"
 
 class Pic;
 class Mouse;
@@ -80,18 +81,14 @@ class Mouse;
 #define Y_SIGN_BIT 0x20
 #define LEFT_BUTTON 0x01
 
-class Kbc:public Object{
+class Kbc:public IoDevice{
     private:
         Pic* pic = NULL;
         Mouse* mouse = NULL;
-        Fifo<uint8_t>* fifo = NULL;
         void ProcessCommand(uint8_t command);
     public:
         Kbc(Pic* pic, Mouse* mouse);
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);
         int IsEmpty();
-        void Push(uint8_t data);
-        uint8_t Pop();//リアルモードで使用する
-        uint8_t Front();//読み込むだけ。リアルモードで使用する
 };

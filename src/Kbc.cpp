@@ -5,10 +5,9 @@ using namespace std;
 
 #define ACK 0xFA	
 
-Kbc::Kbc(Pic* pic, Mouse* mouse){
+Kbc::Kbc(Pic* pic, Mouse* mouse):IoDevice(){
     this->pic   = pic;
     this->mouse = mouse;
-    this->fifo = new Fifo<uint8_t>();
 }
 
 void Kbc::ProcessCommand(uint8_t command){
@@ -56,24 +55,14 @@ uint8_t Kbc::In8(uint16_t addr){
     }
     return data;
 }
-void Kbc::Push(uint8_t data){
-    this->fifo->Push(data);
-}
 
-uint8_t Kbc::Pop(){
-    return this->fifo->Pop();
-}
-
-uint8_t Kbc::Front(){
-    return this->fifo->Front();
-}
 
 int Kbc::IsEmpty(){
     if(this->mouse->IsEmpty()!=-1){
         return 0x0C;
     }
     if(!this->fifo->IsEmpty()){
-        return 1;
+        return 0x01;
     }
     return -1;
 }
