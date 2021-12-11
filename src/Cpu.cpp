@@ -36,16 +36,6 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     for(int i=0; i<GENERAL_PURPOSE_REGISTER32_COUNT; i++){
         this->gprs[i] = 0x00000000;
     }
-    /***
-    this->gprs[EAX] = 0x01;
-    this->gprs[ECX] = 0x01;
-    this->gprs[EBX] = 0x00007C00;
-    this->gprs[ESP] = 0x0000F000;
-    this->gprs[ESI] = 0x000015DA;
-    this->gprs[EDI] = 0x00000FA0;
-    this->segment_registers[DS]->Set(0x0000F000, this);
-    this->segment_registers[SS]->Set(0x0000F000, this);
-    ***/
 
     //FLG_F3は命令化した。
     //FLG_F2は命令化した。
