@@ -94,33 +94,60 @@ void Vga::SetText(uint8_t ascii_code, int w, int h){
     pixel.r = 0xFF;
     pixel.g = 0xFF;
     pixel.b = 0xFF;
+
+    Pixel black_pixel;
+    black_pixel.r = 0x00;
+    black_pixel.g = 0x00;
+    black_pixel.b = 0x00;
     //テキストモード用変数領域の終わり
 
     for(int i=0; i < 8; i++){
         data = font[i];
         if((data & 0x80) != 0){
             this->image_text_mode[x+7+(y+i)*this->width] = pixel; 
+        }else{
+            this->image_text_mode[x+7+(y+i)*this->width] = black_pixel; 
         }
         if((data & 0x40) != 0){
             this->image_text_mode[x+6+(y+i)*this->width] = pixel;    
+        }else{
+            this->image_text_mode[x+6+(y+i)*this->width] = black_pixel; 
         }
+
         if((data & 0x20) != 0){
             this->image_text_mode[x+5+(y+i)*this->width] = pixel;      
+        }else{
+            this->image_text_mode[x+5+(y+i)*this->width] = black_pixel; 
         }
+
         if((data & 0x10) != 0){
             this->image_text_mode[x+4+(y+i)*this->width] = pixel;     
+        }else{
+            this->image_text_mode[x+4+(y+i)*this->width] = black_pixel; 
         }
+
         if((data & 0x08) != 0){
             this->image_text_mode[x+3+(y+i)*this->width] = pixel;     
+        }else{
+            this->image_text_mode[x+3+(y+i)*this->width] = black_pixel; 
         }
+
         if((data & 0x04) != 0){
             this->image_text_mode[x+2+(y+i)*this->width] = pixel;    
+        }else{
+            this->image_text_mode[x+2+(y+i)*this->width] = black_pixel; 
         }
+
         if((data & 0x02) != 0){
             this->image_text_mode[x+1+(y+i)*this->width] = pixel; 
+        }else{
+            this->image_text_mode[x+1+(y+i)*this->width] = black_pixel; 
         }
+
         if((data & 0x01) != 0){
             this->image_text_mode[x+0+(y+i)*this->width] = pixel;  
+        }else{
+            this->image_text_mode[x+0+(y+i)*this->width] = black_pixel; 
         }
     }
 }

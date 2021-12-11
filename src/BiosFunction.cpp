@@ -43,6 +43,7 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
         static int col = 0;
         static bool stop = false;
         static int cnt = 0;
+        static uint8_t console_buff[25][80];
         switch(ah){
             case 0x00:
                 if((mode&0x00FF)==0x13){
@@ -60,15 +61,50 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
             case 0x0E:
                 if(stop)return;
                 ascii_code = cpu->GetR8L(EAX);
+                if(ascii_code==0x0D){
+                    row++;
+                    col = 0;
+                    if(row==25){//上に移動
+                        row = 24;
+                        for(int r=0; r<24; r++){
+                            for(int c=0; c<80; c++){
+                                console_buff[r][c] = console_buff[r+1][c];
+                            }
+                        }
+                        for(int c=0; c<80; c++){
+                            console_buff[24][c] = 0;
+                        }
+                        for(int r=0; r<=24; r++){
+                            for(int c=0; c<80; c++){
+                                this->vga->SetText(console_buff[r][c], c, r);
+                            }
+                        }
+                    }
+                    return;
+                }
+                console_buff[row][col] = ascii_code;
                 this->vga->SetText(ascii_code, col, row);
                 col++;
                 if(col==80){
                     row++;
-                    fprintf(stderr, "row=%d\n", row);
                     col = 0;
-                    if(row==25){
-                        row = 0;
+                     if(row==25){//上に移動
+                        row = 24;
+                        for(int r=0; r<24; r++){
+                            for(int c=0; c<80; c++){
+                                console_buff[r][c] = console_buff[r+1][c];
+                            }
+                        }
+                        for(int c=0; c<80; c++){
+                            console_buff[24][c] = 0;
+                        }
+                        for(int r=0; r<=24; r++){
+                            for(int c=0; c<80; c++){
+                                this->vga->SetText(console_buff[r][c], c, r);
+                            }
+                        }
                     }
+                    return;
                 }
                 return;
             case 0x03:
