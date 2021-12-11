@@ -126,36 +126,90 @@ class Cpu:public Object{
     public:
         Cpu(Bios* bios, Memory* mem);
         void Run(IoPort* io_port);
-        void AddEip(uint32_t data);
-        void SetEip(uint32_t addr);
+        void AddEip(uint32_t data){
+            this->eip += data;
+            if(!this->IsProtectedMode()){
+                this->eip = this->eip & 0x0000FFFF;
+            }
+        }
+        void SetEip(uint32_t addr){
+            if(!this->IsProtectedMode()){
+                this->eip = this->eip & 0x0000FFFF;
+            }
+            this->eip = addr;
+        }
         uint32_t GetLinearAddrForCodeAccess();
         uint32_t GetLinearAddrForDataAccess(uint32_t offset);
         uint32_t GetLinearStackAddr();
-        bool IsProtectedMode();
+        bool IsProtectedMode(){
+            return (bool)this->cr0.flgs.PE;
+        }
         bool Is32bitsMode();
-        bool IsPrefixAddrSize();
-        bool IsPrefixOpSize();
-        void SetR8L(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data);
-        void SetR8H(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data);
-        void SetR8(uint32_t register_type, uint8_t data);
+        bool IsPrefixAddrSize(){
+            return this->prefix_flgs[FLG_67];
+        }
+        bool IsPrefixOpSize(){
+            return this->prefix_flgs[FLG_66];
+        }
+        void SetR8L(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data){
+            this->gprs[register_type] = (this->gprs[register_type]&0xffffff00)|(uint32_t)data;
+        }
+
+        void SetR8H(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data){
+            this->gprs[register_type] = (this->gprs[register_type]&0xffff00FF)|((uint32_t)data<<8);
+        }
+
+        void SetR8(uint32_t register_type, uint8_t data){
+            if(register_type<4){
+                this->SetR8L((GENERAL_PURPOSE_REGISTER32)register_type, data);
+            }else{
+                this->SetR8H((GENERAL_PURPOSE_REGISTER32)(register_type-4), data);
+            }
+        }
         void SetR16(SEGMENT_REGISTER register_type, uint16_t data);
-        void SetR16(GENERAL_PURPOSE_REGISTER32 register_type, uint16_t data);
-        void SetR32(GENERAL_PURPOSE_REGISTER32 register_type, uint32_t data);
+        void SetR16(GENERAL_PURPOSE_REGISTER32 register_type, uint16_t data){
+            this->gprs[register_type] = (this->gprs[register_type]&0xffff0000)|(uint32_t)data;
+        }
+        void SetR32(GENERAL_PURPOSE_REGISTER32 register_type, uint32_t data){
+            this->gprs[register_type] = data;
+        }
         void SetGdtr(uint16_t limit, uint32_t base);
         void SetIdtr(uint16_t limit, uint32_t base);
         void SetCr(CONTROL_REGISTER control_register_type, uint32_t data);
         void SetTr(uint16_t selector);
-        void SetDataSelector(SEGMENT_REGISTER register_type);
-        void SetEflgs(uint32_t eflgs);
-        uint8_t  GetR8(uint32_t register_type);
-        uint8_t  GetR8L(GENERAL_PURPOSE_REGISTER32 register_type);
-        uint8_t  GetR8H(GENERAL_PURPOSE_REGISTER32 register_type);
-        uint16_t GetR16(GENERAL_PURPOSE_REGISTER32 register_type);
+        void SetDataSelector(SEGMENT_REGISTER register_type){
+            this->default_data_selector = register_type;
+        }
+        void SetEflgs(uint32_t eflgs){
+            this->eflags.raw = eflgs;
+        }
+        uint8_t GetR8(uint32_t register_type){
+            if(register_type<4){
+                return this->GetR8L((GENERAL_PURPOSE_REGISTER32)register_type);
+            }else{
+                return this->GetR8H((GENERAL_PURPOSE_REGISTER32)(register_type-4));
+            }
+        }
+        uint8_t GetR8L(GENERAL_PURPOSE_REGISTER32 register_type){
+            return (uint8_t)(this->gprs[register_type]&0x000000ff);
+        }
+        uint8_t GetR8H(GENERAL_PURPOSE_REGISTER32 register_type){
+            return (uint8_t)((this->gprs[register_type]>>8)&0xff);
+        }
+        uint16_t GetR16(GENERAL_PURPOSE_REGISTER32 register_type){
+            return this->gprs[register_type]&0x0000FFFF;
+        }
         uint16_t GetR16(SEGMENT_REGISTER register_type);
-        uint32_t GetR32(GENERAL_PURPOSE_REGISTER32 register_type);
-        uint32_t GetEflgs();
-        uint32_t GetEip();
-        uint16_t GetIp();
+        uint32_t GetR32(GENERAL_PURPOSE_REGISTER32 register_type){
+            return this->gprs[register_type];
+        }
+        uint32_t GetEip(){
+            return this->eip;
+        }
+
+        uint32_t GetEflgs(){
+            return this->eflags.raw;
+        }
         uint32_t GetCr(CONTROL_REGISTER control_register_type);
         uint16_t GetLdtr();
         uint32_t GetGdtBaseAddr();

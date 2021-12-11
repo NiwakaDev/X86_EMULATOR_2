@@ -30,9 +30,9 @@ class Emulator:public Object{
         char* disk_image_name = NULL;
         bool    debug   = false;
         bool head_start = false;
+        void Run();
     public:
         Emulator(int argc, char* argv[]);
-        void Run();
         void Join();
         void Start();
 };
