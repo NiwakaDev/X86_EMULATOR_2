@@ -67,6 +67,7 @@ left-ctrl+left-alt+g
 FreeDOS(リアルモード)を動かすことを目指しています。
 
 dirコマンドは動いてます。
+リアルモードでのBIOSのキーボード機能がしょぼいです。dとiとrと改行コードしか実装してません。
 
 ![FreeDOS](https://user-images.githubusercontent.com/61189782/145657637-3331b9cf-021e-4a1e-867c-b1b49b31a852.png)
 
