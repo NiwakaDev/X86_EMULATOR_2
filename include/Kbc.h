@@ -83,11 +83,10 @@ class Mouse;
 
 class Kbc:public IoDevice{
     private:
-        Pic* pic = NULL;
         Mouse* mouse = NULL;
         void ProcessCommand(uint8_t command);
     public:
-        Kbc(Pic* pic, Mouse* mouse);
+        Kbc(Mouse* mouse);
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);
         int IsEmpty();

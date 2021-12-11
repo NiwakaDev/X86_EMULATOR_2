@@ -20,25 +20,24 @@ Emulator::Emulator(int argc, char* argv[]){
         fprintf(stderr, "               -d : debug\n");
         exit(EXIT_FAILURE);
     }
+    for(int i=0; i<16; i++){
+        this->io_devices[i] = NULL;
+    }
     this->mem     = new Memory();
-    this->pic     = new Pic();
-    this->timer   = new Timer(this->pic);
-    this->mouse   = new Mouse(this->pic);
-    this->kbc     = new Kbc(this->pic, this->mouse);
+    this->timer   = new Timer();
+    this->mouse   = new Mouse();
+    this->kbc     = new Kbc(this->mouse);
+    this->io_devices[0x00] = this->timer;
+    this->io_devices[0x01] = this->kbc;
+    this->io_devices[0x0C] = this->mouse;
+    this->pic     = new Pic(this->io_devices);
     this->vga     = new Vga(this->mem);
     this->bios    = new Bios(this->disk_image_name, this->vga, this->kbc);
     this->cpu     = new Cpu(this->bios, this->mem);
     this->io_port = new IoPort(this->vga, this->pic, this->kbc, this->timer);
     this->gui     = new Gui(this->vga, this->kbc, this->mouse);
     this->bios->LoadIpl(this->disk_image_name, this->mem);
-    if(this->head_start){//今後改良予定
-        //最初から32bitモードにする
-        this->cpu->On32bitMode();
-        for(int i=0; i<10000; i++){//とりあえず10
-            this->cpu->Run(this->io_port);
-        }
-        return;
-    }
+
     if(!this->debug){
         this->emu_thread = new thread(&Emulator::Run, this);
         this->gui->Display();

@@ -5,8 +5,7 @@ using namespace std;
 
 #define ACK 0xFA	
 
-Kbc::Kbc(Pic* pic, Mouse* mouse):IoDevice(){
-    this->pic   = pic;
+Kbc::Kbc(Mouse* mouse):IoDevice(){
     this->mouse = mouse;
 }
 

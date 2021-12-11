@@ -4,11 +4,12 @@
 #include "Fifo.h"
 using namespace std;
 
-Pic::Pic(){
+Pic::Pic(IoDevice** io_devices){
     for(int i=0; i<16; i++){
         this->irq_list[i] = false;
     }
     this->fifo = new Fifo<uint8_t>();
+    this->io_devices = io_devices;
 }
 
 void Pic::Out8(uint16_t addr, uint8_t data){
@@ -48,27 +49,15 @@ void Pic::SetTimer(){
 
 
 int Pic::HasIrq(Kbc* kbc, Timer* timer){
-
-    /***
+    int irq_num;
     for(int i=0; i<16; i++){
-        if((!this->irq_list[i])){
+        if((!this->irq_list[i])||(this->io_devices[i]==NULL)){
             continue;
         }
-        if(this->device[i]->IsEmpty()){
+        if((irq_num=this->io_devices[i]->IsEmpty())==-1){
             continue;
         }
-        return this->irq_num[i];
+        return irq_num;
     }
-    ***/
-   
-    if(this->irq_list[0]){
-        if(!this->fifo->IsEmpty()){
-            this->fifo->Pop();
-            return 0;
-        }
-    }
-    if(!this->irq_list[1]){
-        return -1;
-    }
-    return kbc->IsEmpty();
+    return -1;
 }

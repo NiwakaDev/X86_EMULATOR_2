@@ -2,11 +2,8 @@
 #include "Mouse.h"
 using namespace std;
 
-Mouse::Mouse(Pic* pic){
-    this->pic = pic;
-    assert(this->pic!=NULL);
+Mouse::Mouse():IoDevice(){
     this->enable_flg = false;
-    this->fifo = new Fifo<uint8_t>();
 }
 
 void Mouse::Out8(uint16_t addr, uint8_t data){
@@ -28,10 +25,6 @@ bool Mouse::IsEnable(){
 
 void Mouse::SetEnable(){
     this->enable_flg = true;
-}
-
-void Mouse::Push(uint8_t data){
-    this->fifo->Push(data);
 }
 
 int Mouse::IsEmpty(){

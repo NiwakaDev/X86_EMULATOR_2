@@ -5,9 +5,8 @@ using namespace std;
 using namespace chrono;
 using namespace this_thread;
 
-Timer::Timer(Pic* pic){
+Timer::Timer():IoDevice(){
     this->enable = false;
-    this->pic    = pic;
     this->clock =  119318;
     this->timer_thread = nullptr;
 }
@@ -50,6 +49,14 @@ uint8_t Timer::In8(uint16_t addr){
 void Timer::Run(){
     while(this->enable){
         sleep_for(milliseconds(this->cycle));
-        this->pic->SetTimer();
+        this->Push(0);
     }
+}
+
+int Timer::IsEmpty(){
+    if(!this->fifo->IsEmpty()){
+        this->Pop();
+        return 0x00;
+    }
+    return -1;
 }
