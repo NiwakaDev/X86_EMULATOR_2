@@ -4,6 +4,8 @@
 #include "IoPort.h"
 using namespace std;
 using namespace chrono;
+
+#define LSB 0x01
 #define MSB_8 0x80
 #define MSB_16 0x8000
 #define LSB_8 0x01
@@ -1100,6 +1102,7 @@ CodeD0::CodeD0(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     this->instructions[1] = new RorRm8("RorRm8");
+    this->instructions[5] = new ShrRm8("ShrRm8");
 }
 
 void CodeD0::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
@@ -6367,4 +6370,28 @@ void Std::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(1);
     cpu->SetFlag(DF);
     return;
+}
+
+ShrRm8::ShrRm8(string code_name):Instruction(code_name){
+
+}
+
+void ShrRm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    uint8_t rm8;
+    uint8_t temp_rm8;
+    rm8  = this->GetRM8(cpu, mem);
+    temp_rm8 = rm8;
+    if(rm8&LSB){
+        cpu->SetFlag(CF);
+    }else{
+        cpu->ClearFlag(CF);
+    }
+    rm8 = rm8 >> 1;
+    this->SetRM8(cpu, mem, rm8);
+    cpu->UpdateEflagsForShr(rm8);
+    if((temp_rm8&MSB_8)){
+        cpu->SetFlag(OF);
+    }else{
+        cpu->SetFlag(OF);
+    }
 }
