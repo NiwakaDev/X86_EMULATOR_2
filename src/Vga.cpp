@@ -41,14 +41,6 @@ int Vga::GetHeight(){
     return this->height;
 }
 
-void Vga::LockVga(){
-    this->vga_mtx.lock();
-}
-
-void Vga::UnlockVga(){
-    this->vga_mtx.unlock();
-}
-
 void Vga::Out8(uint16_t addr, uint8_t data){
     static int internal_cnt = 0;
     switch(addr){

@@ -68,3 +68,6 @@ https://bitbucket.org/7shi/8086run/
 <h3>BIOSで使用するFONTについて</h3>
 https://github.com/dhepper/font8x8
 から拝借しました。ありがとうございます。
+
+<h2>ビルドしても動かない場合</h2>
+連絡をくれるとありがたいです。

@@ -33,3 +33,7 @@ uint32_t Memory::Read32(uint32_t addr){
 uint8_t* Memory::GetPointer(uint32_t addr){
     return this->buff+addr;
 }
+
+void Memory::MemCpy(uint32_t to_addr, uint32_t from_addr, uint32_t size){
+    memcpy(this->buff+to_addr, this->buff+from_addr, size);
+}

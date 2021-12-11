@@ -47,20 +47,20 @@ Gui::~Gui(){
     SDL_Quit();
 }
 
-void Gui::Resize(){
+inline void Gui::Resize(){
     SDL_SetWindowSize(this->window, this->screen_width, this->screen_height);
     SDL_RenderSetLogicalSize(this->renderer,this->screen_width,this->screen_height);
     SDL_DestroyTexture(this->texture);
     this->texture = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->screen_width, this->screen_height); 
 }
 
-void Gui::Update(){
+inline void Gui::Update(){
     SDL_UpdateTexture(this->texture, NULL, this->image, this->screen_width * sizeof(Pixel));
     SDL_RenderCopy(this->renderer, this->texture, NULL, NULL);
     SDL_RenderPresent(this->renderer);
 }
 
-uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
+inline uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
     uint8_t key_code;
     switch (e->key.keysym.sym){
         case SDLK_0:
@@ -268,7 +268,7 @@ uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
     return key_code;
 }
 
-void Gui::HandleKeyDown(SDL_Event *e){
+inline void Gui::HandleKeyDown(SDL_Event *e){
     uint8_t key_code;
     switch (e->key.keysym.sym){//使うことのないキーコードはここでスルーする
         case SDLK_LGUI: 
@@ -280,7 +280,7 @@ void Gui::HandleKeyDown(SDL_Event *e){
     this->kbc->Push(key_code);
 }
 
-void Gui::HandleKeyUp(SDL_Event *e){
+inline void Gui::HandleKeyUp(SDL_Event *e){
     uint8_t key_code;
     switch (e->key.keysym.sym){//使うことのないキーコードはここでスルーする
         case SDLK_LGUI: 
@@ -292,25 +292,25 @@ void Gui::HandleKeyUp(SDL_Event *e){
     this->kbc->Push(key_code);
 }
 
-void Gui::HideCursor(){
+inline void Gui::HideCursor(){
     this->grab = true;
     SDL_ShowCursor(SDL_DISABLE);
     SDL_SetRelativeMouseMode(SDL_TRUE);//http://sdl2referencejp.osdn.jp/SDL_SetRelativeMouseMode.html
 }
 
-void Gui::ShowCursor(){
+inline void Gui::ShowCursor(){
     this->grab = false;
     SDL_ShowCursor(SDL_ENABLE);
     SDL_SetRelativeMouseMode(SDL_FALSE);
 }
 
-int Gui::GetModState(){//左ctrl、左altの状態を得る。
+inline int Gui::GetModState(){//左ctrl、左altの状態を得る。
     int mod_state = SDL_GetModState();
     int ctrl_alt_state = KMOD_LALT|KMOD_LCTRL;
     return (mod_state&ctrl_alt_state)==ctrl_alt_state;
 }
 
-void Gui::HandleMouseMotion(SDL_Event *e){
+inline void Gui::HandleMouseMotion(SDL_Event *e){
 
     uint8_t data0, data1, data2;
     int rel_x, rel_y;
@@ -343,14 +343,10 @@ void Gui::HandleMouseMotion(SDL_Event *e){
     this->mouse->Push((uint8_t)rel_y);
 }
 
-void Gui::HandleMouseButton(SDL_Event *e){
+inline void Gui::HandleMouseButton(SDL_Event *e){
     this->mouse->Push(DEFAULT_PACKET_BYTE0|LEFT_BUTTON);
     this->mouse->Push(0);
     this->mouse->Push(0);
-}
-
-bool Gui::IsQuit(){
-    return this->quit;
 }
 
 //この関数はVgaクラスのvga_mutexをロックします。

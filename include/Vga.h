@@ -36,8 +36,12 @@ class Vga:public Object{
         void SetInfo(int width, int height, int vram_start_add);
         int GetWidth();
         int GetHeight();
-        void LockVga();
-        void UnlockVga();
+        void LockVga(){
+            this->vga_mtx.lock();
+        }
+        void UnlockVga(){
+            this->vga_mtx.unlock();
+        }
         void SetText(uint8_t ascii_code, int w, int h);//テキストモードのための関数
         VGA_MODE GetMode();
     private:

@@ -6199,7 +6199,7 @@ void RepMovsM8M8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
             si = cpu->GetR16(ESI);
             es = cpu->GetR16(ES)*16;
             di = cpu->GetR16(EDI);
-            mem->Write(es+di, mem->Read8(ds+si));
+            mem->Write(es+di, mem->Read8(ds+si));//memcpyで高速化予定
             d = cpu->IsFlag(DF)? -1:1;
             cpu->SetR16(EDI, di+d);
             cpu->SetR16(ESI, si+d);
