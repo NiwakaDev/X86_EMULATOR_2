@@ -114,6 +114,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->instructions[0x31] = new XorRm32R32("XorRm32R32");
     this->instructions[0x32] = new XorR8Rm8("XorR8Rm8");
     this->instructions[0x33] = new XorR32Rm32("XorR32Rm32");
+    this->instructions[0x35] = new XorEaxImm32("XorEaxImm32");
     this->instructions[0x38] = new CmpRm8R8("CmpRm8R8");
     this->instructions[0x39] = new CmpRm32R32("CmpRm32R32");
     this->instructions[0x3A] = new CmpR8Rm8("CmpR8Rm8");
@@ -530,6 +531,11 @@ void Cpu::CheckPrefixCode(Memory* mem){
             case FLG_36:
                 this->prefix_flgs[FLG_36] = true;
                 this->default_data_selector = SS;
+                this->segment_override = true;
+                break;
+            case FLG_3E:
+                this->prefix_flgs[FLG_3E] = true;
+                this->default_data_selector = DS;
                 this->segment_override = true;
                 break;
             default:

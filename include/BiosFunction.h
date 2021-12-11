@@ -74,3 +74,9 @@ class TimerFunction:public BiosFunction{
         TimerFunction();
         void Run(Cpu *cpu, Memory* mem);
 };
+
+class GeneralSystemServicesFunction:public BiosFunction{
+    public:
+        GeneralSystemServicesFunction();
+        void Run(Cpu *cpu, Memory* mem);
+};

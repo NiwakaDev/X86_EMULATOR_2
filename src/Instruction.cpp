@@ -6414,3 +6414,20 @@ void AdcRm8Imm8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->UpdateEflagsForAdd((uint16_t)result, (uint8_t)rm8, (uint8_t)(imm8+cf));
     return;
 }
+
+XorEaxImm32::XorEaxImm32(string code_name):Instruction(code_name){
+
+}
+
+void XorEaxImm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: %s::Run", this->code_name.c_str());
+    }
+    uint16_t result;
+    result = cpu->GetR16(EAX) ^ mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    cpu->AddEip(2);
+    cpu->SetR16(EAX, result);
+    cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    return;
+}

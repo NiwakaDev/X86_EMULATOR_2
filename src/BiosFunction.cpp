@@ -29,12 +29,10 @@ VideoFunction::VideoFunction(Vga* vga):BiosFunction(){
 //http://oswiki.osask.jp/?%28AT%29BIOS
 void VideoFunction::Run(Cpu *cpu, Memory* mem){
     uint16_t mode;
-    uint8_t vga_mode;
     uint16_t video_mode;
     uint16_t height;
     uint16_t width;
     uint32_t vram;
-    uint8_t ascii_code;
     mode = cpu->GetR16(EAX);
     uint8_t ah = cpu->GetR8H(EAX);
     if(ah!=0x4F){
@@ -44,6 +42,7 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
         static bool stop = false;
         static int cnt = 0;
         static uint8_t console_buff[25][80];
+        uint8_t ascii_code;
         switch(ah){
             case 0x00:
                 if((mode&0x00FF)==0x13){
@@ -111,9 +110,11 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
             case 0x08:
             case 0x0F:
             case 0x12:
+            case 0x1A:
+            case 0x70:
                 break;//とりあえず無視
             default:
-                this->Error("Not implemented: vga_mode=0x%02X at VideoFunction::Run", vga_mode);
+                this->Error("Not implemented: ah=0x%02X at VideoFunction::Run", ah);
         }
     }else{//VESAサービス
         switch(mode){
@@ -359,6 +360,27 @@ void TimerFunction::Run(Cpu* cpu, Memory* mem){
             return; 
         default:
             this->Error("Not implemented: ah = 0x%02X at TimerFunction::Run", ah);
+            break;
+    }
+}
+
+//GeneralSystemServicesについての解説
+//http://softwaretechnique.web.fc2.com/OS_Development/Tips/Bios_Services/General_Services/system_services_0088.html
+GeneralSystemServicesFunction::GeneralSystemServicesFunction():BiosFunction(){
+    this->function_name = "GeneralSystemServicesFunction";
+}
+
+void GeneralSystemServicesFunction::Run(Cpu* cpu, Memory* mem){
+    uint8_t ah;
+    uint8_t al;
+    ah = cpu->GetR8H(EAX);
+    switch (ah){
+        case 0x88://8086runを参考
+            cpu->ClearFlag(CF);
+            cpu->SetR16(EAX, 0x0000);
+            break;
+        default:
+            this->Error("Not implemented: ah = 0x%02X at GeneralSystemServicesFunction::Run", ah);
             break;
     }
 }

@@ -1565,3 +1565,9 @@ class AdcRm8Imm8:public Instruction{
         AdcRm8Imm8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class XorEaxImm32:public Instruction{
+    public: 
+        XorEaxImm32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

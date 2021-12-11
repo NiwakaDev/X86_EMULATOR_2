@@ -13,6 +13,7 @@ Bios::Bios(char* file_name, Vga* vga, Kbc* kbc){
     this->bios_functions[0x11] = new EquipmentListFunction();
     this->bios_functions[0x12] = new MemoryFunction();
     this->bios_functions[0x13] = new FloppyFunction(file_name);
+    this->bios_functions[0x15] = new GeneralSystemServicesFunction();
     this->bios_functions[0x16] = new KeyFunction(kbc);
     this->bios_functions[0x1A] = new TimerFunction();
 }

@@ -32,7 +32,10 @@ void Pic::Out8(uint16_t addr, uint8_t data){
 }
 
 uint8_t Pic::In8(uint16_t addr){
-    this->Error("Not implemented addr=0x%04X at Pic::In8");
+    switch (addr){
+        default:
+            this->Error("Not implemented addr=0x%04X at Pic::In8", addr);
+    }
 }
 
 void Pic::SetTimer(){

@@ -47,6 +47,9 @@ void IoPort::Out8(uint16_t addr, uint8_t data){
 
 uint8_t IoPort::In8(uint16_t addr){
     switch(addr){
+        case PIC1_IMR:
+        case PIC0_IMR:
+            return 0;//いずれ実装予定
         case 0x61:
             return 0;
         case 0x60:
