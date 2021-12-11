@@ -66,4 +66,11 @@ dirコマンドは動いてます。
 
 ![FreeDOS](https://user-images.githubusercontent.com/61189782/145657637-3331b9cf-021e-4a1e-867c-b1b49b31a852.png)
 
+リアルモードの挙動は、
+https://bitbucket.org/7shi/8086run/
+を参考にしました。
 
+
+<h2>BIOSで使用するFONTについて</h2>
+https://github.com/dhepper/font8x8
+から拝借しました。ありがとうございます。
