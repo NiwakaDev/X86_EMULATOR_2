@@ -10,8 +10,11 @@
 
 ![スクリーンショット 2021-12-01 8.35.34.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/373549/39b0e3eb-4877-4f96-b63b-30673e38221f.png)
 
+<<<<<<< HEAD
 ![富士山](https://user-images.githubusercontent.com/61189782/143998297-d17dd067-b59a-4762-8bde-caebc8ca174b.png)
 
+=======
+>>>>>>> a38288f66c23f04fdd1f701d90d7bbdb8c73e6bc
 <h2>1.ビルド</h2>
 
 ```
@@ -23,27 +26,33 @@ make
 ```
 ./x86 -i haribote.img
 ```
+<<<<<<< HEAD
+
+<h2>3.言語とライブラリ</h2>
+C++11, SDL2.0
+
+<h2>4.マウス使用方法</h2>
+=======
+>>>>>>> a38288f66c23f04fdd1f701d90d7bbdb8c73e6bc
 
 <h2>3.言語とライブラリ</h2>
 C++11, SDL2.0
 
 <h2>4.マウス使用方法</h2>
 
-<h2>Language and Library</h2>
-C++11, SDL2.0
-
-<h2>How to use mouse</h2>
-<h3>Grab mouse on x86 emulator</h3>
-click mouse on x86 emulator
-
-<h3>Release mouse out of x86 emulator</h3>
-press lef-ctrl+left-alt+g
-
 <h3>4-1.マウスをエミュレータに取り込みたい時</h3>
 エミュレータ上でマウスをクリック
 
 <h3>4-2.エミュレータに取り込んだマウスを外に出したい時</h3>
 
+<<<<<<< HEAD
+<h3>4-1.マウスをエミュレータに取り込みたい時</h3>
+エミュレータ上でマウスをクリック
+
+<h3>4-2.エミュレータに取り込んだマウスを外に出したい時</h3>
+
+=======
+>>>>>>> a38288f66c23f04fdd1f701d90d7bbdb8c73e6bc
 ```
 left-ctrl+left-alt+g
 ```
