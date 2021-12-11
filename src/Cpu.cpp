@@ -472,7 +472,7 @@ bool Cpu::IsBflg(SEGMENT_REGISTER register_type){//セグメントディスク�
     return this->segment_registers[register_type]->Is32bitsMode();
 }
 
-void Cpu::InitSelector(){
+inline void Cpu::InitSelector(){
     this->segment_override = false;
     this->default_code_selector = CS;
     this->default_data_selector = DS;
@@ -486,10 +486,6 @@ void Cpu::AddEip(uint32_t data){
     }
 }
 
-void Cpu::AddIp(uint16_t data){
-    this->eip = (this->eip+data)&0x0000FFFF;
-}
-
 void Cpu::SetEip(uint32_t addr){
     if(!this->IsProtectedMode()){
         this->eip = this->eip & 0x0000FFFF;
@@ -497,7 +493,7 @@ void Cpu::SetEip(uint32_t addr){
     this->eip = addr;
 }
 
-void Cpu::ResetPrefixFlg(){
+inline void Cpu::ResetPrefixFlg(){
     this->prefix_flgs[FLG_67] = false;
     this->prefix_flgs[FLG_66] = false;
     this->prefix_flgs[FLG_F0] = false;
@@ -508,7 +504,7 @@ void Cpu::ResetPrefixFlg(){
     this->prefix_flgs[FLG_65] = false;
 }
 
-void Cpu::CheckPrefixCode(Memory* mem){
+inline void Cpu::CheckPrefixCode(Memory* mem){
     uint8_t op_code=mem->Read8(this->GetLinearAddrForCodeAccess());
     while(this->prefix_table[op_code]){      
         switch (op_code){
@@ -683,7 +679,7 @@ void Cpu::ClearFlag(EFLAGS_KIND eflags_kind){
     }
 }
 
-void Cpu::Push32(uint32_t data){
+inline void Cpu::Push32(uint32_t data){
     this->gprs[ESP] = this->gprs[ESP]-4;
     uint32_t addr   = this->GetLinearStackAddr();
     this->mem->Write(addr, data);

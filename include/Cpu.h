@@ -127,7 +127,6 @@ class Cpu:public Object{
         Cpu(Bios* bios, Memory* mem);
         void Run(IoPort* io_port);
         void AddEip(uint32_t data);
-        void AddIp(uint16_t data);
         void SetEip(uint32_t addr);
         uint32_t GetLinearAddrForCodeAccess();
         uint32_t GetLinearAddrForDataAccess(uint32_t offset);
