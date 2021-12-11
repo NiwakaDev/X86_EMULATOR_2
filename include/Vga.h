@@ -27,10 +27,8 @@ class Vga:public Object{
     public:
         VGA_MODE vga_mode;
         Pixel* image_text_mode=NULL;
-        void Execute();
         Pixel* GetPixel(int x, int y);
         Vga(Memory *mem);
-        uint8_t now_palette_idx;
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);
         void SetInfo(int width, int height, int vram_start_add);
