@@ -13,6 +13,10 @@
 
 ![FreeDOS](https://user-images.githubusercontent.com/61189782/145657637-3331b9cf-021e-4a1e-867c-b1b49b31a852.png)
 
+<p>osz(https://github.com/neri/osz)</p>
+
+![スクリーンショット 2021-12-12 21 33 31](https://user-images.githubusercontent.com/61189782/145712414-eed58221-06ef-42d8-9c6f-28fad542ae25.png)
+
 <h2>1.ビルド</h2>
 
 ```
@@ -51,6 +55,8 @@ left-ctrl+left-alt+g
 <h2>5.エミュレータで動かせるOS</h2>
 <h3><a href="https://www.amazon.co.jp/30%E6%97%A5%E3%81%A7%E3%81%A7%E3%81%8D%E3%82%8B-OS%E8%87%AA%E4%BD%9C%E5%85%A5%E9%96%80-%E5%B7%9D%E5%90%88-%E7%A7%80%E5%AE%9F/dp/4839919844/ref=pd_vtp_5/356-0188609-1667566?pd_rd_w=qrIxz&pf_rd_p=949e26f5-c2ef-4c96-bfde-49d7614d0317&pf_rd_r=FQQA4209JZRMHNABD541&pd_rd_r=2bdba9dc-9d7d-401a-b66c-053b098be917&pd_rd_wg=dpohq&pd_rd_i=4839919844&psc=1">30日でできる! OS自作入門</a></h3>
 <h3>FreeDOS(リアルモード)</h3>
+
+<h3>osz(https://github.com/neri/osz)</h3>
 
 <h2>現在、取り組み中の実装</h2>
 FreeDOS(リアルモード)を動かすことを目指しています。
