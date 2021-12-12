@@ -36,7 +36,7 @@ class Instruction:public Object{
         virtual void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
         void Show();
         Instruction(std::string code_name);
-        void SetModRM(ModRM modrm, Sib* sib);
+        void SetModRM(ModRM* modrm, Sib* sib);
 };
 
 class JmpRel8:public Instruction{

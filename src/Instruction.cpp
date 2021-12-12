@@ -73,9 +73,9 @@ void Instruction::Show(){
     fprintf(stderr, "%s\n", this->code_name.c_str());
 }
 
-void Instruction::SetModRM(ModRM modrm, Sib* sib){
+void Instruction::SetModRM(ModRM* modrm, Sib* sib){
     this->sib = *sib;
-    this->modrm = modrm;
+    this->modrm = *modrm;
 }
 
 void Instruction::ParseModRM(Cpu *cpu, Memory* mem){
@@ -833,7 +833,7 @@ void CodeC0::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("code C0 /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -851,7 +851,7 @@ void CodeC6::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: C6 %02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -875,7 +875,7 @@ void Code80::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: 80 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -898,7 +898,7 @@ void Code81::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: 81 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -962,7 +962,7 @@ void CodeC1::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: C1 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -980,7 +980,7 @@ void Code0F00::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: 0F 00 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -999,7 +999,7 @@ void Code0F01::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: 0F 01 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -1024,7 +1024,7 @@ void Code83::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("code 83 /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -1048,7 +1048,7 @@ void CodeF7::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: F7 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -1067,7 +1067,7 @@ void CodeFE::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: FE /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -1086,7 +1086,7 @@ void CodeD0::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: D0 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -1104,7 +1104,7 @@ void CodeD2::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: D2 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -1128,7 +1128,7 @@ void CodeFF::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: FF /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -1149,7 +1149,7 @@ void CodeD1::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("code D1 /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -1169,7 +1169,7 @@ void CodeD3::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: D3 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }
@@ -1190,7 +1190,7 @@ void CodeF6::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(this->instructions[this->modrm.reg_index]==NULL){
             this->Error("Not implemented: F6 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
-    this->instructions[this->modrm.reg_index]->SetModRM(this->modrm, &this->sib);
+    this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(cpu, mem, io_port);
     return;
 }

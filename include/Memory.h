@@ -3,8 +3,8 @@
 #define MEM_SIZE 4294967296
 
 class Memory:public Object{
-    //private:
-    //    uint8_t* buff;
+    private:
+        uint8_t* buff;
     public:
         Memory();
         template<typename type>void Write(uint32_t addr, type data){
@@ -29,5 +29,4 @@ class Memory:public Object{
             return this->buff+addr;
         }
         void Dump(uint32_t start, uint32_t size);
-        uint8_t* buff;
 };  
