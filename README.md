@@ -36,6 +36,11 @@ FreeDOSを起動
 ./x86 -i fd.img
 ```
 
+oszを起動
+```
+./x86 -i full.img
+```
+
 <h2>3.言語とライブラリ</h2>
 C++11, SDL2.0
 
