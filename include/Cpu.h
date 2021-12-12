@@ -125,7 +125,7 @@ class Cpu:public Object{
         bool segment_override;
     public:
         Cpu(Bios* bios, Memory* mem);
-        void Run(IoPort* io_port);
+        bool Run(IoPort* io_port);
         void AddEip(uint32_t data){
             this->eip += data;
             if(!this->IsProtectedMode()){

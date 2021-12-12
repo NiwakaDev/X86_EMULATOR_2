@@ -100,8 +100,9 @@ void Emulator::Run(){
     if(test){
         out = fopen("niwaka_output", "w");
     }
-    bool log_flg = true;
     int  i = 0;
+    bool result;
+    //TODO : テストコードのせいで汚くなったメイン関数の修正
     while(!this->gui->IsQuit()){
         if(test){
             if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
@@ -109,18 +110,22 @@ void Emulator::Run(){
                     this->cpu->HandleInterrupt(irq_num);                
                 }
             }
-            if(log_flg)fprintf(out, "i:%d\n", i);
-            if(log_flg)this->cpu->Debug(out, true);
-            this->cpu->Run(this->io_port);
-            if(log_flg)this->cpu->Debug(out, true);
+            fprintf(out, "i:%d\n", i);
+            this->cpu->Debug(out, true);
+            result = this->cpu->Run(this->io_port);
+            this->cpu->Debug(out, true);
             i++;
+            if(!result){
+                fclose(out);
+                return;
+            }
         }else{
             if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
                 if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
                     this->cpu->HandleInterrupt(irq_num);                
                 }
             }
-            this->cpu->Run(this->io_port);
+            if(!this->cpu->Run(this->io_port))return;
         }
     }
 }
