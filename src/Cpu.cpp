@@ -16,13 +16,11 @@ using namespace std;
 #define CR2_INIT_VALUE    0x00000000
 #define CS_INIT_VALUE     0x0000F000
 
-//static FILE* output_file;//テスト用
-
 Cpu::Cpu(Bios* bios, Memory* mem){
-    //output_file = fopen("output_file", "wb");
     this->bios = bios;
     this->mem  = mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
+    this->eflags.raw = 0x0000F002;//8086runの値を参考にした。
     this->cr0.raw = CR0_INIT_VALUE;
     this->cr0.flgs.PE  = REAL_MODE;
     for(int i=0; i<SEGMENT_REGISTER_COUNT; i++){
@@ -725,6 +723,15 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "TR =%04X %08X\n", this->task_register->GetData(), this->task_register->GetBaseAddr());
     fprintf(stderr, "GDT=%08X\n", this->gdtr->GetBase());
     fprintf(stderr, "GDT=%08X\n", this->idtr->GetBase());
+}
+
+void Cpu::Debug(FILE *f, bool h) {
+    //if (h) fprintf(f, " AX   BX   CX   DX   SP   BP   SI   DI    FLAGS    ES   SS   DS   CS   IP  dump\n");
+    if (h) fprintf(f, " AX   BX   CX   DX   SP   BP   SI   DI   ES   SS   DS   CS   IP   P(EFLAGS) S(EFLAGS)\n");
+        fprintf(f,
+            "%04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %c %c\n",
+            this->GetR16(EAX), this->GetR16(EBX), this->GetR16(ECX), this->GetR16(EDX), this->GetR16(ESP), this->GetR16(EBP), this->GetR16(ESI), this->GetR16(EDI),
+            this->segment_registers[ES]->GetData(), this->segment_registers[SS]->GetData(), this->segment_registers[DS]->GetData(), this->segment_registers[CS]->GetData(), this->eip, this->eflags.flgs.PF?'P':'-', this->eflags.flgs.SF?'S':'-');
 }
 
 void Cpu::Run(IoPort* io_port){

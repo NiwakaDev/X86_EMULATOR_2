@@ -356,7 +356,6 @@ void Gui::Display(){
     SDL_Event e;
     unsigned int start;
     unsigned int end;
-    static int cnt = 0;
     //SDL_WarpMouseInWindow(this->window, guest_x, guest_y);
     while (!this->quit){
         start = SDL_GetTicks();
@@ -395,13 +394,12 @@ void Gui::Display(){
             this->screen_width  = this->vga->GetWidth();
             this->Resize();
         }
-        //vramの領域が変更されているかどうかで描画するかどうか決定する。
-            for(int y=0; y<this->screen_height; y++){
-                for(int x=0; x<this->screen_width; x++){
-                    this->image[x+y*this->screen_width] = *(this->vga->GetPixel(x, y));
-                }
+        for(int y=0; y<this->screen_height; y++){
+            for(int x=0; x<this->screen_width; x++){
+                this->image[x+y*this->screen_width] = *(this->vga->GetPixel(x, y));
             }
-            this->Update();
+        }
+        this->Update();
         //変更があったら。
         this->vga->UnlockVga();
         end = SDL_GetTicks();

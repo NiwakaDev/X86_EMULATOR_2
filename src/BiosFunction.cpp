@@ -379,6 +379,8 @@ void GeneralSystemServicesFunction::Run(Cpu* cpu, Memory* mem){
             cpu->ClearFlag(CF);
             cpu->SetR16(EAX, 0x0000);
             break;
+        case 0x24:
+            break;
         default:
             this->Error("Not implemented: ah = 0x%02X at GeneralSystemServicesFunction::Run", ah);
             break;

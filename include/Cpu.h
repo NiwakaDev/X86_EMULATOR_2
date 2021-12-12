@@ -181,7 +181,7 @@ class Cpu:public Object{
             this->default_data_selector = register_type;
         }
         void SetEflgs(uint32_t eflgs){
-            this->eflags.raw = eflgs;
+            this->eflags.raw = eflgs|0x0000F002;;
         }
         uint8_t GetR8(uint32_t register_type){
             if(register_type<4){
@@ -352,4 +352,5 @@ class Cpu:public Object{
         void On32bitMode();
         bool IsSegmentOverride();
         bool IsBflg(SEGMENT_REGISTER register_type);//セグメントディスクリプタのBフラグ
+        void Debug(FILE *f, bool h);
 };

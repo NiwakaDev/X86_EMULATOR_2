@@ -37,7 +37,12 @@ Emulator::Emulator(int argc, char* argv[]){
     this->io_port = new IoPort(this->vga, this->pic, this->kbc, this->timer);
     this->gui     = new Gui(this->vga, this->kbc, this->mouse);
     this->bios->LoadIpl(this->disk_image_name, this->mem);
+    for(int i=0; i<0x20; i++){//8086runを参考にした
+        this->mem->Write(i<<2, i);
+    }
 }
+
+bool test = false;
 
 int Emulator::ParseArgv(int argc, char* argv[]){
     int parse_result = 0;
@@ -55,6 +60,12 @@ int Emulator::ParseArgv(int argc, char* argv[]){
             this->debug = true;
             argc -= 1;
             argv += 1;
+            continue;
+        }
+        if ((strcmp("-test", argv[0])==0) || (strcmp("-t", argv[0])==0)) {
+            argc -= 1;
+            argv += 1;
+            test= true;
             continue;
         }
         //プログラムを動かしてみたい時のオプション
@@ -85,12 +96,31 @@ void Emulator::Start(){
 
 void Emulator::Run(){
     int irq_num;
+    FILE* out = NULL;
+    if(test){
+        out = fopen("niwaka_output", "w");
+    }
+    bool log_flg = true;
+    int  i = 0;
     while(!this->gui->IsQuit()){
-        if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
-            if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
-                this->cpu->HandleInterrupt(irq_num);                
+        if(test){
+            if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
+                if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
+                    this->cpu->HandleInterrupt(irq_num);                
+                }
             }
+            if(log_flg)fprintf(out, "i:%d\n", i);
+            if(log_flg)this->cpu->Debug(out, true);
+            this->cpu->Run(this->io_port);
+            if(log_flg)this->cpu->Debug(out, true);
+            i++;
+        }else{
+            if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
+                if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
+                    this->cpu->HandleInterrupt(irq_num);                
+                }
+            }
+            this->cpu->Run(this->io_port);
         }
-        this->cpu->Run(this->io_port);
     }
 }

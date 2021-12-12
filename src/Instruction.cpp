@@ -73,11 +73,6 @@ void Instruction::Show(){
     fprintf(stderr, "%s\n", this->code_name.c_str());
 }
 
-void Instruction::SetModRM(ModRM* modrm, Sib* sib){
-    this->sib = *sib;
-    this->modrm = *modrm;
-}
-
 void Instruction::ParseModRM(Cpu *cpu, Memory* mem){
     uint8_t code;
     code = mem->Read8(cpu->GetLinearAddrForCodeAccess());
@@ -5253,6 +5248,7 @@ CodeF3::CodeF3(string code_name):Instruction(code_name){
     this->instructions[0xA4] = new RepMovsM8M8("RepMovsM8M8");
     this->instructions[0xA5] = new RepMovsM32M32("RepMovsM32M32");
     this->instructions[0xA6] = new RepeCmpsM8M8("RepeCmpsM8M8");
+    this->instructions[0xA7] = new RepeCmpsM32M32("RepeCmpsM32M32");
     this->instructions[0xAA] = new RepStosM8("RepStosM8");
     this->instructions[0xAB] = new RepStosM32("RepStosM32");
 }
@@ -6403,5 +6399,53 @@ void XorEaxImm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     cpu->AddEip(2);
     cpu->SetR16(EAX, result);
     cpu->UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    return;
+}
+
+RepeCmpsM32M32::RepeCmpsM32M32(string code_name):Instruction(code_name){
+
+}
+
+void RepeCmpsM32M32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){//32bit op_size
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }else{//16bit op_size
+        if(cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
+            this->Error("Not implemented: op_size=16bit protected mode at %s::Run", this->code_name.c_str());
+        }
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+            this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+        }
+        uint16_t cx = cpu->GetR16(ECX);
+        for(uint16_t i = 0; i<cx; i++){
+            uint32_t base_ds, base_es;
+            uint32_t base_ds_si, base_es_di;
+            uint16_t si, di;
+            uint16_t d;
+            uint16_t m1, m2;
+            uint32_t result;
+            base_ds = cpu->GetR16(DS)*16;
+            si = cpu->GetR16(ESI);
+            base_es = cpu->GetR16(ES)*16;
+            di = cpu->GetR16(EDI);
+            base_ds_si = base_ds+si;
+            base_es_di = base_es+di;
+            m1      = mem->Read16(base_ds_si);
+            m2      = mem->Read16(base_es_di);
+            result = (uint32_t)m1 - (uint32_t)m2;
+            cpu->UpdateEflagsForSub8(result, m1, m2);
+            d = cpu->IsFlag(DF)? 0xFFFF:0x0001;
+            cpu->SetR16(ESI, si+d);
+            cpu->SetR16(EDI, di+d);
+            cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
+            if(!cpu->IsFlag(ZF)){
+                return;
+            }
+        }
+    }
     return;
 }

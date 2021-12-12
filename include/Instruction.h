@@ -36,7 +36,10 @@ class Instruction:public Object{
         virtual void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
         void Show();
         Instruction(std::string code_name);
-        void SetModRM(ModRM* modrm, Sib* sib);
+        void SetModRM(ModRM* modrm, Sib* sib){
+            this->sib = *sib;
+            this->modrm = *modrm;
+        }
 };
 
 class JmpRel8:public Instruction{
@@ -1567,5 +1570,11 @@ class AdcRm8Imm8:public Instruction{
 class XorEaxImm32:public Instruction{
     public: 
         XorEaxImm32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};
+
+class RepeCmpsM32M32:public Instruction{
+    public: 
+        RepeCmpsM32M32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
