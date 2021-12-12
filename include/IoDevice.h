@@ -5,7 +5,6 @@
 class IoDevice:public Object{
     protected:
         Fifo<uint8_t>* fifo = NULL;
-        void ProcessCommand(uint8_t command);
     public:
         IoDevice();
         virtual void Out8(uint16_t addr, uint8_t data) = 0;

@@ -3,6 +3,7 @@
 #include "Gui.h"
 #include "Font.h"
 #include "Mouse.h"
+
 using namespace std;
 
 #define MOVE_SCALE 5
@@ -11,6 +12,7 @@ using namespace std;
 
 #define MAX_WIDTH 1280
 #define MAX_HEIGHT 1024
+
 
 Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
     this->vga = vga;
@@ -354,6 +356,7 @@ void Gui::Display(){
     SDL_Event e;
     unsigned int start;
     unsigned int end;
+    static int cnt = 0;
     //SDL_WarpMouseInWindow(this->window, guest_x, guest_y);
     while (!this->quit){
         start = SDL_GetTicks();
@@ -393,13 +396,13 @@ void Gui::Display(){
             this->Resize();
         }
         //vramの領域が変更されているかどうかで描画するかどうか決定する。
-        //if(memcmp(this->vram, )!=0)
             for(int y=0; y<this->screen_height; y++){
                 for(int x=0; x<this->screen_width; x++){
                     this->image[x+y*this->screen_width] = *(this->vga->GetPixel(x, y));
                 }
             }
             this->Update();
+        //変更があったら。
         this->vga->UnlockVga();
         end = SDL_GetTicks();
         end = end - start;

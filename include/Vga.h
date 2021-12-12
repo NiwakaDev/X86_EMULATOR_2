@@ -39,6 +39,9 @@ class Vga:public Object{
         int GetHeight(){
             return this->height;
         }
+        int GetVramStartAddr(){
+            return this->vram_start_addr;
+        }
         void LockVga(){
             this->vga_mtx.lock();
         }

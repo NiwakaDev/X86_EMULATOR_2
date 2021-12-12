@@ -78,69 +78,44 @@ void Instruction::SetModRM(ModRM modrm, Sib* sib){
     this->modrm = modrm;
 }
 
-void Instruction::ParseModRM_32bitsMode(Cpu* cpu, Memory* mem){
-    uint8_t code;
-    code = mem->Read8(cpu->GetLinearAddrForCodeAccess());
-    this->modrm.mod = ((code&0xC0)>>6);
-    this->modrm.op_code = ((code&0x38) >> 3);
-    this->modrm.rm = code & 0x07;
-    cpu->AddEip(1);//ModRMの内容を読み込んだので、次の番地へ
-    if((this->modrm.mod==0x01&&this->modrm.rm==0x05) || (this->modrm.mod==0x10&&this->modrm.rm==0x05)){
-        cpu->SetDataSelector(SS);
-    }
-    //SIB判定
-    if(this->modrm.mod!=3 && this->modrm.rm==4){
-        this->modrm.sib = mem->Read8(cpu->GetLinearAddrForCodeAccess());
-        cpu->AddEip(1);
-        this->sib.ParseSib(this->modrm.sib, this->modrm.mod);
-        if((this->sib.GetBase()==5 && this->modrm.mod==0x00)){
-            this->modrm.disp32 = mem->Read32(cpu->GetLinearAddrForCodeAccess());
-            cpu->AddEip(4);
-            this->sib.SetDisp32(this->modrm.disp32);
-        }
-    }
-
-    //disp取得disp32は
-    if((this->modrm.mod==0 && this->modrm.rm==5) || this->modrm.mod==2){
-        this->modrm.disp32 = mem->Read32(cpu->GetLinearAddrForCodeAccess());
-        cpu->AddEip(4);
-    }else if(this->modrm.mod==1){
-        this->modrm.disp8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
-        cpu->AddEip(1);
-    }
-}
-
-void Instruction::ParseModRM_16bitsMode(Cpu* cpu, Memory* mem){
+void Instruction::ParseModRM(Cpu *cpu, Memory* mem){
     uint8_t code;
     code = mem->Read8(cpu->GetLinearAddrForCodeAccess());
     this->modrm.mod = ((code&0xC0)>>6);
     this->modrm.op_code = ((code&0x38) >> 3);
     this->modrm.rm = code & 0x07;
     cpu->AddEip(1);
-    if((this->modrm.mod==0 && this->modrm.rm==6) || this->modrm.mod==2){
-        this->modrm.disp16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
-        cpu->AddEip(2);
-    }else if(this->modrm.mod==1){
-        this->modrm.disp8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
-        cpu->AddEip(1);
-    }    
-}
-
-void Instruction::ParseModRM(Cpu *cpu, Memory* mem){
-    if(cpu->Is32bitsMode()){
-        if(cpu->IsPrefixAddrSize()){//32bitmodeで16bitアドレスサイズ
-            this->ParseModRM_16bitsMode(cpu, mem);
-            return;
+    if(cpu->Is32bitsMode()^cpu->IsPrefixAddrSize()){
+        if((this->modrm.mod==0x01&&this->modrm.rm==0x05) || (this->modrm.mod==0x10&&this->modrm.rm==0x05)){
+            cpu->SetDataSelector(SS);
         }
-        this->ParseModRM_32bitsMode(cpu, mem);
-        return;
+        //SIB判定
+        if(this->modrm.mod!=3 && this->modrm.rm==4){
+            this->modrm.sib = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+            cpu->AddEip(1);
+            this->sib.ParseSib(this->modrm.sib, this->modrm.mod);
+            if((this->sib.GetBase()==5 && this->modrm.mod==0x00)){
+                this->modrm.disp32 = mem->Read32(cpu->GetLinearAddrForCodeAccess());
+                cpu->AddEip(4);
+                this->sib.SetDisp32(this->modrm.disp32);
+            }
+        }
+        //disp取得disp32は
+        if((this->modrm.mod==0 && this->modrm.rm==5) || this->modrm.mod==2){
+            this->modrm.disp32 = mem->Read32(cpu->GetLinearAddrForCodeAccess());
+            cpu->AddEip(4);
+        }else if(this->modrm.mod==1){
+            this->modrm.disp8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+            cpu->AddEip(1);
+        }
     }else{
-        if(cpu->IsPrefixAddrSize()){//16bitmodeで32bitアドレスサイズ
-            this->ParseModRM_32bitsMode(cpu, mem);
-            return;
-        }
-        this->ParseModRM_16bitsMode(cpu, mem);
-        return;
+        if((this->modrm.mod==0 && this->modrm.rm==6) || this->modrm.mod==2){
+            this->modrm.disp16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+            cpu->AddEip(2);
+        }else if(this->modrm.mod==1){
+            this->modrm.disp8 = mem->Read8(cpu->GetLinearAddrForCodeAccess());
+            cpu->AddEip(1);
+        }   
     }
 }
 

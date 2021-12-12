@@ -16,8 +16,6 @@ class Instruction:public Object{
         Sib sib;
         ModRM modrm;
         void ParseModRM(Cpu *cpu, Memory* mem);
-        void ParseModRM_32bitsMode(Cpu* cpu, Memory* mem);
-        void ParseModRM_16bitsMode(Cpu* cpu, Memory* mem);
         void ParseRegIdx(Cpu* cpu, Memory* mem);
         uint8_t GetRM8(Cpu* cpu, Memory* mem);
         uint16_t GetRM16(Cpu* cpu, Memory* mem);

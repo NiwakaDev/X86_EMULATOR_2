@@ -9,24 +9,12 @@ SegmentRegister::SegmentRegister(uint16_t data){
     this->cache.bit32_mode = false;//リアルモードでは16ビットモードがデフォルトで、コードセグメントによる変更はできない。
 }
 
-uint32_t SegmentRegister::GetBaseAddr(){
-    return this->cache.base_addr;
-}
-
-uint32_t SegmentRegister::GetLimit(){
-    return this->cache.limit;
-}
-
 bool SegmentRegister::Is32bitsMode(){
     return this->cache.bit32_mode;
 }
 
 void SegmentRegister::On32bitMode(){
     this->cache.bit32_mode = true;
-}
-
-uint16_t SegmentRegister::GetData(){
-    return this->selector.raw;
 }
 
 void SegmentRegister::SetCache(Cpu* cpu, uint16_t idx){

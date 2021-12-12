@@ -25,10 +25,16 @@ class SegmentRegister:public Object{
         uint8_t cpl;
     public:
         SegmentRegister(uint16_t data);
-        uint32_t GetBaseAddr();
-        uint32_t GetLimit();
+        uint32_t GetBaseAddr(){
+            return this->cache.base_addr;
+        }
+        uint32_t GetLimit(){
+            return this->cache.limit;
+        }
+        uint16_t GetData(){
+            return this->selector.raw;
+        }
         bool Is32bitsMode();
-        uint16_t GetData();
         uint8_t GetDpl();
         void SetRpl(uint8_t rpl);
         void SetCpl(uint8_t cpl);

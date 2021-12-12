@@ -16,24 +16,6 @@ void Memory::Dump(uint32_t start, uint32_t size){
     fprintf(stderr, "\n");
 }
 
-uint8_t Memory::Read8(uint32_t addr){
-    return this->buff[addr];
-}
-
-uint16_t Memory::Read16(uint32_t addr){
-    uint16_t* data = (uint16_t*)(this->buff+addr);
-    return *data;
-}
-
-uint32_t Memory::Read32(uint32_t addr){
-    uint32_t* data = (uint32_t*)(this->buff+addr);
-    return *data;
-}
-
-uint8_t* Memory::GetPointer(uint32_t addr){
-    return this->buff+addr;
-}
-
 void Memory::MemCpy(uint32_t to_addr, uint32_t from_addr, uint32_t size){
     memcpy(this->buff+to_addr, this->buff+from_addr, size);
 }

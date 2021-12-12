@@ -8,6 +8,7 @@ G++_OPTIONS = -std=c++11 -O2 -I $(INCLUDE_DIR)
 #G++_OPTIONS = -Wall -std=c++11 -O0 -g -I $(INCLUDE_DIR)
 LD_FLGS += -lSDL2
 
+
 SOURCE_DIR      = ./src/
 INCLUDE_DIR     = ./include/
 
