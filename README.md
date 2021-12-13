@@ -63,7 +63,7 @@ left-ctrl+left-alt+g
 
 <h4>osz(https://github.com/neri/osz)</h4>
 
-<h2>参考</h2>
+<h2>6.参考</h2>
 
 <h4>リアルモードの参考</h4>
 https://bitbucket.org/7shi/8086run/
@@ -73,5 +73,5 @@ https://bitbucket.org/7shi/8086run/
 https://github.com/dhepper/font8x8
 から拝借しました。ありがとうございます。
 
-<h2>ビルドしても動かない場合</h2>
+<h2>7.ビルドしても動かない場合</h2>
 連絡をくれるとありがたいです。
