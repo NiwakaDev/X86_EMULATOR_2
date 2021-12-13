@@ -3,11 +3,9 @@
 
 class Memory;
 
-/***
-#define DEFAULT_HEIGHT 200
-#define DEFAULT_WIDTH 320
-#define DEFAULT_VRAM_START_ADDR 0x000a0000
-***/
+#define MODE13_HEIGHT 200
+#define MODE13_WIDTH 320
+#define MODE13_VRAM_START_ADDR 0x000a0000
 
 /***
 テキストモードのメモ

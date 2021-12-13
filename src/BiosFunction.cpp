@@ -46,7 +46,7 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
         switch(ah){
             case 0x00:
                 if((mode&0x00FF)==0x13){
-                    this->vga->SetInfo(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_VRAM_START_ADDR);
+                    this->vga->SetInfo(MODE13_WIDTH, MODE13_HEIGHT, MODE13_VRAM_START_ADDR);
                 }else{
                     this->Error("Not implemented: video mode=0x%02X at VideoFunction::Run", (uint8_t)(mode&0x00FF));
                 }
