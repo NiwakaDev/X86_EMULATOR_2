@@ -53,9 +53,22 @@ typedef _Tss Tss;
 
 #define DB 0x40
 
+/***こちらを採用するが、まずは汎用レジスタでうまくいくかどうかを調べる。
+struct _Registers{
+	uint32_t eip, eflags, eax, ecx, edx, ebx, esp, ebp, esi, edi;
+	uint32_t es, cs, ss, ds, fs, gs;
+}__attribute__((__packed__));
+typedef struct _Registers Registers;
+***/
+
+struct _Registers{
+	uint32_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
+}__attribute__((__packed__));
+typedef struct _Registers Registers;
 
 class Cpu:public Object{
     private:
+        Registers registers;
         Bios* bios = NULL;
         Gdtr* gdtr = NULL;
         Idtr* idtr = NULL;
@@ -91,7 +104,7 @@ class Cpu:public Object{
             }flgs;
         }cr0;
         uint32_t eip = IPL_START_ADDR;
-        uint32_t gprs[GENERAL_PURPOSE_REGISTER32_COUNT];
+        uint32_t* gprs[GENERAL_PURPOSE_REGISTER32_COUNT];
         SegmentRegister* segment_registers[SEGMENT_REGISTER_COUNT];
         TaskRegister* task_register;
         union{
@@ -154,11 +167,11 @@ class Cpu:public Object{
             return this->prefix_flgs[FLG_66];
         }
         void SetR8L(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data){
-            this->gprs[register_type] = (this->gprs[register_type]&0xffffff00)|(uint32_t)data;
+            *this->gprs[register_type] = ((*this->gprs[register_type])&0xffffff00)|(uint32_t)data;
         }
 
         void SetR8H(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data){
-            this->gprs[register_type] = (this->gprs[register_type]&0xffff00FF)|((uint32_t)data<<8);
+            *this->gprs[register_type] = ((*this->gprs[register_type])&0xffff00FF)|((uint32_t)data<<8);
         }
 
         void SetR8(uint32_t register_type, uint8_t data){
@@ -170,10 +183,10 @@ class Cpu:public Object{
         }
         void SetR16(SEGMENT_REGISTER register_type, uint16_t data);
         void SetR16(GENERAL_PURPOSE_REGISTER32 register_type, uint16_t data){
-            this->gprs[register_type] = (this->gprs[register_type]&0xffff0000)|(uint32_t)data;
+            *this->gprs[register_type] = ((*this->gprs[register_type])&0xffff0000)|(uint32_t)data;
         }
         void SetR32(GENERAL_PURPOSE_REGISTER32 register_type, uint32_t data){
-            this->gprs[register_type] = data;
+            *this->gprs[register_type] = data;
         }
         void SetGdtr(uint16_t limit, uint32_t base);
         void SetIdtr(uint16_t limit, uint32_t base);
@@ -193,17 +206,17 @@ class Cpu:public Object{
             }
         }
         uint8_t GetR8L(GENERAL_PURPOSE_REGISTER32 register_type){
-            return (uint8_t)(this->gprs[register_type]&0x000000ff);
+            return (uint8_t)((*this->gprs[register_type])&0x000000ff);
         }
         uint8_t GetR8H(GENERAL_PURPOSE_REGISTER32 register_type){
-            return (uint8_t)((this->gprs[register_type]>>8)&0xff);
+            return (uint8_t)(((*this->gprs[register_type])>>8)&0xff);
         }
         uint16_t GetR16(GENERAL_PURPOSE_REGISTER32 register_type){
-            return this->gprs[register_type]&0x0000FFFF;
+            return (*this->gprs[register_type])&0x0000FFFF;
         }
         uint16_t GetR16(SEGMENT_REGISTER register_type);
         uint32_t GetR32(GENERAL_PURPOSE_REGISTER32 register_type){
-            return this->gprs[register_type];
+            return *this->gprs[register_type];
         }
         uint32_t GetEip(){
             return this->eip;

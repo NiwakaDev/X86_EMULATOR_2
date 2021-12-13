@@ -31,9 +31,26 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->ldtr = new Ldtr(0);
     this->gdtr = new Gdtr("Gdtr", 0, 0);
     this->idtr = new Idtr("Idtr", 0, 0);
-    for(int i=0; i<GENERAL_PURPOSE_REGISTER32_COUNT; i++){
-        this->gprs[i] = 0x00000000;
-    }
+
+    this->registers.eax  =0x00000000;
+    this->registers.ebx  =0x00000000;
+    this->registers.ecx  =0x00000000;
+    this->registers.edx  =0x00000000;
+    this->registers.esp  =0x00000000;
+    this->registers.ebp  =0x00000000;
+    this->registers.esi  =0x00000000;
+    this->registers.edi  =0x00000000;
+
+    this->gprs[EAX] = &(this->registers.eax);
+    this->gprs[EBX] = &(this->registers.ebx);
+    this->gprs[ECX] = &(this->registers.ecx);
+    this->gprs[EDX] = &(this->registers.edx);
+    this->gprs[ESP] = &(this->registers.esp);
+    this->gprs[EBP] = &(this->registers.ebp);
+    this->gprs[ESI] = &(this->registers.esi);
+    this->gprs[EDI] = &(this->registers.edi);
+
+
 
     //その機械語にはprefixが適用されるかどうかのフラグ
     //FLG_F3は命令化した。
@@ -346,11 +363,11 @@ uint32_t Cpu::GetLinearStackAddr(){
     uint32_t base_addr;
     uint32_t offset;
     if(this->cr0.flgs.PE){
-        offset    = this->gprs[ESP];
+        offset    = *this->gprs[ESP];
         base_addr = this->segment_registers[this->default_stack_selector]->GetBaseAddr();
         return offset + base_addr;
     }
-    offset    = 0x0000FFFF & this->gprs[ESP];
+    offset    = 0x0000FFFF & *this->gprs[ESP];
     base_addr = ((uint32_t)this->segment_registers[this->default_stack_selector]->GetData())*16;
     return (base_addr + offset)&0x000FFFFF;//下位20bitがリアルモードにおいてのリニアアドレス
 }
@@ -584,7 +601,7 @@ void Cpu::ClearFlag(EFLAGS_KIND eflags_kind){
 }
 
 inline void Cpu::Push32(uint32_t data){
-    this->gprs[ESP] = this->gprs[ESP]-4;
+    *this->gprs[ESP] = *this->gprs[ESP]-4;
     uint32_t addr   = this->GetLinearStackAddr();
     this->mem->Write(addr, data);
 }
@@ -596,18 +613,9 @@ void Cpu::SaveTask(uint16_t selector){
     this->task_register->Set(selector, this);
     GdtGate*gdt_gate = this->GetGdtGate(prev_selector);
     task_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
-    //this->mem->Write(task_addr+1*4, this->GetEip());
-    //this->mem->Write(task_addr+2*4, this->GetR16(SS));
     this->mem->Write(task_addr+8*4, this->GetEip());
     this->mem->Write(task_addr+9*4, this->GetEflgs());
-    this->mem->Write(task_addr+10*4, this->GetR32(EAX));
-    this->mem->Write(task_addr+11*4, this->GetR32(ECX));
-    this->mem->Write(task_addr+12*4, this->GetR32(EDX));
-    this->mem->Write(task_addr+13*4, this->GetR32(EBX));
-    this->mem->Write(task_addr+14*4, this->GetR32(ESP));
-    this->mem->Write(task_addr+15*4, this->GetR32(EBP));
-    this->mem->Write(task_addr+16*4, this->GetR32(ESI));
-    this->mem->Write(task_addr+17*4, this->GetR32(EDI));
+    this->mem->Write(task_addr+10*4, this->registers);
     this->mem->Write(task_addr+18*4, this->GetR16(ES));
     this->mem->Write(task_addr+19*4, this->GetR16(CS));
     this->mem->Write(task_addr+20*4, this->GetR16(SS));
@@ -625,14 +633,7 @@ void Cpu::SwitchTask(){
 
     this->SetEip(this->mem->Read32(task_addr+8*4));
     this->SetEflgs(this->mem->Read32(task_addr+9*4));
-    this->SetR32(EAX, this->mem->Read32(task_addr+10*4));
-    this->SetR32(ECX, this->mem->Read32(task_addr+11*4));
-    this->SetR32(EDX, this->mem->Read32(task_addr+12*4));
-    this->SetR32(EBX, this->mem->Read32(task_addr+13*4));
-    this->SetR32(ESP, this->mem->Read32(task_addr+14*4));
-    this->SetR32(EBP, this->mem->Read32(task_addr+15*4));
-    this->SetR32(ESI, this->mem->Read32(task_addr+16*4)); 
-    this->SetR32(EDI, this->mem->Read32(task_addr+17*4)); 
+    memcpy(&this->registers, this->mem->GetPointer(task_addr+10*4), sizeof(Registers));
     this->SetR16(ES, this->mem->Read16(task_addr+18*4));
     this->SetR16(CS, this->mem->Read16(task_addr+19*4));
     this->SetR16(SS, this->mem->Read16(task_addr+20*4));
@@ -700,8 +701,8 @@ static void Dump(Memory* mem, uint32_t start, uint32_t size){
 }
 
 void Cpu::ShowRegisters(){
-    fprintf(stderr, "EAX=%08X EBX=%08X ECX=%08X EDX=%08X\n", this->gprs[EAX], this->gprs[EBX], this->gprs[ECX], this->gprs[EDX]);
-    fprintf(stderr, "ESI=%08X EDI=%08X EBP=%08X ESP=%08X\n", this->gprs[ESI], this->gprs[EDI], this->gprs[EBP], this->gprs[ESP]);
+    fprintf(stderr, "EAX=%08X EBX=%08X ECX=%08X EDX=%08X\n", *this->gprs[EAX], *this->gprs[EBX], *this->gprs[ECX], *this->gprs[EDX]);
+    fprintf(stderr, "ESI=%08X EDI=%08X EBP=%08X ESP=%08X\n", *this->gprs[ESI], *this->gprs[EDI], *this->gprs[EBP], *this->gprs[ESP]);
     fprintf(stderr, "EIP=%08X\n", this->eip);
     fprintf(stderr, "ES =%04X %08X\n", this->segment_registers[ES]->GetData(), this->segment_registers[ES]->GetBaseAddr());
     fprintf(stderr, "CS =%04X %08X\n", this->segment_registers[CS]->GetData(), this->segment_registers[CS]->GetBaseAddr());
