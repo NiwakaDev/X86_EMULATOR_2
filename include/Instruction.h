@@ -1584,3 +1584,9 @@ class RepeScasM8:public Instruction{
         RepeScasM8(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class RcrRm32:public Instruction{
+    public: 
+        RcrRm32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

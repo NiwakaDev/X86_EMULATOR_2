@@ -1133,6 +1133,7 @@ CodeD1::CodeD1(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     this->instructions[2] = new RclRm32("RclRm32");
+    this->instructions[3] = new RcrRm32("RcrRm32");
     this->instructions[4] = new SalRm32("SalRm32");
     this->instructions[5] = new ShrRm32("ShrRm32");
     this->instructions[7] = new SarRm32("SarRm32");
@@ -6522,5 +6523,34 @@ void RepeScasM8::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
             }
         }
     }
+    return;
+}
+
+RcrRm32::RcrRm32(string code_name):Instruction(code_name){
+
+}
+
+void RcrRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    bool temp_cf;
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){//32bit op_size
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }
+    uint16_t rm16;
+    rm16 = this->GetRM16(cpu, mem);
+    bool dest_msb = (rm16&MSB_16)?true:false;
+    if(dest_msb^cpu->IsFlag(CF)){
+        cpu->SetFlag(OF);
+    }else{
+        cpu->ClearFlag(OF);
+    }
+
+    temp_cf = (rm16&LSB)?true:false;
+    rm16 = (rm16>>1)+cpu->IsFlag(CF)?1:0;
+    if(temp_cf){
+        cpu->SetFlag(CF);
+    }else{
+        cpu->ClearFlag(CF);
+    }
+    this->SetRM16(cpu, mem, rm16);
     return;
 }

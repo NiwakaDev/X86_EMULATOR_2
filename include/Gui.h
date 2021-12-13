@@ -14,6 +14,9 @@ class Gui:public Object{
         bool IsQuit(){
             return this->quit;
         }
+        void Finish(){
+            this->quit = true;
+        }
     private:    
         bool quit = false;
         int mouse_x, mouse_y;

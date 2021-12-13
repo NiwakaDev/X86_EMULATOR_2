@@ -125,7 +125,10 @@ void Emulator::Run(){
                     this->cpu->HandleInterrupt(irq_num);                
                 }
             }
-            if(!this->cpu->Run(this->io_port))return;
+            if(!this->cpu->Run(this->io_port)){
+                this->gui->Finish();
+                break;
+            }
         }
     }
 }
