@@ -264,6 +264,12 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
         case KEY_CODE_R:
             decoded_code = ((KEY_CODE_R)<<BYTE)|'r';
             break;
+        case KEY_CODE_M:
+            decoded_code = ((KEY_CODE_M)<<BYTE)|'m';
+            break;
+        case KEY_CODE_E:
+            decoded_code = ((KEY_CODE_M)<<BYTE)|'e';
+            break;
         default:
             this->Error("Not implemented: scan_code=%04X at KeyFunction::Decode\n", scan_code);
             break;
