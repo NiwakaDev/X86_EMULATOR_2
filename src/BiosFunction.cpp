@@ -412,6 +412,12 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
         case KEY_CODE_PERIOD:
             decoded_code = ((KEY_CODE_PERIOD)<<BYTE)|',';
             break;
+        case KEY_CODE_MINUS:
+            decoded_code = ((KEY_CODE_MINUS)<<BYTE)|'-';
+            break;
+        case KEY_CODE_BACKSPACE:
+            decoded_code = ((KEY_CODE_MINUS)<<BYTE)|0x10;
+            break;
         default:
             this->Error("Not implemented: scan_code=%04X at KeyFunction::Decode\n", scan_code);
             break;
