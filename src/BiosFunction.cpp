@@ -153,7 +153,7 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 video_mode = cpu->GetR16(EBX);
                 height = 400;
                 width  = 640;
-                vram   = 0xfd000000;
+                vram   = 0x000a0000;
                 cpu->SetR8H(EAX, 0x00);
                 cpu->SetR8L(EAX, 0x4F);
                 mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x28, (uint32_t)vram);
@@ -172,7 +172,7 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x1b, (uint8_t)0x04);
                 mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x12, (uint16_t)640);
                 mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x14, (uint16_t)400);
-                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x28, (uint32_t)0xfd000000);
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x28, (uint32_t)0x000a0000);
                 cpu->SetR8H(EAX, 0x00);
                 cpu->SetR8L(EAX, 0x4F);
                 return;
