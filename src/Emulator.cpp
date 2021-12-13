@@ -104,6 +104,7 @@ void Emulator::Run(){
     bool result;
     //TODO : テストコードのせいで汚くなったメイン関数の修正
     while(!this->gui->IsQuit()){
+        /***
         if(test){
             if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
                 if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
@@ -120,15 +121,15 @@ void Emulator::Run(){
                 return;
             }
         }else{
-            if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
-                if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
-                    this->cpu->HandleInterrupt(irq_num);                
-                }
+        ***/
+        if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
+            if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
+                this->cpu->HandleInterrupt(irq_num);                
             }
-            if(!this->cpu->Run(this)){
-                this->gui->Finish();
-                break;
-            }
+        }
+        if(!this->cpu->Run(this)){
+            this->gui->Finish();
+            break;
         }
     }
 }

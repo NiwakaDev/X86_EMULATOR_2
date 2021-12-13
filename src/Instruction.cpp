@@ -5294,6 +5294,7 @@ void RepeCmpsM8M8::Run(Emulator* emu){
         uint32_t ecx = emu->cpu->GetR32(ECX);
         base_ds = emu->cpu->GetBaseAddr(DS);
         base_es = emu->cpu->GetBaseAddr(ES);
+        d = emu->cpu->IsFlag(DF)? -1:1;
         for(uint32_t i = 0; i<ecx; i++){
             esi = emu->cpu->GetR32(ESI);
             edi = emu->cpu->GetR32(EDI);
@@ -5303,7 +5304,6 @@ void RepeCmpsM8M8::Run(Emulator* emu){
             m2      = emu->mem->Read8(base_es_edi);
             result = (uint32_t)m1 - (uint32_t)m2;
             emu->cpu->UpdateEflagsForSub8(result, m1, m2);
-            d = emu->cpu->IsFlag(DF)? -1:1;
             emu->cpu->SetR32(ESI, esi+d);
             emu->cpu->SetR32(EDI, edi+d);
             emu->cpu->SetR32(ECX, emu->cpu->GetR32(ECX)-1);
@@ -5380,13 +5380,13 @@ void RepneScasM8::Run(Emulator* emu){
             this->Error("Not implemented: op_size=32bits && addr_size=16bits at %s::Run", this->code_name.c_str());
         }
         uint32_t cx = emu->cpu->GetR32(ECX);
+        uint32_t d = emu->cpu->IsFlag(DF)? -1:1;
         for(uint32_t i = 0; i<cx; i++){
             uint32_t base_es;
             uint32_t edi;
             uint32_t base_es_edi;
             uint8_t al, m8;
             uint32_t result;
-            uint32_t d;
             base_es = emu->cpu->GetBaseAddr(ES);
             edi     = emu->cpu->GetR32(EDI);
             base_es_edi = base_es+edi;
@@ -5394,7 +5394,6 @@ void RepneScasM8::Run(Emulator* emu){
             al = emu->cpu->GetR8L(EAX);
             result = (uint32_t)al - (uint32_t)m8;
             emu->cpu->UpdateEflagsForSub8(result, al, m8);
-            d = emu->cpu->IsFlag(DF)? -1:1;
             emu->cpu->SetR32(EDI, edi+d);
             emu->cpu->SetR32(ECX, emu->cpu->GetR32(ECX)-1);
             if(emu->cpu->IsFlag(ZF)){//等しくなったら終了
@@ -6473,21 +6472,19 @@ void RepeScasM8::Run(Emulator* emu){
             this->Error("Not implemented: op_size=32bits && addr_size=16bits at %s::Run", this->code_name.c_str());
         }
         uint32_t cx = emu->cpu->GetR32(ECX);
+        uint32_t d = emu->cpu->IsFlag(DF)? -1:1;
+        uint32_t base_es = emu->cpu->GetBaseAddr(ES);
         for(uint32_t i = 0; i<cx; i++){
-            uint32_t base_es;
             uint32_t edi;
             uint32_t base_es_edi;
             uint8_t al, m8;
             uint32_t result;
-            uint32_t d;
-            base_es = emu->cpu->GetBaseAddr(ES);
             edi     = emu->cpu->GetR32(EDI);
             base_es_edi = base_es+edi;
             m8      = emu->mem->Read8(base_es_edi);
             al = emu->cpu->GetR8L(EAX);
             result = (uint32_t)al - (uint32_t)m8;
             emu->cpu->UpdateEflagsForSub8(result, al, m8);
-            d = emu->cpu->IsFlag(DF)? -1:1;
             emu->cpu->SetR32(EDI, edi+d);
             emu->cpu->SetR32(ECX, emu->cpu->GetR32(ECX)-1);
             if(!emu->cpu->IsFlag(ZF)){

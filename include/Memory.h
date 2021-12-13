@@ -1,6 +1,7 @@
 #pragma once
 #include "common.h"
 #define MEM_SIZE 4294967296
+//#define MEM_SIZE 33554432
 
 class Memory:public Object{
     private:
@@ -8,10 +9,7 @@ class Memory:public Object{
     public:
         Memory();
         template<typename type>void Write(uint32_t addr, type data){
-            uint8_t* p = (uint8_t*)&data;
-            for(int i=0; i<sizeof(data); i++){
-                this->buff[addr+i] = p[i];
-            }
+            *(type*)(this->buff+addr) = data;
         }
         void MemCpy(uint32_t to_addr, uint32_t from_addr, uint32_t size);
         uint8_t Read8(uint32_t addr){

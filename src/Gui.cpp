@@ -405,10 +405,5 @@ void Gui::Display(){
         this->Update();
         //変更があったら。
         this->vga->UnlockVga();
-        end = SDL_GetTicks();
-        end = end - start;
-        if(16>end){
-            SDL_Delay(16-end);
-        }   
     }
 }

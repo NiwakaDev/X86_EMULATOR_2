@@ -194,6 +194,7 @@ void FloppyFunction::Init(char* file_name){
     }
     this->buff = (uint8_t*)malloc(this->floppy_size);
     fread(this->buff, 1, this->floppy_size, this->disk_img_stream);
+    fclose(this->disk_img_stream);
 }
 
 void FloppyFunction::Run(Cpu* cpu, Memory* mem){
@@ -245,7 +246,6 @@ void FloppyFunction::Read(Cpu* cpu, Memory* mem){
     static int total=0;
     static int cnt=0;
     uint32_t buff_addr;
-    uint8_t data;
     this->es = (uint32_t)cpu->GetR16(ES);
     this->bx = cpu->GetR16(EBX);
     this->drive_number = (uint32_t)cpu->GetR8L(EDX);
@@ -254,14 +254,15 @@ void FloppyFunction::Read(Cpu* cpu, Memory* mem){
     this->cylinder_number = (uint32_t)cpu->GetR8H(ECX);
     this->cylinder_number = ((((uint16_t)cpu->GetR8L(ECX))&0xC0)<<2)|this->cylinder_number;
     this->processed_sector_number = (uint32_t)cpu->GetR8L(EAX);
-    buff_addr = this->es*16 + this->bx;
-    total = total + 512;
-    cnt++;
     for(int i=0; i<this->processed_sector_number; i++){
+        //fprintf(stderr, "%d\n", this->processed_sector_number);
+        /***
         for(int j=0; j<SECTOR_SIZE; j++){
             data = (uint8_t)this->buff[this->head_number*18*SECTOR_SIZE+this->cylinder_number*18*2*SECTOR_SIZE+((this->sector_number+i)-1)*SECTOR_SIZE+j];
             mem->Write(buff_addr+j+i*SECTOR_SIZE, data);
         }
+        ***/
+        memcpy(mem->GetPointer(this->es*16 + this->bx+i*SECTOR_SIZE), this->buff+this->head_number*18*SECTOR_SIZE+this->cylinder_number*18*2*SECTOR_SIZE+((this->sector_number+i)-1)*SECTOR_SIZE, SECTOR_SIZE);
     }
     cpu->SetR8H(EAX, 0x00);
     cpu->ClearFlag(CF);//エラーなし
