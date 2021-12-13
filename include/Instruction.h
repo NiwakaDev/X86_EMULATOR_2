@@ -1578,3 +1578,9 @@ class RepeCmpsM32M32:public Instruction{
         RepeCmpsM32M32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class RepeScasM8:public Instruction{
+    public: 
+        RepeScasM8(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

@@ -385,6 +385,7 @@ void GeneralSystemServicesFunction::Run(Cpu* cpu, Memory* mem){
             cpu->ClearFlag(CF);
             cpu->SetR16(EAX, 0x0000);
             break;
+        case 0xE8://無視
         case 0x24:
             break;
         default:
