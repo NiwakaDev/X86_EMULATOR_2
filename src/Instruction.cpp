@@ -2010,18 +2010,19 @@ void ShrRm32Imm8::Run(Emulator* emu){
         rm32 = this->GetRM32(emu);
         imm8 = emu->mem->Read8(emu->cpu->GetLinearAddrForCodeAccess());
         emu->cpu->AddEip(1);
+        if(imm8==0){
+            return;
+        }
         if(imm8==1){
             this->Error("imm8==1 is not implemented at %s::Run", this->code_name.c_str());
         }
-        for(uint32_t i=0; i<imm8; i++){
-            if(rm32&0x01){
-                emu->cpu->SetFlag(CF);
-            }else{
-                emu->cpu->ClearFlag(CF);
-            }
-            //rm32 = rm32 / 2;
-            rm32 = rm32 >> 1;
+        rm32 = rm32 >> (imm8-1);
+        if(rm32&0x01){
+            emu->cpu->SetFlag(CF);
+        }else{
+            emu->cpu->ClearFlag(CF);
         }
+        rm32 = rm32 >> 1;
         this->SetRM32(emu, rm32);
         emu->cpu->UpdateEflagsForShr(rm32);
         return;
@@ -2352,17 +2353,19 @@ void ShrRm8Imm8::Run(Emulator* emu){
     rm8  = this->GetRM8(emu);
     imm8 = emu->mem->Read8(emu->cpu->GetLinearAddrForCodeAccess());
     emu->cpu->AddEip(1);
+    if(imm8==0){
+        return;
+    }
     if(imm8==1){
         this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
     }
-    for(unsigned int i=0; i<imm8; i++){
-        if(rm8&0x01){
-            emu->cpu->SetFlag(CF);
-        }else{
-            emu->cpu->ClearFlag(CF);
-        }
-        rm8 = rm8 >> 1;
+    rm8 = rm8 >> (imm8-1);
+    if(rm8&0x01){
+        emu->cpu->SetFlag(CF);
+    }else{
+        emu->cpu->ClearFlag(CF);
     }
+    rm8 = rm8 >> 1;
     this->SetRM8(emu, rm8);
     emu->cpu->UpdateEflagsForShr(rm8);
 }
@@ -2659,17 +2662,19 @@ void SalRm32Imm8::Run(Emulator* emu){
         rm32 = this->GetRM32(emu);
         imm8 = (uint32_t)emu->mem->Read8(emu->cpu->GetLinearAddrForCodeAccess());
         emu->cpu->AddEip(1);
+        if(imm8==0){
+            return;
+        }
         if(imm8==1){
             this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
         }
-        for(uint32_t i=0; i<imm8; i++){
-            if(rm32&0x80000000){
-                emu->cpu->SetFlag(CF);
-            }else{
-                emu->cpu->ClearFlag(CF);
-            }
-            rm32 = rm32 << 1;
+        rm32 = rm32 << (imm8-1);
+        if(rm32&0x80000000){
+            emu->cpu->SetFlag(CF);
+        }else{
+            emu->cpu->ClearFlag(CF);
         }
+        rm32 = rm32 << 1;
         this->SetRM32(emu, rm32);
         return;
     }
@@ -2938,24 +2943,24 @@ SarRm32Imm8::SarRm32Imm8(string code_name):Instruction(code_name){
 
 void SarRm32Imm8::Run(Emulator* emu){
     if(emu->cpu->Is32bitsMode() ^ emu->cpu->IsPrefixOpSize()){
-        uint32_t rm32;
+        int32_t rm32;//符号付回転なので、in32_tにしている。
         uint32_t imm8;
         rm32 = this->GetRM32(emu);
         imm8 = (uint32_t)(emu->mem->Read8(emu->cpu->GetLinearAddrForCodeAccess()));
         emu->cpu->AddEip(1);
-        bool flg = (rm32&SIGN_FLG4)? 1:0;
+        if(imm8==0){
+            return;
+        }
         if(imm8==1){
             this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
         }
-        for(uint32_t i=0; i<imm8; i++){
-            if(rm32&0x01){
-                emu->cpu->SetFlag(CF);
-            }else{
-                emu->cpu->ClearFlag(CF);
-            }
-            rm32 = rm32 >> 1;
-            rm32 = rm32 | ((flg)?SIGN_FLG4:0);//最上位bitを補う
+        rm32 = rm32 >> (imm8-1);
+        if(rm32&0x01){
+            emu->cpu->SetFlag(CF);
+        }else{
+            emu->cpu->ClearFlag(CF);
         }
+        rm32 = rm32 >> 1;
         this->SetRM32(emu, rm32);
         emu->cpu->UpdateEflagsForShr(rm32);//shrと同じ
         return;
@@ -3328,29 +3333,6 @@ void Iretd::Run(Emulator* emu){
     }
     return;
 }
-
-/***
- *  Tss* tss = emu->cpu->GetTss();//現在のTSS
-    bool outer_privilege_level;
-    emu->cpu->AddEip(1);
-    if(emu->cpu->Is32bitsMode() ^ emu->cpu->IsPrefixOpSize()){
-        addr     = this->Pop32(emu);
-        cs = this->Pop32(emu);
-        dpl = cs&0x03;
-        outer_privilege_level = (dpl>emu->cpu->GetCpl());
-        if(outer_privilege_level){
-            esp = this->Pop32(emu);
-            ss  = this->Pop32(emu);
-        }
-        emu->cpu->SetEip(addr);
-        emu->cpu->SetR16(CS, cs);
-        if(outer_privilege_level){
-            emu->cpu->SetR32(ESP, esp);
-            emu->cpu->SetR16(SS, ss);
-        }
-        return;
-    }
-***/
 
 MovEaxMoffs32::MovEaxMoffs32(string code_name):Instruction(code_name){
 
@@ -3775,6 +3757,9 @@ void ShrRm32Cl::Run(Emulator* emu){
         uint8_t cl;
         rm32 = this->GetRM32(emu);
         cl = emu->cpu->GetR8L(ECX);
+        if(cl==0){
+            return;
+        }
         if(cl==1){
             if(rm32&SIGN_FLG4){
                 emu->cpu->SetFlag(OF);
@@ -3782,15 +3767,13 @@ void ShrRm32Cl::Run(Emulator* emu){
                 emu->cpu->ClearFlag(OF);
             }
         }
-        for(uint32_t i=0; i<cl; i++){
-            if(rm32&1){
-                emu->cpu->SetFlag(CF);
-            }else{
-                emu->cpu->ClearFlag(CF);
-            }
-            //rm32 = rm32 / 2;
-            rm32 = rm32 >> 1;
+        rm32 = rm32 >> (cl-1);
+        if(rm32&1){
+            emu->cpu->SetFlag(CF);
+        }else{
+            emu->cpu->ClearFlag(CF);
         }
+        rm32 = rm32 >> 1;
         this->SetRM32(emu, rm32);
         emu->cpu->UpdateEflagsForShr(rm32);
         return;
@@ -4021,6 +4004,9 @@ void RcrRm8Imm8::Run(Emulator* emu){
     rm8 = this->GetRM8(emu);
     imm8 = emu->mem->Read8(emu->cpu->GetLinearAddrForCodeAccess());
     emu->cpu->AddEip(1);
+    if(imm8==0){
+        return;
+    }
     if(imm8==1){
         this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
     }
@@ -4042,24 +4028,25 @@ SarRm8Imm8::SarRm8Imm8(string code_name):Instruction(code_name){
 }
 
 void SarRm8Imm8::Run(Emulator* emu){
-    uint8_t rm8;
+    int8_t rm8;//符号付回転なので、int8_t
     uint8_t imm8;
     rm8 = this->GetRM8(emu);
     imm8 = (uint8_t)(emu->mem->Read8(emu->cpu->GetLinearAddrForCodeAccess()));
     emu->cpu->AddEip(1);
     bool flg = (rm8&SIGN_FLG1)? 1:0;
+    if(imm8==0){
+        return;
+    }
     if(imm8==1){
         this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
     }
-    for(uint8_t i=0; i<imm8; i++){
-        if(rm8&0x01){
-            emu->cpu->SetFlag(CF);
-        }else{
-            emu->cpu->ClearFlag(CF);
-        }
-        rm8 = rm8 >> 1;
-        rm8 = rm8 | ((flg)?SIGN_FLG1:0);
+    rm8 = rm8 >> (imm8-1);
+    if(rm8&0x01){
+        emu->cpu->SetFlag(CF);
+    }else{
+        emu->cpu->ClearFlag(CF);
     }
+    rm8 = rm8 >> 1;
     this->SetRM8(emu, rm8);
     emu->cpu->UpdateEflagsForShr(rm8);
     return;
@@ -4576,15 +4563,17 @@ void SalRm32Cl::Run(Emulator* emu){
         uint32_t msb_dest;
         rm32 = this->GetRM32(emu);
         cl = emu->cpu->GetR8L(ECX);
-        change_of_flg = cl==1;
-        for(uint32_t i=0; i<cl; i++){
-            if(rm32&0x80000000){
-                emu->cpu->SetFlag(CF);
-            }else{
-                emu->cpu->ClearFlag(CF);
-            }
-            rm32 = rm32 << 1;
+        if(cl==0){//回転しないなら、フラグに影響を与えないようにするという仕様
+            return;
         }
+        change_of_flg = cl==1;
+        rm32 = rm32 << (cl-1);
+        if(rm32&0x80000000){
+            emu->cpu->SetFlag(CF);
+        }else{
+            emu->cpu->ClearFlag(CF);
+        }
+        rm32 = rm32 << 1;
         this->SetRM32(emu, rm32);
         if(change_of_flg){
             msb_dest = (0x80000000&rm32)!=0;
@@ -4649,27 +4638,28 @@ SarRm32Cl::SarRm32Cl(string code_name):Instruction(code_name){
 
 void SarRm32Cl::Run(Emulator* emu){
     if(emu->cpu->Is32bitsMode() ^ emu->cpu->IsPrefixOpSize()){
-        uint32_t rm32;
+        int32_t rm32;//SAR命令は符号付回転
         uint32_t cl;
         rm32 = this->GetRM32(emu);
         cl = emu->cpu->GetR8L(ECX);
-        bool flg = (rm32&SIGN_FLG4)? 1:0;
+        if(cl==0){//cl==0の時、何もしない。
+            return;
+        }
         if(cl==1){
             emu->cpu->ClearFlag(OF);
         }
-        for(uint32_t i=0; i<cl; i++){
-            if(rm32&0x01){
-                emu->cpu->SetFlag(CF);
-            }else{
-                emu->cpu->ClearFlag(CF);
-            }
-            rm32 = rm32 >> 1;
-            rm32 = rm32 | ((flg)?SIGN_FLG4:0);
+        rm32 = rm32 >> (cl-1);
+        if(rm32&0x01){
+            emu->cpu->SetFlag(CF);
+        }else{
+            emu->cpu->ClearFlag(CF);
         }
+        rm32 = rm32 >> 1;
         this->SetRM32(emu, rm32);
         emu->cpu->UpdateEflagsForShr(rm32);//shr命令と同じ
         return;
     }
+    //TODO:SAR命令は符号を維持して、回転させるので、rm16はint16_tにすべき
     uint16_t rm16;
     uint16_t cl;
     rm16 = this->GetRM16(emu);
@@ -4816,14 +4806,13 @@ void ShrdRm32R32Imm8::Run(Emulator* emu){
         rm32 = this->GetRM32(emu);
         r32  = emu->cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
         dest = (r32<<32)|rm32;
-        for(int i=0; i<imm8; i++){
-            if(dest&0x01){
-                emu->cpu->SetFlag(CF);
-            }else{
-                emu->cpu->ClearFlag(CF);
-            }
-            dest = dest >> 1;
+        dest = dest >> (imm8-1);
+        if(dest&0x01){
+            emu->cpu->SetFlag(CF);
+        }else{
+            emu->cpu->ClearFlag(CF);
         }
+        dest = dest >> 1;
         rm32 = (uint32_t)dest;
         this->SetRM32(emu, rm32);
         emu->cpu->UpdateEflagsForShr(rm32);
