@@ -54,6 +54,37 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
             case 0x01:
                 //本来はカーソル位置を指定するが、今は無視
                 return;
+            case 0x02:
+                col = cpu->GetR8L(EDX);
+                row = cpu->GetR8H(EDX);
+                cpu->SetR16(EAX, 0x0000);
+                return;
+            case 0x06:
+                if(!cpu->GetR8L(EAX)){//0の場合は、ブランクウィンドウ(http://softwaretechnique.web.fc2.com/OS_Development/Tips/Bios_Services/video_services_06.html)
+                    for(int r=0; r<=24; r++){
+                        for(int c=0; c<80; c++){
+                            console_buff[r][c] = 0;
+                            this->vga->SetText(console_buff[r][c], c, r);
+                        }
+                    }
+                    return;
+                }
+                for(int i=0; i<cpu->GetR8L(EAX); i++){
+                    for(int r=0; r<24; r++){
+                        for(int c=0; c<80; c++){
+                            console_buff[r][c] = console_buff[r+1][c];
+                        }
+                    }
+                    for(int c=0; c<80; c++){
+                        console_buff[24][c] = 0;
+                    }
+                }
+                for(int r=0; r<=24; r++){
+                    for(int c=0; c<80; c++){
+                        this->vga->SetText(console_buff[r][c], c, r);
+                    }
+                }
+                return;
             case 0x13:
                 this->vga->SetInfo(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_VRAM_START_ADDR);
                 return;
