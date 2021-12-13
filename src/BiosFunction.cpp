@@ -148,12 +148,12 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 this->Error("Not implemented: ah=0x%02X at VideoFunction::Run", ah);
         }
     }else{//VESAサービス
-        switch(mode){
+        switch(mode){//TODO:マジックナンバーの修正
             case 0x4F02:
                 video_mode = cpu->GetR16(EBX);
                 height = 400;
                 width  = 640;
-                vram   = 0x000a0000;
+                vram   = MODE13_VRAM_START_ADDR;
                 cpu->SetR8H(EAX, 0x00);
                 cpu->SetR8L(EAX, 0x4F);
                 mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x28, (uint32_t)vram);
@@ -172,7 +172,7 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x1b, (uint8_t)0x04);
                 mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x12, (uint16_t)640);
                 mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x14, (uint16_t)400);
-                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x28, (uint32_t)0x000a0000);
+                mem->Write(cpu->GetR16(ES)*16+cpu->GetR16(EDI)+0x28, (uint32_t)MODE13_VRAM_START_ADDR);
                 cpu->SetR8H(EAX, 0x00);
                 cpu->SetR8L(EAX, 0x4F);
                 return;
