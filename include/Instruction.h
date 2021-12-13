@@ -1590,3 +1590,9 @@ class RcrRm32:public Instruction{
         RcrRm32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class AdcEaxImm32:public Instruction{
+    public: 
+        AdcEaxImm32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

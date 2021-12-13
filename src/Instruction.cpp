@@ -6535,7 +6535,7 @@ void RcrRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){//32bit op_size
         this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
-    uint16_t rm16;
+    uint32_t rm16;//16bit目にCFが来るから、uint32_tにしている。
     rm16 = this->GetRM16(cpu, mem);
     bool dest_msb = (rm16&MSB_16)?true:false;
     if(dest_msb^cpu->IsFlag(CF)){
@@ -6545,12 +6545,33 @@ void RcrRm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     }
 
     temp_cf = (rm16&LSB)?true:false;
-    rm16 = (rm16>>1)+cpu->IsFlag(CF)?1:0;
+    rm16 = (rm16>>1)+(cpu->IsFlag(CF)?(1<<WORD):0);
     if(temp_cf){
         cpu->SetFlag(CF);
     }else{
         cpu->ClearFlag(CF);
     }
     this->SetRM16(cpu, mem, rm16);
+    return;
+}
+
+AdcEaxImm32::AdcEaxImm32(string code_name):Instruction(code_name){
+
+}
+
+void AdcEaxImm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){//32bit op_size
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }
+    uint16_t imm16;
+    uint16_t ax;
+    uint32_t result;
+    uint16_t cf = cpu->IsFlag(CF)?1:0;
+    ax = cpu->GetR16(EAX);
+    imm16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
+    result = (uint32_t)imm16 + (uint32_t)ax+(uint32_t)cf;
+    this->SetRM16(cpu, mem, result);
+    cpu->UpdateEflagsForAdd(result, ax, (uint16_t)(imm16+cf));
+    cpu->AddEip(2);
     return;
 }
