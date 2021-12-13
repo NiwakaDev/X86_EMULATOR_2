@@ -35,6 +35,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
         this->gprs[i] = 0x00000000;
     }
 
+    //その機械語にはprefixが適用されるかどうかのフラグ
     //FLG_F3は命令化した。
     //FLG_F2は命令化した。
     this->prefix_flgs[FLG_67] = false;
@@ -46,6 +47,10 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->prefix_flgs[FLG_64] = false;
     this->prefix_flgs[FLG_65] = false;
 
+    //1バイトがprefixかどうかを管理するテーブル
+    for(int i=0; i<256; i++){
+        this->prefix_table[i] = false;
+    }
     this->prefix_table[0xF0] = true;
     this->prefix_table[0x26] = true;
     this->prefix_table[0x2E] = true;
@@ -55,6 +60,7 @@ Cpu::Cpu(Bios* bios, Memory* mem){
     this->prefix_table[0x65] = true;
     this->prefix_table[0x66] = true;
     this->prefix_table[0x67] = true;
+
 
     for(int i=0; i<INSTRUCTION_SIZE; i++){
         this->instructions[i] = NULL;
@@ -677,26 +683,6 @@ void Cpu::HandleInterrupt(int irq_num){
         this->Error("Not implemented: dest_code_segment_dpl>cpl at Cpu::HandleInterrupt");
     }
 
-    return;
-
-    /***
-    ss = this->segment_registers[SS]->GetData();
-    eflags = this->eflags.raw;
-    esp = this->gprs[ESP];
-    cs  = this->segment_registers[CS]->GetData();
-    eip = this->eip;
-    tss = this->GetCurrentTss();
-    this->SetR16(SS, tss->ss0);
-    this->SetR32(ESP, tss->esp0);
-    this->Push32(ss);
-    this->Push32(esp);
-    this->Push32(eflags);
-    this->Push32(cs);
-    this->Push32(eip);
-    this->eip = offset_addr;
-    this->segment_registers[CS]->Set(idt_gate->selector,  this);
-    this->eflags.flgs.IF = 0;
-    ***/
     return;
 }
 
