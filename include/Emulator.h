@@ -15,9 +15,6 @@ class IoDevice;
 class Emulator:public Object{
     private:
         Bios* bios      = NULL;
-        Memory* mem     = NULL;
-        Cpu* cpu        = NULL;
-        IoPort* io_port = NULL;
         Gui* gui        = NULL;
         Vga* vga        = NULL;
         Pic* pic        = NULL;
@@ -32,6 +29,9 @@ class Emulator:public Object{
         bool head_start = false;
         void Run();
     public:
+        Memory* mem     = NULL;
+        Cpu* cpu        = NULL;
+        IoPort* io_port = NULL;
         Emulator(int argc, char* argv[]);
         void Join();
         void Start();

@@ -112,7 +112,7 @@ void Emulator::Run(){
             }
             fprintf(out, "i:%d\n", i);
             this->cpu->Debug(out, true);
-            result = this->cpu->Run(this->io_port);
+            result = this->cpu->Run(this);
             this->cpu->Debug(out, true);
             i++;
             if(!result){
@@ -125,7 +125,7 @@ void Emulator::Run(){
                     this->cpu->HandleInterrupt(irq_num);                
                 }
             }
-            if(!this->cpu->Run(this->io_port)){
+            if(!this->cpu->Run(this)){
                 this->gui->Finish();
                 break;
             }

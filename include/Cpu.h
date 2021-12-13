@@ -12,6 +12,7 @@ class Gdtr;
 class Idtr;
 class Ldtr;
 class TaskRegister;
+class Emulator;
 
 #define REAL_MODE 0     //REAL_MODEの挙動：「IA-32 インテル® アーキテクチャソフトウェア・デベロッパーズ・マニュアル下巻：システム・プログラミング・ガイド」16章
 #define PROTECT_MODE 1
@@ -140,7 +141,7 @@ class Cpu:public Object{
         bool segment_override;
     public:
         Cpu(Bios* bios, Memory* mem);
-        bool Run(IoPort* io_port);
+        bool Run(Emulator* emu);
         void AddEip(uint32_t data){
             this->eip += data;
             if(!this->IsProtectedMode()){

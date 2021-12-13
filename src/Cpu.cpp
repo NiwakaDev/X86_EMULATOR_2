@@ -725,7 +725,7 @@ void Cpu::Debug(FILE *f, bool h) {
             this->segment_registers[ES]->GetData(), this->segment_registers[SS]->GetData(), this->segment_registers[DS]->GetData(), this->segment_registers[CS]->GetData(), this->eip, this->eflags.flgs.PF?'P':'-', this->eflags.flgs.SF?'S':'-');
 }
 
-bool Cpu::Run(IoPort* io_port){
+bool Cpu::Run(Emulator* emu){
     this->InitSelector();
     this->ResetPrefixFlg();
     this->CheckPrefixCode(this->mem);
@@ -735,7 +735,7 @@ bool Cpu::Run(IoPort* io_port){
         fprintf(stderr, "Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
         return false;
     }
-    this->instructions[op_code]->Run(this, this->mem, io_port);
+    this->instructions[op_code]->Run(emu);
     //fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
     return true;
 }
