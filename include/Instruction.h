@@ -1596,3 +1596,9 @@ class AdcEaxImm32:public Instruction{
         AdcEaxImm32(std::string code_name);
         void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
 };
+
+class RepeScasM32:public Instruction{
+    public: 
+        RepeScasM32(std::string code_name);
+        void Run(Cpu* cpu, Memory* mem, IoPort* io_port);
+};

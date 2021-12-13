@@ -5261,6 +5261,7 @@ CodeF3::CodeF3(string code_name):Instruction(code_name){
     this->instructions[0xAA] = new RepStosM8("RepStosM8");
     this->instructions[0xAB] = new RepStosM32("RepStosM32");
     this->instructions[0xAE] = new RepeScasM8("RepeScasM8");
+    this->instructions[0xAF] = new RepeScasM32("RepeScasM32");
 }
 
 void CodeF3::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
@@ -6570,8 +6571,49 @@ void AdcEaxImm32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
     ax = cpu->GetR16(EAX);
     imm16 = mem->Read16(cpu->GetLinearAddrForCodeAccess());
     result = (uint32_t)imm16 + (uint32_t)ax+(uint32_t)cf;
-    this->SetRM16(cpu, mem, result);
+    cpu->SetR16(EAX, result);
     cpu->UpdateEflagsForAdd(result, ax, (uint16_t)(imm16+cf));
     cpu->AddEip(2);
+    return;
+}
+
+RepeScasM32::RepeScasM32(string code_name):Instruction(code_name){
+
+}
+
+void RepeScasM32::Run(Cpu* cpu, Memory* mem, IoPort* io_port){
+    cpu->AddEip(1);
+    if(cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+    }
+    if(cpu->Is32bitsMode() ^ cpu->IsPrefixOpSize()){//32bit op_size
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }else{//16bit op_size
+        if(cpu->Is32bitsMode() ^ cpu->IsPrefixAddrSize()){
+            this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+        }
+        uint16_t cx = cpu->GetR16(ECX);
+        for(uint16_t i = 0; i<cx; i++){
+            uint32_t base_es;
+            uint32_t di;
+            uint32_t base_es_di;
+            uint16_t ax, m16;
+            uint32_t result;
+            uint16_t d;
+            base_es = cpu->GetBaseAddr(ES);
+            di     = cpu->GetR16(EDI);
+            base_es_di = base_es+di;
+            m16      = mem->Read16(base_es_di);
+            ax = cpu->GetR16(EAX);
+            result = (uint32_t)ax - (uint32_t)m16;
+            cpu->UpdateEflagsForSub16(result, ax, m16);
+            d = cpu->IsFlag(DF)? -2:2;
+            cpu->SetR16(EDI, di+d);
+            cpu->SetR16(ECX, cpu->GetR16(ECX)-1);
+            if(!cpu->IsFlag(ZF)){//等しくなったら終了
+                break;
+            }
+        }
+    }
     return;
 }

@@ -255,20 +255,119 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
         case KEY_CODE_ENTER:
             decoded_code = ((KEY_CODE_ENTER)<<BYTE)|0x0d;
             break;
+        case KEY_CODE_A:
+            decoded_code = ((KEY_CODE_A)<<BYTE)|'a';
+            break;
+        case KEY_CODE_B:
+            decoded_code = ((KEY_CODE_B)<<BYTE)|'b';
+            break;
+        case KEY_CODE_C:
+            decoded_code = ((KEY_CODE_C)<<BYTE)|'c';
+            break;
         case KEY_CODE_D:
             decoded_code = ((KEY_CODE_D)<<BYTE)|'d';
+            break;
+        case KEY_CODE_E:
+            decoded_code = ((KEY_CODE_E)<<BYTE)|'e';
+            break;
+        case KEY_CODE_F:
+            decoded_code = ((KEY_CODE_F)<<BYTE)|'f';
+            break;
+        case KEY_CODE_G:
+            decoded_code = ((KEY_CODE_G)<<BYTE)|'g';
+            break;
+        case KEY_CODE_H:
+            decoded_code = ((KEY_CODE_H)<<BYTE)|'h';
             break;
         case KEY_CODE_I:
             decoded_code = ((KEY_CODE_I)<<BYTE)|'i';
             break;
-        case KEY_CODE_R:
-            decoded_code = ((KEY_CODE_R)<<BYTE)|'r';
+        case KEY_CODE_J:
+            decoded_code = ((KEY_CODE_J)<<BYTE)|'j';
+            break;
+        case KEY_CODE_K:
+            decoded_code = ((KEY_CODE_K)<<BYTE)|'k';
+            break;
+        case KEY_CODE_L:
+            decoded_code = ((KEY_CODE_L)<<BYTE)|'l';
             break;
         case KEY_CODE_M:
             decoded_code = ((KEY_CODE_M)<<BYTE)|'m';
             break;
-        case KEY_CODE_E:
-            decoded_code = ((KEY_CODE_M)<<BYTE)|'e';
+        case KEY_CODE_N:
+            decoded_code = ((KEY_CODE_N)<<BYTE)|'n';
+            break;
+        case KEY_CODE_O:
+            decoded_code = ((KEY_CODE_O)<<BYTE)|'o';
+            break;
+        case KEY_CODE_P:
+            decoded_code = ((KEY_CODE_P)<<BYTE)|'p';
+            break;
+        case KEY_CODE_Q:
+            decoded_code = ((KEY_CODE_Q)<<BYTE)|'q';
+            break;
+        case KEY_CODE_R:
+            decoded_code = ((KEY_CODE_R)<<BYTE)|'r';
+            break;
+        case KEY_CODE_S:
+            decoded_code = ((KEY_CODE_S)<<BYTE)|'s';
+            break;
+        case KEY_CODE_T:
+            decoded_code = ((KEY_CODE_T)<<BYTE)|'t';
+            break;
+        case KEY_CODE_U:
+            decoded_code = ((KEY_CODE_U)<<BYTE)|'u';
+            break;
+        case KEY_CODE_V:
+            decoded_code = ((KEY_CODE_V)<<BYTE)|'v';
+            break;
+        case KEY_CODE_W:
+            decoded_code = ((KEY_CODE_W)<<BYTE)|'w';
+            break;
+        case KEY_CODE_X:
+            decoded_code = ((KEY_CODE_X)<<BYTE)|'x';
+            break;
+        case KEY_CODE_Y:
+            decoded_code = ((KEY_CODE_V)<<BYTE)|'y';
+            break;
+        case KEY_CODE_Z:
+            decoded_code = ((KEY_CODE_Z)<<BYTE)|'z';
+            break;
+        case KEY_CODE_0:
+            decoded_code = ((KEY_CODE_0)<<BYTE)|'0';
+            break;
+        case KEY_CODE_1:
+            decoded_code = ((KEY_CODE_1)<<BYTE)|'1';
+            break;
+        case KEY_CODE_2:
+            decoded_code = ((KEY_CODE_2)<<BYTE)|'2';
+            break;
+        case KEY_CODE_3:
+            decoded_code = ((KEY_CODE_3)<<BYTE)|'3';
+            break;
+        case KEY_CODE_4:
+            decoded_code = ((KEY_CODE_4)<<BYTE)|'4';
+            break;
+        case KEY_CODE_5:
+            decoded_code = ((KEY_CODE_5)<<BYTE)|'5';
+            break;
+        case KEY_CODE_6:
+            decoded_code = ((KEY_CODE_6)<<BYTE)|'6';
+            break;
+        case KEY_CODE_7:
+            decoded_code = ((KEY_CODE_7)<<BYTE)|'7';
+            break;
+        case KEY_CODE_8:
+            decoded_code = ((KEY_CODE_8)<<BYTE)|'8';
+            break;
+        case KEY_CODE_9:
+            decoded_code = ((KEY_CODE_9)<<BYTE)|'9';
+            break;
+        case KEY_CODE_SEMICOLON:
+            decoded_code = ((KEY_CODE_SEMICOLON)<<BYTE)|';';
+            break;
+        case KEY_CODE_COLON:
+            decoded_code = ((KEY_CODE_COLON)<<BYTE)|':';
             break;
         default:
             this->Error("Not implemented: scan_code=%04X at KeyFunction::Decode\n", scan_code);
