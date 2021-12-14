@@ -10,7 +10,6 @@ class Gui:public Object{
         Gui(Vga* vga, Kbc* kbc, Mouse* mouse);
         ~Gui();
         void Display();
-        void Update();
         bool IsQuit(){
             return this->quit;
         }
@@ -18,6 +17,8 @@ class Gui:public Object{
             this->quit = true;
         }
     private:    
+        void Update();
+        void Update(int x, int y, int w, int h);
         bool quit = false;
         int mouse_x, mouse_y;
         Vga* vga = NULL;

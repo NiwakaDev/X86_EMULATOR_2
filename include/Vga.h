@@ -49,6 +49,7 @@ class Vga:public Object{
         VGA_MODE GetMode(){
             return this->vga_mode;
         }
+        void SetSnap(uint8_t* snap, int w, int h);
     private:
         std::mutex vga_mtx;
         uint8_t palette[256][4];

@@ -62,6 +62,17 @@ inline void Gui::Update(){
     SDL_RenderPresent(this->renderer);
 }
 
+inline void Gui::Update(int x, int y, int w, int h){
+    SDL_Rect rect;
+    rect.x = x;//左上の座標
+    rect.y = y;//左上の座標
+    rect.w = this->screen_width;//長方形の幅
+    rect.h = this->screen_height;//長方形の高さ
+    SDL_UpdateTexture(this->texture, &rect, this->image+x+y*this->screen_width, this->screen_width * sizeof(Pixel));
+    SDL_RenderCopy(this->renderer, this->texture, NULL, NULL);
+    SDL_RenderPresent(this->renderer);
+}
+
 inline uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
     uint8_t key_code;
     switch (e->key.keysym.sym){
@@ -360,7 +371,14 @@ void Gui::Display(){
     unsigned int start;
     unsigned int end;
     //SDL_WarpMouseInWindow(this->window, guest_x, guest_y);
+    uint8_t* prev_snap = (uint8_t*)malloc(MAX_HEIGHT*MAX_WIDTH);
+    uint8_t* new_snap  = (uint8_t*)malloc(MAX_HEIGHT*MAX_WIDTH);
+    memset(prev_snap, 0x00, MAX_HEIGHT*MAX_WIDTH);
+    memset(new_snap, 0x00, MAX_HEIGHT*MAX_WIDTH);
+    bool full_update;
+    static int cnt =0 ;
     while (!this->quit){
+        cnt++;
         start = SDL_GetTicks();
         while (SDL_PollEvent(&e)){
             if (e.type == SDL_QUIT){
@@ -391,6 +409,7 @@ void Gui::Display(){
                 this->HandleMouseButton(&e);
             }
         }
+        /***
         this->vga->LockVga();
         if((this->vga->GetHeight()!=this->screen_height)||(this->vga->GetWidth()!=this->screen_width)){
             this->screen_height = this->vga->GetHeight();
@@ -403,7 +422,51 @@ void Gui::Display(){
             }
         }
         this->Update();
-        //変更があったら。
         this->vga->UnlockVga();
+        ***/
+        this->vga->LockVga();
+        full_update = false;
+        if((this->vga->GetHeight()!=this->screen_height)||(this->vga->GetWidth()!=this->screen_width)){
+            this->screen_height = this->vga->GetHeight();
+            this->screen_width  = this->vga->GetWidth();
+            this->Resize();
+            full_update = true;
+        }
+        if(!full_update){
+            this->vga->SetSnap(new_snap, this->screen_height, this->screen_width);
+            //new_snapをゲット
+            int y_start = -1;
+            int y;//forループ抜け出した後も利用する。
+            for(y=0; y<this->screen_height; y++){
+                //一致しないとき、再描画
+                if(memcmp(prev_snap+y*this->screen_width, new_snap+y*this->screen_width, this->screen_width)){//1行比較
+                    for(int x=0; x<this->screen_width; x++){
+                        this->image[x+y*this->screen_width] = *(this->vga->GetPixel(x, y));//一致していないので、1行転送, memcpyしない理由はGetPixelを参照してくだされば分かります。
+                    }
+                    if(y_start<0){
+                        y_start = y;
+                        //fprintf(stderr, "cnt=%d, y_start=%d, prev_snap[0]=0x%02X, new_snape[0]=0x%02X\n", cnt, y_start, prev_snap[0], new_snap[0]);
+                    }
+                }else{//メモリの内容は一致。それまでの内容を書き出す
+                    //fprintf(stderr, "cnt=%d, y_start=%d, prev_snap[0]=0x%02X, new_snape[0]=0x%02X\n", cnt, y_start, prev_snap[0], new_snap[0]);
+                    if(y_start>=0){
+                        this->Update(0, y_start, this->screen_width, y-y_start);
+                        y_start = -1;
+                    }   
+                }
+            }
+            if(y_start>=0){//最後の行まで一致しなかった時の条件式
+                this->Update(0, y_start, this->screen_width, y-y_start);
+            }
+            memcpy(prev_snap, new_snap, this->screen_height*this->screen_width);
+        }else{
+            this->Update();
+        }
+        this->vga->UnlockVga();
+        end = SDL_GetTicks();
+        end = end - start;
+        if(16>end){
+            SDL_Delay(16-end);
+        }   
     }
 }

@@ -168,3 +168,7 @@ void Vga::InitPalette(){
     this->SetColor(14, 0xffffff00);
     this->SetColor(15, 0xffffffff);
 }
+
+void Vga::SetSnap(uint8_t* snap, int w, int h){
+    memcpy(snap, this->mem->GetPointer(this->vram_start_addr), this->width*this->height);
+}
