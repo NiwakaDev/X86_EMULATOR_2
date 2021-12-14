@@ -50,7 +50,6 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
         //VGAサービス
         static int row = 0;
         static int col = 0;
-        static bool stop = false;
         static int cnt = 0;
         uint8_t ascii_code;
         uint8_t al = cpu->GetR8L(EAX);
@@ -101,8 +100,39 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 this->vga->SetInfo(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_VRAM_START_ADDR);
                 return;
             case 0x0E:
-                if(stop)return;
                 ascii_code = cpu->GetR8L(EAX);
+                if(ascii_code==0x20){
+                    this->console_buff[row][col] = 0;
+                    this->vga->SetText(this->console_buff[row][col], col, row);
+                    col++;
+                    if(col==80){
+                        row++;
+                        if(row==25){//上に移動
+                            row = 24;
+                            for(int r=0; r<24; r++){
+                                for(int c=0; c<80; c++){
+                                    this->console_buff[r][c] = this->console_buff[r+1][c];
+                                }
+                            }
+                            for(int c=0; c<80; c++){
+                                this->console_buff[24][c] = 0;
+                            }
+                            for(int r=0; r<=24; r++){
+                                for(int c=0; c<80; c++){
+                                    this->vga->SetText(this->console_buff[r][c], c, r);
+                                }
+                            }
+                        }
+                    }
+                    return;
+                }
+                if(ascii_code==0x08){
+                    if(col==0){
+                        return;
+                    }
+                    col = col - 1;
+                    return;
+                }
                 if(ascii_code==0x0D){
                     row++;
                     col = 0;
@@ -429,14 +459,14 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
             decoded_code = ((KEY_CODE_MINUS)<<BYTE)|'-';
             break;
         case KEY_CODE_BACKSPACE:
-            decoded_code = ((KEY_CODE_MINUS)<<BYTE)|0x10;
+            decoded_code = ((KEY_CODE_BACKSPACE)<<BYTE)|0x7F;
             break;
         default:
             this->Error("Not implemented: scan_code=%04X at KeyFunction::Decode\n", scan_code);
             break;
     }
     static int kb_cnt = 0;
-    if(decoded_code==0x1c0d){
+    if(decoded_code==0x0E7F){
         kb_cnt++;
         if(kb_cnt==1)niwaka_start_flg = true;
     }

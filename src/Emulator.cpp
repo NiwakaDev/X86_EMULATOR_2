@@ -107,25 +107,23 @@ void Emulator::Run(){
     bool log = false;
     //TODO : テストコードのせいで汚くなったメイン関数の修正
     while(!this->gui->IsQuit()){
-        if(niwaka_start_flg){
-            log = true;
-        }
         if(test){
+            if(niwaka_start_flg){
+                log = true;
+            }
             if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
                 if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
                     this->cpu->HandleInterrupt(irq_num);                
                 }
-            }
-            if(i==667){
-                i = i;
             }
             if(log)fprintf(out, "i:%d\n", i);
             if(log)this->cpu->Debug(out, true);
             result = this->cpu->Run(this);
             if(log)this->cpu->Debug(out, true);
             if(log)i++;
-            if(!result){
+            if(!result||i==1000000){
                 fclose(out);
+                exit(1);
                 return;
             }
         }else{
