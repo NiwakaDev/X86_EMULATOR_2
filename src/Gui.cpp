@@ -278,6 +278,9 @@ inline uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
         case SDLK_AT:
             key_code = KEY_CODE_AT;
             break;
+        case SDLK_SLASH:
+            key_code = KEY_CODE_SLASH;
+            break;
         default:
             this->Error("Not implemented: SDL_Keycode = %08X(http://sdl2referencejp.osdn.jp/SDLKeycodeLookup.html) at Gui::HandleKeyDown", e->key.keysym.sym);
     }
