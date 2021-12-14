@@ -72,6 +72,8 @@ class Mouse;
 #define KEY_CODE_F12 0x58
 #define KEY_CODE_AT 0x1A
 #define KEY_CODE_SLASH 0x35
+#define KEY_CODE_UNDERSCORE 0x73
+
 
 #define KEY_CODE_MAKE 0x00
 #define KEY_CODE_BREAK 0x80
