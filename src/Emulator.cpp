@@ -123,7 +123,6 @@ void Emulator::Run(){
             if(log)i++;
             if(!result||i==1000000){
                 fclose(out);
-                exit(1);
                 return;
             }
         }else{
