@@ -409,21 +409,6 @@ void Gui::Display(){
                 this->HandleMouseButton(&e);
             }
         }
-        /***
-        this->vga->LockVga();
-        if((this->vga->GetHeight()!=this->screen_height)||(this->vga->GetWidth()!=this->screen_width)){
-            this->screen_height = this->vga->GetHeight();
-            this->screen_width  = this->vga->GetWidth();
-            this->Resize();
-        }
-        for(int y=0; y<this->screen_height; y++){
-            for(int x=0; x<this->screen_width; x++){
-                this->image[x+y*this->screen_width] = *(this->vga->GetPixel(x, y));
-            }
-        }
-        this->Update();
-        this->vga->UnlockVga();
-        ***/
         this->vga->LockVga();
         full_update = false;
         if((this->vga->GetHeight()!=this->screen_height)||(this->vga->GetWidth()!=this->screen_width)){
@@ -432,9 +417,11 @@ void Gui::Display(){
             this->Resize();
             full_update = true;
         }
+        if(this->vga->GetMode()==TEXT_MODE){
+            full_update = true;//変更部分のみの描画処理はグラフィックモードでしかサポートしていない。
+        }
         if(!full_update){
             this->vga->SetSnap(new_snap, this->screen_height, this->screen_width);
-            //new_snapをゲット
             int y_start = -1;
             int y;//forループ抜け出した後も利用する。
             for(y=0; y<this->screen_height; y++){
@@ -445,10 +432,8 @@ void Gui::Display(){
                     }
                     if(y_start<0){
                         y_start = y;
-                        //fprintf(stderr, "cnt=%d, y_start=%d, prev_snap[0]=0x%02X, new_snape[0]=0x%02X\n", cnt, y_start, prev_snap[0], new_snap[0]);
                     }
                 }else{//メモリの内容は一致。それまでの内容を書き出す
-                    //fprintf(stderr, "cnt=%d, y_start=%d, prev_snap[0]=0x%02X, new_snape[0]=0x%02X\n", cnt, y_start, prev_snap[0], new_snap[0]);
                     if(y_start>=0){
                         this->Update(0, y_start, this->screen_width, y-y_start);
                         y_start = -1;
@@ -460,6 +445,11 @@ void Gui::Display(){
             }
             memcpy(prev_snap, new_snap, this->screen_height*this->screen_width);
         }else{
+            for(int y=0; y<this->screen_height; y++){
+                for(int x=0; x<this->screen_width; x++){
+                    this->image[x+y*this->screen_width] = *(this->vga->GetPixel(x, y));
+                }
+            }
             this->Update();
         }
         this->vga->UnlockVga();
