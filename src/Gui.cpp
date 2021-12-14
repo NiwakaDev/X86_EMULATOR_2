@@ -7,7 +7,7 @@
 using namespace std;
 
 #define MOVE_SCALE 5
-#define WIDTH_DISPLAY_SCALE  2
+#define WIDTH_DISPLAY_SCALE  1
 #define HEIGHT_DISPLAY_SCALE 2
 
 #define MAX_WIDTH 1280
@@ -34,7 +34,7 @@ Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
     }
     this->renderer      = SDL_CreateRenderer(this->window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
     this->texture       = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->screen_width, this->screen_height); 
-    if(SDL_RenderSetLogicalSize(this->renderer, this->screen_width, this->screen_height)<0){
+    if(SDL_RenderSetLogicalSize(this->renderer, this->screen_width, this->screen_height*HEIGHT_DISPLAY_SCALE)<0){
         cout << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
     }
