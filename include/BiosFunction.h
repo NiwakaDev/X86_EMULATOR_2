@@ -18,7 +18,9 @@ class VideoFunction:public BiosFunction{
     private:
         uint8_t color_table[8] = {30, 34, 32, 36, 31, 35, 33, 37};
         void out8(uint16_t addr, uint8_t value);
+        void ClearConsole();
         Vga* vga;
+        uint8_t console_buff[25][80];//TODO:動的に配列の内容を変更できるようにする。
     public:
         VideoFunction(Vga* vga);
         void Run(Cpu *cpu, Memory* mem);

@@ -11,6 +11,8 @@
 #include "Timer.h"
 using namespace std;
 
+extern bool niwaka_start_flg;
+
 Emulator::Emulator(int argc, char* argv[]){
     int parse_result;
     parse_result  = this->ParseArgv(argc, argv);
@@ -102,34 +104,40 @@ void Emulator::Run(){
     }
     int  i = 0;
     bool result;
+    bool log = false;
     //TODO : テストコードのせいで汚くなったメイン関数の修正
     while(!this->gui->IsQuit()){
-        /***
+        if(niwaka_start_flg){
+            log = true;
+        }
         if(test){
             if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
                 if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
                     this->cpu->HandleInterrupt(irq_num);                
                 }
             }
-            fprintf(out, "i:%d\n", i);
-            this->cpu->Debug(out, true);
+            if(i==667){
+                i = i;
+            }
+            if(log)fprintf(out, "i:%d\n", i);
+            if(log)this->cpu->Debug(out, true);
             result = this->cpu->Run(this);
-            this->cpu->Debug(out, true);
-            i++;
+            if(log)this->cpu->Debug(out, true);
+            if(log)i++;
             if(!result){
                 fclose(out);
                 return;
             }
         }else{
-        ***/
-        if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
-            if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
-                this->cpu->HandleInterrupt(irq_num);                
+            if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
+                if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
+                    this->cpu->HandleInterrupt(irq_num);                
+                }
             }
-        }
-        if(!this->cpu->Run(this)){
-            this->gui->Finish();
-            break;
+            if(!this->cpu->Run(this)){
+                this->gui->Finish();
+                break;
+            }
         }
     }
 }

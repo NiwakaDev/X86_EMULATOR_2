@@ -5,6 +5,8 @@
 #include "Kbc.h"
 using namespace std;
 
+bool niwaka_start_flg = false;
+
 BiosFunction::BiosFunction(){
 
 }
@@ -26,6 +28,15 @@ VideoFunction::VideoFunction(Vga* vga):BiosFunction(){
     this->vga = vga;
 }
 
+void VideoFunction::ClearConsole(){
+    for(int r=0; r<=24; r++){
+        for(int c=0; c<80; c++){
+            this->console_buff[r][c] = 0;
+            this->vga->SetText(this->console_buff[r][c], c, r);
+        }
+    }
+}
+
 //http://oswiki.osask.jp/?%28AT%29BIOS
 void VideoFunction::Run(Cpu *cpu, Memory* mem){
     uint16_t mode;
@@ -41,14 +52,20 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
         static int col = 0;
         static bool stop = false;
         static int cnt = 0;
-        static uint8_t console_buff[25][80];
         uint8_t ascii_code;
+        uint8_t al = cpu->GetR8L(EAX);
         switch(ah){
             case 0x00:
-                if((mode&0x00FF)==0x13){
-                    this->vga->SetInfo(MODE13_WIDTH, MODE13_HEIGHT, MODE13_VRAM_START_ADDR);
-                }else{
-                    this->Error("Not implemented: video mode=0x%02X at VideoFunction::Run", (uint8_t)(mode&0x00FF));
+                switch (al){
+                    case 0x13:
+                        this->vga->SetInfo(MODE13_WIDTH, MODE13_HEIGHT, MODE13_VRAM_START_ADDR);
+                        return;
+                    case 0x4A:
+                        this->ClearConsole();
+                        return;
+                    default:
+                        this->Error("Not implemented: video mode=0x%02X at VideoFunction::Run", al);
+                        break;
                 }
                 return;
             case 0x01:
@@ -61,27 +78,22 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 return;
             case 0x06:
                 if(!cpu->GetR8L(EAX)){//0の場合は、ブランクウィンドウ(http://softwaretechnique.web.fc2.com/OS_Development/Tips/Bios_Services/video_services_06.html)
-                    for(int r=0; r<=24; r++){
-                        for(int c=0; c<80; c++){
-                            console_buff[r][c] = 0;
-                            this->vga->SetText(console_buff[r][c], c, r);
-                        }
-                    }
+                    this->ClearConsole();
                     return;
                 }
                 for(int i=0; i<cpu->GetR8L(EAX); i++){
                     for(int r=0; r<24; r++){
                         for(int c=0; c<80; c++){
-                            console_buff[r][c] = console_buff[r+1][c];
+                            this->console_buff[r][c] = this->console_buff[r+1][c];
                         }
                     }
                     for(int c=0; c<80; c++){
-                        console_buff[24][c] = 0;
+                        this->console_buff[24][c] = 0;
                     }
                 }
                 for(int r=0; r<=24; r++){
                     for(int c=0; c<80; c++){
-                        this->vga->SetText(console_buff[r][c], c, r);
+                        this->vga->SetText(this->console_buff[r][c], c, r);
                     }
                 }
                 return;
@@ -98,21 +110,21 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                         row = 24;
                         for(int r=0; r<24; r++){
                             for(int c=0; c<80; c++){
-                                console_buff[r][c] = console_buff[r+1][c];
+                                this->console_buff[r][c] = this->console_buff[r+1][c];
                             }
                         }
                         for(int c=0; c<80; c++){
-                            console_buff[24][c] = 0;
+                            this->console_buff[24][c] = 0;
                         }
                         for(int r=0; r<=24; r++){
                             for(int c=0; c<80; c++){
-                                this->vga->SetText(console_buff[r][c], c, r);
+                                this->vga->SetText(this->console_buff[r][c], c, r);
                             }
                         }
                     }
                     return;
                 }
-                console_buff[row][col] = ascii_code;
+                this->console_buff[row][col] = ascii_code;
                 this->vga->SetText(ascii_code, col, row);
                 col++;
                 if(col==80){
@@ -122,15 +134,15 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                         row = 24;
                         for(int r=0; r<24; r++){
                             for(int c=0; c<80; c++){
-                                console_buff[r][c] = console_buff[r+1][c];
+                                this->console_buff[r][c] = this->console_buff[r+1][c];
                             }
                         }
                         for(int c=0; c<80; c++){
-                            console_buff[24][c] = 0;
+                            this->console_buff[24][c] = 0;
                         }
                         for(int r=0; r<=24; r++){
                             for(int c=0; c<80; c++){
-                                this->vga->SetText(console_buff[r][c], c, r);
+                                this->vga->SetText(this->console_buff[r][c], c, r);
                             }
                         }
                     }
@@ -422,6 +434,11 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
         default:
             this->Error("Not implemented: scan_code=%04X at KeyFunction::Decode\n", scan_code);
             break;
+    }
+    static int kb_cnt = 0;
+    if(decoded_code==0x1c0d){
+        kb_cnt++;
+        if(kb_cnt==1)niwaka_start_flg = true;
     }
     return decoded_code;
 }
