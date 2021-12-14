@@ -9,6 +9,7 @@ using namespace std;
 #define LF    0x0A
 #define CR    0x0D
 #define SPACE 0x20
+#define DEL   0x7F
 
 bool niwaka_start_flg = false;
 
@@ -112,6 +113,17 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                     fprintf(stderr, "ascii_code=0x%02X\n", ascii_code);
                 }
                 ***/
+                if(ascii_code==DEL){
+                    if(col==4){
+                        this->console_buff[row][col] = 0;
+                        this->vga->SetText(this->console_buff[row][col], col, row);
+                        return;
+                    }
+                    this->console_buff[row][col] = 0;
+                    this->vga->SetText(this->console_buff[row][col], col, row);
+                    col = col - 1;
+                    return;
+                }
                 if(ascii_code==SPACE){
                     this->console_buff[row][col] = 0;
                     this->vga->SetText(this->console_buff[row][col], col, row);
@@ -474,6 +486,9 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
             break;
         case KEY_CODE_BACKSPACE:
             decoded_code = ((KEY_CODE_BACKSPACE)<<BYTE)|0x7F;
+            break;
+        case KEY_CODE_LSHIFT:
+            decoded_code = ((KEY_CODE_BACKSPACE)<<BYTE)|0x0;
             break;
         default:
             this->Error("Not implemented: scan_code=%04X at KeyFunction::Decode\n", scan_code);
