@@ -5,6 +5,11 @@
 #include "Kbc.h"
 using namespace std;
 
+#define BS    0x08
+#define LF    0x0A
+#define CR    0x0D
+#define SPACE 0x20
+
 bool niwaka_start_flg = false;
 
 BiosFunction::BiosFunction(){
@@ -101,7 +106,13 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                 return;
             case 0x0E:
                 ascii_code = cpu->GetR8L(EAX);
-                if(ascii_code==0x20){
+                /***
+                if((0x00<=ascii_code&&0x1F)||ascii_code==0x7F){
+                    //どんな制御コードがどういう時に届くかを観察するために書いた。
+                    fprintf(stderr, "ascii_code=0x%02X\n", ascii_code);
+                }
+                ***/
+                if(ascii_code==SPACE){
                     this->console_buff[row][col] = 0;
                     this->vga->SetText(this->console_buff[row][col], col, row);
                     col++;
@@ -126,16 +137,19 @@ void VideoFunction::Run(Cpu *cpu, Memory* mem){
                     }
                     return;
                 }
-                if(ascii_code==0x08){
+                if(ascii_code==BS){
                     if(col==0){
                         return;
                     }
                     col = col - 1;
                     return;
                 }
-                if(ascii_code==0x0D){
-                    row++;
+                if(ascii_code==CR){
                     col = 0;
+                    return;
+                }
+                if(ascii_code==LF){
+                    row++;
                     if(row==25){//上に移動
                         row = 24;
                         for(int r=0; r<24; r++){
