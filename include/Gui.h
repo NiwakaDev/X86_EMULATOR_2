@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include <SDL2/SDL_mixer.h>
 
 class Vga;
 class Kbc;
@@ -32,6 +33,7 @@ class Gui:public Object{
         SDL_Renderer *renderer = NULL;
         SDL_Texture *texture   = NULL;
         SDL_DisplayMode display_mode;
+        Mix_Music *music;
         Pixel* image = NULL;
         void HandleKeyDown(SDL_Event *e);
         void HandleKeyUp(SDL_Event *e);

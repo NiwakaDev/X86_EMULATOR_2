@@ -42,7 +42,7 @@ oszを起動
 ```
 
 <h2>3.言語とライブラリ</h2>
-C++11, SDL2.0
+C++11, SDL2, SDL2_mixer
 
 <h2>4.マウス使用方法</h2>
 
@@ -75,3 +75,7 @@ https://github.com/dhepper/font8x8
 
 <h2>7.ビルドしても動かない場合</h2>
 連絡をくれるとありがたいです。
+
+<h2>フロッピーディスクの音源について</h2>
+OtoLogicの素材を使用しています。(https://otologic.jp/)
+フロッピーディスクの音源ファイル:Floppy_Disk_Drive02-1(Operating_Noise).mp3

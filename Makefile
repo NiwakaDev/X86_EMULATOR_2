@@ -7,8 +7,7 @@ CC = clang++
 G++_OPTIONS = -std=c++11 -O2 -I $(INCLUDE_DIR)
 #G++_OPTIONS = -std=c++11 -O3 -mtune=native -march=native -I $(INCLUDE_DIR)
 #G++_OPTIONS = -Wall -std=c++11 -O0 -g -I $(INCLUDE_DIR)
-LD_FLGS += -lSDL2
-
+LD_FLGS += -lSDL2 -lSDL2_mixer
 
 SOURCE_DIR      = ./src/
 INCLUDE_DIR     = ./include/
@@ -23,7 +22,7 @@ all:$(EMULATOR)
 	$(CC) $(G++_OPTIONS) -o $@ -c $<
 
 $(EMULATOR) : $(OBJECTS) 
-	$(CC) $(LD_FLGS) -o $(OUTPUTS_DIR)$(EMULATOR) $^
+	$(CC) $(LD_FLGS) -o $(OUTPUTS_DIR)$(EMULATOR) $^ 
 
 clean :
 	rm $(OUTPUTS_DIR)$(EMULATOR)
