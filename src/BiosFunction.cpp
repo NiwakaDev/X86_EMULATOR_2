@@ -499,6 +499,9 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
         case KEY_CODE_UNDERSCORE:
             decoded_code = ((KEY_CODE_UNDERSCORE)<<BYTE)|'_';
             break;
+        case KEY_CODE_BACKSLASH:
+            decoded_code = ((KEY_CODE_BACKSLASH)<<BYTE)|'\\';
+            break;
         case KEY_CODE_LSHIFT:
             decoded_code = ((KEY_CODE_BACKSPACE)<<BYTE)|0x0;
             break;

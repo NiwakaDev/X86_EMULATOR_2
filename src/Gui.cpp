@@ -73,6 +73,8 @@ inline void Gui::Update(int x, int y, int w, int h){
     SDL_RenderPresent(this->renderer);
 }
 
+//SDLのキーボードキーコードのヘッダーファイル:https://github.com/davidsiaw/SDL2/blob/6ecaa6b61372e5b2f9bd01201814d07e34bb4186/include/SDL_keycode.h
+//定数値が分かるURL : http://sdl2referencejp.osdn.jp/SDLKeycodeLookup.html
 inline uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
     uint8_t key_code;
     switch (e->key.keysym.sym){
@@ -283,6 +285,9 @@ inline uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
             break;
         case SDLK_UNDERSCORE:
             key_code = KEY_CODE_UNDERSCORE;
+            break;
+        case 0xA5://TODO:SDLK_BACKSLASHは日本語では0xA5, このマジックナンバーを後で修正
+            key_code = KEY_CODE_BACKSLASH;
             break;
         default:
             this->Error("Not implemented: SDL_Keycode = %08X(http://sdl2referencejp.osdn.jp/SDLKeycodeLookup.html) at Gui::HandleKeyDown", e->key.keysym.sym);
