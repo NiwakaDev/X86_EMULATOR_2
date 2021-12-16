@@ -44,8 +44,6 @@ Emulator::Emulator(int argc, char* argv[]){
     }
 }
 
-bool test = false;
-
 int Emulator::ParseArgv(int argc, char* argv[]){
     int parse_result = 0;
     argv++;
@@ -62,12 +60,6 @@ int Emulator::ParseArgv(int argc, char* argv[]){
             this->debug = true;
             argc -= 1;
             argv += 1;
-            continue;
-        }
-        if ((strcmp("-test", argv[0])==0) || (strcmp("-t", argv[0])==0)) {
-            argc -= 1;
-            argv += 1;
-            test= true;
             continue;
         }
         //プログラムを動かしてみたい時のオプション
@@ -99,15 +91,21 @@ void Emulator::Start(){
 void Emulator::Run(){
     int irq_num;
     FILE* out = NULL;
-    if(test){
-        out = fopen("niwaka_output", "w");
-    }
+    #ifdef DEBUG
+        out = fopen("niwaka_output.txt", "w");
+        if(out==NULL){
+            fprintf(stderr, "Error: fopen");
+            exit(1);
+        }
+        fprintf(stderr, "DEBUG\n");
+    #endif
+    
     int  i = 0;
     bool result;
     bool log = false;
     //TODO : テストコードのせいで汚くなったメイン関数の修正
     while(!this->gui->IsQuit()){
-        if(test){
+        #ifdef DEBUG
             if(niwaka_start_flg){
                 log = true;
             }
@@ -125,7 +123,7 @@ void Emulator::Run(){
                 fclose(out);
                 return;
             }
-        }else{
+        #else
             if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
                 if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
                     this->cpu->HandleInterrupt(irq_num);                
@@ -135,6 +133,6 @@ void Emulator::Run(){
                 this->gui->Finish();
                 break;
             }
-        }
+        #endif
     }
 }

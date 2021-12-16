@@ -77,5 +77,5 @@ https://github.com/dhepper/font8x8
 連絡をくれるとありがたいです。
 
 <h2>フロッピーディスクの音源について</h2>
-OtoLogicの素材を使用しています。(https://otologic.jp/)
-フロッピーディスクの音源ファイル:Floppy_Disk_Drive02-1(Operating_Noise).mp3
+<p>OtoLogicの素材を使用(https://otologic.jp/)</p>
+<p>フロッピーディスクの音源ファイル:Floppy_Disk_Drive02-1(Operating_Noise).mp3</p>
