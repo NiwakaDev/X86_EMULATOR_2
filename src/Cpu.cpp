@@ -16,6 +16,15 @@ using namespace std;
 #define CR2_INIT_VALUE    0x00000000
 #define CS_INIT_VALUE     0x0000F000
 
+Cpu::~Cpu(){
+    cerr << "Cpuのデストラクタが呼び出し" << endl;
+    for(int i=0; i<INSTRUCTION_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
 Cpu::Cpu(Bios* bios, Memory* mem){
     this->bios = bios;
     this->mem  = mem;

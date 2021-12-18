@@ -33,6 +33,7 @@ class Emulator:public Object{
         Cpu* cpu        = NULL;
         IoPort* io_port = NULL;
         Emulator(int argc, char* argv[]);
+        ~Emulator();
         void Join();
         void Start();
 };

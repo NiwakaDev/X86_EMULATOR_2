@@ -13,6 +13,7 @@ class Bios:public Object{
         BiosFunction *bios_functions[BIOS_FUNCTION_SIZE];
     public:
         Bios(char* file_name, Vga* vga, Kbc* kbc);
+        ~Bios();
         void LoadIpl(char* file_name, Memory* mem);
         void CallFunction(Cpu *cpu, Memory* mem, uint8_t bios_number);
 };

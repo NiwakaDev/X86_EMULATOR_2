@@ -11,6 +11,7 @@ class BiosFunction:public Object{
         std::string function_name;
     public:
         BiosFunction();
+        virtual ~BiosFunction();
         virtual void Run(Cpu *cpu, Memory* mem);
 };
 
@@ -23,6 +24,7 @@ class VideoFunction:public BiosFunction{
         uint8_t console_buff[25][80];//TODO:動的に配列の内容を変更できるようにする。
     public:
         VideoFunction(Vga* vga);
+        ~VideoFunction();
         void Run(Cpu *cpu, Memory* mem);
 };
 
@@ -43,6 +45,7 @@ class FloppyFunction:public BiosFunction{
     public:
         void Run(Cpu *cpu, Memory* mem);
         FloppyFunction(char* file_name);
+        ~FloppyFunction();
 };  
 
 class MemoryFunction:public BiosFunction{
@@ -50,6 +53,7 @@ class MemoryFunction:public BiosFunction{
         void out8(uint16_t addr, uint8_t value);
     public:
         MemoryFunction();
+        ~MemoryFunction();
         void Run(Cpu *cpu, Memory* mem);
 };
 
@@ -58,6 +62,7 @@ class EquipmentListFunction:public BiosFunction{
         void out8(uint16_t addr, uint8_t value);
     public:
         EquipmentListFunction();
+        ~EquipmentListFunction();
         void Run(Cpu *cpu, Memory* mem);
 };
 
@@ -66,6 +71,7 @@ class KeyFunction:public BiosFunction{
         Kbc* kbc;
     public:
         KeyFunction(Kbc* kbc);
+        ~KeyFunction();
         void Run(Cpu *cpu, Memory* mem);
         void In();
         uint16_t Decode(uint16_t scan_code);
@@ -74,11 +80,13 @@ class KeyFunction:public BiosFunction{
 class TimerFunction:public BiosFunction{
     public:
         TimerFunction();
+        ~TimerFunction();
         void Run(Cpu *cpu, Memory* mem);
 };
 
 class GeneralSystemServicesFunction:public BiosFunction{
     public:
         GeneralSystemServicesFunction();
+        ~GeneralSystemServicesFunction();
         void Run(Cpu *cpu, Memory* mem);
 };

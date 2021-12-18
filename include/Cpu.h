@@ -141,6 +141,7 @@ class Cpu:public Object{
         bool segment_override;
     public:
         Cpu(Bios* bios, Memory* mem);
+        ~Cpu();
         bool Run(Emulator* emu);
         void AddEip(uint32_t data){
             this->eip += data;

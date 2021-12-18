@@ -13,6 +13,12 @@ using namespace std;
 
 extern bool niwaka_start_flg;
 
+Emulator::~Emulator(){
+    cerr << "Emulatorのデストラクタ" << endl;
+    delete this->bios;
+    delete this->cpu;
+}
+
 Emulator::Emulator(int argc, char* argv[]){
     int parse_result;
     parse_result  = this->ParseArgv(argc, argv);

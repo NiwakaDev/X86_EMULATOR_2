@@ -17,6 +17,10 @@ BiosFunction::BiosFunction(){
 
 }
 
+BiosFunction::~BiosFunction(){
+
+}
+
 void BiosFunction::Run(Cpu* cpu, Memory* mem){
     this->Error("Not implemented: BiosFunction::Run");
 }
@@ -24,6 +28,11 @@ void BiosFunction::Run(Cpu* cpu, Memory* mem){
 MemoryFunction::MemoryFunction():BiosFunction(){
     this->function_name = "MemoryFunction";
 }
+
+MemoryFunction::~MemoryFunction(){
+
+}
+
 
 void MemoryFunction::Run(Cpu *cpu, Memory* mem){
     cpu->SetR16(EAX, 640);
@@ -33,6 +42,11 @@ VideoFunction::VideoFunction(Vga* vga):BiosFunction(){
     this->function_name = "VideoFunction";
     this->vga = vga;
 }
+
+VideoFunction::~VideoFunction(){
+
+}
+
 
 void VideoFunction::ClearConsole(){
     for(int r=0; r<=24; r++){
@@ -255,6 +269,10 @@ FloppyFunction::FloppyFunction(char* file_name):BiosFunction(){
     this->Init(file_name);
 }
 
+FloppyFunction::~FloppyFunction(){
+    delete[] this->buff;
+}
+
 void FloppyFunction::Init(char* file_name){
     this->disk_img_stream = fopen(file_name, "rb");
     if(this->disk_img_stream==NULL){
@@ -340,6 +358,10 @@ EquipmentListFunction::EquipmentListFunction():BiosFunction(){
     this->function_name = "EquipmentListFunction";
 }
 
+EquipmentListFunction::~EquipmentListFunction(){
+
+}
+
 void EquipmentListFunction::Run(Cpu *cpu, Memory* mem){
     cpu->SetR16(EAX, 1);
 }
@@ -347,6 +369,10 @@ void EquipmentListFunction::Run(Cpu *cpu, Memory* mem){
 KeyFunction::KeyFunction(Kbc* kbc):BiosFunction(){
     this->function_name = "KeyFunction";
     this->kbc           = kbc;
+}
+
+KeyFunction::~KeyFunction(){
+
 }
 
 uint16_t KeyFunction::Decode(uint16_t scan_code){
@@ -569,6 +595,10 @@ TimerFunction::TimerFunction():BiosFunction(){
     this->function_name = "TimerFunction";
 }
 
+TimerFunction::~TimerFunction(){
+
+}
+
 //リアルモードで使用するTimerFunctionの値は全部固定(デバッグが大変になるから。)
 //8086runを参考に実装予定
 void TimerFunction::Run(Cpu* cpu, Memory* mem){
@@ -614,6 +644,10 @@ void TimerFunction::Run(Cpu* cpu, Memory* mem){
 //http://softwaretechnique.web.fc2.com/OS_Development/Tips/Bios_Services/General_Services/system_services_0088.html
 GeneralSystemServicesFunction::GeneralSystemServicesFunction():BiosFunction(){
     this->function_name = "GeneralSystemServicesFunction";
+}
+
+GeneralSystemServicesFunction::~GeneralSystemServicesFunction(){
+
 }
 
 void GeneralSystemServicesFunction::Run(Cpu* cpu, Memory* mem){

@@ -5,6 +5,14 @@
 #define IPL_SIZE 512
 using namespace std;
 
+Bios::~Bios(){
+    for(int i=0; i<BIOS_FUNCTION_SIZE; i++){
+        if(this->bios_functions[i]!=NULL){
+            delete this->bios_functions[i];
+        }
+    }
+}
+
 Bios::Bios(char* file_name, Vga* vga, Kbc* kbc){
     for(int i=0; i<BIOS_FUNCTION_SIZE; i++){
         this->bios_functions[i] = NULL;
