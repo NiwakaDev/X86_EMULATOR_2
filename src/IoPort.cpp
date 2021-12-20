@@ -20,6 +20,11 @@ IoPort::IoPort(Vga* vga, Pic* pic, Kbc* kbc, Timer* timer, Fdc* fdc){
 
 void IoPort::Out8(uint16_t addr, uint8_t data){
     switch(addr){
+        case FDC_CONFIGURATION_CONTROL_REGISTER:
+        case FDC_DATA_FIFO:
+        case FDC_DIGITAL_OUTPUT_REGISTER:
+            this->fdc->Out8(addr, data);
+            break;
         case 0x61:
             break;
         case PIT_CHANNEL_2:
@@ -49,6 +54,9 @@ void IoPort::Out8(uint16_t addr, uint8_t data){
 
 uint8_t IoPort::In8(uint16_t addr){
     switch(addr){
+        case FDC_DATA_FIFO:
+        case FDC_MAIN_STATUS_REGISTER:
+            return this->fdc->In8(addr);
         case PIC1_IMR:
         case PIC0_IMR:
             return 0;//いずれ実装予定

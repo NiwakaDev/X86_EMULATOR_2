@@ -33,12 +33,13 @@ Emulator::Emulator(int argc, char* argv[]){
         this->io_devices[i] = NULL;
     }
     this->mem     = new Memory();
-    this->fdc     = new Fdc();
+    this->fdc     = new Fdc(this->disk_image_name);
     this->timer   = new Timer();
     this->mouse   = new Mouse();
     this->kbc     = new Kbc(this->mouse);
     this->io_devices[0x00] = this->timer;
     this->io_devices[0x01] = this->kbc;
+    this->io_devices[0x06] = this->fdc;
     this->io_devices[0x0C] = this->mouse;
     this->pic     = new Pic(this->io_devices);
     this->vga     = new Vga(this->mem);
