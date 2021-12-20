@@ -21,6 +21,9 @@ template<typename type>class Fifo{
         }
         inline void Push(type data){
             std::lock_guard<std::mutex> lock(this->fifo_mtx);
+            if(this->q.size()==16){
+                return;
+            }
             this->q.push(data);
             return;
         }

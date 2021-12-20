@@ -4,16 +4,18 @@
 #include "Pic.h"
 #include "Kbc.h"
 #include "Timer.h"
+#include "Fdc.h"
 #include "IoSpace.h"
 using namespace std;
 
 //io_map : http://oswiki.osask.jp/?%28AT%29iomap
 
-IoPort::IoPort(Vga* vga, Pic* pic, Kbc* kbc, Timer* timer){
+IoPort::IoPort(Vga* vga, Pic* pic, Kbc* kbc, Timer* timer, Fdc* fdc){
     this->vga   = vga;
     this->pic   = pic;
     this->kbc   = kbc;
     this->timer = timer;
+    this->fdc   = fdc;
 }
 
 void IoPort::Out8(uint16_t addr, uint8_t data){

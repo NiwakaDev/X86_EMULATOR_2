@@ -9,6 +9,7 @@
 #include "Kbc.h"
 #include "Mouse.h"
 #include "Timer.h"
+#include "Fdc.h"
 using namespace std;
 
 extern bool niwaka_start_flg;
@@ -32,6 +33,7 @@ Emulator::Emulator(int argc, char* argv[]){
         this->io_devices[i] = NULL;
     }
     this->mem     = new Memory();
+    this->fdc     = new Fdc();
     this->timer   = new Timer();
     this->mouse   = new Mouse();
     this->kbc     = new Kbc(this->mouse);
@@ -42,7 +44,7 @@ Emulator::Emulator(int argc, char* argv[]){
     this->vga     = new Vga(this->mem);
     this->bios    = new Bios(this->disk_image_name, this->vga, this->kbc);
     this->cpu     = new Cpu(this->bios, this->mem);
-    this->io_port = new IoPort(this->vga, this->pic, this->kbc, this->timer);
+    this->io_port = new IoPort(this->vga, this->pic, this->kbc, this->timer, this->fdc);
     this->gui     = new Gui(this->vga, this->kbc, this->mouse);
     this->bios->LoadIpl(this->disk_image_name, this->mem);
     for(int i=0; i<0x20; i++){//8086runを参考にした
