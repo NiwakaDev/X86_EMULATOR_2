@@ -34,6 +34,8 @@ FDC_COMMAND_TYPE Fdc::GetFdcCommandType(uint8_t data){
             return FDC_COMMAND_CALIBRATE;
         case FDC_COMMAND_READ_SECTOR:
             return FDC_COMMAND_READ_SECTOR;
+        case FDC_COMMAND_WRITE_SECTOR:
+            return FDC_COMMAND_WRITE_SECTOR;
         default:
             this->Error("Not implemented: fdc_command_type=%02X at Fdc::GetFdcCommandType", data);
     }
@@ -62,6 +64,7 @@ void Fdc::ProcessCommandForOut8(uint8_t data){
                     this->fdc_mode = FDC_IDLE_MODE;
                     this->fifo->Push(0);
                     break;
+                case FDC_COMMAND_WRITE_SECTOR:
                 case FDC_COMMAND_READ_SECTOR:
                     this->count_in_command_mode++;
                     if(this->count_in_command_mode==1){
@@ -85,11 +88,26 @@ void Fdc::ProcessCommandForOut8(uint8_t data){
                     }
                     break;
                 default:    
-                    this->Error("Not implemented: fdc_command_tyep=%d at Fdc::Out8", this->fdc_command_type);
+                    this->Error("Not implemented: fdc_command_tyep=%d at Fdc::ProcessCommandForOut8", this->fdc_command_type);
+            }
+            break;
+        case FDC_EXECUTION_MODE:
+            switch (this->fdc_command_type){
+                static int count_in_fdc_in_execution_write_sector=0;
+                case FDC_COMMAND_WRITE_SECTOR:
+                    this->buff[this->head*18*SECTOR_SIZE+this->track*18*2*SECTOR_SIZE+(this->sector-1)*SECTOR_SIZE+count_in_fdc_in_execution_write_sector] = data;
+                    count_in_fdc_in_execution_write_sector++;
+                    if(count_in_fdc_in_execution_write_sector==SECTOR_SIZE){
+                        count_in_fdc_in_execution_write_sector = 0;
+                        this->fdc_mode = FDC_RESULT_MODE;
+                    }
+                    break;
+                default:
+                    this->Error("Not implemented: fdc_command_type=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
             }
             break;
         default:
-            this->Error("Not implemented: fdc_mode=%d Fdc::Out8", this->fdc_mode);
+            this->Error("Not implemented: fdc_mode=%d Fdc::ProcessCommandForOut8", this->fdc_mode);
     }   
 }
 
@@ -126,7 +144,7 @@ uint8_t Fdc::ProcessCommandForIn8(){
                     }
                     break;
                 default:
-                    this->Error("Not implemented: fdc_command_type=%d at Fdc::In8", this->fdc_command_type);
+                    this->Error("Not implemented: fdc_command_type=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
             }
             break;
         case FDC_EXECUTION_MODE:
@@ -142,11 +160,12 @@ uint8_t Fdc::ProcessCommandForIn8(){
                     }
                     break;
                 default:
-                    this->Error("Not implemented: fdc_command_type=%d at Fdc::In8", this->fdc_command_type);
+                    this->Error("Not implemented: fdc_command_type=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
             }
             break;
         case FDC_RESULT_MODE:
             switch(this->fdc_command_type){
+                case FDC_COMMAND_WRITE_SECTOR:
                 case FDC_COMMAND_READ_SECTOR:
                     this->count_in_result_mode++;
                     data = 0x00;
@@ -155,7 +174,7 @@ uint8_t Fdc::ProcessCommandForIn8(){
                     }
                     break;
                 default:    
-                    this->Error("Not implemented: fdc_command_tyep=%d at Fdc::In8", this->fdc_command_type);
+                    this->Error("Not implemented: fdc_command_tyep=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
             }
             break;
         default:
