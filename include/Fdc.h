@@ -60,6 +60,8 @@ class Fdc:public IoDevice{
         uint8_t track;
         uint8_t sector;
         uint8_t* buff = NULL;
+        uint8_t ProcessCommandForIn8();
+        void    ProcessCommandForOut8(uint8_t data);
     public:
         Fdc(const char* file_name);
         void Out8(uint16_t addr, uint8_t data);
