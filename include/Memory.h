@@ -7,6 +7,7 @@ class Memory:public Object{
         uint8_t* buff;
     public:
         Memory();
+        ~Memory();
         template<typename type>void Write(uint32_t addr, type data){
             if((MEM_SIZE-sizeof(data)+1)<=addr){
                 return;

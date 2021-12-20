@@ -17,11 +17,17 @@ using namespace std;
 #define CS_INIT_VALUE     0x0000F000
 
 Cpu::~Cpu(){
-    cerr << "Cpuのデストラクタが呼び出し" << endl;
     for(int i=0; i<INSTRUCTION_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
+    }
+    delete this->task_register;
+    delete this->ldtr;
+    delete this->gdtr;
+    delete this->idtr;
+    for(int i=0; i<SEGMENT_REGISTER_COUNT; i++){
+        delete this->segment_registers[i];
     }
 }
 

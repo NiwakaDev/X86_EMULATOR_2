@@ -15,6 +15,7 @@ class Timer:public IoDevice{
         void Run();
     public:
         Timer();
+        ~Timer();
         void ConsumeData();
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);

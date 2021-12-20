@@ -11,6 +11,10 @@ using namespace chrono;
 #define MSB_16 0x8000
 #define LSB_8 0x01
 
+Instruction::~Instruction(){
+
+}
+
 Instruction::Instruction(string code_name){
     this->code_name = code_name;
 }
@@ -820,6 +824,14 @@ CodeC0::CodeC0(string code_name):Instruction(code_name){
     this->instructions[7] = new SarRm8Imm8("SarRm8Imm8");
 }
 
+CodeC0::~CodeC0(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
 void CodeC0::Run(Emulator* emu){
     emu->cpu->AddEip(1);
     this->ParseModRM(emu);
@@ -829,6 +841,14 @@ void CodeC0::Run(Emulator* emu){
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
     return;
+}
+
+CodeC6::~CodeC6(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
 }
 
 CodeC6::CodeC6(string code_name):Instruction(code_name){
@@ -862,6 +882,14 @@ Code80::Code80(string code_name):Instruction(code_name){
     this->instructions[7] = new CmpRm8Imm8("CmpRm8Imm8");
 }
 
+Code80::~Code80(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
 void Code80::Run(Emulator* emu){
     emu->cpu->AddEip(1);
     this->ParseModRM(emu);
@@ -883,6 +911,14 @@ Code81::Code81(string code_name):Instruction(code_name){
     this->instructions[5] = new SubRm32Imm32("SubRm32Imm32");
     this->instructions[6] = new XorRm32Imm32("XorRm32Imm32");
     this->instructions[7] = new CmpRm32Imm32("CmpRm32Imm32");
+}
+
+Code81::~Code81(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
 }
 
 void Code81::Run(Emulator* emu){
@@ -928,6 +964,14 @@ Code0F::Code0F(string code_name):Instruction(code_name){
     this->instructions[0xBF] = new MovsxR32Rm16("MovsxR32Rm16");
 }
 
+Code0F::~Code0F(){
+    for(int i=0; i<256; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
 void Code0F::Run(Emulator* emu){
     uint8_t op_code;
     emu->cpu->AddEip(1);
@@ -949,6 +993,14 @@ CodeC1::CodeC1(string code_name):Instruction(code_name){
     this->instructions[7] = new SarRm32Imm8("SarRm32Imm8");
 }
 
+CodeC1::~CodeC1(){
+    for(int i=0; i<256; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
 void CodeC1::Run(Emulator* emu){
     emu->cpu->AddEip(1);
     this->ParseModRM(emu);
@@ -966,6 +1018,15 @@ Code0F00::Code0F00(string code_name):Instruction(code_name){
     }
     this->instructions[3] = new LtrRm16("LtrRm16");
 }
+
+Code0F00::~Code0F00(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
 
 void Code0F00::Run(Emulator* emu){
     emu->cpu->AddEip(1);
@@ -985,6 +1046,15 @@ Code0F01::Code0F01(string code_name):Instruction(code_name){
     this->instructions[0x02] = new Lgdt("Lgdt");
     this->instructions[0x03] = new Lidt("Lidt");
 }
+
+Code0F01::~Code0F01(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
 
 void Code0F01::Run(Emulator* emu){
     emu->cpu->AddEip(1);
@@ -1009,6 +1079,14 @@ Code83::Code83(string code_name):Instruction(code_name){
     this->instructions[5] = new SubRm32Imm8("SubRm32Imm8");
     this->instructions[6] = new XorRm32Imm8("XorRm32Imm8");
     this->instructions[7] = new CmpRm32Imm8("CmpRm32Imm8");
+}
+
+Code83::~Code83(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
 }
 
 void Code83::Run(Emulator* emu){
@@ -1054,6 +1132,15 @@ CodeFE::CodeFE(string code_name):Instruction(code_name){
     this->instructions[1] = new DecRm8("DecRm8");
 }
 
+CodeFE::~CodeFE(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
+
 void CodeFE::Run(Emulator* emu){
     emu->cpu->AddEip(1);
     this->ParseModRM(emu);
@@ -1073,6 +1160,14 @@ CodeD0::CodeD0(string code_name):Instruction(code_name){
     this->instructions[5] = new ShrRm8("ShrRm8");
 }
 
+CodeD0::~CodeD0(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
 void CodeD0::Run(Emulator* emu){
     emu->cpu->AddEip(1);
     this->ParseModRM(emu);
@@ -1089,6 +1184,14 @@ CodeD2::CodeD2(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     this->instructions[4] = new SalRm8Cl("SalRm8Cl");
+}
+
+CodeD2::~CodeD2(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
 }
 
 void CodeD2::Run(Emulator* emu){
@@ -1115,6 +1218,15 @@ CodeFF::CodeFF(string code_name):Instruction(code_name){
     this->instructions[6] = new PushRm32("PushRm32");
 }
 
+CodeFF::~CodeFF(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
+
 void CodeFF::Run(Emulator* emu){
     emu->cpu->AddEip(1);
     this->ParseModRM(emu);
@@ -1137,6 +1249,14 @@ CodeD1::CodeD1(string code_name):Instruction(code_name){
     this->instructions[7] = new SarRm32("SarRm32");
 }
 
+CodeD1::~CodeD1(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
 void CodeD1::Run(Emulator* emu){
     emu->cpu->AddEip(1);
     this->ParseModRM(emu);
@@ -1155,6 +1275,14 @@ CodeD3::CodeD3(string code_name):Instruction(code_name){
     this->instructions[4] = new SalRm32Cl("SalRm32Cl");
     this->instructions[5] = new ShrRm32Cl("ShrRm32Cl");
     this->instructions[7] = new SarRm32Cl("SarRm32Cl");
+}
+
+CodeD3::~CodeD3(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
 }
 
 void CodeD3::Run(Emulator* emu){
@@ -1176,6 +1304,14 @@ CodeF6::CodeF6(string code_name):Instruction(code_name){
     this->instructions[2] = new NotRm8("NotRm8");
     this->instructions[4] = new MulRm8("MulRm8");
     this->instructions[6] = new DivRm8("DivRm8");
+}
+
+CodeF6::~CodeF6(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
 }
 
 void CodeF6::Run(Emulator* emu){
@@ -5251,6 +5387,14 @@ CodeF3::CodeF3(string code_name):Instruction(code_name){
     this->instructions[0xAF] = new RepeScasM32("RepeScasM32");
 }
 
+CodeF3::~CodeF3(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
+}
+
 void CodeF3::Run(Emulator* emu){
     emu->cpu->AddEip(1);
     uint8_t op_code = emu->mem->Read8(emu->cpu->GetLinearAddrForCodeAccess());
@@ -5343,6 +5487,14 @@ CodeF2::CodeF2(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     this->instructions[0xAE] = new RepneScasM8("RepneScasM8");
+}
+
+CodeF2::~CodeF2(){
+    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+        if(this->instructions[i]!=NULL){
+            delete this->instructions[i];
+        }
+    }
 }
 
 void CodeF2::Run(Emulator* emu){

@@ -11,6 +11,14 @@ Timer::Timer():IoDevice(){
     this->timer_thread = nullptr;
 }
 
+Timer::~Timer(){
+    cerr << "Timerのデストラクタ" << endl;
+    if(this->timer_thread!=nullptr){
+        this->timer_thread->join();//それまでのタイマースレッドを終了させる。
+        delete this->timer_thread;
+    }
+}
+
 void Timer::Out8(uint16_t addr, uint8_t data){
     switch (addr){
         case PIT_MODE_COMMAND_REGISTER:

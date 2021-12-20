@@ -35,6 +35,7 @@ class Instruction:public Object{
         virtual void Run(Emulator* emu);
         void Show();
         Instruction(std::string code_name);
+        virtual ~Instruction();
         void SetModRM(ModRM* modrm, Sib* sib){
             this->sib = *sib;
             this->modrm = *modrm;
@@ -69,6 +70,7 @@ class CodeC0:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~CodeC0();
         CodeC0(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -77,6 +79,7 @@ class CodeC6:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~CodeC6();
         CodeC6(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -85,6 +88,7 @@ class Code80:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~Code80();
         Code80(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -93,6 +97,7 @@ class Code81:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~Code81();
         Code81(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -101,6 +106,7 @@ class Code83:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~Code83();
         Code83(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -117,6 +123,7 @@ class CodeFE:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~CodeFE();
         CodeFE(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -125,6 +132,7 @@ class CodeD2:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~CodeD2();
         CodeD2(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -133,6 +141,7 @@ class CodeFF:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~CodeFF();
         CodeFF(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -141,6 +150,7 @@ class CodeD0:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~CodeD0();
         CodeD0(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -149,6 +159,7 @@ class CodeD1:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~CodeD1();
         CodeD1(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -157,6 +168,7 @@ class CodeD3:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~CodeD3();
         CodeD3(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -165,6 +177,7 @@ class CodeF6:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~CodeF6();
         CodeF6(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -174,6 +187,7 @@ class Code0F00:public Instruction{
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
         Code0F00(std::string code_name);
+        ~Code0F00();
         void Run(Emulator* emu);
 };
 
@@ -181,6 +195,7 @@ class Code0F01:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SET_SMALL_SIZE];
     public: 
+        ~Code0F01();
         Code0F01(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -190,6 +205,7 @@ class Code0F:public Instruction{
         Instruction* instructions[INSTRUCTION_SIZE];
     public: 
         Code0F(std::string code_name);
+        ~Code0F();
         void Run(Emulator* emu);
 };
 
@@ -197,6 +213,7 @@ class CodeC1:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SIZE];
     public: 
+        ~CodeC1();
         CodeC1(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -1291,6 +1308,7 @@ class CodeF3:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SIZE];
     public: 
+        ~CodeF3();
         CodeF3(std::string code_name);
         void Run(Emulator* emu);
 };
@@ -1305,6 +1323,7 @@ class CodeF2:public Instruction{
     private:
         Instruction* instructions[INSTRUCTION_SIZE];
     public: 
+        ~CodeF2();
         CodeF2(std::string code_name);
         void Run(Emulator* emu);
 };

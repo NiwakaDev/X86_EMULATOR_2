@@ -14,9 +14,9 @@ using namespace std;
 extern bool niwaka_start_flg;
 
 Emulator::~Emulator(){
-    cerr << "Emulatorのデストラクタ" << endl;
     delete this->bios;
     delete this->cpu;
+    delete this->mem;
 }
 
 Emulator::Emulator(int argc, char* argv[]){
