@@ -1,5 +1,6 @@
 #include "Fdc.h"
 #include "IoSpace.h"
+#include "Gui.h"
 using namespace std;
 
 #define SECTOR_SIZE 512

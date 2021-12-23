@@ -22,6 +22,8 @@ enum FDC_COMMAND_TYPE{
 
 #define FLOPPY_DISK_SIZE 1474560
 
+class Gui;
+
 class Fdc:public IoDevice{
     private:
         FDC_MODE fdc_mode;
@@ -67,4 +69,5 @@ class Fdc:public IoDevice{
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);
         int IsEmpty();
+        Gui* gui=NULL;
 };

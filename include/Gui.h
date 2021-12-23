@@ -17,6 +17,7 @@ class Gui:public Object{
         void Finish(){
             this->quit = true;
         }
+        void SoundFdc();
     private:    
         void Update();
         void Update(int x, int y, int w, int h);
