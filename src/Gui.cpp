@@ -32,7 +32,11 @@ Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
         fprintf(stderr, "error : Mix_OpenAudio\n");
     }
     this->music = Mix_LoadMUS(MP3_FILE_PATH);
-    this->SoundFdc();
+    /***
+    if(Mix_PlayMusic(this->music, -1)==-1){
+        this->Error("Error : Mix_PlayMusic");
+    }
+    ***/
     this->vga = vga;
     assert(this->vga!=NULL);
     this->kbc = kbc;
@@ -68,7 +72,7 @@ Gui::~Gui(){
 }
 
 void Gui::SoundFdc(){
-    if(Mix_PlayMusic(this->music, -1)==-1){
+    if(Mix_PlayMusic(this->music, 1)==-1){
         this->Error("Error : Mix_PlayMusic");
     }
 }
