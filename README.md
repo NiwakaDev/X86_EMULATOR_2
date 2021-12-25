@@ -59,6 +59,9 @@ left-ctrl+left-alt+g
 
 <h2>5.エミュレータで動かせるOS</h2>
 <h4><a href="https://www.amazon.co.jp/30%E6%97%A5%E3%81%A7%E3%81%A7%E3%81%8D%E3%82%8B-OS%E8%87%AA%E4%BD%9C%E5%85%A5%E9%96%80-%E5%B7%9D%E5%90%88-%E7%A7%80%E5%AE%9F/dp/4839919844/ref=pd_vtp_5/356-0188609-1667566?pd_rd_w=qrIxz&pf_rd_p=949e26f5-c2ef-4c96-bfde-49d7614d0317&pf_rd_r=FQQA4209JZRMHNABD541&pd_rd_r=2bdba9dc-9d7d-401a-b66c-053b098be917&pd_rd_wg=dpohq&pd_rd_i=4839919844&psc=1">30日でできる! OS自作入門</a></h4>
+<p>※このOSは、「30日でできる! OS自作入門」のharib27dです。ただしマリオ画像をディスクイメージに付け足しています。</p>
+<p>TODO : はりぼてOSアプリ(テキストエディタ)を付け足す予定。試作品はありますが、ここで公開しているはりぼてOSのディスクイメージに付け足していない。</p>
+
 <h4>FreeDOS(REAL MODE)</h4>
 
 <h4>osz(https://github.com/neri/osz)</h4>
