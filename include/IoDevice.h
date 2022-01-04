@@ -7,8 +7,8 @@ class IoDevice:public Object{
         Fifo<uint8_t>* fifo = NULL;
     public:
         IoDevice();
-        virtual void Out8(uint16_t addr, uint8_t data) = 0;
-        virtual uint8_t In8(uint16_t addr)             = 0;
+        virtual void Out8(const uint16_t addr, const uint8_t data) = 0;
+        virtual uint8_t In8(const uint16_t addr)             = 0;
         virtual int IsEmpty()                          = 0;
         void Push(uint8_t data);
         uint8_t Pop();//リアルモードで使用する

@@ -27,7 +27,7 @@ void Kbc::ProcessCommand(uint8_t command){
     }
 }
 
-void Kbc::Out8(uint16_t addr, uint8_t data){
+void Kbc::Out8(const uint16_t addr, const uint8_t data){
     switch (addr){
         case 0x60:
             this->ProcessCommand(data);
@@ -39,7 +39,7 @@ void Kbc::Out8(uint16_t addr, uint8_t data){
     }
 }
 
-uint8_t Kbc::In8(uint16_t addr){
+uint8_t Kbc::In8(const uint16_t addr){
     uint8_t data;
     switch(addr){
         case 0x60://MOUSE割り込み優先にする

@@ -16,6 +16,6 @@ class IoPort:public Object{
         Fdc* fdc = NULL;
     public:
         IoPort(Vga* vga, Pic* pic, Kbc* kbc, Timer* timer, Fdc* fdc);
-        void Out8(uint16_t addr, uint8_t data);
-        uint8_t In8(uint16_t addr);
+        void Out8(const uint16_t addr, const uint8_t data);
+        uint8_t In8(const uint16_t addr);
 };

@@ -19,7 +19,7 @@ Timer::~Timer(){
     }
 }
 
-void Timer::Out8(uint16_t addr, uint8_t data){
+void Timer::Out8(const uint16_t addr, const uint8_t data){
     switch (addr){
         case PIT_MODE_COMMAND_REGISTER:
             this->mode = 0;
@@ -49,7 +49,7 @@ void Timer::Out8(uint16_t addr, uint8_t data){
     }
 }
 
-uint8_t Timer::In8(uint16_t addr){
+uint8_t Timer::In8(const uint16_t addr){
     this->Error("Not implemented: Timer::In8");
     return 0;
 }

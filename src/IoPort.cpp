@@ -18,7 +18,7 @@ IoPort::IoPort(Vga* vga, Pic* pic, Kbc* kbc, Timer* timer, Fdc* fdc){
     this->fdc   = fdc;
 }
 
-void IoPort::Out8(uint16_t addr, uint8_t data){
+void IoPort::Out8(const uint16_t addr, const uint8_t data){
     switch(addr){
         case FDC_CONFIGURATION_CONTROL_REGISTER:
         case FDC_DATA_FIFO:
@@ -52,7 +52,7 @@ void IoPort::Out8(uint16_t addr, uint8_t data){
     }
 }
 
-uint8_t IoPort::In8(uint16_t addr){
+uint8_t IoPort::In8(const uint16_t addr){
     switch(addr){
         case FDC_DATA_FIFO:
         case FDC_MAIN_STATUS_REGISTER:

@@ -66,8 +66,8 @@ class Fdc:public IoDevice{
         void    ProcessCommandForOut8(uint8_t data);
     public:
         Fdc(const char* file_name);
-        void Out8(uint16_t addr, uint8_t data);
-        uint8_t In8(uint16_t addr);
+        void Out8(const uint16_t addr, const uint8_t data);
+        uint8_t In8(const uint16_t addr);
         int IsEmpty();
         Gui* gui=NULL;
 };

@@ -112,7 +112,7 @@ void Fdc::ProcessCommandForOut8(uint8_t data){
     }   
 }
 
-void Fdc::Out8(uint16_t addr, uint8_t data){
+void Fdc::Out8(const uint16_t addr, const uint8_t data){
     this->gui->SoundFdc();
     switch (addr){
         case FDC_CONFIGURATION_CONTROL_REGISTER:
@@ -185,7 +185,7 @@ uint8_t Fdc::ProcessCommandForIn8(){
     return data;
 }
 
-uint8_t Fdc::In8(uint16_t addr){
+uint8_t Fdc::In8(const uint16_t addr){
     this->gui->SoundFdc();
     uint8_t data;
     switch(addr){

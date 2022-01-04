@@ -6,11 +6,11 @@ Mouse::Mouse():IoDevice(){
     this->enable_flg = false;
 }
 
-void Mouse::Out8(uint16_t addr, uint8_t data){
+void Mouse::Out8(const uint16_t addr, const uint8_t data){
     this->Error("Not implmented: Mouse::Out8");
 }
 
-uint8_t Mouse::In8(uint16_t addr){
+uint8_t Mouse::In8(const uint16_t addr){
     switch(addr){
         case 0x60:
             return this->fifo->Pop();
