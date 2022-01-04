@@ -2,6 +2,7 @@
 #include "Memory.h"
 #include "Cpu.h"
 #include "BiosFunction.h"
+#include <fstream>
 #define IPL_SIZE 512
 using namespace std;
 
@@ -32,19 +33,16 @@ void Bios::CallFunction(Cpu *cpu, Memory* mem, uint8_t bios_number){
 }
 
 void Bios::LoadIpl(char* file_name, Memory* mem){
-    uint8_t* buff = NULL;
-    FILE* fp      = NULL;
-    int cnt;
-    if((buff=(uint8_t*)malloc(IPL_SIZE))==NULL){
-        this->Error("buff==NULL at Bios::LoadIpl");
+    fstream input_file;
+    input_file.open(file_name, ios::in|ios::binary);
+    if(!input_file.is_open()){
+        this->Error("Error: input_file.open at Bios::LoadIpl");
     }
-    if((fp=fopen(file_name, "rb"))==NULL){
-        this->Error("can`t open %s at Bios::LoadIpl", file_name);
-    }
-    cnt=fread(buff, 1, IPL_SIZE, fp);
+    uint8_t* buff = new uint8_t[IPL_SIZE];
+    input_file.read((char*)buff, IPL_SIZE);
     for(int i=0; i<IPL_SIZE; i++){
         mem->Write(IPL_START_ADDR+i, buff[i]);
     }
-    free(buff);
-    fclose(fp);
+    input_file.close();
+    delete[] buff;
 }
