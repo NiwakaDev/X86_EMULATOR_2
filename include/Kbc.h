@@ -84,7 +84,7 @@ enum {
 
 //packet format
 //https://wiki.osdev.org/Mouse_Input#PS2_Mouse_--_Basic_Operation_.28Microsoft_compliant.29
-enum PACEKT_INFO{
+enum PACKET_INFO{
     DEFAULT_PACKET_BYTE0 = 0x08,
     X_SIGN_BIT = 0x10,
     Y_SIGN_BIT = 0x20,
