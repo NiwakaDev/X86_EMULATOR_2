@@ -21,11 +21,11 @@ class Instruction:public Object{
         uint32_t GetRM32(Emulator& emu);
         uint16_t GetR16ForEffectiveAddr(Emulator& emu);
         uint32_t GetEffectiveAddr(Emulator& emu);
-        void SetRM8(Emulator& emu, uint8_t data);
-        void SetRM16(Emulator& emu, uint16_t data);
-        void SetRM32(Emulator& emu, uint32_t data);
-        void Push16(Emulator& emu, uint16_t data);
-        void Push32(Emulator& emu, uint32_t data);
+        void SetRM8(Emulator& emu, const uint8_t data);
+        void SetRM16(Emulator& emu, const uint16_t data);
+        void SetRM32(Emulator& emu, const uint32_t data);
+        void Push16(Emulator& emu, const uint16_t data);
+        void Push32(Emulator& emu, const uint32_t data);
         //template<typename type>void Push(Cpu* cpu, Memory* mem, type data);
         uint8_t  Pop8(Emulator& emu);
         uint16_t Pop16(Emulator& emu);

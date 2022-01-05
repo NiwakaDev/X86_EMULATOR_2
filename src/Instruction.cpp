@@ -37,12 +37,12 @@ template<typename type>void Instruction::Push(Emulator& emu, type data){
 }
 ***/
 
-inline void Instruction::Push16(Emulator& emu, uint16_t data){
+inline void Instruction::Push16(Emulator& emu, const uint16_t data){
     emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)-2);
     emu.mem->Write(emu.cpu->GetLinearStackAddr(), data);
 }
 
-inline void Instruction::Push32(Emulator& emu, uint32_t data){
+inline void Instruction::Push32(Emulator& emu, const uint32_t data){
     emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)-4);
     emu.mem->Write(emu.cpu->GetLinearStackAddr(), data);
 }
@@ -507,7 +507,7 @@ inline uint32_t Instruction::GetRM32(Emulator& emu){
     }
 }
 
-inline void Instruction::SetRM8(Emulator& emu, uint8_t data){
+inline void Instruction::SetRM8(Emulator& emu, const uint8_t data){
     uint32_t addr;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
         uint32_t disp8;
@@ -590,7 +590,7 @@ inline void Instruction::SetRM8(Emulator& emu, uint8_t data){
     }
 }
 
-inline void Instruction::SetRM16(Emulator& emu, uint16_t data){
+inline void Instruction::SetRM16(Emulator& emu, const uint16_t data){
     uint32_t addr;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
         uint32_t disp8;
@@ -675,7 +675,7 @@ inline void Instruction::SetRM16(Emulator& emu, uint16_t data){
     }
 }
 
-inline void Instruction::SetRM32(Emulator& emu, uint32_t data){
+inline void Instruction::SetRM32(Emulator& emu, const uint32_t data){
     uint32_t addr;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
         uint32_t disp8;
