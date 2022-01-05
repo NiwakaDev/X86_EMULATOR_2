@@ -139,7 +139,7 @@ void Emulator::Run(){
                     this->cpu->HandleInterrupt(irq_num);                
                 }
             }
-            if(!this->cpu->Run(this)){
+            if(!this->cpu->Run(*this)){
                 this->gui->Finish();
                 break;
             }
