@@ -1,7 +1,6 @@
 #pragma once
 #include "common.h"
-#define MEM_SIZE 33554432 //2<<24
-
+const int MEM_SIZE = 33554432;//2<<24
 class Memory:public Object{
     private:
         uint8_t* buff;
