@@ -57,11 +57,12 @@ Gui::Gui(Vga& vga, Kbc& kbc, Mouse& mouse){
         cout << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
     }
-    this->image = (Pixel*)malloc(MAX_WIDTH*MAX_HEIGHT*sizeof(Pixel));//最大領域の場合のサイズで確保しておく。
+    this->image = new Pixel[MAX_WIDTH*MAX_HEIGHT*sizeof(Pixel)];//最大領域の場合のサイズで確保しておく。
     this->grab  = false;
 }
 
 Gui::~Gui(){
+    delete[] image;
     SDL_DestroyTexture(this->texture);
     SDL_DestroyRenderer(this->renderer);
     SDL_DestroyWindow(this->window);

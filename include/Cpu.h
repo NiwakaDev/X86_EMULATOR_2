@@ -140,7 +140,7 @@ class Cpu:public Object{
         void Push32(uint32_t data);
         bool segment_override;
     public:
-        Cpu(Bios* bios, Memory* mem);
+        Cpu(Bios& bios, Memory& mem);
         ~Cpu();
         bool Run(Emulator& emu);
         void AddEip(uint32_t data){
@@ -158,7 +158,7 @@ class Cpu:public Object{
         uint32_t GetLinearAddrForCodeAccess();
         uint32_t GetLinearAddrForDataAccess(uint32_t offset);
         uint32_t GetLinearStackAddr();
-        bool IsProtectedMode(){
+        bool IsProtectedMode() const{
             return (bool)this->cr0.flgs.PE;
         }
         bool Is32bitsMode();
@@ -229,10 +229,10 @@ class Cpu:public Object{
         }
         uint32_t GetCr(CONTROL_REGISTER control_register_type);
         uint16_t GetLdtr();
-        uint32_t GetGdtBaseAddr();
+        uint32_t GetGdtBaseAddr() const;
         uint32_t GetIdtBase();
-        GdtGate* GetGdtGate(uint16_t selector);
-        GdtGate* GetLdtGate(uint16_t selector);
+        GdtGate* GetGdtGate(uint16_t selector) const;
+        GdtGate* GetLdtGate(uint16_t selector) const;
         IdtGate* GetIdtGate(uint16_t selector);
         Tss*     GetCurrentTss();
         uint32_t GetBaseAddr(SEGMENT_REGISTER register_type);

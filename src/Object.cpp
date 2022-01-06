@@ -1,7 +1,7 @@
 #include "Object.h"
 using namespace std;
 
-void Object::Error(const char* message, ...){
+void Object::Error(const char* message, ...) const{
     char* message_with_ln = (char*)malloc(strlen(message)+2);
     strcpy(message_with_ln, message);
     message_with_ln[strlen(message)+1]   = '\0';

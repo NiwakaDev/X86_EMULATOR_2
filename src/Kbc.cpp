@@ -5,8 +5,8 @@ using namespace std;
 
 #define ACK 0xFA	
 
-Kbc::Kbc(Mouse* mouse):IoDevice(){
-    this->mouse = mouse;
+Kbc::Kbc(Mouse& mouse):IoDevice(){
+    this->mouse = &mouse;
 }
 
 void Kbc::ProcessCommand(uint8_t command){

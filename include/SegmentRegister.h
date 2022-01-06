@@ -12,7 +12,7 @@ class Cpu;
 class SegmentRegister:public Object{
     protected:
         Cache cache;
-        void SetCache(Cpu* cpu, uint16_t idx);
+        void SetCache(const Cpu& cpu, const uint16_t idx);
         union{
             uint16_t raw;
             struct{
@@ -38,6 +38,6 @@ class SegmentRegister:public Object{
         uint8_t GetDpl();
         void SetRpl(uint8_t rpl);
         void SetCpl(uint8_t cpl);
-        void Set(uint16_t data, Cpu* cpu);
+        void Set(const uint16_t data, const Cpu& cpu);
         void On32bitMode();
 };

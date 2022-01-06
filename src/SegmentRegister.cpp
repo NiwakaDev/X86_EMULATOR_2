@@ -17,12 +17,12 @@ void SegmentRegister::On32bitMode(){
     this->cache.bit32_mode = true;
 }
 
-void SegmentRegister::SetCache(Cpu* cpu, uint16_t idx){
+void SegmentRegister::SetCache(const Cpu& cpu, const uint16_t idx){
     GdtGate* gdt_gate;
     if(this->selector.ti){//LDTへのアクセス
-        gdt_gate  = cpu->GetLdtGate(idx);
+        gdt_gate  = cpu.GetLdtGate(idx);
     }else{
-        gdt_gate  = cpu->GetGdtGate(idx);
+        gdt_gate  = cpu.GetGdtGate(idx);
     }
     this->cache.base_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
     this->cache.limit     = 0x03FFFFFF & ((((uint32_t)gdt_gate->limit_high)<<16) | (uint32_t)gdt_gate->limit_low);
@@ -31,8 +31,8 @@ void SegmentRegister::SetCache(Cpu* cpu, uint16_t idx){
     this->cpl             = this->dpl;
 }
 
-void SegmentRegister::Set(uint16_t data, Cpu* cpu){
-    if(cpu->IsProtectedMode()){
+void SegmentRegister::Set(const uint16_t data, const Cpu& cpu){
+    if(cpu.IsProtectedMode()){
         this->selector.raw = data;
         this->SetCache(cpu, this->selector.idx<<3);
         return;

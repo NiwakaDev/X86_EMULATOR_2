@@ -31,11 +31,11 @@ Cpu::~Cpu(){
     }
 }
 
-Cpu::Cpu(Bios* bios, Memory* mem){
-    this->bios = bios;
-    this->mem  = mem;
+Cpu::Cpu(Bios& bios, Memory& mem){
+    this->bios = &bios;
+    this->mem  = &mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
-    this->eflags.raw = 0x0000F002;//8086runの値を参考にした。
+    this->eflags.raw = 0x0000F002;//8086runの値を参考にした。8086runと比較するために同じにしているだけ。いずれ仕様通りの初期値にする予定
     this->cr0.raw = CR0_INIT_VALUE;
     this->cr0.flgs.PE  = REAL_MODE;
     for(int i=0; i<SEGMENT_REGISTER_COUNT; i++){
@@ -276,7 +276,7 @@ void Cpu::UpdateEflagsForInc16(uint16_t result, uint16_t d1, uint16_t d2){
 }
 
 void Cpu::SetR16(SEGMENT_REGISTER register_type, uint16_t data){
-    this->segment_registers[register_type]->Set(data, this);
+    this->segment_registers[register_type]->Set(data, *this);
 }
 
 void Cpu::SetGdtr(uint16_t limit, uint32_t base){
@@ -298,7 +298,7 @@ void Cpu::SetCr(CONTROL_REGISTER control_register_type, uint32_t data){
 }
 
 void Cpu::SetTr(uint16_t selector){
-    this->task_register->Set(selector, this);
+    this->task_register->Set(selector, *this);
 }
 
 bool Cpu::Is32bitsMode(){
@@ -322,7 +322,7 @@ uint32_t Cpu::GetCr(CONTROL_REGISTER control_register_type){
     }
 }
 
-uint32_t Cpu::GetGdtBaseAddr(){
+uint32_t Cpu::GetGdtBaseAddr() const{
     return this->gdtr->GetBase();
 }
 
@@ -330,7 +330,7 @@ uint32_t Cpu::GetIdtBase(){
     return this->idtr->GetBase();
 }
 
-GdtGate* Cpu::GetGdtGate(uint16_t selector){
+GdtGate* Cpu::GetGdtGate(uint16_t selector) const{
     if((selector-4)%8==0){
         this->Error("Not implement: Ldt at Cpu::GetGdtGate");
     }
@@ -338,7 +338,7 @@ GdtGate* Cpu::GetGdtGate(uint16_t selector){
     return (GdtGate*)this->mem->GetPointer(selector+this->GetGdtBaseAddr());
 }
 
-GdtGate* Cpu::GetLdtGate(uint16_t selector){
+GdtGate* Cpu::GetLdtGate(uint16_t selector) const{
     return (GdtGate*)this->mem->GetPointer(selector+this->ldtr->GetBaseAddr());
 }
 
@@ -625,7 +625,7 @@ void Cpu::SaveTask(uint16_t selector){
     uint32_t task_addr;
     uint16_t prev_selector;
     prev_selector = this->task_register->GetData();
-    this->task_register->Set(selector, this);
+    this->task_register->Set(selector, *this);
     GdtGate*gdt_gate = this->GetGdtGate(prev_selector);
     task_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
     this->mem->Write(task_addr+8*4, this->GetEip());
@@ -655,7 +655,7 @@ void Cpu::SwitchTask(){
     this->SetR16(DS, this->mem->Read16(task_addr+21*4));
     this->SetR16(FS, this->mem->Read16(task_addr+22*4));
     this->SetR16(GS, this->mem->Read16(task_addr+23*4));
-    this->ldtr->Set(this->mem->Read16(task_addr+24*4), this);
+    this->ldtr->Set(this->mem->Read16(task_addr+24*4), *this);
 }
 
 void Cpu::HandleInterrupt(int irq_num){
@@ -675,7 +675,7 @@ void Cpu::HandleInterrupt(int irq_num){
         this->Push32(this->segment_registers[CS]->GetData());
         this->Push32(this->eip);
         this->eip = offset_addr;
-        this->segment_registers[CS]->Set(idt_gate->selector, this);
+        this->segment_registers[CS]->Set(idt_gate->selector, *this);
         this->eflags.flgs.IF = 0;
     }else if(dest_code_segment_dpl<cpl){
         ss = this->GetR16(SS);

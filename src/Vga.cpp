@@ -13,8 +13,8 @@ using namespace std;
 #define ALPHA_MAX 0xFF
 
 
-Vga::Vga(Memory* mem){
-    this->mem = mem;
+Vga::Vga(Memory& mem){
+    this->mem = &mem;
     this->height = DEFAULT_HEIGHT;
     this->width  = DEFAULT_WIDTH;
     this->vram_start_addr = DEFAULT_VRAM_START_ADDR;
