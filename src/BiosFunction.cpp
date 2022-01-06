@@ -324,7 +324,7 @@ void FloppyFunction::Run(Cpu& cpu, Memory& mem){
     }
 }
 
-void FloppyFunction::Read(Cpu& cpu, Memory& mem){
+void FloppyFunction::Read(Cpu& cpu, const Memory& mem){
     static int total=0;
     static int cnt=0;
     uint32_t buff_addr;
