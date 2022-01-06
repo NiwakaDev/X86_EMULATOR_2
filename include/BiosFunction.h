@@ -12,7 +12,7 @@ class BiosFunction:public Object{
     public:
         BiosFunction();
         virtual ~BiosFunction();
-        virtual void Run(Cpu *cpu, Memory* mem);
+        virtual void Run(Cpu *cpu, Memory* mem) = 0;
 };
 
 class VideoFunction:public BiosFunction{

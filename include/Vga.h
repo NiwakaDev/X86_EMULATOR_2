@@ -3,9 +3,9 @@
 
 class Memory;
 
-#define MODE13_HEIGHT 200
-#define MODE13_WIDTH 320
-#define MODE13_VRAM_START_ADDR 0x000a0000
+const int MODE13_HEIGHT = 200;
+const int MODE13_WIDTH  = 320;
+const int MODE13_VRAM_START_ADDR = 0x000a0000;
 
 /***
 テキストモードのメモ
@@ -15,9 +15,9 @@ VRAM_START_ADDR : 0x000B8000
 文字数           : 80x25
 ***/
 
-#define DEFAULT_HEIGHT 200
-#define DEFAULT_WIDTH 640
-#define DEFAULT_VRAM_START_ADDR 0x000B8000
+const int DEFAULT_HEIGHT = 200;
+const int DEFAULT_WIDTH  = 640;
+const int DEFAULT_VRAM_START_ADDR = 0x000B8000;
 
 enum VGA_MODE {GRAPHIC_MODE, TEXT_MODE};
 

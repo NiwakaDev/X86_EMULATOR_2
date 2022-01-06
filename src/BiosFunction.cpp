@@ -21,10 +21,6 @@ BiosFunction::~BiosFunction(){
 
 }
 
-void BiosFunction::Run(Cpu* cpu, Memory* mem){
-    this->Error("Not implemented: BiosFunction::Run");
-}
-
 MemoryFunction::MemoryFunction():BiosFunction(){
     this->function_name = "MemoryFunction";
 }
