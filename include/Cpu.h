@@ -142,7 +142,7 @@ class Cpu:public Object{
     public:
         Cpu(Bios& bios, Memory& mem);
         ~Cpu();
-        bool Run(Emulator& emu);
+        bool Run(const Emulator& emu);
         void AddEip(uint32_t data){
             this->eip += data;
             if(!this->IsProtectedMode()){

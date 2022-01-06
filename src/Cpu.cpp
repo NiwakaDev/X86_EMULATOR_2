@@ -740,7 +740,7 @@ void Cpu::Debug(FILE *f, bool h) {
             this->segment_registers[ES]->GetData(), this->segment_registers[SS]->GetData(), this->segment_registers[DS]->GetData(), this->segment_registers[CS]->GetData(), this->eip, this->eflags.flgs.PF?'P':'-', this->eflags.flgs.SF?'S':'-');
 }
 
-bool Cpu::Run(Emulator& emu){
+bool Cpu::Run(const Emulator& emu){
     this->InitSelector();
     this->ResetPrefixFlg();
     this->CheckPrefixCode(this->mem);
