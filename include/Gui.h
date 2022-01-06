@@ -8,7 +8,7 @@ class Mouse;
 
 class Gui:public Object{
     public:
-        Gui(Vga* vga, Kbc* kbc, Mouse* mouse);
+        Gui(Vga& vga, Kbc& kbc, Mouse& mouse);
         ~Gui();
         void Display();
         bool IsQuit(){
@@ -20,7 +20,7 @@ class Gui:public Object{
         void SoundFdc();
     private:    
         void Update();
-        void Update(int x, int y, int w, int h);
+        void Update(const int x, const int y, const int w, const int h);
         bool quit = false;
         int mouse_x, mouse_y;
         Vga* vga = NULL;
@@ -36,11 +36,11 @@ class Gui:public Object{
         SDL_DisplayMode display_mode;
         Mix_Music *music;
         Pixel* image = NULL;
-        void HandleKeyDown(SDL_Event *e);
-        void HandleKeyUp(SDL_Event *e);
-        uint8_t SdlScancode2KeyCode(SDL_Event *e);
-        void HandleMouseMotion(SDL_Event *e);
-        void HandleMouseButton(SDL_Event *e);
+        void HandleKeyDown(SDL_Event& e);
+        void HandleKeyUp(SDL_Event& e);
+        uint8_t SdlScancode2KeyCode(SDL_Event& e);
+        void HandleMouseMotion(SDL_Event& e);
+        void HandleMouseButton(SDL_Event& e);
         void HideCursor();
         void ShowCursor();
         int  GetModState();//左ctrl、左altの状態を得る。

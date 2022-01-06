@@ -6,19 +6,18 @@
 
 using namespace std;
 
-#define MOVE_SCALE 5
-#define WIDTH_DISPLAY_SCALE  1
-#define HEIGHT_DISPLAY_SCALE 2
+const int MOVE_SCALE           = 5;
+const int WIDTH_DISPLAY_SCALE  = 1;
+const int HEIGHT_DISPLAY_SCALE = 2;
 
-#define MAX_WIDTH 1280
-#define MAX_HEIGHT 1024
+const int MAX_WIDTH            = 1280;
+const int MAX_HEIGHT           = 1024;
 
-static char *MP3_FILE_PATH = "Floppy_Disk_Drive02-1(Operating_Noise).mp3";
-
-Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
+Gui::Gui(Vga& vga, Kbc& kbc, Mouse& mouse){
     //TODO:音出しはフロッピーディスクが動作している時のみにする。
     int result = 0;
     int flags = MIX_INIT_MP3;
+    char *MP3_FILE_PATH = "Floppy_Disk_Drive02-1(Operating_Noise).mp3";
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
         printf("Failed to init SDL\n");
         exit(1);
@@ -37,12 +36,10 @@ Gui::Gui(Vga* vga, Kbc* kbc, Mouse* mouse){
         this->Error("Error : Mix_PlayMusic");
     }
     ***/
-    this->vga = vga;
-    assert(this->vga!=NULL);
-    this->kbc = kbc;
-    assert(this->kbc!=NULL);
-    this->mouse = mouse;
-    assert(this->mouse!=NULL);
+    this->vga = &vga;
+    this->kbc = &kbc;
+    this->mouse = &mouse;
+
     this->screen_height = DEFAULT_HEIGHT;
     this->screen_width  = DEFAULT_WIDTH;
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
@@ -90,7 +87,7 @@ inline void Gui::Update(){
     SDL_RenderPresent(this->renderer);
 }
 
-inline void Gui::Update(int x, int y, int w, int h){
+inline void Gui::Update(const int x, const int y, const int w, const int h){
     SDL_Rect rect;
     rect.x = x;//左上の座標
     rect.y = y;//左上の座標
@@ -103,9 +100,9 @@ inline void Gui::Update(int x, int y, int w, int h){
 
 //SDLのキーボードキーコードのヘッダーファイル:https://github.com/davidsiaw/SDL2/blob/6ecaa6b61372e5b2f9bd01201814d07e34bb4186/include/SDL_keycode.h
 //定数値が分かるURL : http://sdl2referencejp.osdn.jp/SDLKeycodeLookup.html
-inline uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
+inline uint8_t Gui::SdlScancode2KeyCode(SDL_Event& e){
     uint8_t key_code;
-    switch (e->key.keysym.sym){
+    switch (e.key.keysym.sym){
         case SDLK_0:
             key_code = KEY_CODE_0;
             break;
@@ -163,7 +160,7 @@ inline uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
             break;
         case SDLK_g:
             key_code = KEY_CODE_G;
-            if(this->grab&&this->GetModState()&&(!e->key.repeat)){//ctrlを押しているならば、画面外に出す。
+            if(this->grab&&this->GetModState()&&(!e.key.repeat)){//ctrlを押しているならば、画面外に出す。
                 this->ShowCursor();
             }
             break;
@@ -318,14 +315,14 @@ inline uint8_t Gui::SdlScancode2KeyCode(SDL_Event *e){
             key_code = KEY_CODE_BACKSLASH;
             break;
         default:
-            this->Error("Not implemented: SDL_Keycode = %08X(http://sdl2referencejp.osdn.jp/SDLKeycodeLookup.html) at Gui::HandleKeyDown", e->key.keysym.sym);
+            this->Error("Not implemented: SDL_Keycode = %08X(http://sdl2referencejp.osdn.jp/SDLKeycodeLookup.html) at Gui::HandleKeyDown", e.key.keysym.sym);
     }
     return key_code;
 }
 
-inline void Gui::HandleKeyDown(SDL_Event *e){
+inline void Gui::HandleKeyDown(SDL_Event& e){
     uint8_t key_code;
-    switch (e->key.keysym.sym){//使うことのないキーコードはここでスルーする
+    switch (e.key.keysym.sym){//使うことのないキーコードはここでスルーする
         case SDLK_LGUI: 
             return;
         case SDLK_RGUI:
@@ -335,9 +332,9 @@ inline void Gui::HandleKeyDown(SDL_Event *e){
     this->kbc->Push(key_code);
 }
 
-inline void Gui::HandleKeyUp(SDL_Event *e){
+inline void Gui::HandleKeyUp(SDL_Event& e){
     uint8_t key_code;
-    switch (e->key.keysym.sym){//使うことのないキーコードはここでスルーする
+    switch (e.key.keysym.sym){//使うことのないキーコードはここでスルーする
         case SDLK_LGUI: 
             return;
         case SDLK_RGUI:
@@ -365,13 +362,13 @@ inline int Gui::GetModState(){//左ctrl、左altの状態を得る。
     return (mod_state&ctrl_alt_state)==ctrl_alt_state;
 }
 
-inline void Gui::HandleMouseMotion(SDL_Event *e){
+inline void Gui::HandleMouseMotion(SDL_Event& e){
 
     uint8_t data0, data1, data2;
     int rel_x, rel_y;
    
-    rel_x = e->motion.xrel / MOVE_SCALE;
-    rel_y = e->motion.yrel / MOVE_SCALE;
+    rel_x = e.motion.xrel / MOVE_SCALE;
+    rel_y = e.motion.yrel / MOVE_SCALE;
     if(rel_x>127){
         rel_x = 127;
     }else if(rel_x < -127){
@@ -384,7 +381,7 @@ inline void Gui::HandleMouseMotion(SDL_Event *e){
     }
     rel_y *= -1;
     data0 = DEFAULT_PACKET_BYTE0;
-    if(e->motion.state==SDL_BUTTON_LMASK){
+    if(e.motion.state==SDL_BUTTON_LMASK){
         data0 = data0 | LEFT_BUTTON;
     }
     if(rel_x < 0){
@@ -398,7 +395,7 @@ inline void Gui::HandleMouseMotion(SDL_Event *e){
     this->mouse->Push((uint8_t)rel_y);
 }
 
-inline void Gui::HandleMouseButton(SDL_Event *e){
+inline void Gui::HandleMouseButton(SDL_Event& e){
     this->mouse->Push(DEFAULT_PACKET_BYTE0|LEFT_BUTTON);
     this->mouse->Push(0);
     this->mouse->Push(0);
@@ -424,18 +421,18 @@ void Gui::Display(){
                 this->quit = true;
             }
             if(e.type==SDL_KEYDOWN){
-                this->HandleKeyDown(&e);
+                this->HandleKeyDown(e);
                 break;
             }
             if(e.type==SDL_KEYUP){
-                this->HandleKeyUp(&e);
+                this->HandleKeyUp(e);
                 break;
             }
             if(e.type==SDL_MOUSEMOTION){
                 if(!this->mouse->IsEnable()){
                     break;
                 }
-                this->HandleMouseMotion(&e);
+                this->HandleMouseMotion(e);
                 break;
             }
             if(e.type==SDL_MOUSEBUTTONDOWN){
@@ -445,7 +442,7 @@ void Gui::Display(){
                 if(!this->grab){//画面にマウスが取り込まれていない時。
                     this->HideCursor();
                 }
-                this->HandleMouseButton(&e);
+                this->HandleMouseButton(e);
             }
         }
         this->vga->LockVga();
