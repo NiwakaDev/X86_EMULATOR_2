@@ -12,7 +12,7 @@ class BiosFunction:public Object{
     public:
         BiosFunction();
         virtual ~BiosFunction();
-        virtual void Run(Cpu *cpu, Memory* mem) = 0;
+        virtual void Run(Cpu& cpu, Memory& mem) = 0;
 };
 
 class VideoFunction:public BiosFunction{
@@ -23,9 +23,9 @@ class VideoFunction:public BiosFunction{
         Vga* vga;
         uint8_t console_buff[25][80];//TODO:動的に配列の内容を変更できるようにする。
     public:
-        VideoFunction(Vga* vga);
+        VideoFunction(Vga& vga);
         ~VideoFunction();
-        void Run(Cpu *cpu, Memory* mem);
+        void Run(Cpu& cpu, Memory& mem);
 };
 
 class FloppyFunction:public BiosFunction{
@@ -40,10 +40,10 @@ class FloppyFunction:public BiosFunction{
         int32_t floppy_size = 1474560;
         uint8_t* buff=NULL;
         FILE* disk_img_stream;
-        void Read(Cpu *cpu, Memory* mem);
+        void Read(Cpu& cpu, Memory& mem);
         void Init(char* file_name);
     public:
-        void Run(Cpu *cpu, Memory* mem);
+        void Run(Cpu& cpu, Memory& mem);
         FloppyFunction(char* file_name);
         ~FloppyFunction();
 };  
@@ -54,7 +54,7 @@ class MemoryFunction:public BiosFunction{
     public:
         MemoryFunction();
         ~MemoryFunction();
-        void Run(Cpu *cpu, Memory* mem);
+        void Run(Cpu& cpu, Memory& mem);
 };
 
 class EquipmentListFunction:public BiosFunction{
@@ -63,16 +63,16 @@ class EquipmentListFunction:public BiosFunction{
     public:
         EquipmentListFunction();
         ~EquipmentListFunction();
-        void Run(Cpu *cpu, Memory* mem);
+        void Run(Cpu& cpu, Memory& mem);
 };
 
 class KeyFunction:public BiosFunction{
     private:
         Kbc* kbc;
     public:
-        KeyFunction(Kbc* kbc);
+        KeyFunction(Kbc& kbc);
         ~KeyFunction();
-        void Run(Cpu *cpu, Memory* mem);
+        void Run(Cpu& cpu, Memory& mem);
         void In();
         uint16_t Decode(uint16_t scan_code);
 };
@@ -81,12 +81,12 @@ class TimerFunction:public BiosFunction{
     public:
         TimerFunction();
         ~TimerFunction();
-        void Run(Cpu *cpu, Memory* mem);
+        void Run(Cpu& cpu, Memory& mem);
 };
 
 class GeneralSystemServicesFunction:public BiosFunction{
     public:
         GeneralSystemServicesFunction();
         ~GeneralSystemServicesFunction();
-        void Run(Cpu *cpu, Memory* mem);
+        void Run(Cpu& cpu, Memory& mem);
 };

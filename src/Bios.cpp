@@ -3,7 +3,7 @@
 #include "Cpu.h"
 #include "BiosFunction.h"
 #include <fstream>
-#define IPL_SIZE 512
+const int IPL_SIZE = 512;
 using namespace std;
 
 Bios::~Bios(){
@@ -14,7 +14,7 @@ Bios::~Bios(){
     }
 }
 
-Bios::Bios(char* file_name, Vga* vga, Kbc* kbc){
+Bios::Bios(char* file_name, Vga& vga, Kbc& kbc){
     for(int i=0; i<BIOS_FUNCTION_SIZE; i++){
         this->bios_functions[i] = NULL;
     }
@@ -27,12 +27,12 @@ Bios::Bios(char* file_name, Vga* vga, Kbc* kbc){
     this->bios_functions[0x1A] = new TimerFunction();
 }
 
-void Bios::CallFunction(Cpu *cpu, Memory* mem, uint8_t bios_number){
+void Bios::CallFunction(Cpu& cpu, Memory& mem, const uint8_t bios_number){
     if(this->bios_functions[bios_number]==NULL)this->Error("Not implemented: 0x%02X at Bios::CallFunction", bios_number);
     this->bios_functions[bios_number]->Run(cpu, mem);
 }
 
-void Bios::LoadIpl(char* file_name, Memory* mem){
+void Bios::LoadIpl(const char* file_name, Memory& mem){
     fstream input_file;
     input_file.open(file_name, ios::in|ios::binary);
     if(!input_file.is_open()){
@@ -41,7 +41,7 @@ void Bios::LoadIpl(char* file_name, Memory* mem){
     uint8_t* buff = new uint8_t[IPL_SIZE];
     input_file.read((char*)buff, IPL_SIZE);
     for(int i=0; i<IPL_SIZE; i++){
-        mem->Write(IPL_START_ADDR+i, buff[i]);
+        mem.Write(IPL_START_ADDR+i, buff[i]);
     }
     input_file.close();
     delete[] buff;

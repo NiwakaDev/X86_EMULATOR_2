@@ -347,7 +347,7 @@ IdtGate* Cpu::GetIdtGate(uint16_t selector){
 }
 
 void Cpu::CallFunctionOnRealMode(Memory* mem, uint8_t selector){
-    this->bios->CallFunction(this, mem, selector);
+    this->bios->CallFunction(*this, *mem, selector);
 }
 
 uint32_t Cpu::GetLinearAddrForCodeAccess(){

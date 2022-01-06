@@ -43,12 +43,12 @@ Emulator::Emulator(int argc, char* argv[]){
     this->io_devices[0x0C] = this->mouse;
     this->pic     = new Pic(this->io_devices);
     this->vga     = new Vga(this->mem);
-    this->bios    = new Bios(this->disk_image_name, this->vga, this->kbc);
+    this->bios    = new Bios(this->disk_image_name, *(this->vga), *(this->kbc));
     this->cpu     = new Cpu(this->bios, this->mem);
     this->io_port = new IoPort(this->vga, this->pic, this->kbc, this->timer, this->fdc);
     this->gui     = new Gui(this->vga, this->kbc, this->mouse);
     this->fdc->gui = this->gui;
-    this->bios->LoadIpl(this->disk_image_name, this->mem);
+    this->bios->LoadIpl(this->disk_image_name, *(this->mem));
     for(int i=0; i<0x20; i++){//8086runを参考にした
         this->mem->Write(i<<2, i);
     }
