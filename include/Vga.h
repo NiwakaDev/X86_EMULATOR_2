@@ -25,12 +25,12 @@ class Vga:public Object{
     public:
         VGA_MODE vga_mode;
         Pixel* image_text_mode=NULL;
-        Pixel* GetPixel(int x, int y);
+        Pixel* GetPixel(const int x, const int y);
         Vga(Memory& mem);
-        void Out8(uint16_t addr, uint8_t data);
-        uint8_t In8(uint16_t addr);
-        void SetInfo(int width, int height, int vram_start_add);
-        void SetText(uint8_t ascii_code, int w, int h);//テキストモードのための関数
+        void Out8(const uint16_t addr, const uint8_t data);
+        uint8_t In8(const uint16_t addr);
+        void SetInfo(const int width, const int height, const int vram_start_add);
+        void SetText(const uint8_t ascii_code, const int w, const int h);//テキストモードのための関数
         int GetWidth(){
             return this->width;
         }
@@ -49,7 +49,7 @@ class Vga:public Object{
         VGA_MODE GetMode(){
             return this->vga_mode;
         }
-        void SetSnap(uint8_t* snap, int w, int h);
+        void SetSnap(uint8_t* snap, const int w, const int h);
     private:
         std::mutex vga_mtx;
         uint8_t palette[256][4];
@@ -58,5 +58,5 @@ class Vga:public Object{
         int width;
         int vram_start_addr;
         void InitPalette();
-        void SetColor(int idx, uint32_t color);
+        void SetColor(const int idx, const uint32_t color);
 };

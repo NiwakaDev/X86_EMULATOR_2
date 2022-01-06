@@ -24,7 +24,7 @@ Vga::Vga(Memory& mem){
 }
 
 //この関数はVgaクラスのvga_mutexをロックします。
-void Vga::SetInfo(int width, int height, int vram_start_addr){
+void Vga::SetInfo(const int width, const int height, const int vram_start_addr){
     this->vga_mtx.lock();
     this->width = width;
     this->height = height;
@@ -33,7 +33,7 @@ void Vga::SetInfo(int width, int height, int vram_start_addr){
     this->vga_mtx.unlock();
 }
 
-void Vga::Out8(uint16_t addr, uint8_t data){
+void Vga::Out8(const uint16_t addr, const uint8_t data){
     static int internal_cnt = 0;
     static uint8_t now_palette_idx;
     switch(addr){
@@ -54,7 +54,7 @@ void Vga::Out8(uint16_t addr, uint8_t data){
     }
 }
 
-uint8_t Vga::In8(uint16_t addr){
+uint8_t Vga::In8(const uint16_t addr){
     switch(addr){
         default:
             this->Error("Not implemented: io_port = %04X at Vga::In8", addr);
@@ -62,7 +62,7 @@ uint8_t Vga::In8(uint16_t addr){
     return 0;
 }
 
-void Vga::SetText(uint8_t ascii_code, int w, int h){
+void Vga::SetText(const uint8_t ascii_code, const int w, const int h){
     //テキストモード用変数領域の始まり  後でメンバ化予定
     int row = 0;
     int col = 0;
@@ -133,7 +133,7 @@ void Vga::SetText(uint8_t ascii_code, int w, int h){
     }
 }
 
-Pixel* Vga::GetPixel(int x, int y){
+Pixel* Vga::GetPixel(const int x, const int y){
     if(this->vga_mode==TEXT_MODE){
         return &this->image_text_mode[x+y*this->width];
     }
@@ -141,7 +141,7 @@ Pixel* Vga::GetPixel(int x, int y){
     return (Pixel*)(this->palette+this->mem->Read8(addr));
 }
 
-void Vga::SetColor(int idx, uint32_t color){
+void Vga::SetColor(const int idx, const uint32_t color){
     this->palette[idx][RED_IDX] = (uint8_t)((color&0x00FF0000) >> 16);
     this->palette[idx][GREEN_IDX] = (uint8_t)((color&0x0000FF00) >> 8);
     this->palette[idx][BLUE_IDX] = (uint8_t)((color&0x000000FF));
@@ -169,6 +169,6 @@ void Vga::InitPalette(){
     this->SetColor(15, 0xffffffff);
 }
 
-void Vga::SetSnap(uint8_t* snap, int w, int h){
+void Vga::SetSnap(uint8_t* snap, const int w, const int h){
     memcpy(snap, this->mem->GetPointer(this->vram_start_addr), this->width*this->height);
 }
