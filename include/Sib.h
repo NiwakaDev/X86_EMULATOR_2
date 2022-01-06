@@ -4,12 +4,12 @@ class Cpu;
 
 class Sib{
     public:
-        void ParseSib(uint8_t sib_byte, uint8_t mod);
-        uint32_t GetAddress(Cpu* cpu);
+        void ParseSib(const uint8_t sib_byte, const uint8_t mod);
+        uint32_t GetAddress(Cpu& cpu);
         uint32_t GetBase();
         uint32_t GetScale();
         uint32_t GetIndex();
-        void SetDisp32(uint32_t disp32);
+        void SetDisp32(const uint32_t disp32);
     private:
         uint8_t scale;
         uint8_t index;

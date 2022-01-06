@@ -134,7 +134,7 @@ inline uint32_t Instruction::GetEffectiveAddr(Emulator& emu){
     uint32_t addr = 0;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
         if(this->modrm.mod!=3 && this->modrm.rm==4){
-            addr = this->sib.GetAddress(emu.cpu);
+            addr = this->sib.GetAddress(*(emu.cpu));
         }
         if(this->modrm.mod==0){
             if(this->modrm.rm==5){
@@ -252,7 +252,7 @@ inline uint8_t Instruction::GetRM8(Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
         uint32_t disp8;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
-            addr = this->sib.GetAddress(emu.cpu);
+            addr = this->sib.GetAddress(*(emu.cpu));
         }
         if(this->modrm.mod==0){
             if(this->modrm.rm==5){
@@ -338,7 +338,7 @@ inline uint16_t Instruction::GetRM16(Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
         uint32_t disp8;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
-            addr = this->sib.GetAddress(emu.cpu);
+            addr = this->sib.GetAddress(*(emu.cpu));
             //this->Error("Sib is not implemented at Instruction::GetRM16", this->code_name.c_str());
         }
         if(this->modrm.mod==0){
@@ -426,7 +426,7 @@ inline uint32_t Instruction::GetRM32(Emulator& emu){
         uint32_t disp8;
         uint32_t disp32;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
-            addr = this->sib.GetAddress(emu.cpu);
+            addr = this->sib.GetAddress(*(emu.cpu));
             //this->Error("Sib is not implemented at Instruction::GetRM32", this->code_name.c_str());
         }
         if(this->modrm.mod==0){
@@ -513,7 +513,7 @@ inline void Instruction::SetRM8(Emulator& emu, const uint8_t data){
         uint32_t disp8;
         uint32_t disp32;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
-            addr = this->sib.GetAddress(emu.cpu);
+            addr = this->sib.GetAddress(*(emu.cpu));
         }
         if(this->modrm.mod==0){
             if(this->modrm.rm==5){
@@ -596,7 +596,7 @@ inline void Instruction::SetRM16(Emulator& emu, const uint16_t data){
         uint32_t disp8;
         uint32_t disp32;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
-            addr = this->sib.GetAddress(emu.cpu);
+            addr = this->sib.GetAddress(*(emu.cpu));
         }
         if(this->modrm.mod==0){
             if(this->modrm.rm==5){
@@ -681,7 +681,7 @@ inline void Instruction::SetRM32(Emulator& emu, const uint32_t data){
         uint32_t disp8;
         uint32_t disp32;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
-            addr = this->sib.GetAddress(emu.cpu);
+            addr = this->sib.GetAddress(*(emu.cpu));
         }
         if(this->modrm.mod==0){
             if(this->modrm.rm==5){
