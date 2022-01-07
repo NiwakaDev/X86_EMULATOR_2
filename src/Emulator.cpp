@@ -14,6 +14,8 @@ using namespace std;
 
 extern bool niwaka_start_flg;
 
+const int BIOS_SIZE = 65536;
+
 Emulator::~Emulator(){
     delete this->bios;
     delete this->cpu;
@@ -23,10 +25,11 @@ Emulator::~Emulator(){
 Emulator::Emulator(int argc, char* argv[]){
     int parse_result;
     parse_result  = this->ParseArgv(argc, argv);
-    if(parse_result==0){
+    if(parse_result<=1){
         fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
         fprintf(stderr, "       -image, -i : disk-image-name\n");
         fprintf(stderr, "               -d : debug\n");
+        fprintf(stderr, "               -b : bios-name\n");
         exit(EXIT_FAILURE);
     }
     for(int i=0; i<16; i++){
@@ -52,6 +55,14 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<0x20; i++){//8086runを参考にした
         this->mem->Write(i<<2, i);
     }
+    //biosをロードする。
+    fstream bios_stream;
+    bios_stream.open(this->bios_name, ios::in|ios::binary);
+    if(!bios_stream.is_open()){
+        this->Error("Cant open : %s", this->bios_name);
+    }
+    bios_stream.read((char*)this->mem->GetPointer(0x000f0000), BIOS_SIZE);
+    bios_stream.read((char*)this->mem->GetPointer(0xffff0000), BIOS_SIZE);
 }
 
 int Emulator::ParseArgv(int argc, char* argv[]){
@@ -63,13 +74,20 @@ int Emulator::ParseArgv(int argc, char* argv[]){
             this->disk_image_name = argv[1];
             argc -= 2;
             argv += 2;
-            parse_result = 1;
+            parse_result += 1;
             continue;
         }
         if ((strcmp("-debug", argv[0])==0) || (strcmp("-d", argv[0])==0)) {
             this->debug = true;
             argc -= 1;
             argv += 1;
+            continue;
+        }
+        if ((strcmp("-bios", argv[0])==0) || (strcmp("-b", argv[0])==0)) {
+            this->bios_name = argv[1];
+            argc -= 2;
+            argv += 2;
+            parse_result += 1;
             continue;
         }
         //プログラムを動かしてみたい時のオプション

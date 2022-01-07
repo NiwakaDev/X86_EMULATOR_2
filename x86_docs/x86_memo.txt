@@ -55,8 +55,11 @@ LDTR.limit    = 0xFFFF
 BIOSがロードされる場所
 参考：https://github.com/nepx/halfix/blob/37a2d1394617397b817bbcd6fdb6260bbee26a10/src/pc.c#L340-L341
 参照先によると、ミラー配置になっている。
-1 : 0x000f0000~
-2 : 0xffff0000~
+1 : 0x000f0000~0x000fffff
+2 : 0xffff0000~0xffffffff
 
 1と2の両方に、BIOSが展開される。
 最初に実行される機械語命令の番地は0xFFFFFFF0なので、ミラーされた領域の機械語命令が実行されることになる。
+1と2の両方のメモリ範囲から分かる通り、BIOSのサイズは
+0x000fffff-0x000f0000+1 = 0x00010000
+※ 0x00010000=65536(10進数表記)
