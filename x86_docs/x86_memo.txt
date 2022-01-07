@@ -50,3 +50,13 @@ LDTR.limit    = 0xFFFF
 ->アドレス幅20bitまでが有効なのでは?
 ->CS.baseの初期値を見れば分かる通り、CS.base+EIP = 0xFFFFFFF0となっている。
 つまり、CSの見えない部分(CS.base)にはあらかじめ、20bit幅を超えるアドレス値が入っている。
+
+
+BIOSがロードされる場所
+参考：https://github.com/nepx/halfix/blob/37a2d1394617397b817bbcd6fdb6260bbee26a10/src/pc.c#L340-L341
+参照先によると、ミラー配置になっている。
+1 : 0x000f0000~
+2 : 0xffff0000~
+
+1と2の両方に、BIOSが展開される。
+最初に実行される機械語命令の番地は0xFFFFFFF0なので、ミラーされた領域の機械語命令が実行されることになる。
