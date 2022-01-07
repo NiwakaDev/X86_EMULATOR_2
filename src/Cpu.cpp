@@ -41,7 +41,6 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         this->eflags.raw = EFLAGS_INIT_VALUE;
     #endif
     this->cr0.raw = CR0_INIT_VALUE;
-    this->cr0.flgs.PE  = REAL_MODE;
     for(int i=0; i<SEGMENT_REGISTER_COUNT; i++){
         this->segment_registers[i] = new SegmentRegister(0x0000);
     }

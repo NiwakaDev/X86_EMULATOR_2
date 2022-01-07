@@ -14,8 +14,6 @@ class Ldtr;
 class TaskRegister;
 class Emulator;
 
-#define REAL_MODE 0     //REAL_MODEの挙動：「IA-32 インテル® アーキテクチャソフトウェア・デベロッパーズ・マニュアル下巻：システム・プログラミング・ガイド」16章
-#define PROTECT_MODE 1
 #define IPL_START_ADDR 0x7c00
 
 #define SIGN_FLG1 0x00000080
