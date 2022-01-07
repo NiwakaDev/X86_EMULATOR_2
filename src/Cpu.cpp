@@ -763,6 +763,8 @@ bool Cpu::Run(const Emulator& emu){
         //fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
         return true;
     }catch(const char* error_message){
+        cerr << error_message << endl;
+        this->ShowRegisters();
         return false;
     }
 }

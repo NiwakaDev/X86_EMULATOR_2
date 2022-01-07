@@ -48,7 +48,9 @@ void IoPort::Out8(const uint16_t addr, const uint8_t data){
             this->vga->Out8(addr, data);
             break;
         default:
-            this->Error("Not implemented: io_port = %04X at IoPort::Out8", addr);
+            //this->Error("Not implemented: io_port = 0x%04X at IoPort::Out8", addr);
+            fprintf(stderr, "Not implemented: io_port = 0x%04X ", addr);
+            throw "at IoPort::Out8";
     }
 }
 
