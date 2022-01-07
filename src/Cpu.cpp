@@ -35,6 +35,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     this->bios = &bios;
     this->mem  = &mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
+    this->eip        = EIP_INIT_VALUE;
     #ifdef DEBUG
         this->eflags.raw = 0x0000F002;//8086runの値を参考にした。8086runと比較するために同じにしているだけ。いずれ仕様通りの初期値にする予定
     #else
@@ -42,6 +43,10 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     #endif
     this->cr0.raw = CR0_INIT_VALUE;
     for(int i=0; i<SEGMENT_REGISTER_COUNT; i++){
+        if(i==CS){
+            this->segment_registers[CS] = new SegmentRegister(CS_INIT_VALUE);
+            continue;
+        }
         this->segment_registers[i] = new SegmentRegister(0x0000);
     }
     this->task_register = new TaskRegister(0x00);

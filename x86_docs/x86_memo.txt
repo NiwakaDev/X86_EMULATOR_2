@@ -51,6 +51,8 @@ LDTR.limit    = 0xFFFF
 ->CS.baseの初期値を見れば分かる通り、CS.base+EIP = 0xFFFFFFF0となっている。
 つまり、CSの見えない部分(CS.base)にはあらかじめ、20bit幅を超えるアドレス値が入っている。
 
+けど、後述するBIOSがロードされる場所を考えると、別に
+0x000ffff0番地にある機械語命令を実行するだけでも良さそう?
 
 BIOSがロードされる場所
 参考：https://github.com/nepx/halfix/blob/37a2d1394617397b817bbcd6fdb6260bbee26a10/src/pc.c#L340-L341
