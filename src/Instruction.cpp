@@ -6753,3 +6753,18 @@ void RepeScasM32::Run(const Emulator& emu){
     }
     return;
 }
+
+Sahf::Sahf(string code_name):Instruction(code_name){
+
+}
+
+void Sahf::Run(const Emulator& emu){
+    uint8_t ah      = emu.cpu->GetR8H(EAX);
+    uint32_t eflags = emu.cpu->GetEflgs();
+    uint32_t updated_eflags;
+    emu.cpu->AddEip(1);
+    eflags = eflags & 0xFFFFFF00;
+    updated_eflags = eflags|(ah&(SF|ZF|AF|PF|CF));
+    emu.cpu->SetEflgs(updated_eflags);
+    return;
+}

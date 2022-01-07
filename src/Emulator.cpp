@@ -63,6 +63,7 @@ Emulator::Emulator(int argc, char* argv[]){
     }
     bios_stream.read((char*)this->mem->GetPointer(0x000f0000), BIOS_SIZE);
     bios_stream.read((char*)this->mem->GetPointer(0xffff0000), BIOS_SIZE);
+    bios_stream.close();
 }
 
 int Emulator::ParseArgv(int argc, char* argv[]){

@@ -47,6 +47,9 @@ void IoPort::Out8(const uint16_t addr, const uint8_t data){
         case 0x3C9:
             this->vga->Out8(addr, data);
             break;
+        case POST_IO_PORT:
+            fprintf(stderr, "POST = 0x%02X\n", data);
+            break;
         default:
             //this->Error("Not implemented: io_port = 0x%04X at IoPort::Out8", addr);
             fprintf(stderr, "Not implemented: io_port = 0x%04X ", addr);

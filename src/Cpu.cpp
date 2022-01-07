@@ -210,6 +210,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     this->instructions[0x9A] = new CallPtr1632("CallPtr1632");
     this->instructions[0x9C] = new PushFd("PushFd");
     this->instructions[0x9D] = new PopFd("PopFd");
+    this->instructions[0x9E] = new Sahf("Sahf");
     this->instructions[0x9F] = new Lahf("Lahf");
     this->instructions[0xA0] = new MovAlMoffs8("MovAlMoffs8");
     this->instructions[0xA1] = new MovEaxMoffs32("MovEaxMoffs32");
@@ -749,7 +750,7 @@ void Cpu::Debug(FILE *f, bool h) {
 }
 
 bool Cpu::Run(const Emulator& emu){
-    try{//TODO: エラー処理はtry catchで処理するようにする。
+    try{//TODO: エラー処理はtry catchで処理するようにする。まだ未実装の箇所が多い。
         this->InitSelector();
         this->ResetPrefixFlg();
         this->CheckPrefixCode(this->mem);

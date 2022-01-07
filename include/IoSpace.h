@@ -17,3 +17,5 @@ enum FDC_REGISTERS{
     FDC_DIGITAL_INPUT_REGISTER            = 0x3F7,
     FDC_CONFIGURATION_CONTROL_REGISTER    = 0x3F7,
 };
+
+int const POST_IO_PORT = 0x190;//https://github.com/barotto/test386.asmで利用されるポート番号。ここでしか利用されない。

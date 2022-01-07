@@ -16,6 +16,7 @@ enum PREFIX_FLG_KIND{
     PREFIX_FLG_KIND_COUNT=10,
 };
 enum EFLAGS_KIND{
+    PF = 1<<2,
     ZF = 1<<6, 
     CF = 1<<0, 
     SF = 1<<7, 
@@ -24,5 +25,6 @@ enum EFLAGS_KIND{
     DF = 1<<10, 
     AC = 1<<18, 
     TF = 1<<8, 
+    AF = 1<<4,
     EFLAGS_KIND_CNT=9,
 };

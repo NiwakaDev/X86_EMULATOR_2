@@ -1623,3 +1623,9 @@ class RepeScasM32:public Instruction{
         RepeScasM32(std::string code_name);
         void Run(const Emulator& emu);
 };
+
+class Sahf:public Instruction{
+    public: 
+        Sahf(std::string code_name);
+        void Run(const Emulator& emu);
+};
