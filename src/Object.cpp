@@ -12,4 +12,3 @@ void Object::Error(const char* message, ...) const{
     va_end(ap);
     exit(EXIT_FAILURE);
 }
-

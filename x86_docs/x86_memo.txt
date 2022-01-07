@@ -1,0 +1,52 @@
+x86の起動時の各レジスタの初期値
+
+EFLAGS        = 0x00000002
+
+EIP           = 0x0000FFF0
+
+CR0           = 0x60000010
+CR2           = 0x00000000
+CR3           = 0x00000000
+CR4           = 0x00000000
+
+CS.selector   = 0xF000
+CS.base       = 0xFFFF0000
+CS.limit      = 0xFFFF
+
+SS.selector   = 0x0000
+SS.base       = 0x00000000
+SS.limit      = 0xFFFF
+DS.selector   = 0x0000
+DS.base       = 0x00000000
+DS.limit      = 0xFFFF
+ES.selector   = 0x0000
+ES.base       = 0x00000000
+ES.limit      = 0xFFFF
+FS.selector   = 0x0000
+FS.base       = 0x00000000
+FS.limit      = 0xFFFF
+GS.selector   = 0x0000
+GS.base       = 0x00000000
+GS.limit      = 0xFFFF
+
+EDX           = 0x00000Fxx
+
+EAX           = 0x00000000
+EBX           = 0x00000000
+ECX           = 0x00000000
+ESI           = 0x00000000
+EDI           = 0x00000000
+EBP           = 0x00000000
+ESP           = 0x00000000
+
+GDTR.base     = 0x00000000
+GDTR.limit    = 0xFFFF
+
+LDTR.selector = 0x0000
+LDTR.base     = 0x00000000
+LDTR.limit    = 0xFFFF
+
+最初に実行される機械語命令の番地 : 0xFFFFFFF0
+->アドレス幅20bitまでが有効なのでは?
+->CS.baseの初期値を見れば分かる通り、CS.base+EIP = 0xFFFFFFF0となっている。
+つまり、CSの見えない部分(CS.base)にはあらかじめ、20bit幅を超えるアドレス値が入っている。
