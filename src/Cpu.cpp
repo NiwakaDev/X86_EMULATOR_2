@@ -185,6 +185,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     this->instructions[0x7F] = new JgRel8("JgRel8");
     this->instructions[0x78] = new JsRel8("JsRel8");
     this->instructions[0x79] = new JnsRel8("JnsRel8");
+    this->instructions[0x7A] = new JpRel8("JpRel8");
     this->instructions[0x7B] = new JnpRel8("JnpRel8");
     this->instructions[0x7D] = new JgeRel8("JgeRel8");
     this->instructions[0x80] = new Code80("Code80");

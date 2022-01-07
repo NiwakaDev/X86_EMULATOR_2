@@ -6783,3 +6783,18 @@ void JnpRel8::Run(const Emulator& emu){
     }
     return;
 }
+
+JpRel8::JpRel8(string code_name):Instruction(code_name){
+
+}
+
+void JpRel8::Run(const Emulator& emu){
+    uint32_t rel8;
+    emu.cpu->AddEip(1);
+    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
+    emu.cpu->AddEip(1);
+    if(emu.cpu->IsFlag(PF)){
+        emu.cpu->AddEip(rel8);
+    }
+    return;
+}
