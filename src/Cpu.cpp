@@ -185,6 +185,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     this->instructions[0x7F] = new JgRel8("JgRel8");
     this->instructions[0x78] = new JsRel8("JsRel8");
     this->instructions[0x79] = new JnsRel8("JnsRel8");
+    this->instructions[0x7B] = new JnpRel8("JnpRel8");
     this->instructions[0x7D] = new JgeRel8("JgeRel8");
     this->instructions[0x80] = new Code80("Code80");
     this->instructions[0x81] = new Code81("Code81");
@@ -569,6 +570,8 @@ bool Cpu::IsFlag(EFLAGS_KIND eflags_kind){
             return this->eflags.flgs.IF;
         case DF:
             return this->eflags.flgs.DF;
+        case PF:
+            return this->eflags.flgs.PF;
         default:
             this->Error("Not implemented: %d Cpu::IsFlag", eflags_kind);
     }

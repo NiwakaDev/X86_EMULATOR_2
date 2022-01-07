@@ -1629,3 +1629,9 @@ class Sahf:public Instruction{
         Sahf(std::string code_name);
         void Run(const Emulator& emu);
 };
+
+class JnpRel8:public Instruction{
+    public: 
+        JnpRel8(std::string code_name);
+        void Run(const Emulator& emu);
+};
