@@ -756,9 +756,8 @@ bool Cpu::Run(const Emulator& emu){
         this->CheckPrefixCode(this->mem);
         uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
         if(this->instructions[op_code]==NULL){
-            Dump(this->mem, this->GetLinearAddrForCodeAccess(), 512);
-            fprintf(stderr, "Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
-            return false;
+            //Dump(this->mem, this->GetLinearAddrForCodeAccess(), 512);
+            this->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
         }
         this->instructions[op_code]->Run(emu);
         //fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
