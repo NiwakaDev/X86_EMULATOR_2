@@ -10,11 +10,11 @@
 
 using namespace std;
 
-#define EFLAGS_INIT_VALUE 0x00000002
-#define EIP_INIT_VALUE    0x0000FFF0
-#define CR0_INIT_VALUE    0x60000010
-#define CR2_INIT_VALUE    0x00000000
-#define CS_INIT_VALUE     0x0000F000
+const int  EFLAGS_INIT_VALUE = 0x00000002;
+const int  EIP_INIT_VALUE    = 0x0000FFF0;
+const int  CR0_INIT_VALUE    = 0x60000010;
+const int  CR2_INIT_VALUE    = 0x00000000;
+const int  CS_INIT_VALUE     = 0x0000F000;
 
 Cpu::~Cpu(){
     for(int i=0; i<INSTRUCTION_SIZE; i++){
@@ -35,7 +35,11 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     this->bios = &bios;
     this->mem  = &mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
-    this->eflags.raw = 0x0000F002;//8086runの値を参考にした。8086runと比較するために同じにしているだけ。いずれ仕様通りの初期値にする予定
+    #ifdef DEBUG
+        this->eflags.raw = 0x0000F002;//8086runの値を参考にした。8086runと比較するために同じにしているだけ。いずれ仕様通りの初期値にする予定
+    #else
+        this->eflags.raw = EFLAGS_INIT_VALUE;
+    #endif
     this->cr0.raw = CR0_INIT_VALUE;
     this->cr0.flgs.PE  = REAL_MODE;
     for(int i=0; i<SEGMENT_REGISTER_COUNT; i++){
