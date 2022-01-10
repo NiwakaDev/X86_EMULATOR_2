@@ -50,3 +50,43 @@ inline void Cpu::SetR16(GENERAL_PURPOSE_REGISTER32 register_type, uint16_t data)
 inline void Cpu::SetR32(GENERAL_PURPOSE_REGISTER32 register_type, uint32_t data){
     *this->gprs[register_type] = data;
 }
+
+inline void Cpu::SetDataSelector(SEGMENT_REGISTER register_type){
+    this->default_data_selector = register_type;
+}
+
+inline void Cpu::SetEflgs(uint32_t eflgs){
+    this->eflags.raw = eflgs|0x0000F002;;
+}
+
+inline uint8_t Cpu::GetR8(uint32_t register_type){
+    if(register_type<4){
+        return this->GetR8L((GENERAL_PURPOSE_REGISTER32)register_type);
+    }else{
+        return this->GetR8H((GENERAL_PURPOSE_REGISTER32)(register_type-4));
+    }
+}
+
+inline uint8_t Cpu::GetR8L(GENERAL_PURPOSE_REGISTER32 register_type){
+    return (uint8_t)((*this->gprs[register_type])&0x000000ff);
+}
+
+inline uint8_t Cpu::GetR8H(GENERAL_PURPOSE_REGISTER32 register_type){
+    return (uint8_t)(((*this->gprs[register_type])>>8)&0xff);
+}
+
+inline uint16_t Cpu::GetR16(GENERAL_PURPOSE_REGISTER32 register_type){
+    return (*this->gprs[register_type])&0x0000FFFF;
+}
+
+inline uint32_t Cpu::GetR32(GENERAL_PURPOSE_REGISTER32 register_type){
+    return *this->gprs[register_type];
+}
+
+inline uint32_t Cpu::GetEip(){
+    return this->eip;
+}
+
+inline uint32_t Cpu::GetEflgs(){
+    return this->eflags.raw;
+}

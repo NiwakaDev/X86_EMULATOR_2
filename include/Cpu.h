@@ -160,39 +160,16 @@ class Cpu:public Object{
         void SetIdtr(uint16_t limit, uint32_t base);
         void SetCr(CONTROL_REGISTER control_register_type, uint32_t data);
         void SetTr(uint16_t selector);
-        void SetDataSelector(SEGMENT_REGISTER register_type){
-            this->default_data_selector = register_type;
-        }
-        void SetEflgs(uint32_t eflgs){
-            this->eflags.raw = eflgs|0x0000F002;;
-        }
-        uint8_t GetR8(uint32_t register_type){
-            if(register_type<4){
-                return this->GetR8L((GENERAL_PURPOSE_REGISTER32)register_type);
-            }else{
-                return this->GetR8H((GENERAL_PURPOSE_REGISTER32)(register_type-4));
-            }
-        }
-        uint8_t GetR8L(GENERAL_PURPOSE_REGISTER32 register_type){
-            return (uint8_t)((*this->gprs[register_type])&0x000000ff);
-        }
-        uint8_t GetR8H(GENERAL_PURPOSE_REGISTER32 register_type){
-            return (uint8_t)(((*this->gprs[register_type])>>8)&0xff);
-        }
-        uint16_t GetR16(GENERAL_PURPOSE_REGISTER32 register_type){
-            return (*this->gprs[register_type])&0x0000FFFF;
-        }
+        inline void SetDataSelector(SEGMENT_REGISTER register_type);
+        inline void SetEflgs(uint32_t eflgs);
+        inline uint8_t GetR8(uint32_t register_type);
+        inline uint8_t GetR8L(GENERAL_PURPOSE_REGISTER32 register_type);
+        inline uint8_t GetR8H(GENERAL_PURPOSE_REGISTER32 register_type);
+        inline uint16_t GetR16(GENERAL_PURPOSE_REGISTER32 register_type);
         uint16_t GetR16(SEGMENT_REGISTER register_type);
-        uint32_t GetR32(GENERAL_PURPOSE_REGISTER32 register_type){
-            return *this->gprs[register_type];
-        }
-        uint32_t GetEip(){
-            return this->eip;
-        }
-
-        uint32_t GetEflgs(){
-            return this->eflags.raw;
-        }
+        inline uint32_t GetR32(GENERAL_PURPOSE_REGISTER32 register_type);
+        inline uint32_t GetEip();
+        inline uint32_t GetEflgs();
         uint32_t GetCr(CONTROL_REGISTER control_register_type);
         uint16_t GetLdtr();
         uint32_t GetGdtBaseAddr() const;
