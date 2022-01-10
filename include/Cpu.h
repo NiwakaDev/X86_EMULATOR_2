@@ -134,7 +134,7 @@ class Cpu:public Object{
         }eflags;
         void InitSelector();
         void ResetPrefixFlg();
-        void CheckPrefixCode(Memory* mem);
+        void CheckPrefixCode(const Memory& mem);
         void Push32(uint32_t data);
         bool segment_override;
     public:

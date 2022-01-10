@@ -453,8 +453,8 @@ inline void Cpu::ResetPrefixFlg(){
     this->prefix_flgs[FLG_65] = false;
 }
 
-inline void Cpu::CheckPrefixCode(Memory* mem){
-    uint8_t op_code=mem->Read8(this->GetLinearAddrForCodeAccess());
+inline void Cpu::CheckPrefixCode(const Memory& mem){
+    uint8_t op_code=mem.Read8(this->GetLinearAddrForCodeAccess());
     while(this->prefix_table[op_code]){      
         switch (op_code){
             case FLG_66:
@@ -487,7 +487,7 @@ inline void Cpu::CheckPrefixCode(Memory* mem){
                 this->Error("prefix_code : 0x%02X is not implemented at Cpu::CheckPrefixCode\n", op_code);
         }
         this->eip++;
-        op_code = mem->Read8(this->GetLinearAddrForCodeAccess());
+        op_code = mem.Read8(this->GetLinearAddrForCodeAccess());
     }
 }
 
@@ -759,7 +759,7 @@ bool Cpu::Run(const Emulator& emu){
     try{//TODO: エラー処理はtry catchで処理するようにする。まだ未実装の箇所が多い。
         this->InitSelector();
         this->ResetPrefixFlg();
-        this->CheckPrefixCode(this->mem);
+        this->CheckPrefixCode(*(this->mem));
         uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
         if(this->instructions[op_code]==NULL){
             //Dump(this->mem, this->GetLinearAddrForCodeAccess(), 512);
