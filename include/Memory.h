@@ -37,5 +37,4 @@ class Memory:public Object{
         uint8_t* GetPointer(const uint32_t addr) const{
             return this->buff+addr;
         }
-        void Dump(uint32_t start, uint32_t size);
-};  
+};
