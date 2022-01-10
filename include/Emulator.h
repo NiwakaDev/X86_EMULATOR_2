@@ -15,6 +15,8 @@ class IoDevice;
 
 class Emulator:public Object{
     private:
+        class Impl;
+        Impl* impl;
         Bios* bios      = NULL;
         Gui* gui        = NULL;
         Vga* vga        = NULL;

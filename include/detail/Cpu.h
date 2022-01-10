@@ -90,3 +90,116 @@ inline uint32_t Cpu::GetEip(){
 inline uint32_t Cpu::GetEflgs(){
     return this->eflags.raw;
 }
+
+inline template<typename type>void Cpu::UpdateEflagsForDec(type result, type d1, type d2){
+    this->UpdateZF(result);
+    this->UpdateSF(result);
+    this->UpdatePF(result);
+    switch(sizeof(result)){
+        case 1:
+            this->UpdateOF_Sub8(result, d1, d2);
+            break;
+        case 2:
+            this->UpdateOF_Sub16(result, d1, d2);
+            break;
+        case 4:
+            this->UpdateOF_Sub(result, d1, d2);
+            break;
+        default:
+            this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateElfagsForDec", sizeof(result));
+    }
+}
+
+inline template<typename type1, typename type2>void Cpu::UpdateEflagsForAdd(type1 result, type2 d1, type2 d2){
+    this->UpdateZF((type2)result);
+    this->UpdateSF((type2)result);
+    this->UpdatePF(result);
+    this->UpdateCfForSub(result, sizeof(d1));
+    switch(sizeof(d1)){
+        case 1:
+            this->UpdateOF_Add((uint8_t)result, (uint8_t)d1, (uint8_t)d2);
+            break;
+        case 2:
+            this->UpdateOF_Add((uint16_t)result, (uint16_t)d1, (uint16_t)d2);
+            break;
+        case 4:
+            this->UpdateOF_Add((uint32_t)result, (uint32_t)d1, (uint32_t)d2);
+            break;
+        default:
+            this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(result));
+    }
+}
+
+inline template<typename type>void Cpu::UpdateEflagsForShr(type result){
+    this->UpdateZF((uint32_t)result);
+    this->UpdateSF(result);
+    this->UpdatePF((uint32_t)result);
+}
+
+inline template<typename type>void Cpu::UpdateOF_Add(type result, type d1, type d2){
+    switch(sizeof(result)){
+        case 1:
+            this->eflags.flgs.OF = ((d1&SIGN_FLG1)==(d2&SIGN_FLG1)) && ((result&SIGN_FLG1)!=(d1&SIGN_FLG1));
+            break;
+        case 2:
+            this->eflags.flgs.OF = ((d1&SIGN_FLG2)==(d2&SIGN_FLG2)) && ((result&SIGN_FLG2)!=(d1&SIGN_FLG2));
+            break;
+        case 4:
+            this->eflags.flgs.OF = ((d1&SIGN_FLG4)==(d2&SIGN_FLG4)) && ((result&SIGN_FLG4)!=(d1&SIGN_FLG4));
+            break;
+        default:
+            this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(result));
+    }
+}
+
+inline template<typename type> void Cpu::UpdateCfForSub(type data, int group){
+    switch(group){
+        case 1:
+            this->eflags.flgs.CF = ((data>>8)&1)? 1:0;
+            break;
+        case 2:
+            this->eflags.flgs.CF = ((data>>16)&1)? 1:0;
+            break;
+        case 4:
+        case 8:
+            this->eflags.flgs.CF = ((data>>32)&1)? 1:0;
+            break;
+        default:
+            this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(data));
+    }
+}
+
+inline template<typename type> void Cpu::UpdateSF(type data){
+    switch(sizeof(data)){
+        case 1:
+            this->eflags.flgs.SF = ((data&SIGN_FLG1)==SIGN_FLG1)? 1:0;
+            break;
+        case 2:
+            this->eflags.flgs.SF = ((data&SIGN_FLG2)==SIGN_FLG2)? 1:0;
+            break;
+        case 4:
+        case 8:
+            this->eflags.flgs.SF = ((data&SIGN_FLG4)==SIGN_FLG4)? 1:0;
+            break;
+        default:
+            this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(data));
+    }
+}
+
+inline template<typename type>void Cpu::UpdateEflagsForAnd(type data){
+    this->ClearFlag(CF);
+    this->ClearFlag(OF);
+    this->UpdateSF(data);
+    this->UpdateZF(data);
+    this->UpdatePF(data);
+}
+
+inline template<typename type>void Cpu::UpdateEflagsForUnsignedMul(type data){
+    if(data==0){
+        this->ClearFlag(OF);
+        this->ClearFlag(CF);
+    }else{
+        this->SetFlag(OF);
+        this->SetFlag(CF);
+    }
+}
