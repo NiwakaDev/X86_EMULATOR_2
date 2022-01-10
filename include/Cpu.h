@@ -142,38 +142,20 @@ class Cpu:public Object{
         ~Cpu();
         bool Run(const Emulator& emu);
         inline void AddEip(uint32_t data);
-        void SetEip(uint32_t addr);
+        inline void SetEip(uint32_t addr);
         uint32_t GetLinearAddrForCodeAccess();
         uint32_t GetLinearAddrForDataAccess(uint32_t offset);
         uint32_t GetLinearStackAddr();
-        bool IsProtectedMode() const;
+        inline bool IsProtectedMode() const;
         bool Is32bitsMode();
-        bool IsPrefixAddrSize();
-        bool IsPrefixOpSize(){
-            return this->prefix_flgs[FLG_66];
-        }
-        void SetR8L(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data){
-            *this->gprs[register_type] = ((*this->gprs[register_type])&0xffffff00)|(uint32_t)data;
-        }
-
-        void SetR8H(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data){
-            *this->gprs[register_type] = ((*this->gprs[register_type])&0xffff00FF)|((uint32_t)data<<8);
-        }
-
-        void SetR8(uint32_t register_type, uint8_t data){
-            if(register_type<4){
-                this->SetR8L((GENERAL_PURPOSE_REGISTER32)register_type, data);
-            }else{
-                this->SetR8H((GENERAL_PURPOSE_REGISTER32)(register_type-4), data);
-            }
-        }
+        inline bool IsPrefixAddrSize();
+        inline bool IsPrefixOpSize();
+        inline void SetR8L(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data);
+        inline void SetR8H(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data);
+        inline void SetR8(uint32_t register_type, uint8_t data);
         void SetR16(SEGMENT_REGISTER register_type, uint16_t data);
-        void SetR16(GENERAL_PURPOSE_REGISTER32 register_type, uint16_t data){
-            *this->gprs[register_type] = ((*this->gprs[register_type])&0xffff0000)|(uint32_t)data;
-        }
-        void SetR32(GENERAL_PURPOSE_REGISTER32 register_type, uint32_t data){
-            *this->gprs[register_type] = data;
-        }
+        inline void SetR16(GENERAL_PURPOSE_REGISTER32 register_type, uint16_t data);
+        inline void SetR32(GENERAL_PURPOSE_REGISTER32 register_type, uint32_t data);
         void SetGdtr(uint16_t limit, uint32_t base);
         void SetIdtr(uint16_t limit, uint32_t base);
         void SetCr(CONTROL_REGISTER control_register_type, uint32_t data);
