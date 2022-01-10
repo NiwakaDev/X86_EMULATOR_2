@@ -8,7 +8,6 @@ class Memory:public Object{
         Memory();
         ~Memory();
         template<typename type>void Write(const uint32_t addr, const type data);
-        void MemCpy(uint32_t to_addr, uint32_t from_addr, uint32_t size);
         uint8_t Read8(const uint32_t addr) const;
         uint16_t Read16(const uint32_t addr) const;
         uint32_t Read32(const uint32_t addr) const;

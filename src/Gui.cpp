@@ -40,9 +40,19 @@ class Gui::Impl{
         void HandleMouseButton(SDL_Event& e);
         void HideCursor();
         void ShowCursor();
-        int  GetModState();//左ctrl、左altの状態を得る。
         void Resize();
 };
+
+//publicメンバしか利用しないor何のメンバも使用しない関数はGuiHelper空間に実装する
+namespace GuiHelper{
+    static inline int GetModState();//左ctrl、左altの状態を得る。
+};
+
+static inline int GuiHelper::GetModState(){
+    int mod_state = SDL_GetModState();
+    int ctrl_alt_state = KMOD_LALT|KMOD_LCTRL;
+    return (mod_state&ctrl_alt_state)==ctrl_alt_state;
+}
 
 Gui::Gui(Vga& vga, Kbc& kbc, Mouse& mouse){
     //IMPLイディオム
@@ -204,7 +214,7 @@ inline uint8_t Gui::Impl::SdlScancode2KeyCode(SDL_Event& e){
             break;
         case SDLK_g:
             key_code = KEY_CODE_G;
-            if(this->grab&&this->GetModState()&&(!e.key.repeat)){//ctrlを押しているならば、画面外に出す。
+            if(this->grab&&GuiHelper::GetModState()&&(!e.key.repeat)){//ctrlを押しているならば、画面外に出す。
                 this->ShowCursor();
             }
             break;
@@ -399,12 +409,6 @@ inline void Gui::Impl::ShowCursor(){
     this->grab = false;
     SDL_ShowCursor(SDL_ENABLE);
     SDL_SetRelativeMouseMode(SDL_FALSE);
-}
-
-inline int Gui::Impl::GetModState(){//左ctrl、左altの状態を得る。
-    int mod_state = SDL_GetModState();
-    int ctrl_alt_state = KMOD_LALT|KMOD_LCTRL;
-    return (mod_state&ctrl_alt_state)==ctrl_alt_state;
 }
 
 inline void Gui::Impl::HandleMouseMotion(SDL_Event& e){
