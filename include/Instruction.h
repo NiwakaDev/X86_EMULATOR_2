@@ -1641,3 +1641,9 @@ class JpRel8:public Instruction{
         JpRel8(std::string code_name);
         void Run(const Emulator& emu);
 };
+
+class SalRm8:public Instruction{
+    public: 
+        SalRm8(std::string code_name);
+        void Run(const Emulator& emu);
+};

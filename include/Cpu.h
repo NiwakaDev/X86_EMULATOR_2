@@ -141,28 +141,14 @@ class Cpu:public Object{
         Cpu(Bios& bios, Memory& mem);
         ~Cpu();
         bool Run(const Emulator& emu);
-        void AddEip(uint32_t data){
-            this->eip += data;
-            if(!this->IsProtectedMode()){
-                this->eip = this->eip & 0x0000FFFF;
-            }
-        }
-        void SetEip(uint32_t addr){
-            if(!this->IsProtectedMode()){
-                this->eip = this->eip & 0x0000FFFF;
-            }
-            this->eip = addr;
-        }
+        inline void AddEip(uint32_t data);
+        void SetEip(uint32_t addr);
         uint32_t GetLinearAddrForCodeAccess();
         uint32_t GetLinearAddrForDataAccess(uint32_t offset);
         uint32_t GetLinearStackAddr();
-        bool IsProtectedMode() const{
-            return (bool)this->cr0.flgs.PE;
-        }
+        bool IsProtectedMode() const;
         bool Is32bitsMode();
-        bool IsPrefixAddrSize(){
-            return this->prefix_flgs[FLG_67];
-        }
+        bool IsPrefixAddrSize();
         bool IsPrefixOpSize(){
             return this->prefix_flgs[FLG_66];
         }
@@ -369,3 +355,5 @@ class Cpu:public Object{
         bool IsBflg(SEGMENT_REGISTER register_type);//セグメントディスクリプタのBフラグ
         void Debug(FILE *f, bool h);
 };
+
+#include "detail/Cpu.h"

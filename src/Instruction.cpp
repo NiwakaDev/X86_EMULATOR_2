@@ -6798,3 +6798,31 @@ void JpRel8::Run(const Emulator& emu){
     }
     return;
 }
+
+SalRm8::SalRm8(string code_name):Instruction(code_name){
+
+}
+
+void SalRm8::Run(const Emulator& emu){
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+    }
+    uint16_t rm16;
+    bool msb_dest;
+    rm16 = this->GetRM16(emu);
+    if(rm16&SIGN_FLG2){
+        emu.cpu->SetFlag(CF);
+    }else{
+        emu.cpu->ClearFlag(CF);
+    }
+    rm16 = rm16 << 1;
+    this->SetRM16(emu, rm16);
+    emu.cpu->UpdateEflagsForShr(rm16);
+    msb_dest = (SIGN_FLG2&rm16)?true:false;
+    if(msb_dest^emu.cpu->IsFlag(CF)){
+        emu.cpu->SetFlag(OF);
+    }else{
+        emu.cpu->ClearFlag(OF);
+    }
+    return;
+}

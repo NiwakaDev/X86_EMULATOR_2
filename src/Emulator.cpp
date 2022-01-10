@@ -25,7 +25,7 @@ Emulator::~Emulator(){
 Emulator::Emulator(int argc, char* argv[]){
     int parse_result;
     parse_result  = this->ParseArgv(argc, argv);
-    if(parse_result<=1){
+    if(parse_result==0){
         fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
         fprintf(stderr, "       -image, -i : disk-image-name\n");
         fprintf(stderr, "               -d : debug\n");
@@ -55,6 +55,7 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<0x20; i++){//8086runを参考にした
         this->mem->Write(i<<2, i);
     }
+    /***
     //biosをロードする。
     fstream bios_stream;
     bios_stream.open(this->bios_name, ios::in|ios::binary);
@@ -64,6 +65,7 @@ Emulator::Emulator(int argc, char* argv[]){
     bios_stream.read((char*)this->mem->GetPointer(0x000f0000), BIOS_SIZE);
     bios_stream.read((char*)this->mem->GetPointer(0xffff0000), BIOS_SIZE);
     bios_stream.close();
+    ***/
 }
 
 int Emulator::ParseArgv(int argc, char* argv[]){
@@ -88,7 +90,7 @@ int Emulator::ParseArgv(int argc, char* argv[]){
             this->bios_name = argv[1];
             argc -= 2;
             argv += 2;
-            parse_result += 1;
+            //parse_result += 1;
             continue;
         }
         //プログラムを動かしてみたい時のオプション

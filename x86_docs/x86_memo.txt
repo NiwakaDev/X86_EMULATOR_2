@@ -65,3 +65,14 @@ BIOSがロードされる場所
 1と2の両方のメモリ範囲から分かる通り、BIOSのサイズは
 0x000fffff-0x000f0000+1 = 0x00010000
 ※ 0x00010000=65536(10進数表記)
+
+QEMUのシングルステップの実行に関わっていると思われる関数 : https://github.com/qemu/qemu/blob/master/cpu.c#L347-L358
+QEMUにsinglestepで実行させるには、実行時にオプションとして-singlestepを渡してあげる。
+
+レジスターの値を取得して、ファイルに保存する方法
+-d cpu -D 保存先のファイル名
+参考：https://msyksphinz.hatenablog.com/entry/2020/07/16/000000
+※-dオプションに渡せるものは、qemu-system-i386 -d helpで確認可能
+
+デバッグ付きでビルド
+../configure --enable-debug
