@@ -31,24 +31,12 @@ class Vga:public Object{
         uint8_t In8(const uint16_t addr);
         void SetInfo(const int width, const int height, const int vram_start_add);
         void SetText(const uint8_t ascii_code, const int w, const int h);//テキストモードのための関数
-        int GetWidth(){
-            return this->width;
-        }
-        int GetHeight(){
-            return this->height;
-        }
-        int GetVramStartAddr(){
-            return this->vram_start_addr;
-        }
-        void LockVga(){
-            this->vga_mtx.lock();
-        }
-        void UnlockVga(){
-            this->vga_mtx.unlock();
-        }
-        VGA_MODE GetMode(){
-            return this->vga_mode;
-        }
+        int GetWidth();
+        int GetHeight();
+        int GetVramStartAddr();
+        void LockVga();
+        void UnlockVga();
+        VGA_MODE GetMode();
         void SetSnap(uint8_t* snap, const int w, const int h);
     private:
         std::mutex vga_mtx;
@@ -60,3 +48,5 @@ class Vga:public Object{
         void InitPalette();
         void SetColor(const int idx, const uint32_t color);
 };
+
+#include "detail/Vga.h"
