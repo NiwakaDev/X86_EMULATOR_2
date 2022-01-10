@@ -11,12 +11,8 @@ class Gui:public Object{
         Gui(Vga& vga, Kbc& kbc, Mouse& mouse);
         ~Gui();
         void Display();
-        bool IsQuit(){
-            return this->quit;
-        }
-        void Finish(){
-            this->quit = true;
-        }
+        bool IsQuit();
+        void Finish();
         void SoundFdc();
     private:    
         void Update();
@@ -47,3 +43,5 @@ class Gui:public Object{
         void Resize();
         bool grab;
 };
+
+#include "detail/Gui.h"
