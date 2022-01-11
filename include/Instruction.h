@@ -35,7 +35,7 @@ class Instruction:public Object{
         uint32_t Pop32(const Emulator& emu);
     public:
         std::string code_name;
-        virtual void Run(const Emulator& emu);
+        virtual void Run(const Emulator& emu) = 0;
         void Show();
         Instruction(std::string code_name);
         virtual ~Instruction();

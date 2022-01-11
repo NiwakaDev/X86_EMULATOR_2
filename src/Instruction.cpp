@@ -20,10 +20,6 @@ Instruction::Instruction(string code_name){
     this->code_name = code_name;
 }
 
-void Instruction::Run(const Emulator& emu){
-    this->Error("Not implemented: Instruction::Run");
-}
-
 /***
  * このコードは3代目x86エミュレータに組み込む予定
  * 無理やりこのコードを今のエミュレータに使うのは怖い。
