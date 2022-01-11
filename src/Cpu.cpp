@@ -104,7 +104,6 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     this->prefix_table[0x66] = true;
     this->prefix_table[0x67] = true;
 
-
     for(int i=0; i<INSTRUCTION_SIZE; i++){
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }
@@ -549,12 +548,12 @@ void Cpu::HandleInterrupt(int irq_num){
 //#define OFFSET 10
 #define OFFSET 35
 
-static void Dump(Memory* mem, uint32_t start, uint32_t size){
+static void Dump(const Memory& mem, uint32_t start, uint32_t size){
     for(int i=0; i<size; i++){
         if(i%8==0){
             fprintf(stderr, "\n");
         }
-        fprintf(stderr, "%02X ", mem->Read8(start+i));
+        fprintf(stderr, "%02X ", mem.Read8(start+i));
     }
     fprintf(stderr, "\n");
 }
