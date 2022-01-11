@@ -150,34 +150,34 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     this->instructions[0x2C] = instruction_factory.CreateInstruction(0x2C);
     this->instructions[0x2D] = instruction_factory.CreateInstruction(0x2D);
     this->instructions[0x30] = instruction_factory.CreateInstruction(0x30);
-    this->instructions[0x31] = new XorRm32R32("XorRm32R32");
-    this->instructions[0x32] = new XorR8Rm8("XorR8Rm8");
-    this->instructions[0x33] = new XorR32Rm32("XorR32Rm32");
-    this->instructions[0x35] = new XorEaxImm32("XorEaxImm32");
-    this->instructions[0x38] = new CmpRm8R8("CmpRm8R8");
-    this->instructions[0x39] = new CmpRm32R32("CmpRm32R32");
-    this->instructions[0x3A] = new CmpR8Rm8("CmpR8Rm8");
-    this->instructions[0x3B] = new CmpR32Rm32("CmpR32Rm32");
-    this->instructions[0x3C] = new CmpAlImm8("CmpAlImm8");
-    this->instructions[0x3D] = new CmpEaxImm32("CmpEaxImm32");
+    this->instructions[0x31] = instruction_factory.CreateInstruction(0x31);
+    this->instructions[0x32] = instruction_factory.CreateInstruction(0x32);
+    this->instructions[0x33] = instruction_factory.CreateInstruction(0x33);
+    this->instructions[0x35] = instruction_factory.CreateInstruction(0x35);
+    this->instructions[0x38] = instruction_factory.CreateInstruction(0x38);
+    this->instructions[0x39] = instruction_factory.CreateInstruction(0x39);
+    this->instructions[0x3A] = instruction_factory.CreateInstruction(0x3A);
+    this->instructions[0x3B] = instruction_factory.CreateInstruction(0x3B);
+    this->instructions[0x3C] = instruction_factory.CreateInstruction(0x3C);
+    this->instructions[0x3D] = instruction_factory.CreateInstruction(0x3D);
     for(int i=0; i<GENERAL_PURPOSE_REGISTER32_COUNT; i++){
-        this->instructions[0x40+i] = new IncR32("IncR32");
+        this->instructions[0x40+i] = instruction_factory.CreateInstruction(0x40);
     }
     for(int i=0; i<GENERAL_PURPOSE_REGISTER32_COUNT; i++){
-        this->instructions[0x48+i] = new DecR32("DecR32");
+        this->instructions[0x48+i] = instruction_factory.CreateInstruction(0x48);
     }
     for(int i=0; i<GENERAL_PURPOSE_REGISTER32_COUNT; i++){
-        this->instructions[0x50+i] = new PushR32("PushR32");
+        this->instructions[0x50+i] = instruction_factory.CreateInstruction(0x50);
     }
     for(int i=0; i<GENERAL_PURPOSE_REGISTER32_COUNT; i++){
-        this->instructions[0x58+i] = new PopR32("PopR32");
+        this->instructions[0x58+i] = instruction_factory.CreateInstruction(0x58);
     }
-    this->instructions[0x60] = new PushAd("PushAd");
-    this->instructions[0x61] = new PopAd("PopAd");
-    this->instructions[0x68] = new PushImm32("PushImm32");
-    this->instructions[0x69] = new ImulR32Rm32Imm32("ImulR32Rm32Imm32");
-    this->instructions[0x6A] = new PushImm8("PushImm8");
-    this->instructions[0x6B] = new ImulR32Rm32Imm8("ImulR32Rm32Imm8");
+    this->instructions[0x60] = instruction_factory.CreateInstruction(0x60);
+    this->instructions[0x61] = instruction_factory.CreateInstruction(0x61);
+    this->instructions[0x68] = instruction_factory.CreateInstruction(0x68);
+    this->instructions[0x69] = instruction_factory.CreateInstruction(0x69);
+    this->instructions[0x6A] = instruction_factory.CreateInstruction(0x6A);
+    this->instructions[0x6B] = instruction_factory.CreateInstruction(0x6B);
     this->instructions[0x72] = new JcRel8("JcRel8");
     this->instructions[0x73] = new JaeRel8("JaeRel8");
     this->instructions[0x74] = new JzRel8("JzRel8");

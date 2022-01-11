@@ -85,6 +85,74 @@ Instruction* InstructionFactory::CreateInstruction(const uint8_t op_code){
             return new SubEaxImm32("SubEaxImm32");
         case 0x30:
             return new XorRm8R8("XorRm8R8");
+        case 0x31:
+            return new XorRm32R32("XorRm32R32");
+        case 0x32:
+            return new XorR8Rm8("XorR8Rm8");
+        case 0x33:
+            return new XorR32Rm32("XorR32Rm32");
+        case 0x35:
+            return new XorEaxImm32("XorEaxImm32");
+        case 0x38:
+            return new CmpRm8R8("CmpRm8R8");
+        case 0x39:
+            return new CmpRm32R32("CmpRm32R32");
+        case 0x3A:
+            return new CmpR8Rm8("CmpR8Rm8");
+        case 0x3B:
+            return new CmpR32Rm32("CmpR32Rm32");
+        case 0x3C:
+            return new CmpAlImm8("CmpAlImm8");
+        case 0x3D:
+            return new CmpEaxImm32("CmpEaxImm32");
+        case 0x40+0:
+        case 0x40+1:
+        case 0x40+2:
+        case 0x40+3:
+        case 0x40+4:
+        case 0x40+5:
+        case 0x40+6:
+        case 0x40+7:
+            return new IncR32("IncR32");
+        case 0x48+0:
+        case 0x48+1:
+        case 0x48+2:
+        case 0x48+3:
+        case 0x48+4:
+        case 0x48+5:
+        case 0x48+6:
+        case 0x48+7:
+            return new DecR32("DecR32");
+        case 0x50+0:
+        case 0x50+1:
+        case 0x50+2:
+        case 0x50+3:
+        case 0x50+4:
+        case 0x50+5:
+        case 0x50+6:
+        case 0x50+7:
+            return new PushR32("PushR32");
+        case 0x58+0:
+        case 0x58+1:
+        case 0x58+2:
+        case 0x58+3:
+        case 0x58+4:
+        case 0x58+5:
+        case 0x58+6:
+        case 0x58+7:
+            return new PopR32("PopR32");
+        case 0x60:
+            return new PushAd("PushAd");
+        case 0x61:
+            return new PopAd("PopAd");
+        case 0x68:
+            return new PushImm32("PushImm32");
+        case 0x69:
+            return new ImulR32Rm32Imm32("ImulR32Rm32Imm32");
+        case 0x6A:
+            return new PushImm8("PushImm8");
+        case 0x6B:
+            return new ImulR32Rm32Imm8("ImulR32Rm32Imm8");
     }
     return NULL;
 }
