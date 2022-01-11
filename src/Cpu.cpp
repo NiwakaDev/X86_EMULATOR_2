@@ -2,7 +2,6 @@
 #include "SegmentRegister.h"
 #include "Memory.h"
 #include "Bios.h"
-//#include "Instruction.h"
 #include "Gdtr.h"
 #include "Idtr.h"
 #include "Ldtr.h"

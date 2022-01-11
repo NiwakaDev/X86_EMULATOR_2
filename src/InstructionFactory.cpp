@@ -1,5 +1,7 @@
 #include "InstructionFactory.h"
 #include "Instruction.h"
+#include "Instructions.h"
+
 
 Instruction* InstructionFactory::CreateInstruction(const uint8_t op_code){
     switch (op_code){

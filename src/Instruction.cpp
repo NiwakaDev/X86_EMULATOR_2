@@ -1,4 +1,5 @@
 #include "Instruction.h"
+#include "Instructions.h"
 #include "Cpu.h"
 #include "Memory.h"
 #include "IoPort.h"
