@@ -153,6 +153,220 @@ Instruction* InstructionFactory::CreateInstruction(const uint8_t op_code){
             return new PushImm8("PushImm8");
         case 0x6B:
             return new ImulR32Rm32Imm8("ImulR32Rm32Imm8");
-    }
+        case 0x72:
+            return new JcRel8("JcRel8");
+        case 0x73:
+            return new JaeRel8("JaeRel8");
+        case 0x74:
+            return new JzRel8("JzRel8");
+        case 0x75:
+            return new JnzRel8("JnzRel8");
+        case 0x76:
+            return new JbeRel8("JbeRel8");
+        case 0x77:
+            return new JaRel8("JaRel8");
+        case 0x78:
+            return new JsRel8("JsRel8");
+        case 0x79:
+            return new JnsRel8("JnsRel8");
+        case 0x7A:
+            return new JpRel8("JpRel8");
+        case 0x7B:
+            return new JnpRel8("JnpRel8");
+        case 0x7C:
+            return new JlRel8("JlRel8");
+        case 0x7D:
+            return new JgeRel8("JgeRel8");
+        case 0x7E:
+            return new JleRel8("JleRel8");
+        case 0x7F:
+            return new JgRel8("JgRel8");
+        case 0x80:
+            return new Code80("Code80");
+        case 0x81:
+            return new Code81("Code81");
+        case 0x83:
+            return new Code83("Code83");
+        case 0x84:
+            return new TestRm8R8("TestRm8R8");
+        case 0x85:
+            return new TestRm32R32("TestRm32R32");
+        case 0x86:
+            return new XchgRm8R8("XchgRm8R8");
+        case 0x87:
+            return new XchgR32Rm32("XchgR32Rm32");
+        case 0x88:
+            return new MovRm8R8("MovRm8R8");
+        case 0x89:
+            return new MovRm32R32("MovRm32R32");
+        case 0x8A:
+            return new MovR8Rm8("MovR8Rm8");
+        case 0x8B:
+            return new MovR32Rm32("MovR32Rm32");
+        case 0x8C:
+            return new MovRm16Sreg("MovRm16Sreg");
+        case 0x8D:
+            return new LeaR32M("LeaR32M");
+        case 0x8E:
+            return new MovSregRm16("MovSregRm16");
+        case 0x8F:
+            return new PopM32("PopM32");
+        case 0x90:
+            return new Nop("Nop");
+        case 0x90+1://1から始める理由は0x90にはNopを割り当てているから。
+        case 0x90+2:
+        case 0x90+3:
+        case 0x90+4:
+        case 0x90+5:
+        case 0x90+6:
+        case 0x90+7:
+            return new XchgEaxR32("XchgEaxR32");
+        case 0x98:
+            return new Cwde("Cwde");
+        case 0x99:
+            return new Cdq("Cdq");
+        case 0x9A:
+            return new CallPtr1632("CallPtr1632");
+        case 0x9C:
+            return new PushFd("PushFd");
+        case 0x9D:
+            return new PopFd("PopFd");
+        case 0x9E:
+            return new Sahf("Sahf");
+        case 0x9F:
+            return new Lahf("Lahf");
+        case 0xA0:
+            return new MovAlMoffs8("MovAlMoffs8");
+        case 0xA1:
+            return new MovEaxMoffs32("MovEaxMoffs32");
+        case 0xA2:
+            return new MovMoffs8Al("MovMoffs8Al");
+        case 0xA3:
+            return new MovMoffs32Eax("MovMoffs32Eax");
+        case 0xA4:
+            return new MovsM8M8("MovsM8M8");
+        case 0xA5:
+            return new MovM32M32("MovM32M32");
+        case 0xA6:
+            return new CmpsM8M8("CmpsM8M8");
+        case 0xA8:
+            return new TestAlImm8("TestAlImm8");
+        case 0xA9:
+            return new TestEaxImm32("TestEaxImm32");
+        case 0xAA:
+            return new StosM8("StosM8");
+        case 0xAB:
+            return new StosM32("StosM32");
+        case 0xAC:
+            return new LodsM8("LodsM8");
+        case 0xAD:
+            return new LodsM32("LodsM32");
+        case 0xAE:
+            return new ScasM8("ScasM8");
+        case 0xAF:
+            return new ScasD("ScasD");
+        case 0xB0+0:
+        case 0xB0+1:
+        case 0xB0+2:
+        case 0xB0+3:
+        case 0xB0+4:
+        case 0xB0+5:
+        case 0xB0+6:
+        case 0xB0+7:
+            return new MovR8Imm8("MovR8Imm8");
+        case 0xB8+0:
+        case 0xB8+1:
+        case 0xB8+2:
+        case 0xB8+3:
+        case 0xB8+4:
+        case 0xB8+5:
+        case 0xB8+6:
+        case 0xB8+7:
+            return new MovR32Imm32("MovR32Imm32");
+        case 0xC0:
+            return new CodeC0("CodeC0");
+        case 0xC1:
+            return new CodeC1("CodeC1");
+        case 0xC2:
+            return new RetImm16("RetImm16");
+        case 0xC3:
+            return new Ret32Near("Ret32Near");
+        case 0xC4:
+            return new LesR32M1632("LesR32M1632");
+        case 0xC5:
+            return new LdsR32M1632("LdsR32M1632");
+        case 0xC6:
+            return new CodeC6("CodeC6");
+        case 0xC7:
+            return new MovRm32Imm32("MovRm32Imm32");
+        case 0xC9:
+            return new Leave("Leave");
+        case 0xCA:
+            return new RetFarImm16("RetFarImm16");
+        case 0xCB:
+            return new Ret32Far("Ret32Far");
+        case 0xCD:
+            return new IntImm8("IntImm8");
+        case 0xCF:
+            return new Iretd("Iretd");
+        case 0xD0:
+            return new CodeD0("CodeD0");
+        case 0xD1:
+            return new CodeD1("CodeD1");
+        case 0xD2:
+            return new CodeD2("CodeD2");
+        case 0xD3:
+            return new CodeD3("CodeD3");
+        case 0xD7:
+            return new Xlatb("Xlatb");
+        case 0xE1:
+            return new LoopeRel8("LoopeRel8");
+        case 0xE2:
+            return new LoopRel8("LoopRel8");
+        case 0xE3:
+            return new JcxzRel8("JcxzRel8");
+        case 0xE4:
+            return new InAlImm8("InAlImm8");
+        case 0xE6:
+            return new OutImm8("OutImm8");
+        case 0xE8:
+            return new CallRel32("CallRel32");
+        case 0xE9:
+            return new JmpRel32("JmpRel32");
+        case 0xEA:
+            return new JmpPtr1632("JmpPtr1632");
+        case 0xEB:
+            return new JmpRel8("JmpRel8");
+        case 0xEC:
+            return new InAlDx("InAlDx");
+        case 0xEE:
+            return new OutDxAl("OutDxAl");
+        case 0xF2:
+            return new CodeF2("CodeF2");
+        case 0xF3:
+            return new CodeF3("CodeF3");
+        case 0xF4:
+            return new Hlt("Hlt");
+        case 0xF6:
+            return new CodeF6("CodeF6");
+        case 0xF7:
+            return new CodeF7("CodeF7");
+        case 0xF8:
+            return new Clc("Clc");
+        case 0xF9:
+            return new Stc("Stc");
+        case 0xFA:
+            return new Cli("Cli");
+        case 0xFB:
+            return new Sti("Sti");
+        case 0xFC:
+            return new Cld("Cld");
+        case 0xFD:
+            return new Std("Std");
+        case 0xFE:
+            return new CodeFE("CodeFE");
+        case 0xFF:
+            return new CodeFF("CodeFF");
+    }       
     return NULL;
 }
