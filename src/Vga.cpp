@@ -12,7 +12,6 @@ using namespace std;
 #define PALETTE_SIZE 16
 #define ALPHA_MAX 0xFF
 
-
 Vga::Vga(Memory& mem){
     this->mem = &mem;
     this->height = DEFAULT_HEIGHT;

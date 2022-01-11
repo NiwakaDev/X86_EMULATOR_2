@@ -38,7 +38,9 @@ class Vga:public Object{
         void UnlockVga();
         VGA_MODE GetMode();
         void SetSnap(uint8_t* snap, const int w, const int h);
+        //Vga* GetInstance();//シングルトン
     private:
+        //static Vga* vga=NULL;
         std::mutex vga_mtx;
         uint8_t palette[256][4];
         Memory* mem;

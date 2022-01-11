@@ -7,6 +7,7 @@
 #include "Idtr.h"
 #include "Ldtr.h"
 #include "TaskRegister.h"
+#include "InstructionFactory.h"
 
 using namespace std;
 
@@ -32,6 +33,7 @@ Cpu::~Cpu(){
 }
 
 Cpu::Cpu(Bios& bios, Memory& mem){
+    InstructionFactory instruction_factory;
     this->bios = &bios;
     this->mem  = &mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
@@ -107,47 +109,47 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     for(int i=0; i<INSTRUCTION_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[0x00] = new AddRm8R8("AddRm8R8");
-    this->instructions[0x01] = new AddRm32R32("AddRm32R32");
-    this->instructions[0x02] = new AddR8Rm8("AddR8Rm8");
-    this->instructions[0x03] = new AddR32Rm32("AddR32Rm32");
-    this->instructions[0x04] = new AddAlImm8("AddAlImm8");
-    this->instructions[0x05] = new AddEaxImm32("AddEaxImm32");
-    this->instructions[0x06] = new PushEs("PushEs");
-    this->instructions[0x07] = new PopEs("PopEs");
-    this->instructions[0x08] = new OrRm8R8("OrRm8R8");
-    this->instructions[0x09] = new OrRm32R32("OrRm32R32");
-    this->instructions[0x0A] = new OrR8Rm8("OrR8Rm8");
-    this->instructions[0x0B] = new OrR32Rm32("OrR32Rm32");
-    this->instructions[0x0C] = new OrAlImm8("OrAlImm8");
-    this->instructions[0x0D] = new OrEaxImm32("OrEaxImm32");
-    this->instructions[0x0E] = new PushCs("PushCs");
-    this->instructions[0x10] = new AdcRm8R8("AdcRm8R8");
-    this->instructions[0x11] = new AdcRm32R32("AdcRm32R32");
-    this->instructions[0x0F] = new Code0F("Code0F");
-    this->instructions[0x13] = new AdcR32Rm32("AdcR32Rm32");
-    this->instructions[0x15] = new AdcEaxImm32("AdcEaxImm32");
-    this->instructions[0x16] = new PushSs("PushSs");
-    this->instructions[0x17] = new PopSs("PopSs");
-    this->instructions[0x18] = new SbbRm8R8("SbbRm8R8");
-    this->instructions[0x19] = new SbbRm32R32("SbbRm32R32");
-    this->instructions[0x1A] = new SbbR8Rm8("SbbR8Rm8");
-    this->instructions[0x1B] = new SbbR32Rm32("SbbR32Rm32");
-    this->instructions[0x1E] = new PushDs("PushDs");
-    this->instructions[0x1F] = new PopDs("PopDs");
-    this->instructions[0x20] = new AndRm8R8("AndRm8R8");
-    this->instructions[0x21] = new AndRm32R32("AndRm32R32");
-    this->instructions[0x22] = new AndR8Rm8("AndR8Rm8");
-    this->instructions[0x23] = new AndR32Rm32("AndR32Rm32");
-    this->instructions[0x24] = new AndAlImm8("AndAlImm8");
-    this->instructions[0x25] = new AndEaxImm32("AndEaxImm32");
-    this->instructions[0x28] = new SubRm8R8("SubRm8R8");
-    this->instructions[0x29] = new SubRm32R32("SubRm32R32");
-    this->instructions[0x2A] = new SubR8Rm8("SubR8Rm8");
-    this->instructions[0x2B] = new SubR32Rm32("SubR32Rm32");
-    this->instructions[0x2C] = new SubAlImm8("SubAlImm8");
-    this->instructions[0x2D] = new SubEaxImm32("SubEaxImm32");
-    this->instructions[0x30] = new XorRm8R8("XorRm8R8");
+    this->instructions[0x00] = instruction_factory.CreateInstruction(0x00);
+    this->instructions[0x01] = instruction_factory.CreateInstruction(0x01);
+    this->instructions[0x02] = instruction_factory.CreateInstruction(0x02);
+    this->instructions[0x03] = instruction_factory.CreateInstruction(0x03);
+    this->instructions[0x04] = instruction_factory.CreateInstruction(0x04);
+    this->instructions[0x05] = instruction_factory.CreateInstruction(0x05);
+    this->instructions[0x06] = instruction_factory.CreateInstruction(0x06);
+    this->instructions[0x07] = instruction_factory.CreateInstruction(0x07);
+    this->instructions[0x08] = instruction_factory.CreateInstruction(0x08);
+    this->instructions[0x09] = instruction_factory.CreateInstruction(0x09);
+    this->instructions[0x0A] = instruction_factory.CreateInstruction(0x0A);
+    this->instructions[0x0B] = instruction_factory.CreateInstruction(0x0B);
+    this->instructions[0x0C] = instruction_factory.CreateInstruction(0x0C);
+    this->instructions[0x0D] = instruction_factory.CreateInstruction(0x0D);
+    this->instructions[0x0E] = instruction_factory.CreateInstruction(0x0E);
+    this->instructions[0x10] = instruction_factory.CreateInstruction(0x10);
+    this->instructions[0x11] = instruction_factory.CreateInstruction(0x11);
+    this->instructions[0x0F] = instruction_factory.CreateInstruction(0x0F);
+    this->instructions[0x13] = instruction_factory.CreateInstruction(0x13);
+    this->instructions[0x15] = instruction_factory.CreateInstruction(0x15);
+    this->instructions[0x16] = instruction_factory.CreateInstruction(0x16);
+    this->instructions[0x17] = instruction_factory.CreateInstruction(0x17);
+    this->instructions[0x18] = instruction_factory.CreateInstruction(0x18);
+    this->instructions[0x19] = instruction_factory.CreateInstruction(0x19);
+    this->instructions[0x1A] = instruction_factory.CreateInstruction(0x1A);
+    this->instructions[0x1B] = instruction_factory.CreateInstruction(0x1B);
+    this->instructions[0x1E] = instruction_factory.CreateInstruction(0x1E);
+    this->instructions[0x1F] = instruction_factory.CreateInstruction(0x1F);
+    this->instructions[0x20] = instruction_factory.CreateInstruction(0x20);
+    this->instructions[0x21] = instruction_factory.CreateInstruction(0x21);
+    this->instructions[0x22] = instruction_factory.CreateInstruction(0x22);
+    this->instructions[0x23] = instruction_factory.CreateInstruction(0x23);
+    this->instructions[0x24] = instruction_factory.CreateInstruction(0x24);
+    this->instructions[0x25] = instruction_factory.CreateInstruction(0x25);
+    this->instructions[0x28] = instruction_factory.CreateInstruction(0x28);
+    this->instructions[0x29] = instruction_factory.CreateInstruction(0x29);
+    this->instructions[0x2A] = instruction_factory.CreateInstruction(0x2A);
+    this->instructions[0x2B] = instruction_factory.CreateInstruction(0x2B);
+    this->instructions[0x2C] = instruction_factory.CreateInstruction(0x2C);
+    this->instructions[0x2D] = instruction_factory.CreateInstruction(0x2D);
+    this->instructions[0x30] = instruction_factory.CreateInstruction(0x30);
     this->instructions[0x31] = new XorRm32R32("XorRm32R32");
     this->instructions[0x32] = new XorR8Rm8("XorR8Rm8");
     this->instructions[0x33] = new XorR32Rm32("XorR32Rm32");
