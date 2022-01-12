@@ -23,9 +23,7 @@ Emulator::~Emulator(){
 }
 
 Emulator::Emulator(int argc, char* argv[]){
-    int parse_result;
-    parse_result  = this->ParseArgv(argc, argv);
-    if(parse_result==0){
+    if(this->ParseArgv(argc, argv)==0){
         fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
         fprintf(stderr, "       -image, -i : disk-image-name\n");
         fprintf(stderr, "               -d : debug\n");
