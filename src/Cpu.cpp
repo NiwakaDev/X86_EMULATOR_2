@@ -7,7 +7,7 @@
 #include "Ldtr.h"
 #include "TaskRegister.h"
 #include "Instruction.h"
-#include "InstructionFactory.h"
+#include "InstructionHelper.h"
 
 using namespace std;
 
@@ -105,7 +105,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     this->prefix_table[0x67] = true;
 
     for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
-        InstructionFactory instruction_factory;
+        InstructionHelper::InstructionFactory instruction_factory;
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }
 }

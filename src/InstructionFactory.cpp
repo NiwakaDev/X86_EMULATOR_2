@@ -1,9 +1,8 @@
-#include "InstructionFactory.h"
+#include "InstructionHelper.h"
 #include "Instruction.h"
 #include "Instructions.h"
 
-
-Instruction* InstructionFactory::CreateInstruction(const uint8_t op_code){
+Instruction* InstructionHelper::InstructionFactory::CreateInstruction(const uint8_t op_code){
     switch (op_code){
         case 0x00:
             return new AddRm8R8("AddRm8R8");
