@@ -12,12 +12,19 @@ using namespace chrono;
 #define MSB_16 0x8000
 #define LSB_8 0x01
 
-Instruction::~Instruction(){
-
+namespace InstructionHelper{
+    void ShowInstructionName(Instruction& instruction){
+        cout << instruction.GetInstructionName() << endl;
+    }
 }
 
 Instruction::Instruction(string code_name){
     this->code_name = code_name;
+}
+
+
+Instruction::~Instruction(){
+
 }
 
 /***
@@ -69,10 +76,6 @@ inline uint32_t Instruction::Pop32(const Emulator& emu){
     data = emu.mem->Read32(addr);
     emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)+4);
     return data;
-}
-
-void Instruction::Show(){
-    fprintf(stderr, "%s\n", this->code_name.c_str());
 }
 
 inline void Instruction::ParseModRM(const Emulator& emu){

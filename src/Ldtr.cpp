@@ -9,6 +9,8 @@ Ldtr::Ldtr(uint16_t data):SegmentRegister(data){
     this->cache.limit     = 0x0000FFFF;
 }
 
+//使われていないので、コメントアウト。いずれ使うかもだから、消さない。
+/***
 void Ldtr::SetCache(Cpu* cpu, uint16_t selector){
     GdtGate* gdt_gate  = cpu->GetGdtGate(selector);
     this->cache.base_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
@@ -19,3 +21,4 @@ void Ldtr::SetCache(Cpu* cpu, uint16_t selector){
     }
     this->Error("This gdt_gate is not Ldt at Ldtr::SetCache");
 }
+***/

@@ -33,12 +33,14 @@ class Instruction:public Object{
         uint8_t  Pop8(const Emulator& emu);
         uint16_t Pop16(const Emulator& emu);
         uint32_t Pop32(const Emulator& emu);
-    public:
         std::string code_name;
+    public:
         virtual void Run(const Emulator& emu) = 0;
-        void Show();
         Instruction(std::string code_name);
         virtual ~Instruction();
+        std::string& GetInstructionName(){
+            return this->code_name;
+        }
         void SetModRM(ModRM* modrm, Sib* sib){
             this->sib = *sib;
             this->modrm = *modrm;

@@ -9,8 +9,10 @@ TaskRegister::TaskRegister(uint16_t data):SegmentRegister(data){
     this->cache.limit     = 0x0000FFFF;
 }
 
-void TaskRegister::SetCache(Cpu* cpu, uint16_t selector){
-    GdtGate* gdt_gate  = cpu->GetGdtGate(selector);
+//使われていないので、コメントアウト。いずれ使うかもだから、消さない。
+/***
+void TaskRegister::SetCache(Cpu& cpu, uint16_t selector){
+    GdtGate* gdt_gate  = cpu.GetGdtGate(selector);
     this->cache.base_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
     this->cache.limit     = 0x03FFFFFF & ((((uint32_t)gdt_gate->limit_high)<<16) | (uint32_t)gdt_gate->limit_low);
     this->cache.bit32_mode = (gdt_gate->limit_high&DB)==DB;
@@ -19,3 +21,4 @@ void TaskRegister::SetCache(Cpu* cpu, uint16_t selector){
     }
     this->Error("This gdt_gate is not Tss at TaskRegister::SetCache");
 }
+***/
