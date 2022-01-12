@@ -11,7 +11,9 @@ using namespace std;
 #define SPACE 0x20
 #define DEL   0x7F
 
-bool niwaka_start_flg = false;
+#ifdef DEBUG
+    bool niwaka_start_flg = false;
+#endif
 
 BiosFunction::BiosFunction(){
 
@@ -531,11 +533,13 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
             this->Error("Not implemented: scan_code=%04X at KeyFunction::Decode\n", scan_code);
             break;
     }
-    static int kb_cnt = 0;
-    if(decoded_code==0x0E7F){
-        kb_cnt++;
-        if(kb_cnt==1)niwaka_start_flg = true;
-    }
+    #ifdef DEBUG
+        static int kb_cnt = 0;
+        if(decoded_code==0x0E7F){
+            kb_cnt++;
+                if(kb_cnt==1)niwaka_start_flg = true;
+        }
+    #endif
     return decoded_code;
 }
 
