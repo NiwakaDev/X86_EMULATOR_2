@@ -27,12 +27,6 @@ class Instruction:public Object{
         //TODO:SetRMをtemplate化
         //SetRM8やSetRM16のdataに4byteサイズを指定している場合もあり、現時点ではバグの原因になります。
         //template<typename type> void SetRM(const Emulator& emu, const type data);
-        void Push16(const Emulator& emu, const uint16_t data);
-        void Push32(const Emulator& emu, const uint32_t data);
-        //template<typename type>void Push(Cpu* cpu, Memory* mem, type data);
-        uint8_t  Pop8(const Emulator& emu);
-        uint16_t Pop16(const Emulator& emu);
-        uint32_t Pop32(const Emulator& emu);
         std::string code_name;
     public:
         virtual void Run(const Emulator& emu) = 0;

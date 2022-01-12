@@ -16,6 +16,42 @@ namespace InstructionHelper{
     void ShowInstructionName(Instruction& instruction){
         cout << instruction.GetInstructionName() << endl;
     }
+    inline static void Push16(const Emulator& emu, const uint16_t data){
+        emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)-2);
+        emu.mem->Write(emu.cpu->GetLinearStackAddr(), data);
+    }
+
+    inline static void Push32(const Emulator& emu, const uint32_t data){
+        emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)-4);
+        emu.mem->Write(emu.cpu->GetLinearStackAddr(), data);
+    }
+
+    inline static uint8_t Pop8(const Emulator& emu){
+        uint32_t addr;
+        uint8_t data;
+        addr = emu.cpu->GetLinearStackAddr();
+        data = emu.mem->Read8(addr);
+        emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+1);
+        return data;
+    }
+
+    inline static uint16_t Pop16(const Emulator& emu){
+        uint32_t addr;
+        uint16_t data;
+        addr = emu.cpu->GetLinearStackAddr();
+        data = emu.mem->Read16(addr);
+        emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+2);
+        return data;
+    }
+
+    inline static uint32_t Pop32(const Emulator& emu){
+        uint32_t addr;
+        uint32_t data;
+        addr = emu.cpu->GetLinearStackAddr();
+        data = emu.mem->Read32(addr);
+        emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)+4);
+        return data;
+    }
 }
 
 Instruction::Instruction(string code_name){
@@ -40,43 +76,6 @@ template<typename type>void Instruction::Push(const Emulator& emu, type data){
     emu.mem->Write(emu.cpu->GetLinearStackAddr(), data);
 }
 ***/
-
-inline void Instruction::Push16(const Emulator& emu, const uint16_t data){
-    emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)-2);
-    emu.mem->Write(emu.cpu->GetLinearStackAddr(), data);
-}
-
-inline void Instruction::Push32(const Emulator& emu, const uint32_t data){
-    emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)-4);
-    emu.mem->Write(emu.cpu->GetLinearStackAddr(), data);
-}
-
-inline uint8_t Instruction::Pop8(const Emulator& emu){
-    uint32_t addr;
-    uint8_t data;
-    addr = emu.cpu->GetLinearStackAddr();
-    data = emu.mem->Read8(addr);
-    emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+1);
-    return data;
-}
-
-inline uint16_t Instruction::Pop16(const Emulator& emu){
-    uint32_t addr;
-    uint16_t data;
-    addr = emu.cpu->GetLinearStackAddr();
-    data = emu.mem->Read16(addr);
-    emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+2);
-    return data;
-}
-
-inline uint32_t Instruction::Pop32(const Emulator& emu){
-    uint32_t addr;
-    uint32_t data;
-    addr = emu.cpu->GetLinearStackAddr();
-    data = emu.mem->Read32(addr);
-    emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)+4);
-    return data;
-}
 
 inline void Instruction::ParseModRM(const Emulator& emu){
     uint8_t code;
@@ -1544,19 +1543,19 @@ void IntImm8::Run(const Emulator& emu){
             tss = emu.cpu->GetCurrentTss();
             emu.cpu->SetR16(SS, tss->ss0);
             emu.cpu->SetR32(ESP, tss->esp0);
-            this->Push32(emu, ss);
-            this->Push32(emu, esp);
-            this->Push32(emu, eflags);
-            this->Push32(emu, cs);
-            this->Push32(emu, eip);
+            InstructionHelper::Push32(emu, ss);
+            InstructionHelper::Push32(emu, esp);
+            InstructionHelper::Push32(emu, eflags);
+            InstructionHelper::Push32(emu, cs);
+            InstructionHelper::Push32(emu, eip);
             emu.cpu->SetEip(offset_addr);
             emu.cpu->SetR16(CS, idt_gate->selector);
             //emu.cpu->SetRpl(CS, cpl);
             emu.cpu->ClearFlag(IF);
         }else if(dest_code_segment_dpl==cpl){
-            this->Push32(emu, emu.cpu->GetEflgs());
-            this->Push32(emu, emu.cpu->GetR16(CS));
-            this->Push32(emu, emu.cpu->GetEip());
+            InstructionHelper::Push32(emu, emu.cpu->GetEflgs());
+            InstructionHelper::Push32(emu, emu.cpu->GetR16(CS));
+            InstructionHelper::Push32(emu, emu.cpu->GetEip());
             emu.cpu->SetEip(offset_addr);
             emu.cpu->SetR16(CS, idt_gate->selector);
             //emu.cpu->SetRpl(CS, cpl);
@@ -1580,12 +1579,12 @@ void IntImm8::Run(const Emulator& emu){
         uint16_t eflags = emu.cpu->GetEflgs();
         uint16_t ip     = emu.cpu->GetEip();
         uint16_t new_ip, new_cs;
-        this->Push16(emu, eflags);
+        InstructionHelper::Push16(emu, eflags);
         emu.cpu->ClearFlag(IF);
         emu.cpu->ClearFlag(TF);
         emu.cpu->ClearFlag(AC);
-        this->Push16(emu, emu.cpu->GetR16(CS));
-        this->Push16(emu, ip);
+        InstructionHelper::Push16(emu, emu.cpu->GetR16(CS));
+        InstructionHelper::Push16(emu, ip);
         new_ip = emu.mem->Read16((selector<<2));
         new_cs = emu.mem->Read16((selector<<2)+2);
         emu.cpu->SetR16(CS, new_cs);
@@ -1829,13 +1828,13 @@ void CallRel32::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         uint32_t rel32;
         rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-        this->Push32(emu, emu.cpu->GetEip()+4);
+        InstructionHelper::Push32(emu, emu.cpu->GetEip()+4);
         emu.cpu->AddEip(rel32+4);
         return;
     }
     uint16_t rel16;
     rel16 = emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess());
-    this->Push16(emu, emu.cpu->GetEip()+2);
+    InstructionHelper::Push16(emu, emu.cpu->GetEip()+2);
     emu.cpu->AddEip(rel16+2);
     return;
 }
@@ -1880,11 +1879,11 @@ Ret32Near::Ret32Near(string code_name):Instruction(code_name){
 void Ret32Near::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        emu.cpu->SetEip(this->Pop32(emu));
+        emu.cpu->SetEip(InstructionHelper::Pop32(emu));
         return;
     }
     uint32_t addr;
-    addr = 0x0000FFFF&this->Pop16(emu);
+    addr = 0x0000FFFF&InstructionHelper::Pop16(emu);
     emu.cpu->SetEip(addr);
     return;
 }
@@ -2214,10 +2213,10 @@ void PushR32::Run(const Emulator& emu){
     register_type = (GENERAL_PURPOSE_REGISTER32)((uint32_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess())-(uint32_t)0x50);
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Push32(emu, emu.cpu->GetR32(register_type));
+        InstructionHelper::Push32(emu, emu.cpu->GetR32(register_type));
         return;
     }
-    this->Push16(emu, emu.cpu->GetR16(register_type));
+    InstructionHelper::Push16(emu, emu.cpu->GetR16(register_type));
     return;
 }
 
@@ -2230,10 +2229,10 @@ void PopR32::Run(const Emulator& emu){
     register_type = (GENERAL_PURPOSE_REGISTER32)((uint32_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess())-(uint32_t)0x58);
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        emu.cpu->SetR32(register_type, this->Pop32(emu));
+        emu.cpu->SetR32(register_type, InstructionHelper::Pop32(emu));
         return;
     }
-    emu.cpu->SetR16(register_type, this->Pop16(emu));
+    emu.cpu->SetR16(register_type, InstructionHelper::Pop16(emu));
     return;
 }
 
@@ -2247,12 +2246,12 @@ void PushImm8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         imm8_32bit = (int32_t)(int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
-        this->Push32(emu, imm8_32bit);
+        InstructionHelper::Push32(emu, imm8_32bit);
         emu.cpu->AddEip(1);
         return;
     }
     imm8_16bit = (uint16_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
-    this->Push16(emu, imm8_16bit);
+    InstructionHelper::Push16(emu, imm8_16bit);
     emu.cpu->AddEip(1);
     return;
 }
@@ -2418,7 +2417,7 @@ PushImm32::PushImm32(string code_name):Instruction(code_name){
 void PushImm32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Push32(emu, emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess()));
+        InstructionHelper::Push32(emu, emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess()));
         emu.cpu->AddEip(4);
         return;
     }
@@ -2434,11 +2433,11 @@ void PushFd::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         uint32_t eflgs = emu.cpu->GetEflgs();
-        this->Push32(emu, eflgs);
+        InstructionHelper::Push32(emu, eflgs);
         return;
     }
     uint16_t eflgs = emu.cpu->GetEflgs();
-    this->Push16(emu, eflgs);
+    InstructionHelper::Push16(emu, eflgs);
     return;
 }
 
@@ -2539,12 +2538,12 @@ void PopFd::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         uint32_t eflgs;
-        eflgs = this->Pop32(emu);
+        eflgs = InstructionHelper::Pop32(emu);
         emu.cpu->SetEflgs(eflgs);
         return;
     }
     uint32_t eflgs;
-    eflgs = this->Pop16(emu);
+    eflgs = InstructionHelper::Pop16(emu);
     emu.cpu->SetEflgs((emu.cpu->GetEflgs()&0xFFFF0000)|eflgs);
     return;
 }
@@ -2557,7 +2556,7 @@ void Leave::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         emu.cpu->SetR32(ESP, emu.cpu->GetR32(EBP));
-        emu.cpu->SetR32(EBP, this->Pop32(emu));
+        emu.cpu->SetR32(EBP, InstructionHelper::Pop32(emu));
         return;
     }
     this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
@@ -2643,10 +2642,10 @@ PushRm32::PushRm32(string code_name):Instruction(code_name){
 
 void PushRm32::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Push32(emu, this->GetRM32(emu));
+        InstructionHelper::Push32(emu, this->GetRM32(emu));
         return;
     }
-    this->Push16(emu, this->GetRM16(emu));
+    InstructionHelper::Push16(emu, this->GetRM16(emu));
     return;
 }
 
@@ -3220,13 +3219,13 @@ void PushEs::Run(const Emulator& emu){
         uint32_t es = 0;
         emu.cpu->AddEip(1);
         es = (uint32_t)emu.cpu->GetR16(ES);
-        this->Push32(emu, es);
+        InstructionHelper::Push32(emu, es);
         return;
     }
     uint16_t es;
     emu.cpu->AddEip(1);
     es = emu.cpu->GetR16(ES);
-    this->Push16(emu, es);
+    InstructionHelper::Push16(emu, es);
     return;
 }
 
@@ -3239,13 +3238,13 @@ void PushDs::Run(const Emulator& emu){
         uint32_t ds = 0;
         emu.cpu->AddEip(1);
         ds = (uint32_t)emu.cpu->GetR16(DS);
-        this->Push32(emu, ds);
+        InstructionHelper::Push32(emu, ds);
         return;
     }
     uint16_t ds;
     emu.cpu->AddEip(1);
     ds = emu.cpu->GetR16(DS);
-    this->Push16(emu, ds);
+    InstructionHelper::Push16(emu, ds);
     return;
 }
 
@@ -3258,13 +3257,13 @@ void PushCs::Run(const Emulator& emu){
         uint32_t cs = 0;
         emu.cpu->AddEip(1);
         cs = (uint32_t)emu.cpu->GetR16(CS);
-        this->Push32(emu, cs);
+        InstructionHelper::Push32(emu, cs);
         return;
     }
     uint16_t cs;
     emu.cpu->AddEip(1);
     cs = emu.cpu->GetR16(CS);
-    this->Push16(emu, cs);
+    InstructionHelper::Push16(emu, cs);
     return;
 }
 
@@ -3277,26 +3276,26 @@ void PushAd::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         esp = emu.cpu->GetR32(ESP);
-        this->Push32(emu, emu.cpu->GetR32(EAX));
-        this->Push32(emu, emu.cpu->GetR32(ECX));
-        this->Push32(emu, emu.cpu->GetR32(EDX));
-        this->Push32(emu, emu.cpu->GetR32(EBX));
-        this->Push32(emu, esp);
-        this->Push32(emu, emu.cpu->GetR32(EBP));
-        this->Push32(emu, emu.cpu->GetR32(ESI));
-        this->Push32(emu, emu.cpu->GetR32(EDI));
+        InstructionHelper::Push32(emu, emu.cpu->GetR32(EAX));
+        InstructionHelper::Push32(emu, emu.cpu->GetR32(ECX));
+        InstructionHelper::Push32(emu, emu.cpu->GetR32(EDX));
+        InstructionHelper::Push32(emu, emu.cpu->GetR32(EBX));
+        InstructionHelper::Push32(emu, esp);
+        InstructionHelper::Push32(emu, emu.cpu->GetR32(EBP));
+        InstructionHelper::Push32(emu, emu.cpu->GetR32(ESI));
+        InstructionHelper::Push32(emu, emu.cpu->GetR32(EDI));
         return;
     }
     uint16_t sp;
     sp = emu.cpu->GetR16(ESP);
-    this->Push16(emu, emu.cpu->GetR16(EAX));
-    this->Push16(emu, emu.cpu->GetR16(ECX));
-    this->Push16(emu, emu.cpu->GetR16(EDX));
-    this->Push16(emu, emu.cpu->GetR16(EBX));
-    this->Push16(emu, sp);
-    this->Push16(emu, emu.cpu->GetR16(EBP));
-    this->Push16(emu, emu.cpu->GetR16(ESI));
-    this->Push16(emu, emu.cpu->GetR16(EDI));
+    InstructionHelper::Push16(emu, emu.cpu->GetR16(EAX));
+    InstructionHelper::Push16(emu, emu.cpu->GetR16(ECX));
+    InstructionHelper::Push16(emu, emu.cpu->GetR16(EDX));
+    InstructionHelper::Push16(emu, emu.cpu->GetR16(EBX));
+    InstructionHelper::Push16(emu, sp);
+    InstructionHelper::Push16(emu, emu.cpu->GetR16(EBP));
+    InstructionHelper::Push16(emu, emu.cpu->GetR16(ESI));
+    InstructionHelper::Push16(emu, emu.cpu->GetR16(EDI));
     return;
 }
 
@@ -3360,14 +3359,14 @@ void PopAd::Run(const Emulator& emu){
     uint32_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        edi = this->Pop32(emu);
-        esi = this->Pop32(emu);
-        ebp = this->Pop32(emu);
-        esp = this->Pop32(emu);
-        ebx = this->Pop32(emu);
-        edx = this->Pop32(emu);
-        ecx = this->Pop32(emu);
-        eax = this->Pop32(emu);
+        edi = InstructionHelper::Pop32(emu);
+        esi = InstructionHelper::Pop32(emu);
+        ebp = InstructionHelper::Pop32(emu);
+        esp = InstructionHelper::Pop32(emu);
+        ebx = InstructionHelper::Pop32(emu);
+        edx = InstructionHelper::Pop32(emu);
+        ecx = InstructionHelper::Pop32(emu);
+        eax = InstructionHelper::Pop32(emu);
 
         emu.cpu->SetR32(EAX, eax);
         emu.cpu->SetR32(ECX, ecx);
@@ -3391,11 +3390,11 @@ void PopDs::Run(const Emulator& emu){
     uint32_t ds;
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        ds = this->Pop32(emu);
+        ds = InstructionHelper::Pop32(emu);
         emu.cpu->SetR16(DS, ds);
         return;
     }
-    ds = this->Pop16(emu);
+    ds = InstructionHelper::Pop16(emu);
     emu.cpu->SetR16(DS, ds);
     return;
 }
@@ -3408,11 +3407,11 @@ void PopEs::Run(const Emulator& emu){
     uint32_t es = 0;
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        es = this->Pop32(emu);
+        es = InstructionHelper::Pop32(emu);
         emu.cpu->SetR16(ES, es);
         return;
     }
-    es = this->Pop16(emu);
+    es = InstructionHelper::Pop16(emu);
     emu.cpu->SetR16(ES, es);
     return;
 }
@@ -3428,9 +3427,9 @@ void Iretd::Run(const Emulator& emu){
             this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
         }else{
             uint16_t cs, ip, eflags;
-            ip = this->Pop16(emu);
-            cs = this->Pop16(emu);
-            eflags = this->Pop16(emu);
+            ip = InstructionHelper::Pop16(emu);
+            cs = InstructionHelper::Pop16(emu);
+            eflags = InstructionHelper::Pop16(emu);
             emu.cpu->SetEip(ip);
             emu.cpu->SetR16(CS, cs);
             emu.cpu->SetEflgs(eflags);
@@ -3442,14 +3441,14 @@ void Iretd::Run(const Emulator& emu){
         uint16_t cs, ss;
         uint32_t eip, eflags, esp;
         uint8_t cpl, rpl;
-        eip    = this->Pop32(emu);
-        cs     = this->Pop32(emu);
-        eflags = this->Pop32(emu);
+        eip    = InstructionHelper::Pop32(emu);
+        cs     = InstructionHelper::Pop32(emu);
+        eflags = InstructionHelper::Pop32(emu);
         rpl    = GET_RPL(cs);//呼び出し元特権レベル
         cpl    = emu.cpu->GetCpl();
         if(rpl>cpl){
-            esp = this->Pop32(emu);
-            ss = this->Pop32(emu);
+            esp = InstructionHelper::Pop32(emu);
+            ss = InstructionHelper::Pop32(emu);
             emu.cpu->SetR32(ESP, esp);
             emu.cpu->SetR16(SS, ss);
             emu.cpu->SetR16(CS, cs);
@@ -4365,8 +4364,8 @@ void CallPtr1632::Run(const Emulator& emu){
         emu.cpu->AddEip(2);
         selector = emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess());
         emu.cpu->AddEip(2);
-        this->Push16(emu, emu.cpu->GetR16(CS));
-        this->Push16(emu, (uint16_t)emu.cpu->GetEip());
+        InstructionHelper::Push16(emu, emu.cpu->GetR16(CS));
+        InstructionHelper::Push16(emu, (uint16_t)emu.cpu->GetEip());
         emu.cpu->SetR16(CS, selector);
         emu.cpu->SetEip(offset);
         return;
@@ -4380,8 +4379,8 @@ void CallPtr1632::Run(const Emulator& emu){
         gdt_gate = emu.cpu->GetGdtGate(selector);
         emu.cpu->AddEip(6);
         if((gdt_gate->access_right&SEGMENT_DESC_TYPE_FLG)!=0){
-            this->Push32(emu, emu.cpu->GetR16(CS));
-            this->Push32(emu, emu.cpu->GetEip());
+            InstructionHelper::Push32(emu, emu.cpu->GetR16(CS));
+            InstructionHelper::Push32(emu, emu.cpu->GetEip());
             emu.cpu->SetEip(imm32);
             emu.cpu->SetR16(CS, selector);
             return;
@@ -4404,8 +4403,8 @@ void Ret32Far::Run(const Emulator& emu){
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
             this->Error("Not implemented: op_size=32 at on real_mode at %s::Run", this->code_name.c_str());
         }
-        eip     = this->Pop16(emu);
-        cs      = this->Pop16(emu);
+        eip     = InstructionHelper::Pop16(emu);
+        cs      = InstructionHelper::Pop16(emu);
         emu.cpu->SetEip(eip);
         emu.cpu->SetR16(CS, cs);
         return;
@@ -4416,15 +4415,15 @@ void Ret32Far::Run(const Emulator& emu){
     uint16_t ss;
     uint8_t cpl, rpl;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        eip     = this->Pop32(emu);
-        cs      = this->Pop32(emu);
+        eip     = InstructionHelper::Pop32(emu);
+        cs      = InstructionHelper::Pop32(emu);
         rpl = GET_RPL(cs);
         cpl = emu.cpu->GetCpl();
         if(rpl>cpl){
             emu.cpu->SetEip(eip);
             emu.cpu->SetR16(CS, cs);
-            esp = this->Pop32(emu);
-            ss  = this->Pop32(emu);
+            esp = InstructionHelper::Pop32(emu);
+            ss  = InstructionHelper::Pop32(emu);
             emu.cpu->SetR32(ESP, esp);
             emu.cpu->SetR16(SS, ss);
         }else{
@@ -4452,8 +4451,8 @@ void CallM1632::Run(const Emulator& emu){
             selector = emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+4));
             gdt_gate = emu.cpu->GetGdtGate(selector);
             if((gdt_gate->access_right&SEGMENT_DESC_TYPE_FLG)!=0){
-                this->Push32(emu, emu.cpu->GetR16(CS));
-                this->Push32(emu, emu.cpu->GetEip());
+                InstructionHelper::Push32(emu, emu.cpu->GetR16(CS));
+                InstructionHelper::Push32(emu, emu.cpu->GetEip());
                 emu.cpu->SetEip(offset_addr);
                 emu.cpu->SetR16(CS, selector);
                 return;
@@ -4469,8 +4468,8 @@ void CallM1632::Run(const Emulator& emu){
     effective_addr = this->GetEffectiveAddr(emu);
     eip      = emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr));
     selector = emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+2));
-    this->Push16(emu, emu.cpu->GetR16(CS));
-    this->Push16(emu, (uint16_t)emu.cpu->GetEip());
+    InstructionHelper::Push16(emu, emu.cpu->GetR16(CS));
+    InstructionHelper::Push16(emu, (uint16_t)emu.cpu->GetEip());
     emu.cpu->SetEip(eip);
     emu.cpu->SetR16(CS, selector);
 }
@@ -4484,13 +4483,13 @@ void PushSs::Run(const Emulator& emu){
         uint32_t ss = 0;
         emu.cpu->AddEip(1);
         ss = (uint32_t)emu.cpu->GetR16(SS);
-        this->Push32(emu, ss);
+        InstructionHelper::Push32(emu, ss);
         return;
     }
     uint16_t ss;
     emu.cpu->AddEip(1);
     ss = emu.cpu->GetR16(SS);
-    this->Push16(emu, ss);
+    InstructionHelper::Push16(emu, ss);
     return;
 }
 
@@ -5019,7 +5018,7 @@ void CallRm32::Run(const Emulator& emu){
         return;
     }
     uint16_t rm16 = this->GetRM16(emu);
-    this->Push16(emu, emu.cpu->GetEip());
+    InstructionHelper::Push16(emu, emu.cpu->GetEip());
     emu.cpu->SetEip(rm16);
     return;
 }
@@ -5656,7 +5655,7 @@ void PopSs::Run(const Emulator& emu){
         this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint16_t ss = 0;
-    ss = this->Pop16(emu);
+    ss = InstructionHelper::Pop16(emu);
     emu.cpu->SetR16(SS, ss);
     return;
 }
@@ -5890,7 +5889,7 @@ void PopM32::Run(const Emulator& emu){
     }
     uint16_t effective_addr;
     effective_addr        = this->GetEffectiveAddr(emu);
-    emu.mem->Write(emu.cpu->GetLinearAddrForDataAccess(effective_addr), this->Pop16(emu));
+    emu.mem->Write(emu.cpu->GetLinearAddrForDataAccess(effective_addr), InstructionHelper::Pop16(emu));
     return;
 }
 
@@ -6104,12 +6103,12 @@ void RetImm16::Run(const Emulator& emu){
         this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint32_t addr;
-    addr = this->Pop16(emu);
+    addr = InstructionHelper::Pop16(emu);
     uint16_t imm16 = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
     emu.cpu->AddEip(2);
     emu.cpu->SetEip(addr);
     for(uint16_t i=0; i<imm16; i++){
-        this->Pop8(emu);//指定された回数だけPop
+        InstructionHelper::Pop8(emu);//指定された回数だけPop
     }
     return;
 }
@@ -6149,14 +6148,14 @@ void RetFarImm16::Run(const Emulator& emu){
         this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint16_t ip, cs;
-    ip = this->Pop16(emu);
-    cs = this->Pop16(emu);
+    ip = InstructionHelper::Pop16(emu);
+    cs = InstructionHelper::Pop16(emu);
     uint16_t imm16 = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
     emu.cpu->AddEip(2);
     emu.cpu->SetEip(ip);
     emu.cpu->SetR16(CS, cs);
     for(uint16_t i=0; i<imm16; i++){
-        this->Pop8(emu);//指定された回数だけPop
+        InstructionHelper::Pop8(emu);//指定された回数だけPop
     }
     return;
 }
