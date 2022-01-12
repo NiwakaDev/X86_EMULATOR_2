@@ -6,6 +6,7 @@
 #include "Idtr.h"
 #include "Ldtr.h"
 #include "TaskRegister.h"
+#include "Instruction.h"
 #include "InstructionFactory.h"
 
 using namespace std;
@@ -17,7 +18,7 @@ const int  CR2_INIT_VALUE    = 0x00000000;
 const int  CS_INIT_VALUE     = 0x0000F000;
 
 Cpu::~Cpu(){
-    for(int i=0; i<INSTRUCTION_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -103,7 +104,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     this->prefix_table[0x66] = true;
     this->prefix_table[0x67] = true;
 
-    for(int i=0; i<INSTRUCTION_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
         InstructionFactory instruction_factory;
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }

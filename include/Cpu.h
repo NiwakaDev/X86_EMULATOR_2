@@ -1,6 +1,6 @@
 #pragma once
 #include "common.h"
-#include "Instruction.h"
+#include "InstructionHelper.h"
 #include "CpuEnum.h"
 
 class SegmentRegister;
@@ -73,7 +73,7 @@ class Cpu:public Object{
         Idtr* idtr = NULL;
         Ldtr* ldtr = NULL;
         Memory* mem = NULL;
-        Instruction* instructions[INSTRUCTION_SIZE];
+        Instruction* instructions[InstructionHelper::INSTRUCTION_SIZE];
         SEGMENT_REGISTER default_code_selector;
         SEGMENT_REGISTER default_data_selector;
         SEGMENT_REGISTER default_stack_selector;

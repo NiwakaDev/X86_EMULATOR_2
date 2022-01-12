@@ -2,13 +2,10 @@
 #include "common.h"
 #include "ModRM.h"
 #include "Sib.h"
-
+#include "InstructionHelper.h"
 
 class Sib;
 class Emulator;
-
-#define INSTRUCTION_SET_SMALL_SIZE 8
-#define INSTRUCTION_SIZE 256
 
 class Instruction:public Object{
     protected:
@@ -40,7 +37,3 @@ class Instruction:public Object{
             this->modrm = *modrm;
         }
 };
-
-namespace InstructionHelper{
-    void ShowInstructionName(Instruction& instruction);
-}

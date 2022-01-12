@@ -821,7 +821,7 @@ void MovR8Rm8::Run(const Emulator& emu){
 }
 
 CodeC0::CodeC0(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[5] = new ShrRm8Imm8("ShrRm8Imm8");
@@ -829,7 +829,7 @@ CodeC0::CodeC0(string code_name):Instruction(code_name){
 }
 
 CodeC0::~CodeC0(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -848,7 +848,7 @@ void CodeC0::Run(const Emulator& emu){
 }
 
 CodeC6::~CodeC6(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -856,7 +856,7 @@ CodeC6::~CodeC6(){
 }
 
 CodeC6::CodeC6(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new MovRm8Imm8("MovRm8Imm8");
@@ -874,7 +874,7 @@ void CodeC6::Run(const Emulator& emu){
 }
 
 Code80::Code80(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new AddRm8Imm8("AddRm8Imm8");
@@ -887,7 +887,7 @@ Code80::Code80(string code_name):Instruction(code_name){
 }
 
 Code80::~Code80(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -906,7 +906,7 @@ void Code80::Run(const Emulator& emu){
 }
 
 Code81::Code81(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new AddRm32Imm32("AddRm32Imm32");
@@ -918,7 +918,7 @@ Code81::Code81(string code_name):Instruction(code_name){
 }
 
 Code81::~Code81(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -1017,14 +1017,14 @@ void CodeC1::Run(const Emulator& emu){
 }
 
 Code0F00::Code0F00(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[3] = new LtrRm16("LtrRm16");
 }
 
 Code0F00::~Code0F00(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -1044,7 +1044,7 @@ void Code0F00::Run(const Emulator& emu){
 }
 
 Code0F01::Code0F01(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[0x02] = new Lgdt("Lgdt");
@@ -1052,7 +1052,7 @@ Code0F01::Code0F01(string code_name):Instruction(code_name){
 }
 
 Code0F01::~Code0F01(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -1072,7 +1072,7 @@ void Code0F01::Run(const Emulator& emu){
 }
 
 Code83::Code83(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[1] = new OrRm32Imm8("OrRm32Imm8");
@@ -1086,7 +1086,7 @@ Code83::Code83(string code_name):Instruction(code_name){
 }
 
 Code83::~Code83(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -1105,7 +1105,7 @@ void Code83::Run(const Emulator& emu){
 }
 
 CodeF7::CodeF7(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new TestRm32Imm32("TestRm32Imm32");
@@ -1129,7 +1129,7 @@ void CodeF7::Run(const Emulator& emu){
 }
 
 CodeFE::CodeFE(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new IncRm8("IncRm8");
@@ -1137,7 +1137,7 @@ CodeFE::CodeFE(string code_name):Instruction(code_name){
 }
 
 CodeFE::~CodeFE(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -1157,7 +1157,7 @@ void CodeFE::Run(const Emulator& emu){
 }
 
 CodeD0::CodeD0(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[1] = new RorRm8("RorRm8");
@@ -1165,7 +1165,7 @@ CodeD0::CodeD0(string code_name):Instruction(code_name){
 }
 
 CodeD0::~CodeD0(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -1184,14 +1184,14 @@ void CodeD0::Run(const Emulator& emu){
 }
 
 CodeD2::CodeD2(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[4] = new SalRm8Cl("SalRm8Cl");
 }
 
 CodeD2::~CodeD2(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -1210,7 +1210,7 @@ void CodeD2::Run(const Emulator& emu){
 }
 
 CodeFF::CodeFF(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new IncRm32("IncRm32");
@@ -1223,7 +1223,7 @@ CodeFF::CodeFF(string code_name):Instruction(code_name){
 }
 
 CodeFF::~CodeFF(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -1243,7 +1243,7 @@ void CodeFF::Run(const Emulator& emu){
 }
 
 CodeD1::CodeD1(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[2] = new RclRm32("RclRm32");
@@ -1254,7 +1254,7 @@ CodeD1::CodeD1(string code_name):Instruction(code_name){
 }
 
 CodeD1::~CodeD1(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -1273,7 +1273,7 @@ void CodeD1::Run(const Emulator& emu){
 }
 
 CodeD3::CodeD3(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[4] = new SalRm32Cl("SalRm32Cl");
@@ -1282,7 +1282,7 @@ CodeD3::CodeD3(string code_name):Instruction(code_name){
 }
 
 CodeD3::~CodeD3(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -1301,7 +1301,7 @@ void CodeD3::Run(const Emulator& emu){
 }
 
 CodeF6::CodeF6(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[0] = new TestRm8Imm8("TestRm8Imm8");
@@ -1311,7 +1311,7 @@ CodeF6::CodeF6(string code_name):Instruction(code_name){
 }
 
 CodeF6::~CodeF6(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -5378,7 +5378,7 @@ void AdcR32Rm32::Run(const Emulator& emu){
 }
 
 CodeF3::CodeF3(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[0xA4] = new RepMovsM8M8("RepMovsM8M8");
@@ -5392,7 +5392,7 @@ CodeF3::CodeF3(string code_name):Instruction(code_name){
 }
 
 CodeF3::~CodeF3(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
@@ -5487,14 +5487,14 @@ void RepeCmpsM8M8::Run(const Emulator& emu){
 }
 
 CodeF2::CodeF2(string code_name):Instruction(code_name){
-    for(int i=0; i<INSTRUCTION_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
         this->instructions[i] = NULL;
     }
     this->instructions[0xAE] = new RepneScasM8("RepneScasM8");
 }
 
 CodeF2::~CodeF2(){
-    for(int i=0; i<INSTRUCTION_SET_SMALL_SIZE; i++){
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         if(this->instructions[i]!=NULL){
             delete this->instructions[i];
         }
