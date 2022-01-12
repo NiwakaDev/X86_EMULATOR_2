@@ -548,12 +548,11 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
 //AL == ASCIIコード, AH == キーボードスキャンコード
 //キーボードスキャンコード : http://oswiki.osask.jp/?%28AT%29keyboard
 void KeyFunction::Run(Cpu& cpu, Memory& mem){
-    uint8_t ah;
-    uint8_t al;
-    ah = cpu.GetR8H(EAX);
-    uint16_t ch;
-    int d;
+    uint8_t ah = cpu.GetR8H(EAX);
     switch (ah){
+        uint8_t al;
+        uint16_t ch;
+        int d;
         case 0x00:
             while(this->kbc->IsEmpty()==-1){
 
