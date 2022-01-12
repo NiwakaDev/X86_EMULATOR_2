@@ -12,7 +12,9 @@
 #include "Fdc.h"
 using namespace std;
 
-extern bool niwaka_start_flg;
+#ifdef DEBUG
+    extern bool niwaka_start_flg;
+#endif 
 
 const int BIOS_SIZE = 65536;
 
