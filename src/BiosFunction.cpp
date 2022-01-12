@@ -5,12 +5,6 @@
 #include "Kbc.h"
 using namespace std;
 
-#define BS    0x08
-#define LF    0x0A
-#define CR    0x0D
-#define SPACE 0x20
-#define DEL   0x7F
-
 #ifdef DEBUG
     bool niwaka_start_flg = false;
 #endif
@@ -125,6 +119,13 @@ void VideoFunction::Run(Cpu& cpu, Memory& mem){
                     fprintf(stderr, "ascii_code=0x%02X\n", ascii_code);
                 }
                 ***/
+                enum ASCII_CODE{
+                    BS    = 0x08,
+                    LF    = 0x0A,
+                    CR    = 0x0D,
+                    SPACE = 0x20,
+                    DEL   = 0x7F,
+                };
                 if(ascii_code==DEL){
                     if(col==4){
                         this->console_buff[row][col] = 0;
