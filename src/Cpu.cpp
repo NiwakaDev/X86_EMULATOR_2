@@ -103,8 +103,8 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     this->prefix_table[0x66] = true;
     this->prefix_table[0x67] = true;
 
-    InstructionFactory instruction_factory;
     for(int i=0; i<INSTRUCTION_SIZE; i++){
+        InstructionFactory instruction_factory;
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }
 }
