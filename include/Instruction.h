@@ -40,3 +40,7 @@ class Instruction:public Object{
             this->modrm = *modrm;
         }
 };
+
+namespace InstructionHelper{
+    void ShowInstructionName(Instruction& instruction);
+}

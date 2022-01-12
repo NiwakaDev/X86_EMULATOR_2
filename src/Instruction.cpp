@@ -4,6 +4,7 @@
 #include "Memory.h"
 #include "IoPort.h"
 #include "Emulator.h"
+
 using namespace std;
 using namespace chrono;
 
@@ -12,6 +13,10 @@ using namespace chrono;
 #define MSB_16 0x8000
 #define LSB_8 0x01
 
+//Instructionクラスのメンバにアクセスすることがない
+//or
+//Instructionクラスのpublicメンバにしかアクセスしない関数をInstructionHelper空間に移動させた。
+//TODO : InstructionHelper::ShowInstructionNameを外部からもアクセスできるようにする。
 namespace InstructionHelper{
     void ShowInstructionName(Instruction& instruction){
         cout << instruction.GetInstructionName() << endl;
