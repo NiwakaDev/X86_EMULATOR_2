@@ -5,7 +5,7 @@ using namespace std;
 
 #define SECTOR_SIZE 512
 
-Fdc::Fdc(const char* file_name):IoDevice(){
+Fdc::Fdc(const char* const file_name):IoDevice(){
     this->msr.flgs.rqm = 1;
     this->fdc_mode = FDC_IDLE_MODE;
     FILE* disk_image_stream = NULL;
