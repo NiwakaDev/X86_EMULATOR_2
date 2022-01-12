@@ -80,12 +80,6 @@ int Emulator::ParseArgv(int argc, char* argv[]){
             parse_result += 1;
             continue;
         }
-        if ((strcmp("-debug", argv[0])==0) || (strcmp("-d", argv[0])==0)) {
-            this->debug = true;
-            argc -= 1;
-            argv += 1;
-            continue;
-        }
         if ((strcmp("-bios", argv[0])==0) || (strcmp("-b", argv[0])==0)) {
             this->bios_name = argv[1];
             argc -= 2;
@@ -111,12 +105,12 @@ void Emulator::Join(){
 }
 
 void Emulator::Start(){
-    if(!this->debug){
+    #ifdef DEBUG
+        this->Run();
+    #else
         this->emu_thread = new thread(&Emulator::Run, this);
         this->gui->Display();
-    }else{
-        this->Run();
-    }
+    #endif
 }
 
 void Emulator::Run(){

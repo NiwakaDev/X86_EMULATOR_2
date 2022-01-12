@@ -28,7 +28,6 @@ class Emulator:public Object{
         int ParseArgv(int argc, char* argv[]);
         char* disk_image_name = NULL;
         char* bios_name       = NULL;//いずれBIOSクラスを外す予定だが、当分は共存させる。
-        bool    debug   = false;
         bool head_start = false;
         void Run();
     public:
