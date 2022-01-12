@@ -114,9 +114,8 @@ void Emulator::Start(){
 }
 
 void Emulator::Run(){
-    int irq_num;
-    FILE* out = NULL;
     #ifdef DEBUG
+        FILE* out = NULL;
         out = fopen("niwaka_output.txt", "w");
         if(out==NULL){
             fprintf(stderr, "Error: fopen");
@@ -125,16 +124,17 @@ void Emulator::Run(){
         fprintf(stderr, "DEBUG\n");
     #endif
     
-    int  i = 0;
-    bool result;
-    bool log = false;
     //TODO : テストコードのせいで汚くなったメイン関数の修正
     while(!this->gui->IsQuit()){
         #ifdef DEBUG
+            static int i = 0;
+            static bool log = false;
+            bool result;
             if(niwaka_start_flg){
                 log = true;
             }
             if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
+                int irq_num;
                 if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
                     this->cpu->HandleInterrupt(irq_num);                
                 }
@@ -150,6 +150,7 @@ void Emulator::Run(){
             }
         #else
             if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
+                int irq_num;
                 if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
                     this->cpu->HandleInterrupt(irq_num);                
                 }
