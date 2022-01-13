@@ -415,7 +415,6 @@ inline void Gui::Pimpl::ShowCursor(){
 
 inline void Gui::Pimpl::HandleMouseMotion(SDL_Event& e){
 
-    uint8_t data0, data1, data2;
     int rel_x, rel_y;
    
     rel_x = e.motion.xrel / MOVE_SCALE;
@@ -431,7 +430,8 @@ inline void Gui::Pimpl::HandleMouseMotion(SDL_Event& e){
         rel_y = -127;
     }
     rel_y *= -1;
-    data0 = DEFAULT_PACKET_BYTE0;
+    
+    uint8_t data0 = DEFAULT_PACKET_BYTE0;
     if(e.motion.state==SDL_BUTTON_LMASK){
         data0 = data0 | LEFT_BUTTON;
     }
