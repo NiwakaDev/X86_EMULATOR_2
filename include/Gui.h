@@ -16,8 +16,8 @@ class Gui:public Object{
         enum IO_DEVICE_KIND {KBD, MOUSE, IO_DEVICE_KIND_TOTAL};
         void AddIoDevice(IO_DEVICE_KIND io_device_kind, IoDevice& io_device);
     private:    
-        class Impl;
-        Impl* impl;
+        class Pimpl;
+        Pimpl* pimpl;
 };
 
 #include "detail/Gui.h"

@@ -13,7 +13,7 @@ const int HEIGHT_DISPLAY_SCALE = 2;
 const int MAX_WIDTH            = 1280;
 const int MAX_HEIGHT           = 1024;
 
-class Gui::Impl{
+class Gui::Pimpl{
     public:
         Pixel* image = NULL;
         bool grab;
@@ -55,8 +55,8 @@ static inline int GuiHelper::GetModState(){
 }
 
 Gui::Gui(Vga& vga){
-    //IMPLイディオム
-    this->impl = new Gui::Impl();
+    //PIMPLイディオム
+    this->pimpl = new Gui::Pimpl();
 
     //TODO:音出しはフロッピーディスクが動作している時のみにする。
     int result = 0;
@@ -74,51 +74,51 @@ Gui::Gui(Vga& vga){
     if(Mix_OpenAudio(22050, AUDIO_F32SYS, 2, 640)==-1){
         fprintf(stderr, "error : Mix_OpenAudio\n");
     }
-    this->impl->music = Mix_LoadMUS(MP3_FILE_PATH);
+    this->pimpl->music = Mix_LoadMUS(MP3_FILE_PATH);
     /***
     if(Mix_PlayMusic(this->music, -1)==-1){
         this->Error("Error : Mix_PlayMusic");
     }
     ***/
-    this->impl->vga = &vga;
+    this->pimpl->vga = &vga;
 
-    this->impl->screen_height = DEFAULT_HEIGHT;
-    this->impl->screen_width  = DEFAULT_WIDTH;
+    this->pimpl->screen_height = DEFAULT_HEIGHT;
+    this->pimpl->screen_width  = DEFAULT_WIDTH;
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
         cerr << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
     }
-    this->impl->window = SDL_CreateWindow("EMULATOR", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, this->impl->screen_width*WIDTH_DISPLAY_SCALE, this->impl->screen_height*HEIGHT_DISPLAY_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-    if(this->impl->window==NULL){
+    this->pimpl->window = SDL_CreateWindow("EMULATOR", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, this->pimpl->screen_width*WIDTH_DISPLAY_SCALE, this->pimpl->screen_height*HEIGHT_DISPLAY_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    if(this->pimpl->window==NULL){
         cout << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
     }
-    this->impl->renderer      = SDL_CreateRenderer(this->impl->window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
-    this->impl->texture       = SDL_CreateTexture(this->impl->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->impl->screen_width, this->impl->screen_height); 
-    if(SDL_RenderSetLogicalSize(this->impl->renderer, this->impl->screen_width, this->impl->screen_height*HEIGHT_DISPLAY_SCALE)<0){
+    this->pimpl->renderer      = SDL_CreateRenderer(this->pimpl->window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
+    this->pimpl->texture       = SDL_CreateTexture(this->pimpl->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->pimpl->screen_width, this->pimpl->screen_height); 
+    if(SDL_RenderSetLogicalSize(this->pimpl->renderer, this->pimpl->screen_width, this->pimpl->screen_height*HEIGHT_DISPLAY_SCALE)<0){
         cout << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
     }
-    this->impl->image = new Pixel[MAX_WIDTH*MAX_HEIGHT*sizeof(Pixel)];//最大領域の場合のサイズで確保しておく。
-    this->impl->grab  = false;
+    this->pimpl->image = new Pixel[MAX_WIDTH*MAX_HEIGHT*sizeof(Pixel)];//最大領域の場合のサイズで確保しておく。
+    this->pimpl->grab  = false;
 }
 
 Gui::~Gui(){
-    delete[] this->impl->image;
-    SDL_DestroyTexture(this->impl->texture);
-    SDL_DestroyRenderer(this->impl->renderer);
-    SDL_DestroyWindow(this->impl->window);
+    delete[] this->pimpl->image;
+    SDL_DestroyTexture(this->pimpl->texture);
+    SDL_DestroyRenderer(this->pimpl->renderer);
+    SDL_DestroyWindow(this->pimpl->window);
     SDL_Quit();
-    delete this->impl;
+    delete this->pimpl;
 }
 
 void Gui::AddIoDevice(IO_DEVICE_KIND io_device_kind, IoDevice& io_device){
     switch (io_device_kind){
         case KBD:
-            this->impl->kbc = &io_device;
+            this->pimpl->kbc = &io_device;
             break;
         case MOUSE:
-            this->impl->mouse = &io_device;
+            this->pimpl->mouse = &io_device;
             break;
         default:
             //TODO:例外を投げるように修正する。
@@ -128,33 +128,33 @@ void Gui::AddIoDevice(IO_DEVICE_KIND io_device_kind, IoDevice& io_device){
 }
 
 bool Gui::IsQuit(){
-    return this->impl->quit;
+    return this->pimpl->quit;
 }
 
 void Gui::Finish(){
-    this->impl->quit = true;
+    this->pimpl->quit = true;
 }
 
 void Gui::SoundFdc(){
-    if(Mix_PlayMusic(this->impl->music, 1)==-1){
+    if(Mix_PlayMusic(this->pimpl->music, 1)==-1){
         this->Error("Error : Mix_PlayMusic");
     }
 }
 
-inline void Gui::Impl::Resize(){
+inline void Gui::Pimpl::Resize(){
     SDL_SetWindowSize(this->window, this->screen_width, this->screen_height);
     SDL_RenderSetLogicalSize(this->renderer,this->screen_width,this->screen_height);
     SDL_DestroyTexture(this->texture);
     this->texture = SDL_CreateTexture(this->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->screen_width, this->screen_height); 
 }
 
-inline void Gui::Impl::Update(){
+inline void Gui::Pimpl::Update(){
     SDL_UpdateTexture(this->texture, NULL, this->image, this->screen_width * sizeof(Pixel));
     SDL_RenderCopy(this->renderer, this->texture, NULL, NULL);
     SDL_RenderPresent(this->renderer);
 }
 
-inline void Gui::Impl::Update(const int x, const int y, const int w, const int h){
+inline void Gui::Pimpl::Update(const int x, const int y, const int w, const int h){
     SDL_Rect rect;
     rect.x = x;//左上の座標
     rect.y = y;//左上の座標
@@ -167,7 +167,7 @@ inline void Gui::Impl::Update(const int x, const int y, const int w, const int h
 
 //SDLのキーボードキーコードのヘッダーファイル:https://github.com/davidsiaw/SDL2/blob/6ecaa6b61372e5b2f9bd01201814d07e34bb4186/include/SDL_keycode.h
 //定数値が分かるURL : http://sdl2referencejp.osdn.jp/SDLKeycodeLookup.html
-inline uint8_t Gui::Impl::SdlScancode2KeyCode(SDL_Event& e){
+inline uint8_t Gui::Pimpl::SdlScancode2KeyCode(SDL_Event& e){
     uint8_t key_code;
     switch (e.key.keysym.sym){
         case SDLK_0:
@@ -388,7 +388,7 @@ inline uint8_t Gui::Impl::SdlScancode2KeyCode(SDL_Event& e){
     return key_code;
 }
 
-inline void Gui::Impl::HandleKeyDown(SDL_Event& e){
+inline void Gui::Pimpl::HandleKeyDown(SDL_Event& e){
     uint8_t key_code;
     switch (e.key.keysym.sym){//使うことのないキーコードはここでスルーする
         case SDLK_LGUI: 
@@ -400,7 +400,7 @@ inline void Gui::Impl::HandleKeyDown(SDL_Event& e){
     this->kbc->Push(key_code);
 }
 
-inline void Gui::Impl::HandleKeyUp(SDL_Event& e){
+inline void Gui::Pimpl::HandleKeyUp(SDL_Event& e){
     uint8_t key_code;
     switch (e.key.keysym.sym){//使うことのないキーコードはここでスルーする
         case SDLK_LGUI: 
@@ -412,19 +412,19 @@ inline void Gui::Impl::HandleKeyUp(SDL_Event& e){
     this->kbc->Push(key_code);
 }
 
-inline void Gui::Impl::HideCursor(){
+inline void Gui::Pimpl::HideCursor(){
     this->grab = true;
     SDL_ShowCursor(SDL_DISABLE);
     SDL_SetRelativeMouseMode(SDL_TRUE);//http://sdl2referencejp.osdn.jp/SDL_SetRelativeMouseMode.html
 }
 
-inline void Gui::Impl::ShowCursor(){
+inline void Gui::Pimpl::ShowCursor(){
     this->grab = false;
     SDL_ShowCursor(SDL_ENABLE);
     SDL_SetRelativeMouseMode(SDL_FALSE);
 }
 
-inline void Gui::Impl::HandleMouseMotion(SDL_Event& e){
+inline void Gui::Pimpl::HandleMouseMotion(SDL_Event& e){
 
     uint8_t data0, data1, data2;
     int rel_x, rel_y;
@@ -457,7 +457,7 @@ inline void Gui::Impl::HandleMouseMotion(SDL_Event& e){
     this->mouse->Push((uint8_t)rel_y);
 }
 
-inline void Gui::Impl::HandleMouseButton(SDL_Event& e){
+inline void Gui::Pimpl::HandleMouseButton(SDL_Event& e){
     this->mouse->Push(DEFAULT_PACKET_BYTE0|LEFT_BUTTON);
     this->mouse->Push(0);
     this->mouse->Push(0);
@@ -474,83 +474,83 @@ void Gui::Display(){
     memset(prev_snap, 0x00, MAX_HEIGHT*MAX_WIDTH);
     memset(new_snap, 0x00, MAX_HEIGHT*MAX_WIDTH);
     bool full_update;
-    while (!this->impl->quit){
+    while (!this->pimpl->quit){
         try{
             start = SDL_GetTicks();
             while (SDL_PollEvent(&e)){
                 if (e.type == SDL_QUIT){
-                    this->impl->quit = true;
+                    this->pimpl->quit = true;
                 }
                 if(e.type==SDL_KEYDOWN){
-                    this->impl->HandleKeyDown(e);
+                    this->pimpl->HandleKeyDown(e);
                     break;
                 }
                 if(e.type==SDL_KEYUP){
-                    this->impl->HandleKeyUp(e);
+                    this->pimpl->HandleKeyUp(e);
                     break;
                 }
                 if(e.type==SDL_MOUSEMOTION){
-                    this->impl->HandleMouseMotion(e);
+                    this->pimpl->HandleMouseMotion(e);
                     break;
                 }
                 if(e.type==SDL_MOUSEBUTTONDOWN){
-                    if(!this->impl->grab){//画面にマウスが取り込まれていない時。
-                        this->impl->HideCursor();
+                    if(!this->pimpl->grab){//画面にマウスが取り込まれていない時。
+                        this->pimpl->HideCursor();
                     }
-                    this->impl->HandleMouseButton(e);
+                    this->pimpl->HandleMouseButton(e);
                 }
             }
-            this->impl->vga->LockVga();
+            this->pimpl->vga->LockVga();
             full_update = false;
-            if((this->impl->vga->GetHeight()!=this->impl->screen_height)||(this->impl->vga->GetWidth()!=this->impl->screen_width)){
-                this->impl->screen_height = this->impl->vga->GetHeight();
-                this->impl->screen_width  = this->impl->vga->GetWidth();
-                this->impl->Resize();
+            if((this->pimpl->vga->GetHeight()!=this->pimpl->screen_height)||(this->pimpl->vga->GetWidth()!=this->pimpl->screen_width)){
+                this->pimpl->screen_height = this->pimpl->vga->GetHeight();
+                this->pimpl->screen_width  = this->pimpl->vga->GetWidth();
+                this->pimpl->Resize();
                 full_update = true;
             }
-            if(this->impl->vga->GetMode()==TEXT_MODE){
+            if(this->pimpl->vga->GetMode()==TEXT_MODE){
                 full_update = true;//変更部分のみの描画処理はグラフィックモードでしかサポートしていない。
             }
             if(!full_update){
-                this->impl->vga->SetSnap(new_snap, this->impl->screen_height, this->impl->screen_width);
+                this->pimpl->vga->SetSnap(new_snap, this->pimpl->screen_height, this->pimpl->screen_width);
                 int y_start = -1;
                 int y;//forループ抜け出した後も利用する。
-                for(y=0; y<this->impl->screen_height; y++){
+                for(y=0; y<this->pimpl->screen_height; y++){
                     //一致しないとき、再描画
-                    if(memcmp(prev_snap+y*this->impl->screen_width, new_snap+y*this->impl->screen_width, this->impl->screen_width)){//1行比較
-                        for(int x=0; x<this->impl->screen_width; x++){
-                            this->impl->image[x+y*this->impl->screen_width] = *(this->impl->vga->GetPixel(x, y));//一致していないので、1行転送, memcpyしない理由はGetPixelを参照してくだされば分かります。
+                    if(memcmp(prev_snap+y*this->pimpl->screen_width, new_snap+y*this->pimpl->screen_width, this->pimpl->screen_width)){//1行比較
+                        for(int x=0; x<this->pimpl->screen_width; x++){
+                            this->pimpl->image[x+y*this->pimpl->screen_width] = *(this->pimpl->vga->GetPixel(x, y));//一致していないので、1行転送, memcpyしない理由はGetPixelを参照してくだされば分かります。
                         }
                         if(y_start<0){
                             y_start = y;
                         }
                     }else{//メモリの内容は一致。それまでの内容を書き出す
                         if(y_start>=0){
-                            this->impl->Update(0, y_start, this->impl->screen_width, y-y_start);
+                            this->pimpl->Update(0, y_start, this->pimpl->screen_width, y-y_start);
                             y_start = -1;
                         }   
                     }
                 }
                 if(y_start>=0){//最後の行まで一致しなかった時の条件式
-                    this->impl->Update(0, y_start, this->impl->screen_width, y-y_start);
+                    this->pimpl->Update(0, y_start, this->pimpl->screen_width, y-y_start);
                 }
-                memcpy(prev_snap, new_snap, this->impl->screen_height*this->impl->screen_width);
+                memcpy(prev_snap, new_snap, this->pimpl->screen_height*this->pimpl->screen_width);
             }else{
-                for(int y=0; y<this->impl->screen_height; y++){
-                    for(int x=0; x<this->impl->screen_width; x++){
-                        this->impl->image[x+y*this->impl->screen_width] = *(this->impl->vga->GetPixel(x, y));
+                for(int y=0; y<this->pimpl->screen_height; y++){
+                    for(int x=0; x<this->pimpl->screen_width; x++){
+                        this->pimpl->image[x+y*this->pimpl->screen_width] = *(this->pimpl->vga->GetPixel(x, y));
                     }
                 }
-                this->impl->Update();
+                this->pimpl->Update();
             }
-            this->impl->vga->UnlockVga();
+            this->pimpl->vga->UnlockVga();
             end = SDL_GetTicks();
             end = end - start;
             if(16>end){
                 SDL_Delay(16-end);
             }   
         }catch(const char* error_message){
-            this->impl->quit = true;
+            this->pimpl->quit = true;
         }
     }
 }
