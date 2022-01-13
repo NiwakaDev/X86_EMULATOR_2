@@ -14,7 +14,7 @@ Bios::~Bios(){
     }
 }
 
-Bios::Bios(char* file_name, Vga& vga, Kbc& kbc){
+Bios::Bios(const char* const file_name, Vga& vga, Kbc& kbc){
     for(int i=0; i<BIOS_FUNCTION_SIZE; i++){
         this->bios_functions[i] = NULL;
     }
@@ -32,7 +32,7 @@ void Bios::CallFunction(Cpu& cpu, Memory& mem, const uint8_t bios_number){
     this->bios_functions[bios_number]->Run(cpu, mem);
 }
 
-void Bios::LoadIpl(const char* file_name, Memory& mem){
+void Bios::LoadIpl(const char* const file_name, Memory& mem){
     fstream input_file;
     input_file.open(file_name, ios::in|ios::binary);
     if(!input_file.is_open()){

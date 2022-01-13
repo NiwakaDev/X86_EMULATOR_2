@@ -503,6 +503,7 @@ void Cpu::SwitchTask(){
 }
 
 void Cpu::HandleInterrupt(int irq_num){
+    //TODO : 変数の宣言のスコープを縮める。
     irq_num = irq_num + 0x20;
     uint16_t selector, cs, ss;
     uint32_t eip, eflags, esp;
