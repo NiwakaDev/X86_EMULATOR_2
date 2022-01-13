@@ -389,14 +389,13 @@ inline void Gui::Pimpl::HandleKeyDown(SDL_Event& e){
 }
 
 inline void Gui::Pimpl::HandleKeyUp(SDL_Event& e){
-    uint8_t key_code;
     switch (e.key.keysym.sym){//使うことのないキーコードはここでスルーする
         case SDLK_LGUI: 
             return;
         case SDLK_RGUI:
             return;
     }
-    key_code = KEY_CODE_BREAK | this->SdlScancode2KeyCode(e);
+    uint8_t key_code = KEY_CODE_BREAK | this->SdlScancode2KeyCode(e);
     this->io_devices[KBD]->Push(key_code);
 }
 
