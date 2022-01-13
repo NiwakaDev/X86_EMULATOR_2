@@ -11,8 +11,8 @@ class Mouse:public IoDevice{
         void Out8(const uint16_t addr, const uint8_t data);
         uint8_t In8(const uint16_t addr);
         int IsEmpty();
-        bool IsEnable();
         void SetEnable();
+        inline void Push(uint8_t data);
     private:
         bool enable_flg;
 };

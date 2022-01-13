@@ -5,6 +5,10 @@ IoDevice::IoDevice(){
     this->fifo = new Fifo<uint8_t>();
 }
 
+IoDevice::~IoDevice(){
+    delete this->fifo;
+}
+
 void IoDevice::Push(uint8_t data){
     this->fifo->Push(data);
 }

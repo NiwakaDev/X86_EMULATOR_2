@@ -477,16 +477,10 @@ void Gui::Display(){
                     break;
                 }
                 if(e.type==SDL_MOUSEMOTION){
-                    if(!this->impl->mouse->IsEnable()){
-                        break;
-                    }
                     this->impl->HandleMouseMotion(e);
                     break;
                 }
                 if(e.type==SDL_MOUSEBUTTONDOWN){
-                    if(!this->impl->mouse->IsEnable()){
-                        break;
-                    }
                     if(!this->impl->grab){//画面にマウスが取り込まれていない時。
                         this->impl->HideCursor();
                     }
