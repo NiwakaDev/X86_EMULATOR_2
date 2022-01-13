@@ -1,7 +1,7 @@
 #include "Vga.h"
 #include "IoDevice.h"
 #include "Gui.h"
-#include "Kbc.h"
+#include "KbcEnum.h"
 #include "Font.h"
 
 using namespace std;

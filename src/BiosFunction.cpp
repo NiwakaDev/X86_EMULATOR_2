@@ -3,6 +3,7 @@
 #include "Memory.h"
 #include "Vga.h"
 #include "Kbc.h"
+#include "KbcEnum.h"
 using namespace std;
 
 #ifdef DEBUG

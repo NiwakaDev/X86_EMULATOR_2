@@ -78,6 +78,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
 
 
 
+    //TODO : prefixは全てInstructionクラスにする。
     //その機械語にはprefixが適用されるかどうかのフラグ
     //FLG_F3は命令化した。
     //FLG_F2は命令化した。
@@ -576,6 +577,7 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "GDT=%08X\n", this->idtr->GetBase());
 }
 
+//TODO : bool引数はenumに変更すべき
 void Cpu::Debug(FILE *f, bool h) {
     //if (h) fprintf(f, " AX   BX   CX   DX   SP   BP   SI   DI    FLAGS    ES   SS   DS   CS   IP  dump\n");
     if (h) fprintf(f, " AX   BX   CX   DX   SP   BP   SI   DI   ES   SS   DS   CS   IP   P(EFLAGS) S(EFLAGS)\n");
