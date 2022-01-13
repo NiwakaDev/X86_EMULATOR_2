@@ -12,5 +12,4 @@ template<typename type>class Fifo{
         std::queue<type> q;
 };
 
-//uint8_tを実引数に取るFifoクラステンプレートしか、インスタンス化できません。
-typedef Fifo<uint8_t> Uint8Fifo;
+#include "detail/Fifo.h"
