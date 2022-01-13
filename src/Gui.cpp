@@ -454,18 +454,16 @@ inline void Gui::Pimpl::HandleMouseButton(SDL_Event& e){
 
 //この関数はVgaクラスのvga_mutexをロックします。
 void Gui::Display(){
-    SDL_Event e;
-    unsigned int start;
-    unsigned int end;
     //SDL_WarpMouseInWindow(this->window, guest_x, guest_y);
     uint8_t* prev_snap = (uint8_t*)malloc(MAX_HEIGHT*MAX_WIDTH);
     uint8_t* new_snap  = (uint8_t*)malloc(MAX_HEIGHT*MAX_WIDTH);
     memset(prev_snap, 0x00, MAX_HEIGHT*MAX_WIDTH);
     memset(new_snap, 0x00, MAX_HEIGHT*MAX_WIDTH);
-    bool full_update;
     while (!this->pimpl->quit){
         try{
+            unsigned int start;
             start = SDL_GetTicks();
+            SDL_Event e;
             while (SDL_PollEvent(&e)){
                 if (e.type == SDL_QUIT){
                     this->pimpl->quit = true;
@@ -490,7 +488,7 @@ void Gui::Display(){
                 }
             }
             this->pimpl->vga->LockVga();
-            full_update = false;
+            bool full_update = false;
             if((this->pimpl->vga->GetHeight()!=this->pimpl->screen_height)||(this->pimpl->vga->GetWidth()!=this->pimpl->screen_width)){
                 this->pimpl->screen_height = this->pimpl->vga->GetHeight();
                 this->pimpl->screen_width  = this->pimpl->vga->GetWidth();
@@ -500,7 +498,14 @@ void Gui::Display(){
             if(this->pimpl->vga->GetMode()==TEXT_MODE){
                 full_update = true;//変更部分のみの描画処理はグラフィックモードでしかサポートしていない。
             }
-            if(!full_update){
+            if(full_update){
+                for(int y=0; y<this->pimpl->screen_height; y++){
+                    for(int x=0; x<this->pimpl->screen_width; x++){
+                        this->pimpl->image[x+y*this->pimpl->screen_width] = *(this->pimpl->vga->GetPixel(x, y));
+                    }
+                }
+                this->pimpl->Update();
+            }else{
                 this->pimpl->vga->SetSnap(new_snap, this->pimpl->screen_height, this->pimpl->screen_width);
                 int y_start = -1;
                 int y;//forループ抜け出した後も利用する。
@@ -524,15 +529,9 @@ void Gui::Display(){
                     this->pimpl->Update(0, y_start, this->pimpl->screen_width, y-y_start);
                 }
                 memcpy(prev_snap, new_snap, this->pimpl->screen_height*this->pimpl->screen_width);
-            }else{
-                for(int y=0; y<this->pimpl->screen_height; y++){
-                    for(int x=0; x<this->pimpl->screen_width; x++){
-                        this->pimpl->image[x+y*this->pimpl->screen_width] = *(this->pimpl->vga->GetPixel(x, y));
-                    }
-                }
-                this->pimpl->Update();
             }
             this->pimpl->vga->UnlockVga();
+            unsigned int end;
             end = SDL_GetTicks();
             end = end - start;
             if(16>end){
