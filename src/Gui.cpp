@@ -1,8 +1,8 @@
 #include "Vga.h"
-#include "Kbc.h"
+#include "IoDevice.h"
 #include "Gui.h"
+#include "Kbc.h"
 #include "Font.h"
-#include "Mouse.h"
 
 using namespace std;
 
@@ -22,8 +22,8 @@ class Gui::Impl{
         bool quit = false;
         int mouse_x, mouse_y;
         Vga* vga = NULL;
-        Kbc* kbc = NULL;
-        Mouse* mouse = NULL;
+        IoDevice* mouse = NULL;
+        IoDevice* kbc = NULL;
         Pixel* vram_mem = NULL;
         int screen_width;
         int screen_height;
@@ -54,7 +54,7 @@ static inline int GuiHelper::GetModState(){
     return (mod_state&ctrl_alt_state)==ctrl_alt_state;
 }
 
-Gui::Gui(Vga& vga, Kbc& kbc, Mouse& mouse){
+Gui::Gui(Vga& vga){
     //IMPLイディオム
     this->impl = new Gui::Impl();
 
@@ -81,8 +81,6 @@ Gui::Gui(Vga& vga, Kbc& kbc, Mouse& mouse){
     }
     ***/
     this->impl->vga = &vga;
-    this->impl->kbc = &kbc;
-    this->impl->mouse = &mouse;
 
     this->impl->screen_height = DEFAULT_HEIGHT;
     this->impl->screen_width  = DEFAULT_WIDTH;
@@ -112,6 +110,21 @@ Gui::~Gui(){
     SDL_DestroyWindow(this->impl->window);
     SDL_Quit();
     delete this->impl;
+}
+
+void Gui::AddIoDevice(IO_DEVICE_KIND io_device_kind, IoDevice& io_device){
+    switch (io_device_kind){
+        case KBD:
+            this->impl->kbc = &io_device;
+            break;
+        case MOUSE:
+            this->impl->mouse = &io_device;
+            break;
+        default:
+            //TODO:例外を投げるように修正する。
+            fprintf(stderr, "Not implemented: io_device_kind=%d\n at Gui::AddIoDevice", io_device_kind);
+            exit(EXIT_FAILURE);
+    }
 }
 
 bool Gui::IsQuit(){
