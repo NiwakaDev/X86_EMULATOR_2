@@ -22,8 +22,7 @@ class Gui::Pimpl{
         bool quit = false;
         int mouse_x, mouse_y;
         Vga* vga = NULL;
-        IoDevice* mouse = NULL;
-        IoDevice* kbc = NULL;
+        IoDevice* io_devices[IO_DEVICE_KIND_TOTAL];
         Pixel* vram_mem = NULL;
         int screen_width;
         int screen_height;
@@ -113,18 +112,8 @@ Gui::~Gui(){
 }
 
 void Gui::AddIoDevice(IO_DEVICE_KIND io_device_kind, IoDevice& io_device){
-    switch (io_device_kind){
-        case KBD:
-            this->pimpl->kbc = &io_device;
-            break;
-        case MOUSE:
-            this->pimpl->mouse = &io_device;
-            break;
-        default:
-            //TODO:例外を投げるように修正する。
-            fprintf(stderr, "Not implemented: io_device_kind=%d\n at Gui::AddIoDevice", io_device_kind);
-            exit(EXIT_FAILURE);
-    }
+    if(io_device_kind==IO_DEVICE_KIND_TOTAL)return;
+    this->pimpl->io_devices[io_device_kind] = &io_device;
 }
 
 bool Gui::IsQuit(){
@@ -397,7 +386,7 @@ inline void Gui::Pimpl::HandleKeyDown(SDL_Event& e){
             return;
     }
     key_code = this->SdlScancode2KeyCode(e);
-    this->kbc->Push(key_code);
+    this->io_devices[KBD]->Push(key_code);
 }
 
 inline void Gui::Pimpl::HandleKeyUp(SDL_Event& e){
@@ -409,7 +398,7 @@ inline void Gui::Pimpl::HandleKeyUp(SDL_Event& e){
             return;
     }
     key_code = KEY_CODE_BREAK | this->SdlScancode2KeyCode(e);
-    this->kbc->Push(key_code);
+    this->io_devices[KBD]->Push(key_code);
 }
 
 inline void Gui::Pimpl::HideCursor(){
@@ -452,15 +441,15 @@ inline void Gui::Pimpl::HandleMouseMotion(SDL_Event& e){
     if(rel_y < 0){
         data0 = data0 | Y_SIGN_BIT;
     }
-    this->mouse->Push(data0);
-    this->mouse->Push((uint8_t)rel_x);
-    this->mouse->Push((uint8_t)rel_y);
+    this->io_devices[MOUSE]->Push(data0);
+    this->io_devices[MOUSE]->Push((uint8_t)rel_x);
+    this->io_devices[MOUSE]->Push((uint8_t)rel_y);
 }
 
 inline void Gui::Pimpl::HandleMouseButton(SDL_Event& e){
-    this->mouse->Push(DEFAULT_PACKET_BYTE0|LEFT_BUTTON);
-    this->mouse->Push(0);
-    this->mouse->Push(0);
+    this->io_devices[MOUSE]->Push(DEFAULT_PACKET_BYTE0|LEFT_BUTTON);
+    this->io_devices[MOUSE]->Push(0);
+    this->io_devices[MOUSE]->Push(0);
 }
 
 //この関数はVgaクラスのvga_mutexをロックします。
