@@ -27,9 +27,8 @@ class Pic:public Object{
         Pic(IoDevice** io_devices);
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);
-        int HasIrq(Kbc* kbc, Timer* timer);
+        int HasIrq(Kbc* kbc, Timer* timer); //TODO : Pic::HasIrqの戻り値をboolに変更
         Fifo<uint8_t>* fifo = NULL;
-        void SetTimer();
     private:
         IoDevice**io_devices = NULL;
         bool irq_list[16];//割り込み許可

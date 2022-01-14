@@ -39,15 +39,7 @@ uint8_t Pic::In8(uint16_t addr){
     }
 }
 
-void Pic::SetTimer(){
-    if(!this->irq_list[0]){
-        return;
-    }
-    this->fifo->Push(0);
-    return;
-}
-
-
+//TODO : Pic::HasIrqの戻り値をboolに変更
 int Pic::HasIrq(Kbc* kbc, Timer* timer){
     int irq_num;
     for(int i=0; i<16; i++){
