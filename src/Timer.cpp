@@ -1,5 +1,4 @@
 #include "Timer.h"
-#include "Pic.h"
 #include "IoSpace.h"
 using namespace std;
 using namespace chrono;
@@ -7,13 +6,12 @@ using namespace this_thread;
 
 Timer::Timer():IoDevice(){
     this->enable = false;
-    this->clock =  119318;
     this->timer_thread = nullptr;
 }
 
 Timer::~Timer(){
-    cerr << "Timerのデストラクタ" << endl;
     if(this->timer_thread!=nullptr){
+        this->enable = false;
         this->timer_thread->join();//それまでのタイマースレッドを終了させる。
         delete this->timer_thread;
     }
@@ -21,8 +19,10 @@ Timer::~Timer(){
 
 void Timer::Out8(const uint16_t addr, const uint8_t data){
     switch (addr){
+        static const uint32_t clock = 119318;
+        static uint32_t mode;
         case PIT_MODE_COMMAND_REGISTER:
-            this->mode = 0;
+            mode = 0;
             this->enable = false;
             if(this->timer_thread!=nullptr){
                 this->timer_thread->join();//それまでのタイマースレッドを終了させる。
@@ -30,15 +30,15 @@ void Timer::Out8(const uint16_t addr, const uint8_t data){
             }
             break;
         case PIT_CHANNEL_0:
-            if(this->mode==0){
+            if(mode==0){
                 this->cycle = 0;
                 this->cycle = data;
-                this->mode = 1;
+                mode = 1;
                 break;
-            }else if(this->mode==1){
+            }else if(mode==1){
                 this->cycle  = this->cycle | (((uint32_t)data)<<8);  
-                this->cycle  = (uint32_t)ceil(((double)this->clock) / ((double)this->cycle));
-                this->mode   = 3;
+                this->cycle  = (uint32_t)ceil(((double)clock) / ((double)this->cycle));
+                mode   = 3;
                 this->enable = true;
                 this->timer_thread =  new thread(&Timer::Run, this);
                 break;

@@ -6,6 +6,10 @@ Mouse::Mouse():IoDevice(){
     this->enable_flg = false;
 }
 
+Mouse::~Mouse(){
+    
+}
+
 void Mouse::Out8(const uint16_t addr, const uint8_t data){
     this->Error("Not implmented: Mouse::Out8");
 }
