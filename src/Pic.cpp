@@ -40,7 +40,7 @@ uint8_t Pic::In8(uint16_t addr){
 }
 
 //TODO : Pic::HasIrqの戻り値をboolに変更
-int Pic::HasIrq(Kbc* kbc, Timer* timer){
+int Pic::HasIrq(){
     int irq_num;
     for(int i=0; i<16; i++){
         if((!this->irq_list[i])||(this->io_devices[i]==NULL)){

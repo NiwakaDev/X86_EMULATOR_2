@@ -153,7 +153,7 @@ void Emulator::Run(){
         #else
             if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
                 int irq_num;
-                if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
+                if((irq_num=this->pic->HasIrq())!=-1){
                     this->cpu->HandleInterrupt(irq_num);                
                 }
             }
