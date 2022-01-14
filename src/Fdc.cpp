@@ -16,6 +16,10 @@ Fdc::Fdc(const char* const file_name):IoDevice(){
     fclose(disk_image_stream);
 }
 
+Fdc::~Fdc(){
+    delete[] this->buff;
+}
+
 void Fdc::ProcessCommand(uint8_t command){
     switch (command){
         default:

@@ -74,6 +74,7 @@ Emulator::~Emulator(){
     delete this->kbc;
     delete this->mouse;
     delete this->timer;
+    delete this->fdc;
     delete this->mem;
 }
 

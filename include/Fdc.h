@@ -20,12 +20,21 @@ enum FDC_COMMAND_TYPE{
     FDC_COMMAND_TYPE_TOTAL      = 5,
 };
 
-#define FLOPPY_DISK_SIZE 1474560
+const int FLOPPY_DISK_SIZE = 1474560;
 
 class Gui;
 
 class Fdc:public IoDevice{
+    public:
+        Fdc(const char* const file_name);
+        ~Fdc();
+        void Out8(const uint16_t addr, const uint8_t data);
+        uint8_t In8(const uint16_t addr);
+        int IsEmpty();
+        Gui* gui=NULL;
     private:
+        Fdc(const Fdc& other);
+        void operator=(const Fdc& other);
         FDC_MODE fdc_mode;
         FDC_COMMAND_TYPE fdc_command_type;
         int count_in_command_mode;
@@ -64,10 +73,4 @@ class Fdc:public IoDevice{
         uint8_t* buff = NULL;
         uint8_t ProcessCommandForIn8();
         void    ProcessCommandForOut8(uint8_t data);
-    public:
-        Fdc(const char* const file_name);
-        void Out8(const uint16_t addr, const uint8_t data);
-        uint8_t In8(const uint16_t addr);
-        int IsEmpty();
-        Gui* gui=NULL;
 };
