@@ -1,7 +1,5 @@
 #include "Pic.h"
-#include "Kbc.h"
-#include "Timer.h"
-#include "Fifo.h"
+#include "IoDevice.h"
 using namespace std;
 
 Pic::Pic(IoDevice** io_devices){
