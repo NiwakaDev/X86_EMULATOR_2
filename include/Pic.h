@@ -28,7 +28,6 @@ class Pic:public Object{
         void Out8(uint16_t addr, uint8_t data);
         uint8_t In8(uint16_t addr);
         int HasIrq(); //TODO : Pic::HasIrqの戻り値をboolに変更
-        Fifo<uint8_t>* fifo = NULL;
     private:
         IoDevice**io_devices = NULL;
         bool irq_list[16];//割り込み許可

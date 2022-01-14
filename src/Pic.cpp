@@ -8,7 +8,6 @@ Pic::Pic(IoDevice** io_devices){
     for(int i=0; i<16; i++){
         this->irq_list[i] = false;
     }
-    this->fifo = new Fifo<uint8_t>();
     this->io_devices = io_devices;
 }
 
