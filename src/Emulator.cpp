@@ -156,7 +156,10 @@ void Emulator::Run(){
                     this->cpu->HandleInterrupt(this->pic->GetNowIrq());                
                 }
             }
-            if(!this->cpu->Run(*this)){
+            if(this->cpu->Run(*this)){
+                //正常
+                continue;
+            }else{
                 this->gui->Finish();
                 break;
             }
