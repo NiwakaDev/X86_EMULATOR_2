@@ -61,6 +61,7 @@ void Timer::Run(){
     }
 }
 
+//TODO : Timer::IsEmptyの戻り値をboolに変更
 int Timer::IsEmpty(){
     if(this->fifo->IsEmpty()){
         return -1;

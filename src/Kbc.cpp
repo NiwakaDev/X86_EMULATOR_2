@@ -64,8 +64,8 @@ int Kbc::IsEmpty(){
     if(this->mouse->IsEmpty()!=-1){
         return 0x0C;
     }
-    if(!this->fifo->IsEmpty()){
-        return 0x01;
+    if(this->fifo->IsEmpty()){
+        return -1;
     }
-    return -1;
+    return 0x01;
 }
