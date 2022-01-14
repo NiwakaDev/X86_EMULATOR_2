@@ -14,6 +14,14 @@ class Fdc;
 class IoDevice;
 
 class Emulator:public Object{
+    public:
+        Memory* mem     = NULL;
+        Cpu* cpu        = NULL;
+        IoPort* io_port = NULL;
+        Emulator(int argc, char* argv[]);
+        ~Emulator();
+        void ThreadJoin();
+        void RunMainLoop();
     private:
         Bios* bios      = NULL;
         Gui* gui        = NULL;
@@ -30,12 +38,6 @@ class Emulator:public Object{
         char* bios_name       = NULL;//いずれBIOSクラスを外す予定だが、当分は共存させる。
         bool head_start = false;
         void MainLoop();
-    public:
-        Memory* mem     = NULL;
-        Cpu* cpu        = NULL;
-        IoPort* io_port = NULL;
-        Emulator(int argc, char* argv[]);
-        ~Emulator();
-        void ThreadJoin();
-        void RunMainLoop();
+        Emulator(const Emulator& other);
+        void operator=(const Emulator& other);
 };

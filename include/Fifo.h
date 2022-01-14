@@ -1,5 +1,6 @@
 #pragma once
-#include "common.h"
+#include <queue>
+#include <mutex>
 
 template<typename type>class Fifo{
     public:
