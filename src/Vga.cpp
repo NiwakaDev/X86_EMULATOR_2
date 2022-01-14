@@ -4,13 +4,13 @@
 extern uint8_t font8x8_basic[128][8];
 using namespace std;
 
-#define ALPHA_IDX 0
-#define RED_IDX   1
-#define GREEN_IDX 2
-#define BLUE_IDX  3
-#define RGB_OFFSET 1
-#define PALETTE_SIZE 16
-#define ALPHA_MAX 0xFF
+static const int ALPHA_IDX     = 0;
+static const int RED_IDX       = 1;
+static const int GREEN_IDX     = 2;
+static const int BLUE_IDX      = 3;
+static const int RGB_OFFSET    = 1;
+static const int PALETTE_SIZE  = 16;
+static const int ALPHA_MAX     = 0xFF;
 
 Vga::Vga(Memory& mem){
     this->mem = &mem;
@@ -33,9 +33,9 @@ void Vga::SetInfo(const int width, const int height, const int vram_start_addr){
 }
 
 void Vga::Out8(const uint16_t addr, const uint8_t data){
-    static int internal_cnt = 0;
-    static uint8_t now_palette_idx;
     switch(addr){
+        static int internal_cnt = 0;
+        static uint8_t now_palette_idx;
         case 0x3C8:
             now_palette_idx = data;
             internal_cnt    = 0;
@@ -62,13 +62,9 @@ uint8_t Vga::In8(const uint16_t addr){
 }
 
 void Vga::SetText(const uint8_t ascii_code, const int w, const int h){
-    //テキストモード用変数領域の始まり  後でメンバ化予定
-    int row = 0;
-    int col = 0;
-    int x, y;
-    x = w*8;
-    y = h*8;
-    char data;
+    int x = w*8;
+    int y = h*8;
+
     uint8_t *font = font8x8_basic[ascii_code];
     Pixel pixel;
     pixel.r = 0xFF;
@@ -79,10 +75,9 @@ void Vga::SetText(const uint8_t ascii_code, const int w, const int h){
     black_pixel.r = 0x00;
     black_pixel.g = 0x00;
     black_pixel.b = 0x00;
-    //テキストモード用変数領域の終わり
 
     for(int i=0; i < 8; i++){
-        data = font[i];
+        uint8_t data = font[i];
         if((data & 0x80) != 0){
             this->image_text_mode[x+7+(y+i)*this->width] = pixel; 
         }else{
@@ -140,7 +135,7 @@ Pixel* Vga::GetPixel(const int x, const int y){
     return (Pixel*)(this->palette+this->mem->Read8(addr));
 }
 
-void Vga::SetColor(const int idx, const uint32_t color){
+inline void Vga::SetColor(const int idx, const uint32_t color){
     this->palette[idx][RED_IDX] = (uint8_t)((color&0x00FF0000) >> 16);
     this->palette[idx][GREEN_IDX] = (uint8_t)((color&0x0000FF00) >> 8);
     this->palette[idx][BLUE_IDX] = (uint8_t)((color&0x000000FF));

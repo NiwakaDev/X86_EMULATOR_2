@@ -66,77 +66,6 @@ struct _Registers{
 typedef struct _Registers Registers;
 
 class Cpu:public Object{
-    private:
-        Registers registers;
-        Bios* bios = NULL;
-        Gdtr* gdtr = NULL;
-        Idtr* idtr = NULL;
-        Ldtr* ldtr = NULL;
-        Memory* mem = NULL;
-        Instruction* instructions[InstructionHelper::INSTRUCTION_SIZE];
-        SEGMENT_REGISTER default_code_selector;
-        SEGMENT_REGISTER default_data_selector;
-        SEGMENT_REGISTER default_stack_selector;
-        //std::map<uint8_t, bool> prefix_table;//1byteがprefixかどうかを示すテーブル
-        //std::map<uint8_t, bool> prefix_flgs;//現在実行中の機械語命令で使用しているプレフィックスを管理
-        bool prefix_table[256];
-        bool prefix_flgs[256];
-        //bool prefix_flgs[PREFIX_FLG_KIND_COUNT];
-        //制御レジスタ : 「IA-32 インテル® アーキテクチャソフトウェア・デベロッパーズ・マニュアル下巻：システム・プログラミング・ガイド」2.5節を参照
-        union{
-            uint32_t raw;
-            struct{
-                unsigned PE:1;
-                unsigned MP:1;
-                unsigned EM:1;
-                unsigned TS:1;
-                unsigned ET:1;
-                unsigned NE:1;
-                unsigned reserve1:10;
-                unsigned WP:1;
-                unsigned reserve2:1;
-                unsigned AM:1;
-                unsigned reserve3:10;
-                unsigned NW:1;
-                unsigned CD:1;
-                unsigned PG:1;
-            }flgs;
-        }cr0;
-        uint32_t eip = IPL_START_ADDR;
-        uint32_t* gprs[GENERAL_PURPOSE_REGISTER32_COUNT];
-        SegmentRegister* segment_registers[SEGMENT_REGISTER_COUNT];
-        TaskRegister* task_register;
-        union{
-            uint32_t raw;
-            struct{
-                unsigned CF : 1;
-                unsigned RESERVED0 : 1;
-                unsigned PF : 1;
-                unsigned RESERVED1 : 1;
-                unsigned AF : 1;
-                unsigned RESERVED2 : 1;
-                unsigned ZF : 1;
-                unsigned SF : 1;
-                unsigned TF : 1;
-                unsigned IF : 1;
-                unsigned DF : 1;
-                unsigned OF : 1;
-                unsigned IOPL : 2;
-                unsigned NT : 1;
-                unsigned RESERVED3 : 1;
-                unsigned RF : 1;
-                unsigned VM : 1;
-                unsigned AC : 1;
-                unsigned VIF : 1;
-                unsigned VIP : 1;
-                unsigned ID : 1;
-            }flgs;
-        }eflags;
-        void InitSelector();
-        void ResetPrefixFlg();
-        void CheckPrefixCode(const Memory& mem);
-        void Push32(uint32_t data);
-        bool segment_override;
     public:
         Cpu(Bios& bios, Memory& mem);
         ~Cpu();
@@ -215,6 +144,79 @@ class Cpu:public Object{
         bool IsSegmentOverride();
         bool IsBflg(SEGMENT_REGISTER register_type);//セグメントディスクリプタのBフラグ
         void Debug(FILE *f, bool h);
+    private:
+        class Pimpl;
+        Pimpl* pimpl;
+        Registers registers;
+        Bios* bios = NULL;
+        Gdtr* gdtr = NULL;
+        Idtr* idtr = NULL;
+        Ldtr* ldtr = NULL;
+        Memory* mem = NULL;
+        Instruction* instructions[InstructionHelper::INSTRUCTION_SIZE];
+        SEGMENT_REGISTER default_code_selector;
+        SEGMENT_REGISTER default_data_selector;
+        SEGMENT_REGISTER default_stack_selector;
+        //std::map<uint8_t, bool> prefix_table;//1byteがprefixかどうかを示すテーブル
+        //std::map<uint8_t, bool> prefix_flgs;//現在実行中の機械語命令で使用しているプレフィックスを管理
+        bool prefix_table[256];
+        bool prefix_flgs[256];
+        //bool prefix_flgs[PREFIX_FLG_KIND_COUNT];
+        //制御レジスタ : 「IA-32 インテル® アーキテクチャソフトウェア・デベロッパーズ・マニュアル下巻：システム・プログラミング・ガイド」2.5節を参照
+        union{
+            uint32_t raw;
+            struct{
+                unsigned PE:1;
+                unsigned MP:1;
+                unsigned EM:1;
+                unsigned TS:1;
+                unsigned ET:1;
+                unsigned NE:1;
+                unsigned reserve1:10;
+                unsigned WP:1;
+                unsigned reserve2:1;
+                unsigned AM:1;
+                unsigned reserve3:10;
+                unsigned NW:1;
+                unsigned CD:1;
+                unsigned PG:1;
+            }flgs;
+        }cr0;
+        uint32_t eip = IPL_START_ADDR;
+        uint32_t* gprs[GENERAL_PURPOSE_REGISTER32_COUNT];
+        SegmentRegister* segment_registers[SEGMENT_REGISTER_COUNT];
+        TaskRegister* task_register;
+        union{
+            uint32_t raw;
+            struct{
+                unsigned CF : 1;
+                unsigned RESERVED0 : 1;
+                unsigned PF : 1;
+                unsigned RESERVED1 : 1;
+                unsigned AF : 1;
+                unsigned RESERVED2 : 1;
+                unsigned ZF : 1;
+                unsigned SF : 1;
+                unsigned TF : 1;
+                unsigned IF : 1;
+                unsigned DF : 1;
+                unsigned OF : 1;
+                unsigned IOPL : 2;
+                unsigned NT : 1;
+                unsigned RESERVED3 : 1;
+                unsigned RF : 1;
+                unsigned VM : 1;
+                unsigned AC : 1;
+                unsigned VIF : 1;
+                unsigned VIP : 1;
+                unsigned ID : 1;
+            }flgs;
+        }eflags;
+        void InitSelector();
+        void ResetPrefixFlg();
+        void CheckPrefixCode(const Memory& mem);
+        void Push32(uint32_t data);
+        bool segment_override;
 };
 
 #include "detail/Cpu.h"

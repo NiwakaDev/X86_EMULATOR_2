@@ -102,20 +102,20 @@ int Emulator::ParseArgv(int argc, char* argv[]){
    return parse_result;
 }
 
-void Emulator::Join(){
+void Emulator::ThreadJoin(){
     this->emu_thread->join();
 }
 
-void Emulator::Start(){
+void Emulator::RunMainLoop(){
     #ifdef DEBUG
         this->Run();
     #else
-        this->emu_thread = new thread(&Emulator::Run, this);
+        this->emu_thread = new thread(&Emulator::MainLoop, this);
         this->gui->Display();
     #endif
 }
 
-void Emulator::Run(){
+void Emulator::MainLoop(){
     #ifdef DEBUG
         FILE* out = NULL;
         out = fopen("niwaka_output.txt", "w");

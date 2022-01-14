@@ -23,8 +23,8 @@ class Pic:public Object{
     public:
         void Execute();
         Pic(IoDevice** io_devices);
-        void Out8(uint16_t addr, uint8_t data);
-        uint8_t In8(uint16_t addr);
+        void Out8(const uint16_t addr, const uint8_t data);
+        uint8_t In8(const uint16_t addr);
         bool HasIrq(); 
         inline int GetNowIrq();
     private:

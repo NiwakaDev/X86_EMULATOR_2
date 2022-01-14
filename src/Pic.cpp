@@ -9,7 +9,7 @@ Pic::Pic(IoDevice** io_devices){
     this->io_devices = io_devices;
 }
 
-void Pic::Out8(uint16_t addr, uint8_t data){
+void Pic::Out8(const uint16_t addr, const uint8_t data){
     switch (addr){
         case PIC1_ICW1:
         case PIC0_ICW1:
@@ -29,7 +29,7 @@ void Pic::Out8(uint16_t addr, uint8_t data){
     }
 }
 
-uint8_t Pic::In8(uint16_t addr){
+uint8_t Pic::In8(const uint16_t addr){
     switch (addr){
         default:
             this->Error("Not implemented addr=0x%04X at Pic::In8", addr);

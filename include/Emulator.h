@@ -29,13 +29,13 @@ class Emulator:public Object{
         char* disk_image_name = NULL;
         char* bios_name       = NULL;//いずれBIOSクラスを外す予定だが、当分は共存させる。
         bool head_start = false;
-        void Run();
+        void MainLoop();
     public:
         Memory* mem     = NULL;
         Cpu* cpu        = NULL;
         IoPort* io_port = NULL;
         Emulator(int argc, char* argv[]);
         ~Emulator();
-        void Join();
-        void Start();
+        void ThreadJoin();
+        void RunMainLoop();
 };
