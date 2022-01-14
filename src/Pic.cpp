@@ -38,8 +38,7 @@ uint8_t Pic::In8(uint16_t addr){
     }
 }
 
-//TODO : Pic::HasIrqの戻り値をboolに変更
-int Pic::HasIrq(){
+bool Pic::HasIrq(){
     int irq_num;
     for(int i=0; i<16; i++){
         if((!this->irq_list[i])||(this->io_devices[i]==NULL)){
@@ -48,7 +47,8 @@ int Pic::HasIrq(){
         if((irq_num=this->io_devices[i]->IsEmpty())==-1){
             continue;
         }
-        return irq_num;
+        this->now_irq_num = irq_num;
+        return true;
     }
-    return -1;
+    return false;
 }
