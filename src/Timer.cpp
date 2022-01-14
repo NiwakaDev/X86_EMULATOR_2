@@ -62,10 +62,10 @@ void Timer::Run(){
 }
 
 int Timer::IsEmpty(){
-    if(!this->fifo->IsEmpty()){
-        //入出力デバイスの中で、Timerだけなぜここで消費するかというと、OS側では消費しないから。
-        this->Pop();
-        return 0x00;
+    if(this->fifo->IsEmpty()){
+        return -1;
     }
-    return -1;
+    //入出力デバイスの中で、Timerだけなぜここで消費するかというと、OS側では消費しないから。
+    this->Pop();
+    return 0x00;
 }
