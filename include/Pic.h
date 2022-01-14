@@ -21,13 +21,15 @@ class IoDevice;
 
 class Pic:public Object{
     public:
-        void Execute();
         Pic(IoDevice** io_devices);
+        ~Pic();
         void Out8(const uint16_t addr, const uint8_t data);
         uint8_t In8(const uint16_t addr);
         bool HasIrq(); 
         inline int GetNowIrq();
     private:
+        Pic(const Pic& other);
+        void operator=(const Pic& other);
         IoDevice**io_devices = NULL;
         bool irq_list[16];//割り込み許可
         int now_irq_num;

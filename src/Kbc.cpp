@@ -3,10 +3,14 @@
 #include "Mouse.h"
 using namespace std;
 
-#define ACK 0xFA	
+const uint8_t ACK = 0xFA;
 
 Kbc::Kbc(Mouse& mouse):IoDevice(){
     this->mouse = &mouse;
+}
+
+Kbc::~Kbc(){
+
 }
 
 void Kbc::ProcessCommand(uint8_t command){

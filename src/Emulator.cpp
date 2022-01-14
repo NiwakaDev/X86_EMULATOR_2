@@ -18,12 +18,6 @@ using namespace std;
 
 const int BIOS_SIZE = 65536;
 
-Emulator::~Emulator(){
-    delete this->bios;
-    delete this->cpu;
-    delete this->mem;
-}
-
 Emulator::Emulator(int argc, char* argv[]){
     if(this->ParseArgv(argc, argv)==0){
         fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
@@ -68,6 +62,17 @@ Emulator::Emulator(int argc, char* argv[]){
     bios_stream.read((char*)this->mem->GetPointer(0xffff0000), BIOS_SIZE);
     bios_stream.close();
     ***/
+}
+
+Emulator::~Emulator(){
+    delete this->gui;
+    delete this->io_port;
+    delete this->cpu;
+    delete this->bios;
+    delete this->vga;
+    delete this->pic;
+    delete this->kbc;
+    delete this->mem;
 }
 
 int Emulator::ParseArgv(int argc, char* argv[]){

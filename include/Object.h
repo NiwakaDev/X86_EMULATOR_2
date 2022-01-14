@@ -8,4 +8,5 @@
 class Object{
     public:
         void Error(const char* message, ...) const;
+        virtual ~Object(){}
 };

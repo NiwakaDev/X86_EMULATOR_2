@@ -27,6 +27,7 @@ class Vga:public Object{
         Pixel* image_text_mode=NULL;
         Pixel* GetPixel(const int x, const int y);
         Vga(Memory& mem);
+        ~Vga();
         void Out8(const uint16_t addr, const uint8_t data);
         uint8_t In8(const uint16_t addr);
         void SetInfo(const int width, const int height, const int vram_start_add);
@@ -49,6 +50,8 @@ class Vga:public Object{
         int vram_start_addr;
         void InitPalette();
         void SetColor(const int idx, const uint32_t color);
+        Vga(const Vga& other);
+        void operator=(const Vga& other);
 };
 
 #include "detail/Vga.h"

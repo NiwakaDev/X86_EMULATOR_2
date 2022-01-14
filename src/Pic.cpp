@@ -9,6 +9,10 @@ Pic::Pic(IoDevice** io_devices){
     this->io_devices = io_devices;
 }
 
+Pic::~Pic(){
+
+}
+
 void Pic::Out8(const uint16_t addr, const uint8_t data){
     switch (addr){
         case PIC1_ICW1:
