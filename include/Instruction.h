@@ -36,4 +36,7 @@ class Instruction:public Object{
             this->sib = *sib;
             this->modrm = *modrm;
         }
+    private:
+        Instruction(const Instruction& other);
+        void operator=(const Instruction& other);
 };
