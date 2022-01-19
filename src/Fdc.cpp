@@ -29,7 +29,7 @@ void Fdc::ProcessCommand(uint8_t command){
 }
 
 //未実装のコマンドタイプをキャッチするために、以下の実装をしている。
-FDC_COMMAND_TYPE Fdc::GetFdcCommandType(uint8_t data){
+Fdc::FDC_COMMAND_TYPE Fdc::GetFdcCommandType(uint8_t data){
     switch (data){
         case FDC_COMMAND_CHECK_INT:
             return FDC_COMMAND_CHECK_INT;

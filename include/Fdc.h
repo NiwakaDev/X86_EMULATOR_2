@@ -3,23 +3,6 @@
 #include "Fifo.h"
 #include "IoDevice.h"
 
-enum FDC_MODE{
-    FDC_IDLE_MODE, 
-    FDC_COMMAND_MODE, 
-    FDC_EXECUTION_MODE, 
-    FDC_RESULT_MODE, 
-    FDC_MODE_TOTAL
-};
-
-enum FDC_COMMAND_TYPE{
-	FDC_CMD_SPECIFY		        = 0x3,
-	FDC_COMMAND_WRITE_SECTOR	= 0x5,
-	FDC_COMMAND_READ_SECTOR	    = 0x6,
-	FDC_COMMAND_CALIBRATE	    = 0x7,
-	FDC_COMMAND_CHECK_INT	    = 0x8,
-    FDC_COMMAND_TYPE_TOTAL      = 5,
-};
-
 const int FLOPPY_DISK_SIZE = 1474560;
 
 class Gui;
@@ -31,11 +14,26 @@ class Fdc:public IoDevice{
         void Out8(const uint16_t addr, const uint8_t data);
         uint8_t In8(const uint16_t addr);
         int IsEmpty();
+        enum FDC_MODE{
+            FDC_IDLE_MODE, 
+            FDC_COMMAND_MODE, 
+            FDC_EXECUTION_MODE, 
+            FDC_RESULT_MODE, 
+            FDC_MODE_TOTAL
+        };
         Gui* gui=NULL;
     private:
         Fdc(const Fdc& other);
         void operator=(const Fdc& other);
         FDC_MODE fdc_mode;
+        enum FDC_COMMAND_TYPE{
+            FDC_CMD_SPECIFY		        = 0x3,
+            FDC_COMMAND_WRITE_SECTOR	= 0x5,
+            FDC_COMMAND_READ_SECTOR	    = 0x6,
+            FDC_COMMAND_CALIBRATE	    = 0x7,
+            FDC_COMMAND_CHECK_INT	    = 0x8,
+            FDC_COMMAND_TYPE_TOTAL      = 5,
+        };
         FDC_COMMAND_TYPE fdc_command_type;
         int count_in_command_mode;
         int count_in_result_mode;

@@ -37,10 +37,10 @@ void IoPort::Out8(const uint16_t addr, const uint8_t data){
         case 0x64:
             this->kbc->Out8(addr, data);
             break;
-        case PIC1_ICW1:
-        case PIC0_IMR:
-        case PIC1_IMR:
-        case PIC0_ICW1:
+        case Pic::PIC1_ICW1:
+        case Pic::PIC0_IMR:
+        case Pic::PIC1_IMR:
+        case Pic::PIC0_ICW1:
             this->pic->Out8(addr, data);
             break;
         case 0x3C8:
@@ -62,9 +62,9 @@ uint8_t IoPort::In8(const uint16_t addr){
         case FDC_DATA_FIFO:
         case FDC_MAIN_STATUS_REGISTER:
             return this->fdc->In8(addr);
-        case PIC1_IMR:
-        case PIC0_IMR:
-            return 0;//いずれ実装予定
+        case Pic::PIC1_IMR:
+        case Pic::PIC0_IMR:
+            return 0;//TODO : いずれ実装予定
         case 0x61:
             return 0;
         case 0x60:
