@@ -1,5 +1,7 @@
 #include "Instruction.h"
 
+//TODO : operator=とコピーコンストラクタをpriavteに宣言する。
+
 class JmpRel8:public Instruction{
     public: 
         JmpRel8(std::string code_name);

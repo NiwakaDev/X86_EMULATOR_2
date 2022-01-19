@@ -34,8 +34,8 @@ class Emulator:public Object{
         IoDevice* io_devices[16];
         std::thread* emu_thread = NULL;
         int ParseArgv(int argc, char* argv[]);
-        char* disk_image_name = NULL;
-        char* bios_name       = NULL;//いずれBIOSクラスを外す予定だが、当分は共存させる。
+        const char* disk_image_name = NULL;
+        const char* bios_name       = NULL;//いずれBIOSクラスを外す予定だが、当分は共存させる。
         bool head_start = false;
         void MainLoop();
         Emulator(const Emulator& other);

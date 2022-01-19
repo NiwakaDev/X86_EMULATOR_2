@@ -18,7 +18,7 @@ using namespace chrono;
 //Instructionクラスのpublicメンバにしかアクセスしない関数をInstructionHelper空間に移動させた。
 //TODO : InstructionHelper::ShowInstructionNameを外部からもアクセスできるようにする。
 namespace InstructionHelper{
-    void ShowInstructionName(Instruction& instruction){
+    void ShowInstructionName(const Instruction& instruction){
         cout << instruction.GetInstructionName() << endl;
     }
     inline static void Push16(const Emulator& emu, const uint16_t data){

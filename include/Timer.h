@@ -9,7 +9,6 @@ class Timer:public IoDevice{
     public:
         Timer();
         ~Timer();
-        void ConsumeData();
         void Out8(const uint16_t addr, const uint8_t data);
         uint8_t In8(const uint16_t addr);
         int IsEmpty();
