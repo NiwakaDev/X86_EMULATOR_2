@@ -29,29 +29,27 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<16; i++){
         this->io_devices[i] = NULL;
     }
-    //this->mem     = new Memory();
-    this->shared_mem     = make_shared<Memory>();
-    this->mem = this->shared_mem.get();
-    this->fdc     = new Fdc(this->disk_image_name);
-    this->timer   = new Timer();
-    this->mouse   = new Mouse();
-    this->kbc     = new Kbc(*(this->mouse));
-    this->io_devices[0x00] = this->timer;
-    this->io_devices[0x01] = this->kbc;
-    this->io_devices[0x06] = this->fdc;
-    this->io_devices[0x0C] = this->mouse;
-    this->pic     = new Pic(this->io_devices);
-    this->vga     = new Vga(*(this->shared_mem.get()));
-    this->bios    = new Bios(this->disk_image_name, *(this->vga), *(this->kbc));
-    this->cpu     = new Cpu(*(this->bios), this->shared_mem);
-    this->io_port = new IoPort(*(this->vga), *(this->pic), *(this->kbc), *(this->timer), *(this->fdc));
-    this->gui     = new Gui(*(this->vga));
-    this->gui->AddIoDevice(Gui::KBD, *(this->kbc));
-    this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse));
-    this->fdc->gui = this->gui;
-    this->bios->LoadIpl(this->disk_image_name, *(this->shared_mem.get()));
+    this->mem     = make_unique<Memory>();
+    this->fdc     = make_unique<Fdc>(this->disk_image_name);
+    this->timer   = make_unique<Timer>();
+    this->mouse   = make_unique<Mouse>();
+    this->kbc     = make_unique<Kbc>(*(this->mouse.get()));
+    this->io_devices[0x00] = this->timer.get();
+    this->io_devices[0x01] = this->kbc.get();
+    this->io_devices[0x06] = this->fdc.get();
+    this->io_devices[0x0C] = this->mouse.get();
+    this->pic     = make_unique<Pic>(this->io_devices);
+    this->vga     = make_unique<Vga>(*(this->mem.get()));
+    this->bios    = make_unique<Bios>(this->disk_image_name, *(this->vga.get()), *(this->kbc.get()));
+    this->cpu     = make_unique<Cpu>(*(this->bios.get()), *(this->mem.get()));
+    this->io_port = make_unique<IoPort>(*(this->vga.get()), *(this->pic.get()), *(this->kbc.get()), *(this->timer.get()), *(this->fdc.get()));
+    this->gui     = make_unique<Gui>(*(this->vga.get()));
+    this->gui->AddIoDevice(Gui::KBD, *(this->kbc.get()));
+    this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse.get()));
+    this->fdc->gui = this->gui.get();
+    this->bios->LoadIpl(this->disk_image_name, *(this->mem.get()));
     for(int i=0; i<0x20; i++){//8086runを参考にした
-        this->shared_mem->Write(i<<2, i);
+        this->mem->Write(i<<2, i);
     }
     /***
     //biosをロードする。
@@ -67,16 +65,7 @@ Emulator::Emulator(int argc, char* argv[]){
 }
 
 Emulator::~Emulator(){
-    delete this->gui;
-    delete this->io_port;
-    delete this->cpu;
-    delete this->bios;
-    delete this->vga;
-    delete this->pic;
-    delete this->kbc;
-    delete this->mouse;
-    delete this->timer;
-    delete this->fdc;
+
 }
 
 int Emulator::ParseArgv(int argc, char* argv[]){

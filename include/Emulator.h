@@ -15,23 +15,22 @@ class IoDevice;
 
 class Emulator:public Object{
     public:
-        Memory* mem     = NULL;
-        std::shared_ptr<Memory> shared_mem;//Memory* mem     = NULL;
-        Cpu* cpu        = NULL;
-        IoPort* io_port = NULL;
+        std::unique_ptr<Memory> mem;
+        std::unique_ptr<Cpu> cpu;
+        std::unique_ptr<IoPort> io_port;
         Emulator(int argc, char* argv[]);
         ~Emulator();
         void ThreadJoin();
         void RunMainLoop();
     private:
-        Bios* bios      = NULL;
-        Gui* gui        = NULL;
-        Vga* vga        = NULL;
-        Pic* pic        = NULL;
-        Kbc* kbc        = NULL;
-        Mouse* mouse    = NULL;
-        Timer* timer    = NULL;
-        Fdc* fdc        = NULL;
+        std::unique_ptr<Bios> bios;
+        std::unique_ptr<Gui> gui;
+        std::unique_ptr<Vga> vga; 
+        std::unique_ptr<Pic> pic;
+        std::unique_ptr<Kbc> kbc;
+        std::unique_ptr<Mouse> mouse;
+        std::unique_ptr<Timer> timer;
+        std::unique_ptr<Fdc> fdc;
         IoDevice* io_devices[16];
         std::thread* emu_thread = NULL;
         int ParseArgv(int argc, char* argv[]);

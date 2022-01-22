@@ -1571,7 +1571,7 @@ void IntImm8::Run(const Emulator& emu){
         return;
     }
     if(selector<0x20){
-        emu.cpu->CallFunctionOnRealMode(emu.mem, selector);
+        emu.cpu->CallFunctionOnRealMode(selector);
     }else{
         //PUSH EFLAGSの下位16bit
         //IFをクリア

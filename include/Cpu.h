@@ -67,7 +67,7 @@ typedef struct _Registers Registers;
 
 class Cpu:public Object{
     public:
-        Cpu(Bios& bios, std::shared_ptr<Memory>& shared_mem);
+        Cpu(Bios& bios, Memory& mem);
         ~Cpu();
         bool Run(const Emulator& emu);
         inline void AddEip(uint32_t data);
@@ -131,7 +131,7 @@ class Cpu:public Object{
         void ClearFlag(EFLAGS_KIND eflags_kind);
         template<typename type>void UpdateEflagsForAnd(type data);
         template<typename type>void UpdateEflagsForUnsignedMul(type data);
-        void CallFunctionOnRealMode(Memory* mem, uint8_t selector);
+        void CallFunctionOnRealMode(uint8_t selector);
         void HandleInterrupt(int irq_num);
         void SaveTask(uint16_t selector);
         void SwitchTask();
@@ -147,11 +147,11 @@ class Cpu:public Object{
     private:
         Registers registers;
         Bios* bios = NULL;
+        Memory* mem;
         std::unique_ptr<Gdtr> gdtr;
         std::unique_ptr<Idtr> idtr;
         std::unique_ptr<Ldtr> ldtr;
         std::unique_ptr<TaskRegister> task_register;
-        std::shared_ptr<Memory> mem;
         std::unique_ptr<Instruction> instructions[InstructionHelper::INSTRUCTION_SIZE];
         SEGMENT_REGISTER default_code_selector;
         SEGMENT_REGISTER default_data_selector;

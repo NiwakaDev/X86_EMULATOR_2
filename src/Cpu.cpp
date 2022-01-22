@@ -21,9 +21,9 @@ Cpu::~Cpu(){
 
 }
 
-Cpu::Cpu(Bios& bios, shared_ptr<Memory>& shared_mem){
+Cpu::Cpu(Bios& bios, Memory& mem){
     this->bios = &bios;
-    this->mem  = shared_mem;
+    this->mem  = &mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
     this->eip        = IPL_START_ADDR;
     #ifdef DEBUG
@@ -177,8 +177,8 @@ IdtGate* Cpu::GetIdtGate(uint16_t selector){
     return (IdtGate*)this->mem->GetPointer(selector+this->GetIdtBase());
 }
 
-void Cpu::CallFunctionOnRealMode(Memory* mem, uint8_t selector){
-    this->bios->CallFunction(*this, *mem, selector);
+void Cpu::CallFunctionOnRealMode(uint8_t selector){
+    this->bios->CallFunction(*this, *this->mem, selector);
 }
 
 uint32_t Cpu::GetLinearAddrForCodeAccess(){
