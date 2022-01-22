@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <queue>
 #include <fstream>
+#include <memory>
 #include "Object.h"
 
 struct _Pixel{

@@ -29,7 +29,9 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<16; i++){
         this->io_devices[i] = NULL;
     }
-    this->mem     = new Memory();
+    //this->mem     = new Memory();
+    this->shared_mem     = make_shared<Memory>();
+    this->mem = this->shared_mem.get();
     this->fdc     = new Fdc(this->disk_image_name);
     this->timer   = new Timer();
     this->mouse   = new Mouse();
@@ -39,17 +41,17 @@ Emulator::Emulator(int argc, char* argv[]){
     this->io_devices[0x06] = this->fdc;
     this->io_devices[0x0C] = this->mouse;
     this->pic     = new Pic(this->io_devices);
-    this->vga     = new Vga(*(this->mem));
+    this->vga     = new Vga(*(this->shared_mem.get()));
     this->bios    = new Bios(this->disk_image_name, *(this->vga), *(this->kbc));
-    this->cpu     = new Cpu(*(this->bios), *(this->mem));
+    this->cpu     = new Cpu(*(this->bios), this->shared_mem);
     this->io_port = new IoPort(*(this->vga), *(this->pic), *(this->kbc), *(this->timer), *(this->fdc));
     this->gui     = new Gui(*(this->vga));
     this->gui->AddIoDevice(Gui::KBD, *(this->kbc));
     this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse));
     this->fdc->gui = this->gui;
-    this->bios->LoadIpl(this->disk_image_name, *(this->mem));
+    this->bios->LoadIpl(this->disk_image_name, *(this->shared_mem.get()));
     for(int i=0; i<0x20; i++){//8086runを参考にした
-        this->mem->Write(i<<2, i);
+        this->shared_mem->Write(i<<2, i);
     }
     /***
     //biosをロードする。
@@ -75,7 +77,6 @@ Emulator::~Emulator(){
     delete this->mouse;
     delete this->timer;
     delete this->fdc;
-    delete this->mem;
 }
 
 int Emulator::ParseArgv(int argc, char* argv[]){

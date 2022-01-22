@@ -67,7 +67,7 @@ typedef struct _Registers Registers;
 
 class Cpu:public Object{
     public:
-        Cpu(Bios& bios, Memory& mem);
+        Cpu(Bios& bios, std::shared_ptr<Memory>& shared_mem);
         ~Cpu();
         bool Run(const Emulator& emu);
         inline void AddEip(uint32_t data);
@@ -145,15 +145,14 @@ class Cpu:public Object{
         bool IsBflg(SEGMENT_REGISTER register_type);//セグメントディスクリプタのBフラグ
         void Debug(FILE *f, bool h);
     private:
-        class Pimpl;
-        Pimpl* pimpl;
         Registers registers;
         Bios* bios = NULL;
-        Gdtr* gdtr = NULL;
-        Idtr* idtr = NULL;
-        Ldtr* ldtr = NULL;
-        Memory* mem = NULL;
-        Instruction* instructions[InstructionHelper::INSTRUCTION_SIZE];
+        std::unique_ptr<Gdtr> gdtr;
+        std::unique_ptr<Idtr> idtr;
+        std::unique_ptr<Ldtr> ldtr;
+        std::unique_ptr<TaskRegister> task_register;
+        std::shared_ptr<Memory> mem;
+        std::unique_ptr<Instruction> instructions[InstructionHelper::INSTRUCTION_SIZE];
         SEGMENT_REGISTER default_code_selector;
         SEGMENT_REGISTER default_data_selector;
         SEGMENT_REGISTER default_stack_selector;
@@ -184,8 +183,7 @@ class Cpu:public Object{
         }cr0;
         uint32_t eip = IPL_START_ADDR;
         uint32_t* gprs[GENERAL_PURPOSE_REGISTER32_COUNT];
-        SegmentRegister* segment_registers[SEGMENT_REGISTER_COUNT];
-        TaskRegister* task_register;
+        std::unique_ptr<SegmentRegister> segment_registers[SEGMENT_REGISTER_COUNT];
         union{
             uint32_t raw;
             struct{

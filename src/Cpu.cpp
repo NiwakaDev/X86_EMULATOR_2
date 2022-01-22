@@ -18,23 +18,12 @@ const int  CR2_INIT_VALUE    = 0x00000000;
 const int  CS_INIT_VALUE     = 0x0000F000;
 
 Cpu::~Cpu(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
-    delete this->task_register;
-    delete this->ldtr;
-    delete this->gdtr;
-    delete this->idtr;
-    for(int i=0; i<SEGMENT_REGISTER_COUNT; i++){
-        delete this->segment_registers[i];
-    }
+
 }
 
-Cpu::Cpu(Bios& bios, Memory& mem){
+Cpu::Cpu(Bios& bios, shared_ptr<Memory>& shared_mem){
     this->bios = &bios;
-    this->mem  = &mem;
+    this->mem  = shared_mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
     this->eip        = IPL_START_ADDR;
     #ifdef DEBUG
@@ -50,13 +39,12 @@ Cpu::Cpu(Bios& bios, Memory& mem){
             continue;
         }
         ***/
-        this->segment_registers[i] = new SegmentRegister(0x0000);
+        this->segment_registers[i] = make_unique<SegmentRegister>(0x0000);
     }
-    this->task_register = new TaskRegister(0x00);
-
-    this->ldtr = new Ldtr(0);
-    this->gdtr = new Gdtr("Gdtr", 0, 0);
-    this->idtr = new Idtr("Idtr", 0, 0);
+    this->task_register = make_unique<TaskRegister>(0x00);
+    this->ldtr = make_unique<Ldtr>(0);
+    this->gdtr = make_unique<Gdtr>("Gdtr", 0, 0);
+    this->idtr = make_unique<Idtr>("Idtr", 0, 0);
 
     this->registers.eax  =0x00000000;
     this->registers.ebx  =0x00000000;
@@ -593,7 +581,7 @@ bool Cpu::Run(const Emulator& emu){
         this->ResetPrefixFlg();
         this->CheckPrefixCode(*(this->mem));
         uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
-        if(this->instructions[op_code]==NULL){
+        if(this->instructions[op_code].get()==NULL){
             //Dump(this->mem, this->GetLinearAddrForCodeAccess(), 512);
             this->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
         }

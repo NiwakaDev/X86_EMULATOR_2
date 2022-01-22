@@ -16,6 +16,7 @@ class IoDevice;
 class Emulator:public Object{
     public:
         Memory* mem     = NULL;
+        std::shared_ptr<Memory> shared_mem;//Memory* mem     = NULL;
         Cpu* cpu        = NULL;
         IoPort* io_port = NULL;
         Emulator(int argc, char* argv[]);
