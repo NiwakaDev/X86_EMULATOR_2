@@ -3,7 +3,7 @@
 const int MEM_SIZE = 33554432;//2<<24
 class Memory:public Object{
     private:
-        uint8_t* buff;
+        std::unique_ptr<uint8_t[]> buff;
     public:
         Memory();
         ~Memory();
