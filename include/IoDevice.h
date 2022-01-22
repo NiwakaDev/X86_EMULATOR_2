@@ -4,7 +4,7 @@
 
 class IoDevice:public Object{
     protected:
-        Fifo<uint8_t>* fifo = NULL;
+        std::unique_ptr<Fifo<uint8_t>> fifo;
     public:
         IoDevice();
         virtual ~IoDevice();

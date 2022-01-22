@@ -2,11 +2,11 @@
 using namespace std;
 
 IoDevice::IoDevice(){
-    this->fifo = new Fifo<uint8_t>();
+    this->fifo = make_unique<Fifo<uint8_t>>();
 }
 
 IoDevice::~IoDevice(){
-    delete this->fifo;
+
 }
 
 void IoDevice::Push(uint8_t data){
