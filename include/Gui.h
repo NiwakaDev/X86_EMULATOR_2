@@ -17,7 +17,7 @@ class Gui:public Object{
         void AddIoDevice(IO_DEVICE_KIND io_device_kind, IoDevice& io_device);
     private:    
         class Pimpl;
-        Pimpl* pimpl;
+        std::unique_ptr<Pimpl> pimpl;
 };
 
 #include "detail/Gui.h"

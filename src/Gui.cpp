@@ -15,7 +15,7 @@ const int MAX_HEIGHT           = 1024;
 
 class Gui::Pimpl{
     public:
-        Pixel* image = NULL;
+        unique_ptr<Pixel[]> image;
         bool grab;
         void Update();
         void Update(const int x, const int y, const int w, const int h);
@@ -27,7 +27,6 @@ class Gui::Pimpl{
         int screen_width;
         int screen_height;
         SDL_Window* window = NULL;
-        SDL_Surface* screenSurface = NULL;
         SDL_Renderer *renderer = NULL;
         SDL_Texture *texture   = NULL;
         SDL_DisplayMode display_mode;
@@ -53,10 +52,7 @@ static inline int GuiHelper::GetModState(){
     return (mod_state&ctrl_alt_state)==ctrl_alt_state;
 }
 
-Gui::Gui(Vga& vga){
-    //PIMPLイディオム
-    this->pimpl = new Gui::Pimpl();
-
+Gui::Gui(Vga& vga):pimpl(make_unique<Gui::Pimpl>()){
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
         printf("Failed to init SDL\n");
         exit(1);
@@ -97,17 +93,15 @@ Gui::Gui(Vga& vga){
         cout << SDL_GetError() << endl;
         this->Error("at Gui::Gui");
     }
-    this->pimpl->image = new Pixel[MAX_WIDTH*MAX_HEIGHT*sizeof(Pixel)];//最大領域の場合のサイズで確保しておく。
+    this->pimpl->image = make_unique<Pixel[]>(MAX_WIDTH*MAX_HEIGHT);//最大領域の場合のサイズで確保しておく。
     this->pimpl->grab  = false;
 }
 
 Gui::~Gui(){
-    delete[] this->pimpl->image;
     SDL_DestroyTexture(this->pimpl->texture);
     SDL_DestroyRenderer(this->pimpl->renderer);
     SDL_DestroyWindow(this->pimpl->window);
     SDL_Quit();
-    delete this->pimpl;
 }
 
 void Gui::AddIoDevice(IO_DEVICE_KIND io_device_kind, IoDevice& io_device){
@@ -137,7 +131,7 @@ inline void Gui::Pimpl::Resize(){
 }
 
 inline void Gui::Pimpl::Update(){
-    SDL_UpdateTexture(this->texture, NULL, this->image, this->screen_width * sizeof(Pixel));
+    SDL_UpdateTexture(this->texture, NULL, this->image.get(), this->screen_width * sizeof(Pixel));
     SDL_RenderCopy(this->renderer, this->texture, NULL, NULL);
     SDL_RenderPresent(this->renderer);
 }
@@ -148,7 +142,7 @@ inline void Gui::Pimpl::Update(const int x, const int y, const int w, const int 
     rect.y = y;//左上の座標
     rect.w = this->screen_width;//長方形の幅
     rect.h = this->screen_height;//長方形の高さ
-    SDL_UpdateTexture(this->texture, &rect, this->image+x+y*this->screen_width, this->screen_width * sizeof(Pixel));
+    SDL_UpdateTexture(this->texture, &rect, this->image.get()+x+y*this->screen_width, this->screen_width * sizeof(Pixel));
     SDL_RenderCopy(this->renderer, this->texture, NULL, NULL);
     SDL_RenderPresent(this->renderer);
 }
