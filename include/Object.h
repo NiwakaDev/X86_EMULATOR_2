@@ -8,5 +8,5 @@
 class Object{
     public:
         void Error(const char* message, ...) const;
-        virtual ~Object(){}
+        ~Object(){}//ポリモーフィズムとして利用しないので、仮想デストラクタにしない。
 };
