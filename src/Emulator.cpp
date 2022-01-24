@@ -108,7 +108,7 @@ void Emulator::RunMainLoop(){
     #ifdef DEBUG
         this->Run();
     #else
-        this->emu_thread = new thread(&Emulator::MainLoop, this);
+        this->emu_thread = make_unique<thread>(&Emulator::MainLoop, this);
         this->gui->Display();
     #endif
 }

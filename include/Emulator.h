@@ -32,7 +32,7 @@ class Emulator:public Object{
         std::unique_ptr<Timer> timer;
         std::unique_ptr<Fdc> fdc;
         IoDevice* io_devices[16];
-        std::thread* emu_thread = NULL;
+        std::unique_ptr<std::thread> emu_thread;
         int ParseArgv(int argc, char* argv[]);
         const char* disk_image_name = NULL;
         const char* bios_name       = NULL;//いずれBIOSクラスを外す予定だが、当分は共存させる。

@@ -17,10 +17,6 @@ const int  CR0_INIT_VALUE    = 0x60000010;
 const int  CR2_INIT_VALUE    = 0x00000000;
 const int  CS_INIT_VALUE     = 0x0000F000;
 
-Cpu::~Cpu(){
-
-}
-
 Cpu::Cpu(Bios& bios, Memory& mem){
     this->bios = &bios;
     this->mem  = &mem;
@@ -97,6 +93,10 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         InstructionHelper::InstructionFactory instruction_factory;
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }
+}
+
+Cpu::~Cpu(){
+
 }
 
 void Cpu::UpdateEflagsForInc16(uint16_t result, uint16_t d1, uint16_t d2){
