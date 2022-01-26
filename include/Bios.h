@@ -8,9 +8,10 @@ class BiosFunction;
 class Vga;
 class Kbc;
 
-class Bios:public Object{
+class Bios{
     private:
         BiosFunction *bios_functions[BIOS_FUNCTION_SIZE];
+        std::unique_ptr<Object> obj;
     public:
         Bios(const char* const file_name, Vga& vga, Kbc& kbc);
         ~Bios();
