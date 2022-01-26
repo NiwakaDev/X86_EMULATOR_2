@@ -20,6 +20,7 @@ Timer::~Timer(){
 void Timer::Out8(const uint16_t addr, const uint8_t data){
     switch (addr){
         static const uint32_t clock = 119318;
+        static uint32_t cycle;
         static uint32_t mode;
         case PIT_MODE_COMMAND_REGISTER:
             mode = 0;
@@ -31,16 +32,16 @@ void Timer::Out8(const uint16_t addr, const uint8_t data){
             break;
         case PIT_CHANNEL_0:
             if(mode==0){
-                this->cycle = 0;
-                this->cycle = data;
+                cycle = 0;
+                cycle = data;
                 mode = 1;
                 break;
             }else if(mode==1){
-                this->cycle  = this->cycle | (((uint32_t)data)<<8);  
-                this->cycle  = (uint32_t)ceil(((double)clock) / ((double)this->cycle));
+                cycle  = cycle | (((uint32_t)data)<<8);  
+                cycle  = (uint32_t)ceil(((double)clock) / ((double)cycle));
                 mode   = 3;
                 this->enable = true;
-                this->timer_thread =  new thread(&Timer::Run, this);
+                this->timer_thread =  new thread(&Timer::Run, this, cycle);
                 break;
             }
         default:
@@ -54,9 +55,9 @@ uint8_t Timer::In8(const uint16_t addr){
     return 0;
 }
 
-void Timer::Run(){
+void Timer::Run(uint32_t cycle){
     while(this->enable){
-        sleep_for(milliseconds(this->cycle));
+        sleep_for(milliseconds(cycle));
         this->Push(0);
     }
 }

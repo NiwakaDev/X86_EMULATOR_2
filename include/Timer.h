@@ -17,6 +17,5 @@ class Timer:public IoDevice{
         void operator=(const Timer& other);
         bool enable = false;
         std::thread* timer_thread;
-        uint32_t cycle;
-        void Run();
+        void Run(uint32_t cycle);
 };
