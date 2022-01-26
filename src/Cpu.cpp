@@ -474,10 +474,8 @@ void Cpu::SaveTask(uint16_t selector){
 }
 
 void Cpu::SwitchTask(){
-    uint32_t task_addr;
     GdtGate* gdt_gate = this->GetGdtGate(this->task_register->GetData());
-
-    task_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
+    uint32_t task_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
 
     this->SetEip(this->mem->Read32(task_addr+8*4));
     this->SetEflgs(this->mem->Read32(task_addr+9*4));
