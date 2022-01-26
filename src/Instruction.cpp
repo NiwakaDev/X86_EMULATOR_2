@@ -202,9 +202,9 @@ inline uint32_t Instruction::GetEffectiveAddr(const Emulator& emu){
 
 inline uint16_t Instruction::GetR16ForEffectiveAddr(const Emulator& emu){
     uint16_t data=0;
-    uint16_t r1;
-    uint16_t r2;
     switch (this->modrm.rm){
+        uint16_t r1;
+        uint16_t r2;
         case 0:
             r1   = (uint16_t)emu.cpu->GetR32(EBX);
             r2   = (uint16_t)emu.cpu->GetR32(ESI);

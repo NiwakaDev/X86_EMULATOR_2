@@ -16,7 +16,7 @@ using namespace std;
     extern bool niwaka_start_flg;
 #endif 
 
-const int BIOS_SIZE = 65536;
+const int BIOS_ROM_SIZE = 65536;
 
 Emulator::Emulator(int argc, char* argv[]){
     if(this->ParseArgv(argc, argv)==0){
