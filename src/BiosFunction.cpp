@@ -649,10 +649,8 @@ GeneralSystemServicesFunction::~GeneralSystemServicesFunction(){
 }
 
 void GeneralSystemServicesFunction::Run(Cpu& cpu, Memory& mem){
-    uint8_t ah;
-    uint8_t al;
-    ah = cpu.GetR8H(EAX);
-    switch (ah){
+    switch (uint8_t ah = cpu.GetR8H(EAX)){
+        uint8_t al;
         case 0x88://8086runを参考
             cpu.ClearFlag(CF);
             cpu.SetR16(EAX, 0x0000);
