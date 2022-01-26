@@ -455,12 +455,11 @@ inline void Cpu::Push32(uint32_t data){
 }
 
 void Cpu::SaveTask(uint16_t selector){
-    uint32_t task_addr;
     uint16_t prev_selector;
     prev_selector = this->task_register->GetData();
     this->task_register->Set(selector, *this);
     GdtGate*gdt_gate = this->GetGdtGate(prev_selector);
-    task_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
+    uint32_t task_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
     this->mem->Write(task_addr+8*4, this->GetEip());
     this->mem->Write(task_addr+9*4, this->GetEflgs());
     this->mem->Write(task_addr+10*4, this->registers);
