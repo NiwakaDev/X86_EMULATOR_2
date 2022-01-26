@@ -602,10 +602,8 @@ TimerFunction::~TimerFunction(){
 //リアルモードで使用するTimerFunctionの値は全部固定(デバッグが大変になるから。)
 //8086runを参考に実装予定
 void TimerFunction::Run(Cpu& cpu, Memory& mem){
-    uint8_t ah;
-    uint8_t al;
-    ah = cpu.GetR8H(EAX);
-    switch (ah){
+    switch (uint8_t ah = cpu.GetR8H(EAX)){
+        uint8_t al;
         case 0x00:
             mem.Write(0x470, (uint8_t)0x00);
             cpu.SetR8L(EAX, 0x00);
