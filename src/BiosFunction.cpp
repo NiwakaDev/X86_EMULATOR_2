@@ -549,8 +549,7 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
 //AL == ASCIIコード, AH == キーボードスキャンコード
 //キーボードスキャンコード : http://oswiki.osask.jp/?%28AT%29keyboard
 void KeyFunction::Run(Cpu& cpu, Memory& mem){
-    uint8_t ah = cpu.GetR8H(EAX);
-    switch (ah){
+    switch (uint8_t ah = cpu.GetR8H(EAX)){
         uint8_t al;
         uint16_t ch;
         int d;
