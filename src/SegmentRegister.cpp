@@ -27,7 +27,7 @@ void SegmentRegister::SetCache(const Cpu& cpu, const uint16_t idx){
     this->cache.base_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
     this->cache.limit     = 0x03FFFFFF & ((((uint32_t)gdt_gate->limit_high)<<16) | (uint32_t)gdt_gate->limit_low);
     this->cache.bit32_mode = (gdt_gate->limit_high&DB)==DB;
-    this->dpl = GET_DPL(gdt_gate->access_right);
+    this->dpl = CpuHelper::GetDpl(gdt_gate->access_right);
     this->cpl             = this->dpl;
 }
 

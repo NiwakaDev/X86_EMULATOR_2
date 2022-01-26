@@ -1529,10 +1529,10 @@ void IntImm8::Run(const Emulator& emu){
     if(emu.cpu->IsProtectedMode()){
         idt_gate    = emu.cpu->GetIdtGate(selector*8);
         offset_addr = (((uint32_t)idt_gate->offset_high)<<16) | ((uint32_t)idt_gate->offset_low);
-        uint8_t idt_gate_dpl = GET_DPL(idt_gate->access_right);
+        uint8_t idt_gate_dpl = CpuHelper::GetDpl(idt_gate->access_right);
         uint8_t cpl = emu.cpu->GetCpl();
         GdtGate* gdt_gate = emu.cpu->GetGdtGate(idt_gate->selector);
-        uint8_t dest_code_segment_dpl = GET_DPL(gdt_gate->access_right);
+        uint8_t dest_code_segment_dpl = CpuHelper::GetDpl(gdt_gate->access_right);
         if(idt_gate_dpl<cpl){
             this->Error("Not implemented: dpl(idt_gate)<cpl at %s::Run", this->code_name.c_str());
         }
@@ -3449,7 +3449,7 @@ void Iretd::Run(const Emulator& emu){
         eip    = InstructionHelper::Pop32(emu);
         cs     = InstructionHelper::Pop32(emu);
         eflags = InstructionHelper::Pop32(emu);
-        rpl    = GET_RPL(cs);//呼び出し元特権レベル
+        rpl    = CpuHelper::GetRpl(cs);//呼び出し元特権レベル
         cpl    = emu.cpu->GetCpl();
         if(rpl>cpl){
             esp = InstructionHelper::Pop32(emu);
@@ -4422,7 +4422,7 @@ void Ret32Far::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         eip     = InstructionHelper::Pop32(emu);
         cs      = InstructionHelper::Pop32(emu);
-        rpl = GET_RPL(cs);
+        rpl = CpuHelper::GetRpl(cs);
         cpl = emu.cpu->GetCpl();
         if(rpl>cpl){
             emu.cpu->SetEip(eip);

@@ -498,7 +498,7 @@ void Cpu::HandleInterrupt(int irq_num){
     Tss* tss;
     IdtGate* idt_gate = (IdtGate*)this->mem->GetPointer(this->idtr->GetBase()+irq_num*8);
     GdtGate* gdt_gate = this->GetGdtGate(idt_gate->selector);
-    dest_code_segment_dpl = GET_DPL(gdt_gate->access_right);
+    dest_code_segment_dpl = CpuHelper::GetDpl(gdt_gate->access_right);
     cpl = this->GetCpl();
     offset_addr = (((uint32_t)idt_gate->offset_high)<<16) | ((uint32_t)idt_gate->offset_low);
     if(dest_code_segment_dpl==cpl){

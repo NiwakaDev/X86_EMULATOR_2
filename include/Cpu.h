@@ -14,6 +14,7 @@ class Ldtr;
 class TaskRegister;
 class Emulator;
 
+//TODO : defineで定義された定数をconstに変更
 #define IPL_START_ADDR 0x7c00
 
 #define SIGN_FLG1 0x00000080
@@ -24,8 +25,16 @@ class Emulator;
 #define SEGMENT_DESC_TYPE_FLG 1<<4
 
 #define DPL 0x60 //access_rightのDPLの該当部分
-#define GET_DPL(data) (data&DPL)>>5
-#define GET_RPL(data) (data&0x03)
+
+namespace CpuHelper{
+    inline template<typename type> uint8_t GetDpl(type data){
+        return (data&DPL)>>5;
+    }
+
+    inline template<typename type> uint8_t GetRpl(type data){
+        return data&0x03;
+    }
+}
 
 struct _GdtGate{
     uint16_t limit_low, base_low;
