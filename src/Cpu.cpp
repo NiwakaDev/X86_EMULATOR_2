@@ -18,7 +18,6 @@ const int  CR2_INIT_VALUE    = 0x00000000;
 const int  CS_INIT_VALUE     = 0x0000F000;
 
 Cpu::Cpu(Bios& bios, Memory& mem){
-    /***
     this->bios = &bios;
     this->mem  = &mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
@@ -93,7 +92,8 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         InstructionHelper::InstructionFactory instruction_factory;
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }
-    ***/
+
+    /***
     this->bios = &bios;
     this->mem  = &mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
@@ -163,6 +163,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         InstructionHelper::InstructionFactory instruction_factory;
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }
+    ***/
 }
 
 Cpu::~Cpu(){

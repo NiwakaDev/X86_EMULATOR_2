@@ -6091,19 +6091,20 @@ LoopRel8::LoopRel8(string code_name):Instruction(code_name){
 
 void LoopRel8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
-    uint16_t cx;
+    uint32_t count;
     //アドレスサイズによって、カウンタの値が決まる。
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-        this->Error("Not implemented: addr_size=32bit at %s::Run", this->code_name.c_str());
+        count = emu.cpu->GetR32(ECX);
+        count--;
+        emu.cpu->SetR32(ECX, count);
     }else{
-        cx = emu.cpu->GetR16(ECX);
+        count = emu.cpu->GetR16(ECX);
+        count--;
+        emu.cpu->SetR16(ECX, count);
     }
-    uint32_t rel8;
-    cx = cx - 1;
-    emu.cpu->SetR16(ECX, cx);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
+    uint32_t rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
     emu.cpu->AddEip(1);
-    if(cx){
+    if(count){
         emu.cpu->AddEip(rel8);
     }
     return;
