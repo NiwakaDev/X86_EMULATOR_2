@@ -6067,19 +6067,20 @@ LoopeRel8::LoopeRel8(string code_name):Instruction(code_name){
 
 void LoopeRel8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
-    uint16_t cx;
+    uint32_t count;
     //アドレスサイズによって、カウンタの値が決まる。
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-        this->Error("Not implemented: addr_size=32bit at %s::Run", this->code_name.c_str());
+        count = emu.cpu->GetR32(ECX);
+        count--;
+        emu.cpu->SetR32(ECX, count);
     }else{
-        cx = emu.cpu->GetR16(ECX);
+        count = emu.cpu->GetR16(ECX);
+        count--;
+        emu.cpu->SetR16(ECX, count);
     }
-    uint32_t rel8;
-    cx = cx - 1;
-    emu.cpu->SetR16(ECX, cx);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
+    uint32_t rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
     emu.cpu->AddEip(1);
-    if(cx&&emu.cpu->IsFlag(ZF)){
+    if(count&&emu.cpu->IsFlag(ZF)){
         emu.cpu->AddEip(rel8);
     }
     return;
@@ -6298,7 +6299,22 @@ ImulRm16::ImulRm16(string code_name):Instruction(code_name){
 
 void ImulRm16::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit_op
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        uint64_t rm32;
+        uint64_t eax;
+        uint64_t result;
+        eax    = (int64_t)(int32_t)emu.cpu->GetR32(EAX);
+        rm32   = (int64_t)(int32_t)this->GetRM32(emu);
+        result = eax*rm32;
+        emu.cpu->SetR32(EAX, result&0x00000000FFFFFFFF);
+        emu.cpu->SetR32(EDX, (result&0xFFFFFFFF00000000)>>32);
+        if(!emu.cpu->GetR32(EDX)){
+            emu.cpu->ClearFlag(OF);
+            emu.cpu->ClearFlag(CF);
+        }else{
+            emu.cpu->SetFlag(OF);
+            emu.cpu->SetFlag(CF);
+        }
+        return;
     }
     uint32_t rm16;
     uint32_t ax;
@@ -6776,6 +6792,32 @@ void JccRel32::Run(const Emulator& emu){
     emu.cpu->AddEip(2);
     if(condition){
         emu.cpu->AddEip(rel16);
+    }
+    return;
+}
+
+//TODO : LOOP系命令は1つにまとめる
+LoopneRel8::LoopneRel8(string code_name):Instruction(code_name){
+
+}
+
+void LoopneRel8::Run(const Emulator& emu){
+    emu.cpu->AddEip(1);
+    uint32_t count;
+    //アドレスサイズによって、カウンタの値が決まる。
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+        count = emu.cpu->GetR32(ECX);
+        count--;
+        emu.cpu->SetR32(ECX, count);
+    }else{
+        count = emu.cpu->GetR16(ECX);
+        count--;
+        emu.cpu->SetR16(ECX, count);
+    }
+    uint32_t rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
+    emu.cpu->AddEip(1);
+    if(count&&!emu.cpu->IsFlag(ZF)){
+        emu.cpu->AddEip(rel8);
     }
     return;
 }

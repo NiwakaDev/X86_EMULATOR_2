@@ -1562,3 +1562,9 @@ class JccRel32:public Instruction{
         JccRel32(std::string code_name);
         void Run(const Emulator& emu);
 };
+
+class LoopneRel8:public Instruction{
+    public: 
+        LoopneRel8(std::string code_name);
+        void Run(const Emulator& emu);
+};

@@ -325,6 +325,8 @@ unique_ptr<Instruction> InstructionHelper::InstructionFactory::CreateInstruction
             return make_unique<CodeD3>("CodeD3");
         case 0xD7:
             return make_unique<Xlatb>("Xlatb");
+        case 0xE0:
+            return make_unique<LoopneRel8>("LoopneRel8");
         case 0xE1:
             return make_unique<LoopeRel8>("LoopeRel8");
         case 0xE2:
