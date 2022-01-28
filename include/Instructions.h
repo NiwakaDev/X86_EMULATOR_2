@@ -616,24 +616,6 @@ class XchgR32Rm32:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class JneRel32:public Instruction{
-    public: 
-        JneRel32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JeRel32:public Instruction{
-    public: 
-        JeRel32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JnaRel32:public Instruction{
-    public: 
-        JnaRel32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class TestRm32R32:public Instruction{
     public: 
         TestRm32R32(std::string code_name);
@@ -667,12 +649,6 @@ class JgeRel8:public Instruction{
 class SubRm32R32:public Instruction{
     public: 
         SubRm32R32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JleRel32:public Instruction{
-    public: 
-        JleRel32(std::string code_name);
         void Run(const Emulator& emu);
 };
 
@@ -826,12 +802,6 @@ class TestEaxImm32:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class JsRel32:public Instruction{
-    public: 
-        JsRel32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class OrEaxImm32:public Instruction{
     public: 
         OrEaxImm32(std::string code_name);
@@ -853,12 +823,6 @@ class XorRm32Imm8:public Instruction{
 class SubEaxImm32:public Instruction{
     public: 
         SubEaxImm32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JgRel32:public Instruction{
-    public: 
-        JgRel32(std::string code_name);
         void Run(const Emulator& emu);
 };
 
@@ -1018,12 +982,6 @@ class SbbR8Rm8:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class JgeRel32:public Instruction{
-    public: 
-        JgeRel32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class CallPtr1632:public Instruction{
     public: 
         CallPtr1632(std::string code_name);
@@ -1057,24 +1015,6 @@ class CmpR8Rm8:public Instruction{
 class MulRm32:public Instruction{
     public: 
         MulRm32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JnsRel32:public Instruction{
-    public: 
-        JnsRel32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JaRel32:public Instruction{
-    public: 
-        JaRel32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JlRel32:public Instruction{
-    public: 
-        JlRel32(std::string code_name);
         void Run(const Emulator& emu);
 };
 
@@ -1602,5 +1542,23 @@ class JpRel8:public Instruction{
 class SalRm8:public Instruction{
     public: 
         SalRm8(std::string code_name);
+        void Run(const Emulator& emu);
+};
+
+class JnoRel8:public Instruction{
+    public: 
+        JnoRel8(std::string code_name);
+        void Run(const Emulator& emu);
+};
+
+class JoRel8:public Instruction{
+    public: 
+        JoRel8(std::string code_name);
+        void Run(const Emulator& emu);
+};
+
+class JccRel32:public Instruction{
+    public: 
+        JccRel32(std::string code_name);
         void Run(const Emulator& emu);
 };

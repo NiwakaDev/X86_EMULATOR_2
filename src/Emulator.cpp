@@ -19,7 +19,7 @@ using namespace std;
 const int BIOS_ROM_SIZE = 65536;
 
 Emulator::Emulator(int argc, char* argv[]){
-    if(this->ParseArgv(argc, argv)==0){
+    if(this->ParseArgv(argc, argv)<=1){
         fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
         fprintf(stderr, "       -image, -i : disk-image-name\n");
         fprintf(stderr, "               -d : debug\n");
@@ -51,17 +51,15 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<0x20; i++){//8086runを参考にした
         this->mem->Write(i<<2, i);
     }
-    /***
     //biosをロードする。
     fstream bios_stream;
     bios_stream.open(this->bios_name, ios::in|ios::binary);
     if(!bios_stream.is_open()){
         this->Error("Cant open : %s", this->bios_name);
     }
-    bios_stream.read((char*)this->mem->GetPointer(0x000f0000), BIOS_SIZE);
-    bios_stream.read((char*)this->mem->GetPointer(0xffff0000), BIOS_SIZE);
+    bios_stream.read((char*)this->mem->GetPointer(0x000f0000), BIOS_ROM_SIZE);
+    //bios_stream.read((char*)this->mem->GetPointer(0xffff0000), BIOS_ROM_SIZE);
     bios_stream.close();
-    ***/
 }
 
 Emulator::~Emulator(){
@@ -84,7 +82,7 @@ int Emulator::ParseArgv(int argc, char* argv[]){
             this->bios_name = argv[1];
             argc -= 2;
             argv += 2;
-            //parse_result += 1;
+            parse_result += 1;
             continue;
         }
         //プログラムを動かしてみたい時のオプション

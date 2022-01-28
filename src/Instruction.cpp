@@ -944,16 +944,22 @@ Code0F::Code0F(string code_name):Instruction(code_name){
     this->instructions[0x01] = new Code0F01("Code0F01"); 
     this->instructions[0x20] = new MovR32CRX("MovR32CRX"); 
     this->instructions[0x22] = new MovCRXR32("MovCRXR32");
-    this->instructions[0x84] = new JeRel32("JeRel32"); 
-    this->instructions[0x85] = new JneRel32("JneRel32");
-    this->instructions[0x86] = new JnaRel32("JnaRel32");
-    this->instructions[0x87] = new JaRel32("JaRel32");
-    this->instructions[0x88] = new JsRel32("JsRel32");
-    this->instructions[0x89] = new JnsRel32("JnsRel32");
-    this->instructions[0x8C] = new JlRel32("JlRel32");
-    this->instructions[0x8D] = new JgeRel32("JgeRel32");
-    this->instructions[0x8E] = new JleRel32("JleRel32");
-    this->instructions[0x8F] = new JgRel32("JgRel32");
+    this->instructions[0x80] = new JccRel32("JccRel32");
+    this->instructions[0x81] = new JccRel32("JccRel32");
+    this->instructions[0x82] = new JccRel32("JccRel32");
+    this->instructions[0x83] = new JccRel32("JccRel32");
+    this->instructions[0x84] = new JccRel32("JccRel32"); 
+    this->instructions[0x85] = new JccRel32("JccRel32");
+    this->instructions[0x86] = new JccRel32("JccRel32");
+    this->instructions[0x87] = new JccRel32("JccRel32");
+    this->instructions[0x88] = new JccRel32("JccRel32");
+    this->instructions[0x89] = new JccRel32("JccRel32");
+    this->instructions[0x8A] = new JccRel32("JccRel32");
+    this->instructions[0x8B] = new JccRel32("JccRel32");
+    this->instructions[0x8C] = new JccRel32("JccRel32");
+    this->instructions[0x8D] = new JccRel32("JccRel32");
+    this->instructions[0x8E] = new JccRel32("JccRel32");
+    this->instructions[0x8F] = new JccRel32("JccRel32");
     this->instructions[0x92] = new SetbRm8("SetbRm8");
     this->instructions[0x94] = new SeteRm8("SeteRm8");
     this->instructions[0x95] = new SetneRm8("SetneRm8");
@@ -1161,6 +1167,7 @@ CodeD0::CodeD0(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     this->instructions[1] = new RorRm8("RorRm8");
+    this->instructions[4] = new SalRm8("SalRm8");
     this->instructions[5] = new ShrRm8("ShrRm8");
 }
 
@@ -1605,6 +1612,7 @@ Hlt::Hlt(string code_name):Instruction(code_name){
 void Hlt::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this_thread::sleep_for(milliseconds(10));
+    //this->Error("Hlt::Run");
 }
 
 JaeRel8::JaeRel8(string code_name):Instruction(code_name){
@@ -2878,51 +2886,6 @@ void XchgR32Rm32::Run(const Emulator& emu){
     emu.cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, rm16);
 }
 
-JneRel32::JneRel32(string code_name):Instruction(code_name){
-
-}
-
-void JneRel32::Run(const Emulator& emu){
-    uint32_t rel32;
-    emu.cpu->AddEip(1);
-    rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-    emu.cpu->AddEip(4);
-    if(!emu.cpu->IsFlag(ZF)){
-        emu.cpu->AddEip(rel32);
-    }
-    return;
-}
-
-JeRel32::JeRel32(string code_name):Instruction(code_name){
-
-}
-
-void JeRel32::Run(const Emulator& emu){
-    uint32_t rel32;
-    emu.cpu->AddEip(1);
-    rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-    emu.cpu->AddEip(4);
-    if(emu.cpu->IsFlag(ZF)){
-        emu.cpu->AddEip(rel32);
-    }
-    return;
-}
-
-JnaRel32::JnaRel32(string code_name):Instruction(code_name){
-
-}
-
-void JnaRel32::Run(const Emulator& emu){
-    uint32_t rel32;
-    emu.cpu->AddEip(1);
-    rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-    emu.cpu->AddEip(4);
-    if(emu.cpu->IsFlag(ZF)||emu.cpu->IsFlag(CF)){
-        emu.cpu->AddEip(rel32);
-    }
-    return;
-}
-
 TestRm32R32::TestRm32R32(string code_name):Instruction(code_name){
 
 }
@@ -3055,25 +3018,6 @@ void SubRm32R32::Run(const Emulator& emu){
     result = (uint32_t)rm16 - (uint32_t)r16;
     this->SetRM16(emu, result);
     emu.cpu->UpdateEflagsForSub16(result, rm16, r16);
-    return;
-}
-
-JleRel32::JleRel32(string code_name):Instruction(code_name){
-
-}
-
-void JleRel32::Run(const Emulator& emu){
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t rel32;
-        emu.cpu->AddEip(1);
-        rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-        emu.cpu->AddEip(4);
-        if(emu.cpu->IsFlag(ZF) || (emu.cpu->IsFlag(OF)!=emu.cpu->IsFlag(SF))){
-            emu.cpu->AddEip(rel32);
-        }
-        return;
-    }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
     return;
 }
 
@@ -3640,24 +3584,6 @@ void TestEaxImm32::Run(const Emulator& emu){
     return;
 }
 
-JsRel32::JsRel32(string code_name):Instruction(code_name){
-
-}
-
-void JsRel32::Run(const Emulator& emu){
-    emu.cpu->AddEip(1);
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t rel32;
-        rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-        emu.cpu->AddEip(4);
-        if(emu.cpu->IsFlag(SF)){
-            emu.cpu->AddEip(rel32);
-        }
-        return;
-    }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
-}
-
 OrEaxImm32::OrEaxImm32(string code_name):Instruction(code_name){
 
 }
@@ -3756,24 +3682,6 @@ void SubEaxImm32::Run(const Emulator& emu){
     emu.cpu->SetR16(EAX, result);
     emu.cpu->UpdateEflagsForSub16(result, ax, imm16);
     return;
-}
-
-JgRel32::JgRel32(string code_name):Instruction(code_name){
-
-}
-
-void JgRel32::Run(const Emulator& emu){
-    emu.cpu->AddEip(1);
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t rel32;
-        rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-        emu.cpu->AddEip(4);
-        if((!emu.cpu->IsFlag(ZF)) && (emu.cpu->IsFlag(SF)==emu.cpu->IsFlag(OF))){
-            emu.cpu->AddEip(rel32);
-        }
-        return;
-    }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 ImulR32Rm32Imm8::ImulR32Rm32Imm8(string code_name):Instruction(code_name){
@@ -4335,24 +4243,6 @@ void SbbR8Rm8::Run(const Emulator& emu){
     emu.cpu->UpdateEflagsForSub8(result, r8, rm8+cf);
 }
 
-JgeRel32::JgeRel32(string code_name):Instruction(code_name){
-
-}
-
-void JgeRel32::Run(const Emulator& emu){
-    uint32_t rel32;
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        emu.cpu->AddEip(1);
-        rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-        emu.cpu->AddEip(4);
-        if(emu.cpu->IsFlag(SF)==emu.cpu->IsFlag(OF)){
-            emu.cpu->AddEip(rel32);
-        }
-        return;
-    }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
-}
-
 CallPtr1632::CallPtr1632(string code_name):Instruction(code_name){
 
 }
@@ -4556,25 +4446,6 @@ void MulRm32::Run(const Emulator& emu){
     return;
 }
 
-JnsRel32::JnsRel32(string code_name):Instruction(code_name){
-
-}
-
-void JnsRel32::Run(const Emulator& emu){
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t rel32;
-        emu.cpu->AddEip(1);
-        rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-        emu.cpu->AddEip(4);
-        if(!emu.cpu->IsFlag(SF)){
-            emu.cpu->AddEip(rel32);
-        }
-        return;
-    }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
-    return;
-}
-
 AddRm8R8::AddRm8R8(string code_name):Instruction(code_name){
 
 }
@@ -4590,44 +4461,6 @@ void AddRm8R8::Run(const Emulator& emu){
     result = (uint16_t)rm8+(uint16_t)r8;
     this->SetRM8(emu, result);
     emu.cpu->UpdateEflagsForAdd(result, rm8, r8);
-    return;
-}
-
-JaRel32::JaRel32(string code_name):Instruction(code_name){
-
-}
-
-void JaRel32::Run(const Emulator& emu){
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t rel32;
-        emu.cpu->AddEip(1);
-        rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-        emu.cpu->AddEip(4);
-        if((!emu.cpu->IsFlag(CF))&&(!emu.cpu->IsFlag(ZF))){
-            emu.cpu->AddEip(rel32);
-        }
-        return;
-    }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
-    return;
-}
-
-JlRel32::JlRel32(string code_name):Instruction(code_name){
-
-}
-
-void JlRel32::Run(const Emulator& emu){
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t rel32;
-        emu.cpu->AddEip(1);
-        rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-        emu.cpu->AddEip(4);
-        if(emu.cpu->IsFlag(SF)!=emu.cpu->IsFlag(OF)){
-            emu.cpu->AddEip(rel32);
-        }
-        return;
-    }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
     return;
 }
 
@@ -6283,7 +6116,14 @@ JcxzRel8::JcxzRel8(string code_name):Instruction(code_name){
 void JcxzRel8::Run(const Emulator& emu){
     //アドレスサイズが32bitの時は、ECXを使用するので、未実装
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-        this->Error("Not implemented: addr_size=32bit at %s::Run", this->code_name.c_str());
+        uint32_t rel8;
+        emu.cpu->AddEip(1);
+        rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
+        emu.cpu->AddEip(1);
+        if(!emu.cpu->GetR32(ECX)){
+            emu.cpu->AddEip(rel8);
+        }
+        return;
     }
     uint32_t rel8;
     emu.cpu->AddEip(1);
@@ -6827,6 +6667,114 @@ void SalRm8::Run(const Emulator& emu){
         emu.cpu->SetFlag(OF);
     }else{
         emu.cpu->ClearFlag(OF);
+    }
+    return;
+}
+
+JnoRel8::JnoRel8(string code_name):Instruction(code_name){
+
+}
+
+void JnoRel8::Run(const Emulator& emu){
+    uint32_t rel8;
+    emu.cpu->AddEip(1);
+    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
+    emu.cpu->AddEip(1);
+    if(!emu.cpu->IsFlag(OF)){
+        emu.cpu->AddEip(rel8);
+    }
+    return;
+}
+
+JoRel8::JoRel8(string code_name):Instruction(code_name){
+
+}
+
+void JoRel8::Run(const Emulator& emu){
+    uint32_t rel8;
+    emu.cpu->AddEip(1);
+    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
+    emu.cpu->AddEip(1);
+    if(emu.cpu->IsFlag(OF)){
+        emu.cpu->AddEip(rel8);
+    }
+    return;
+}
+
+JccRel32::JccRel32(string code_name):Instruction(code_name){
+
+}
+
+void JccRel32::Run(const Emulator& emu){
+    uint8_t jcc_type = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
+    bool condition;
+    switch(jcc_type){
+        case 0x80:
+            condition = emu.cpu->IsFlag(OF);
+            break;
+        case 0x81:
+            condition = !emu.cpu->IsFlag(OF);
+            break;
+        case 0x82:
+            condition = emu.cpu->IsFlag(CF);
+            break;
+        case 0x83:
+            condition = !emu.cpu->IsFlag(CF);
+            break;
+        case 0x84:
+            condition = emu.cpu->IsFlag(ZF);
+            break;
+        case 0x85:
+            condition = !emu.cpu->IsFlag(ZF);
+            break;
+        case 0x86:
+            condition = emu.cpu->IsFlag(ZF)||emu.cpu->IsFlag(CF);
+            break;
+        case 0x87:
+            condition = (!emu.cpu->IsFlag(CF))&&(!emu.cpu->IsFlag(ZF));
+            break;
+        case 0x88:
+            condition = emu.cpu->IsFlag(SF);
+            break;
+        case 0x89:
+            condition = !emu.cpu->IsFlag(SF);
+            break;
+        case 0x8A:
+            condition = emu.cpu->IsFlag(PF);
+            break;
+        case 0x8B:
+            condition = !emu.cpu->IsFlag(PF);
+            break;
+        case 0x8C:
+            condition = emu.cpu->IsFlag(SF)!=emu.cpu->IsFlag(OF);
+            break;
+        case 0x8D:
+            condition = emu.cpu->IsFlag(SF)==emu.cpu->IsFlag(OF);
+            break;
+        case 0x8E:
+            condition = emu.cpu->IsFlag(ZF) || (emu.cpu->IsFlag(OF)!=emu.cpu->IsFlag(SF));
+            break;
+        case 0x8F:
+            condition = (!emu.cpu->IsFlag(ZF)) && (emu.cpu->IsFlag(SF)==emu.cpu->IsFlag(OF));
+            break;
+        default:
+            this->Error("Not implemented: jcc_type=0x%02X at %s::Run", jcc_type, this->code_name.c_str());
+    }
+    emu.cpu->AddEip(1);
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        uint32_t rel32;
+        rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
+        emu.cpu->AddEip(4);
+        if(condition){
+            emu.cpu->AddEip(rel32);
+        }
+        return;
+    }
+    uint32_t rel16;
+    rel16 = (int32_t)((int16_t)emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess()));
+    emu.cpu->AddEip(2);
+    if(condition){
+        emu.cpu->AddEip(rel16);
     }
     return;
 }

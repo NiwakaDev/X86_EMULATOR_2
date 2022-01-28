@@ -18,6 +18,82 @@ const int  CR2_INIT_VALUE    = 0x00000000;
 const int  CS_INIT_VALUE     = 0x0000F000;
 
 Cpu::Cpu(Bios& bios, Memory& mem){
+    /***
+    this->bios = &bios;
+    this->mem  = &mem;
+    this->eflags.raw = EFLAGS_INIT_VALUE;
+    //this->eip        = IPL_START_ADDR;
+    this->eip = EIP_INIT_VALUE;
+    #ifdef DEBUG
+        this->eflags.raw = 0x0000F002;//8086runの値を参考にした。8086runと比較するために同じにしているだけ。いずれ仕様通りの初期値にする予定
+    #else
+        this->eflags.raw = EFLAGS_INIT_VALUE;
+    #endif
+    this->cr0.raw = CR0_INIT_VALUE;
+    for(int i=0; i<SEGMENT_REGISTER_COUNT; i++){
+        if(i==CS){
+            this->segment_registers[CS] = make_unique<SegmentRegister>(CS_INIT_VALUE);
+            continue;
+        }
+        this->segment_registers[i] = make_unique<SegmentRegister>(0x0000);
+    }
+    this->task_register = make_unique<TaskRegister>(0x00);
+    this->ldtr = make_unique<Ldtr>(0);
+    this->gdtr = make_unique<Gdtr>("Gdtr", 0, 0);
+    this->idtr = make_unique<Idtr>("Idtr", 0, 0);
+
+    this->registers.eax  =0x00000000;
+    this->registers.ebx  =0x00000000;
+    this->registers.ecx  =0x00000000;
+    this->registers.edx  =0x00000000;
+    this->registers.esp  =0x00000000;
+    this->registers.ebp  =0x00000000;
+    this->registers.esi  =0x00000000;
+    this->registers.edi  =0x00000000;
+
+    this->gprs[EAX] = &(this->registers.eax);
+    this->gprs[EBX] = &(this->registers.ebx);
+    this->gprs[ECX] = &(this->registers.ecx);
+    this->gprs[EDX] = &(this->registers.edx);
+    this->gprs[ESP] = &(this->registers.esp);
+    this->gprs[EBP] = &(this->registers.ebp);
+    this->gprs[ESI] = &(this->registers.esi);
+    this->gprs[EDI] = &(this->registers.edi);
+
+
+
+    //TODO : prefixは全てInstructionクラスにする。
+    //その機械語にはprefixが適用されるかどうかのフラグ
+    //FLG_F3は命令化した。
+    //FLG_F2は命令化した。
+    this->prefix_flgs[FLG_67] = false;
+    this->prefix_flgs[FLG_66] = false;
+    this->prefix_flgs[FLG_F0] = false;
+    this->prefix_flgs[FLG_2E] = false;
+    this->prefix_flgs[FLG_36] = false;
+    this->prefix_flgs[FLG_26] = false;
+    this->prefix_flgs[FLG_64] = false;
+    this->prefix_flgs[FLG_65] = false;
+
+    //1バイトがprefixかどうかを管理するテーブル
+    for(int i=0; i<256; i++){
+        this->prefix_table[i] = false;
+    }
+    this->prefix_table[0xF0] = true;
+    this->prefix_table[0x26] = true;
+    this->prefix_table[0x2E] = true;
+    this->prefix_table[0x36] = true;
+    this->prefix_table[0x3E] = true;
+    this->prefix_table[0x64] = true;
+    this->prefix_table[0x65] = true;
+    this->prefix_table[0x66] = true;
+    this->prefix_table[0x67] = true;
+
+    for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
+        InstructionHelper::InstructionFactory instruction_factory;
+        this->instructions[i] = instruction_factory.CreateInstruction(i);
+    }
+    ***/
     this->bios = &bios;
     this->mem  = &mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
@@ -29,12 +105,6 @@ Cpu::Cpu(Bios& bios, Memory& mem){
     #endif
     this->cr0.raw = CR0_INIT_VALUE;
     for(int i=0; i<SEGMENT_REGISTER_COUNT; i++){
-        /***
-        if(i==CS){
-            this->segment_registers[CS] = new SegmentRegister(CS_INIT_VALUE);
-            continue;
-        }
-        ***/
         this->segment_registers[i] = make_unique<SegmentRegister>(0x0000);
     }
     this->task_register = make_unique<TaskRegister>(0x00);

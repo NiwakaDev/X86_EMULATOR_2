@@ -155,6 +155,10 @@ unique_ptr<Instruction> InstructionHelper::InstructionFactory::CreateInstruction
             return make_unique<PushImm8>("PushImm8");
         case 0x6B:
             return make_unique<ImulR32Rm32Imm8>("ImulR32Rm32Imm8");
+        case 0x70:
+            return make_unique<JoRel8>("JoRel8");
+        case 0x71:
+            return make_unique<JnoRel8>("JnoRel8");
         case 0x72:
             return make_unique<JcRel8>("JcRel8");
         case 0x73:

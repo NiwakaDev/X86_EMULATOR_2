@@ -76,3 +76,13 @@ QEMUにsinglestepで実行させるには、実行時にオプションとして
 
 デバッグ付きでビルド
 ../configure --enable-debug
+
+https://airbus-seclab.github.io/qemu_blog/
+
+テストに使えそう
+https://github.com/qemu/qemu/tree/266469947161aa10b1d36843580d369d5aa38589/tests/tcg/i386
+
+https://github.com/barotto/test386.asm
+diagnostic codeによって、今現在どのテストコードが実行されているかどうか分かる。
+例えば、diagnostic code=0x00でエミュレータがHLTされるならば、Real mode initialisationのテストコードに
+失敗していることが分かる。diagnostic codeはポート番号0x190を通じて、取得できる。
