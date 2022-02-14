@@ -4120,7 +4120,7 @@ CmpsM8M8::CmpsM8M8(string code_name):Instruction(code_name){
 }
 
 void CmpsM8M8::Run(const Emulator& emu){
-    this->Error("Not implemented: at %s::Run", this->code_name.c_str());
+    //this->Error("Not implemented: at %s::Run", this->code_name.c_str());
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
     }
@@ -4168,6 +4168,43 @@ void CmpsM8M8::Run(const Emulator& emu){
     emu.cpu->SetR16(EDI, di+d);
     return;
 }
+
+CmpsM32M32::CmpsM32M32(string code_name):Instruction(code_name){
+
+}
+
+void CmpsM32M32::Run(const Emulator& emu){
+    //this->Error("Not implemented: at %s::Run", this->code_name.c_str());
+    if(emu.cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
+    }
+    emu.cpu->AddEip(1);
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//アドレスで場合分け
+        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        return;
+    }
+    uint32_t base_ds, base_es;
+    uint16_t si, di;
+    uint32_t base_ds_si, base_es_di;
+    uint16_t m1, m2;
+    uint32_t result;
+    uint16_t d;
+    base_ds = emu.cpu->GetBaseAddr(DS);
+    base_es = emu.cpu->GetBaseAddr(ES);
+    si     = emu.cpu->GetR16(ESI);
+    di     = emu.cpu->GetR16(EDI);
+    base_ds_si = base_ds+si;
+    base_es_di = base_es+di;
+    m1      = emu.mem->Read16(base_ds_si);
+    m2      = emu.mem->Read16(base_es_di);
+    result = (uint32_t)m1 - (uint32_t)m2;
+    emu.cpu->UpdateEflagsForSub16(result, m1, m2);
+    d = emu.cpu->IsFlag(DF)? 0xFFFF:0x0001;
+    emu.cpu->SetR16(ESI, si+d);
+    emu.cpu->SetR16(EDI, di+d);
+    return;
+}
+
 
 SetaRm8::SetaRm8(string code_name):Instruction(code_name){
 

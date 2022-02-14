@@ -952,6 +952,12 @@ class CmpsM8M8:public Instruction{
         void Run(const Emulator& emu);
 };
 
+class CmpsM32M32:public Instruction{
+    public: 
+        CmpsM32M32(std::string code_name);
+        void Run(const Emulator& emu);
+};
+
 class SetaRm8:public Instruction{
     public: 
         SetaRm8(std::string code_name);

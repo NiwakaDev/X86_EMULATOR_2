@@ -255,6 +255,8 @@ unique_ptr<Instruction> InstructionHelper::InstructionFactory::CreateInstruction
             return make_unique<MovM32M32>("MovM32M32");
         case 0xA6:
             return make_unique<CmpsM8M8>("CmpsM8M8");
+        case 0xA7:
+            return make_unique<CmpsM32M32>("CmpsM32M32");
         case 0xA8:
             return make_unique<TestAlImm8>("TestAlImm8");
         case 0xA9:
