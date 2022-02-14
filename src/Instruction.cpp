@@ -4203,7 +4203,7 @@ void CmpsM32M32::Run(const Emulator& emu){
         m2      = emu.mem->Read32(base_es_di);
         result = (uint32_t)m1 - (uint32_t)m2;
         emu.cpu->UpdateEflagsForSub(result, m1, m2);
-        d = emu.cpu->IsFlag(DF)? 04:0x0004;
+        d = emu.cpu->IsFlag(DF)? -4:4;
         emu.cpu->SetR16(ESI, si+d);
         emu.cpu->SetR16(EDI, di+d);
         return;
@@ -4224,7 +4224,7 @@ void CmpsM32M32::Run(const Emulator& emu){
     m2      = emu.mem->Read16(base_es_di);
     result = (uint32_t)m1 - (uint32_t)m2;
     emu.cpu->UpdateEflagsForSub16(result, m1, m2);
-    d = emu.cpu->IsFlag(DF)? 0xFFFF:0x0002;
+    d = emu.cpu->IsFlag(DF)? -2:0x0002;
     emu.cpu->SetR16(ESI, si+d);
     emu.cpu->SetR16(EDI, di+d);
     return;

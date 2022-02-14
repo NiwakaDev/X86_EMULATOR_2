@@ -92,7 +92,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         InstructionHelper::InstructionFactory instruction_factory;
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }
-
+    
     /***
     this->bios = &bios;
     this->mem  = &mem;
@@ -670,7 +670,7 @@ bool Cpu::Run(const Emulator& emu){
             }
             exit(EXIT_FAILURE);
         }
-        if(this->eip==0x8FC){
+        if(this->eip==0x00000ADA){
             int i=0;
             i++;
         }
