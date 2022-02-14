@@ -29,7 +29,7 @@ class Instruction:public Object{
         virtual void Run(const Emulator& emu) = 0;
         Instruction(std::string code_name);
         virtual ~Instruction();
-        std::string GetInstructionName() const{
+        const std::string& GetInstructionName() const{
             return this->code_name;
         }
         void SetModRM(ModRM* modrm, Sib* sib){

@@ -203,3 +203,19 @@ inline template<typename type>void Cpu::UpdateEflagsForUnsignedMul(type data){
         this->SetFlag(CF);
     }
 }
+
+inline bool Cpu::IsException(){
+    return this->is_exception_;
+}
+
+inline void Cpu::SetException(){
+    this->is_exception_ = true;
+}
+
+inline void Cpu::SetVectorNumber(int vector_number){
+    this->vector_number_ = vector_number;
+}
+
+inline int Cpu::GetVectorNumber(){
+    return this->vector_number_;
+}

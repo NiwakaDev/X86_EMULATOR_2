@@ -147,8 +147,10 @@ void Emulator::MainLoop(){
                 return;
             }
         #else
-            if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
-                if(this->pic->HasIrq()){
+            if((this->cpu->IsException())||(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode())){
+                if(this->cpu->IsException()){
+                    this->cpu->HandleInterrupt(this->cpu->GetVectorNumber());
+                }else if(this->pic->HasIrq()){
                     this->cpu->HandleInterrupt(this->pic->GetNowIrq());                
                 }
             }

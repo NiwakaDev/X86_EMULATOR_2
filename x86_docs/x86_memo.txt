@@ -86,3 +86,12 @@ https://github.com/barotto/test386.asm
 diagnostic codeによって、今現在どのテストコードが実行されているかどうか分かる。
 例えば、diagnostic code=0x00でエミュレータがHLTされるならば、Real mode initialisationのテストコードに
 失敗していることが分かる。diagnostic codeはポート番号0x190を通じて、取得できる。
+diagnostic codeに対応したソースコードが知りたい場合は、
+https://github.com/barotto/test386.asm/blob/1ccc5adb729b6d729118c821b0777ad44fb42766/src/test386.asmで
+わかる。
+
+例外について
+MOV命令でCSをロードすることはできない。
+この場合、無効オペコード(#UD)が発生する。
+ベクター番号：0x06
+これはリアルモードだろうがプロテクトモードだろうが同じ

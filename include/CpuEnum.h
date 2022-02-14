@@ -28,3 +28,10 @@ enum EFLAGS_KIND{
     AF = 1<<4,
     EFLAGS_KIND_CNT=9,
 };
+
+namespace CpuEnum{
+    enum VECTOR_NUMBER{
+        UD = 6,
+        VECTOR_NUMBER_CNT=1,
+    };
+};

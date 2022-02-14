@@ -798,12 +798,17 @@ MovSregRm16::MovSregRm16(string code_name):Instruction(code_name){
 }
 
 void MovSregRm16::Run(const Emulator& emu){
-    SEGMENT_REGISTER register_type;
-    uint16_t rm16;
+    uint32_t eip = emu.cpu->GetEip();
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
-    register_type = (SEGMENT_REGISTER)this->modrm.reg_index;
-    rm16 = this->GetRM16(emu);
+    SEGMENT_REGISTER register_type = (SEGMENT_REGISTER)this->modrm.reg_index;
+    if(register_type==CS){
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetException();
+        emu.cpu->SetVectorNumber(CpuEnum::UD);
+        return;
+    }
+    uint16_t rm16                  = this->GetRM16(emu);
     emu.cpu->SetR16(register_type, rm16);
 }   
 
@@ -6725,6 +6730,7 @@ JccRel32::JccRel32(string code_name):Instruction(code_name){
 void JccRel32::Run(const Emulator& emu){
     uint8_t jcc_type = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
     bool condition;
+    //TODO : マジックナンバーをenum化する。
     switch(jcc_type){
         case 0x80:
             condition = emu.cpu->IsFlag(OF);

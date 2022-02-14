@@ -164,6 +164,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }
     ***/
+   this->is_exception_ = false;
 }
 
 Cpu::~Cpu(){
@@ -519,6 +520,13 @@ void Cpu::ClearFlag(EFLAGS_KIND eflags_kind){
     }
 }
 
+inline void Cpu::Push16(uint16_t data){
+    *this->gprs[ESP] = *this->gprs[ESP]-2;
+    uint32_t addr   = this->GetLinearStackAddr();
+    this->mem->Write(addr, data);
+}
+
+
 inline void Cpu::Push32(uint32_t data){
     *this->gprs[ESP] = *this->gprs[ESP]-4;
     uint32_t addr   = this->GetLinearStackAddr();
@@ -560,6 +568,15 @@ void Cpu::SwitchTask(){
 }
 
 void Cpu::HandleInterrupt(int irq_num){
+    if(!this->IsProtectedMode()){
+        this->Push16(this->eflags.raw);
+        this->Push16(this->segment_registers[CS]->GetData());
+        this->Push16(this->eip);
+        this->eip   = this->mem->Read16(irq_num*4);
+        this->SetR16(CS, this->mem->Read16(irq_num*4+2));
+        this->is_exception_ = false;
+        return;
+    }
     //TODO : 変数の宣言のスコープを縮める。
     irq_num = irq_num + 0x20;
     uint16_t selector, cs, ss;
@@ -644,7 +661,19 @@ void Cpu::Debug(FILE *f, bool h) {
 }
 
 bool Cpu::Run(const Emulator& emu){
+    static vector<uint32_t> eip_history;
     try{//TODO: エラー処理はtry catchで処理するようにする。まだ未実装の箇所が多い。
+        eip_history.push_back(this->eip);
+        if(this->eip==0xD58F){
+            for(int i=eip_history.size()-100; i<eip_history.size(); i++){
+                fprintf(stderr, "EIP=0x%08X\n", eip_history[i]);
+            }
+            exit(EXIT_FAILURE);
+        }
+        if(this->eip==0x633){
+            int i=0;
+            i++;
+        }
         this->InitSelector();
         this->ResetPrefixFlg();
         this->CheckPrefixCode(*(this->mem));
