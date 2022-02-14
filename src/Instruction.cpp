@@ -5244,8 +5244,19 @@ void LodsM32::Run(const Emulator& emu){
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
+        this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
+    }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bitオペランドサイズ
-        this->Error("Not implemented: op_size=32bits at %s::Run", this->code_name.c_str());
+        uint32_t ds;
+        uint16_t si;
+        uint32_t d;
+        ds = emu.cpu->GetBaseAddr(DS);
+        si = emu.cpu->GetR16(ESI);
+        emu.cpu->SetR32(EAX, emu.mem->Read32(ds+si));
+        d = emu.cpu->IsFlag(DF)? -4:4;
+        emu.cpu->SetR16(ESI, si+d);
+        return;
     }else{//16bitオペランドサイズ
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
             this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
