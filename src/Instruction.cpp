@@ -4936,28 +4936,44 @@ void MovM32M32::Run(const Emulator& emu){
     if(emu.cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
         this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
     }
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+        this->Error("Not implemented: op_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+    }
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
+        uint16_t cx = 1;
+        for(uint16_t i = 0; i<cx; i++){
+            uint32_t ds, es;
+            uint16_t si, di;
+            uint32_t d;
+            ds = emu.cpu->GetR16(DS)*16;
+            si = emu.cpu->GetR16(ESI);
+            es = emu.cpu->GetR16(ES)*16;
+            di = emu.cpu->GetR16(EDI);
+            emu.mem->Write(es+di, emu.mem->Read32(ds+si));
+            d = emu.cpu->IsFlag(DF)? -4:4;
+            emu.cpu->SetR16(EDI, di+d);
+            emu.cpu->SetR16(ESI, si+d);
+        }
         return;
     }else{
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
             this->Error("Not implemented: op_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
         }else{
-            uint16_t cx = 1;
-            for(uint16_t i = 0; i<cx; i++){
-                uint32_t ds, es;
-                uint16_t si, di;
-                uint16_t d;
-                ds = emu.cpu->GetR16(DS)*16;
-                si = emu.cpu->GetR16(ESI);
-                es = emu.cpu->GetR16(ES)*16;
-                di = emu.cpu->GetR16(EDI);
-                emu.mem->Write(es+di, emu.mem->Read16(ds+si));
-                d = emu.cpu->IsFlag(DF)? -2:2;
-                emu.cpu->SetR16(EDI, di+d);
-                emu.cpu->SetR16(ESI, si+d);
-            }
+        uint16_t cx = 1;
+        for(uint16_t i = 0; i<cx; i++){
+            uint32_t ds, es;
+            uint16_t si, di;
+            uint16_t d;
+            ds = emu.cpu->GetR16(DS)*16;
+            si = emu.cpu->GetR16(ESI);
+            es = emu.cpu->GetR16(ES)*16;
+            di = emu.cpu->GetR16(EDI);
+            emu.mem->Write(es+di, emu.mem->Read16(ds+si));
+            d = emu.cpu->IsFlag(DF)? -2:2;
+            emu.cpu->SetR16(EDI, di+d);
+            emu.cpu->SetR16(ESI, si+d);
+        }
         }
         return;
     }
