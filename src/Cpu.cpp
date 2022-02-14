@@ -292,7 +292,7 @@ uint32_t Cpu::GetLinearStackAddr(){
 
 uint32_t Cpu::GetBaseAddr(SEGMENT_REGISTER register_type){
     if(!this->IsProtectedMode()){//read mode
-        return this->segment_registers[register_type]->GetData();
+        return this->segment_registers[register_type]->GetData()*16;
     }
     return this->segment_registers[register_type]->GetBaseAddr();
 }
@@ -670,7 +670,7 @@ bool Cpu::Run(const Emulator& emu){
             }
             exit(EXIT_FAILURE);
         }
-        if(this->eip==0x633){
+        if(this->eip==0x8FC){
             int i=0;
             i++;
         }

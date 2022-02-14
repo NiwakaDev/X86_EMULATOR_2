@@ -4175,12 +4175,37 @@ CmpsM32M32::CmpsM32M32(string code_name):Instruction(code_name){
 
 void CmpsM32M32::Run(const Emulator& emu){
     //this->Error("Not implemented: at %s::Run", this->code_name.c_str());
+    if(emu.cpu->IsProtectedMode()){
+        this->Error("Not implemented: protected_mode at %s::Run", this->code_name.c_str());
+    }
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
     }
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//アドレスで場合分け
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->Error("Not implemented: addr_size=32bit at %s::Run", this->code_name.c_str());
+        return;
+    }
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        uint32_t base_ds, base_es;
+        uint16_t si, di;
+        uint32_t base_ds_si, base_es_di;
+        uint32_t m1, m2;
+        uint64_t result;
+        uint32_t d;//オペランドサイズで決まる
+        base_ds = emu.cpu->GetBaseAddr(DS);
+        base_es = emu.cpu->GetBaseAddr(ES);
+        si     = emu.cpu->GetR16(ESI);
+        di     = emu.cpu->GetR16(EDI);
+        base_ds_si = base_ds+si;
+        base_es_di = base_es+di;
+        m1      = emu.mem->Read32(base_ds_si);
+        m2      = emu.mem->Read32(base_es_di);
+        result = (uint32_t)m1 - (uint32_t)m2;
+        emu.cpu->UpdateEflagsForSub(result, m1, m2);
+        d = emu.cpu->IsFlag(DF)? 04:0x0004;
+        emu.cpu->SetR16(ESI, si+d);
+        emu.cpu->SetR16(EDI, di+d);
         return;
     }
     uint32_t base_ds, base_es;
@@ -5168,7 +5193,7 @@ void StosM32::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         uint32_t es;
         uint16_t di;
-        uint16_t d;
+        uint32_t d;
         es = emu.cpu->GetR16(ES)*16;//リアルモードは16倍
         di = emu.cpu->GetR16(EDI);
         emu.mem->Write(es+di, emu.cpu->GetR32(EAX));
