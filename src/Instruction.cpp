@@ -5942,8 +5942,26 @@ void ScasD::Run(const Emulator& emu){
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
+        this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
+    }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bitオペランドサイズ
-        this->Error("Not implemented: op_size=32bits at %s::Run", this->code_name.c_str());
+        uint32_t base_es;
+        uint32_t di;
+        uint32_t base_es_di;
+        uint32_t eax, m32;
+        uint64_t result;
+        uint32_t d;
+        base_es = emu.cpu->GetBaseAddr(ES);
+        di     = emu.cpu->GetR16(EDI);
+        base_es_di = base_es+di;
+        m32      = emu.mem->Read32(base_es_di);
+        eax = emu.cpu->GetR32(EAX);
+        result = (uint32_t)eax - (uint32_t)m32;
+        emu.cpu->UpdateEflagsForSub(result, eax, m32);
+        d = emu.cpu->IsFlag(DF)? -4:4;
+        emu.cpu->SetR16(EDI, di+d);
+        return;
     }else{//16bitオペランドサイズ
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
             this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
