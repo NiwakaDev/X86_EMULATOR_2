@@ -5166,7 +5166,15 @@ void StosM32::Run(const Emulator& emu){
         this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bits at %s::Run", this->code_name.c_str());
+        uint32_t es;
+        uint16_t di;
+        uint16_t d;
+        es = emu.cpu->GetR16(ES)*16;//リアルモードは16倍
+        di = emu.cpu->GetR16(EDI);
+        emu.mem->Write(es+di, emu.cpu->GetR32(EAX));
+        d = emu.cpu->IsFlag(DF)? -4:4;
+        emu.cpu->SetR16(EDI, di+d);
+        return;
     }else{
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
             this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
