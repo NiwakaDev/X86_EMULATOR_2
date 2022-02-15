@@ -1580,3 +1580,9 @@ class Code66:public Instruction{
         Code66(std::string code_name);
         void Run(const Emulator& emu);
 };
+
+class LssR32M1632:public Instruction{
+    public: 
+        LssR32M1632(std::string code_name);
+        void Run(const Emulator& emu);
+};

@@ -973,6 +973,7 @@ Code0F::Code0F(string code_name):Instruction(code_name){
     this->instructions[0x9F] = new SetgRm8("SetgRm8");
     this->instructions[0xAC] = new ShrdRm32R32Imm8("ShrdRm32R32Imm8");
     this->instructions[0xAF] = new ImulR32Rm32("ImulR32Rm32");
+    this->instructions[0xB2] = new LssR32M1632("LssR32M1632");
     this->instructions[0xB6] = new MovzxR32Rm8("MovzxR32Rm8");
     this->instructions[0xB7] = new MovzxR32Rm16("MovzxR32Rm16");
     this->instructions[0xBE] = new MovsxR32Rm8("MovsxR32Rm8");
@@ -7048,5 +7049,27 @@ void LoopneRel8::Run(const Emulator& emu){
     if(count&&!emu.cpu->IsFlag(ZF)){
         emu.cpu->AddEip(rel8);
     }
+    return;
+}
+
+LssR32M1632::LssR32M1632(string code_name):Instruction(code_name){
+
+}
+
+void LssR32M1632::Run(const Emulator& emu){
+    if(emu.cpu->IsProtectedMode()){
+        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    }
+    emu.cpu->AddEip(1);
+    this->ParseModRM(emu);
+    if(emu.cpu->Is32bitsMode()^emu.cpu->IsPrefixOpSize()){
+        uint16_t effective_addr = this->GetEffectiveAddr(emu);
+        emu.cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, emu.mem->Read32(emu.cpu->GetLinearAddrForDataAccess(effective_addr)));
+        emu.cpu->SetR16(SS, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+4)));
+        return;
+    }
+    uint16_t effective_addr = this->GetEffectiveAddr(emu);
+    emu.cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr)));
+    emu.cpu->SetR16(SS, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+2)));
     return;
 }
