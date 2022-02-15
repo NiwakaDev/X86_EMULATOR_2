@@ -5306,10 +5306,21 @@ void AdcR32Rm32::Run(const Emulator& emu){
     return;
 }
 
+Code66::Code66(string code_name):Instruction(code_name){
+
+}
+
+void Code66::Run(const Emulator& emu){
+    emu.cpu->SetPrefix66();
+    emu.cpu->AddEip(1);
+    return;
+}
+
 CodeF3::CodeF3(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
         this->instructions[i] = NULL;
     }
+    this->instructions[0x66] = new Code66("Code66");
     this->instructions[0xA4] = new RepMovsM8M8("RepMovsM8M8");
     this->instructions[0xA5] = new RepMovsM32M32("RepMovsM32M32");
     this->instructions[0xA6] = new RepeCmpsM8M8("RepeCmpsM8M8");
@@ -5331,6 +5342,10 @@ CodeF3::~CodeF3(){
 void CodeF3::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     uint8_t op_code = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
+    if(op_code==0x66){
+        this->instructions[0x66]->Run(emu);
+        op_code = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
+    }
     if(this->instructions[op_code]==NULL){
         this->Error("Not implemented: F3 %02X at %s::Run", op_code, this->code_name.c_str());
     }

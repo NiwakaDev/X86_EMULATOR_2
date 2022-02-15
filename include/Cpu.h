@@ -157,6 +157,7 @@ class Cpu:public Object{
         void SetException();
         void SetVectorNumber(int vector_number);
         int GetVectorNumber();
+        void SetPrefix66();
     private:
         Registers registers;
         Bios* bios = NULL;

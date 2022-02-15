@@ -1574,3 +1574,9 @@ class LoopneRel8:public Instruction{
         LoopneRel8(std::string code_name);
         void Run(const Emulator& emu);
 };
+
+class Code66:public Instruction{
+    public: 
+        Code66(std::string code_name);
+        void Run(const Emulator& emu);
+};

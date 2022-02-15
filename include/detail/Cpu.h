@@ -219,3 +219,7 @@ inline void Cpu::SetVectorNumber(int vector_number){
 inline int Cpu::GetVectorNumber(){
     return this->vector_number_;
 }
+
+inline void Cpu::SetPrefix66(){
+    this->prefix_flgs[FLG_66] = true;
+}
