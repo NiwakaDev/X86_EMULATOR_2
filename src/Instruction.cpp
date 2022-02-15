@@ -6748,7 +6748,28 @@ void RepeScasM32::Run(const Emulator& emu){
         this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        uint16_t cx = emu.cpu->GetR16(ECX);
+        uint32_t eax = emu.cpu->GetR16(EAX);
+        uint32_t d = emu.cpu->IsFlag(DF)? -4:4;
+        for(uint16_t i = 0; i<cx; i++){
+            uint32_t base_es;
+            uint32_t di;
+            uint32_t base_es_di;
+            uint32_t m32;
+            uint64_t result;
+            base_es = emu.cpu->GetBaseAddr(ES);
+            di     = emu.cpu->GetR16(EDI);
+            base_es_di = base_es+di;
+            m32      = emu.mem->Read32(base_es_di);
+            result = (uint64_t)eax - (uint64_t)m32;
+            emu.cpu->UpdateEflagsForSub(result, eax, m32);
+            emu.cpu->SetR16(EDI, di+d);
+            emu.cpu->SetR16(ECX, emu.cpu->GetR16(ECX)-1);
+            if(!emu.cpu->IsFlag(ZF)){//等しくなったら終了
+                break;
+            }
+        }
+        return;
     }else{//16bit op_size
         uint16_t cx = emu.cpu->GetR16(ECX);
         for(uint16_t i = 0; i<cx; i++){
