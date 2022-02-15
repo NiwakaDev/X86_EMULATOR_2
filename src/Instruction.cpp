@@ -6749,7 +6749,7 @@ void RepeScasM32::Run(const Emulator& emu){
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
         uint16_t cx = emu.cpu->GetR16(ECX);
-        uint32_t eax = emu.cpu->GetR16(EAX);
+        uint32_t eax = emu.cpu->GetR32(EAX);
         uint32_t d = emu.cpu->IsFlag(DF)? -4:4;
         for(uint16_t i = 0; i<cx; i++){
             uint32_t base_es;
