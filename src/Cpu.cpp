@@ -648,6 +648,7 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "TR =%04X %08X\n", this->task_register->GetData(), this->task_register->GetBaseAddr());
     fprintf(stderr, "GDT=%08X\n", this->gdtr->GetBase());
     fprintf(stderr, "GDT=%08X\n", this->idtr->GetBase());
+    fprintf(stderr, "MODE = %s\n", this->IsProtectedMode()?"PROTECTED" : "REAL");
 }
 
 //TODO : bool引数はenumに変更すべき

@@ -4316,7 +4316,17 @@ void CallPtr1632::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(!emu.cpu->IsProtectedMode()){//リアルモード
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-            this->Error("Not implemented: op_size=32bit on real_mode at %s::Run", this->code_name.c_str());
+            uint32_t offset;
+            uint16_t selector;
+            offset = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
+            emu.cpu->AddEip(4);
+            selector = emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess());
+            emu.cpu->AddEip(2);
+            InstructionHelper::Push32(emu, emu.cpu->GetR16(CS));
+            InstructionHelper::Push32(emu, (uint16_t)emu.cpu->GetEip());
+            emu.cpu->SetR16(CS, selector);
+            emu.cpu->SetEip(offset);
+            return;
         }
         uint16_t offset;
         uint16_t selector;
@@ -4358,11 +4368,17 @@ Ret32Far::Ret32Far(string code_name):Instruction(code_name){
 void Ret32Far::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(!emu.cpu->IsProtectedMode()){//リアルモードのRET FAR
+        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+            uint32_t eip;
+            uint16_t cs;
+            eip     = InstructionHelper::Pop32(emu);
+            cs      = InstructionHelper::Pop32(emu);
+            emu.cpu->SetEip(eip);
+            emu.cpu->SetR16(CS, cs);
+            return;
+        }
         uint32_t eip;
         uint16_t cs;
-        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-            this->Error("Not implemented: op_size=32 at on real_mode at %s::Run", this->code_name.c_str());
-        }
         eip     = InstructionHelper::Pop16(emu);
         cs      = InstructionHelper::Pop16(emu);
         emu.cpu->SetEip(eip);
