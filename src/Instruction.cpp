@@ -6118,7 +6118,10 @@ void LdsR32M1632::Run(const Emulator& emu){
         this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
     }else{
         if(emu.cpu->Is32bitsMode()^emu.cpu->IsPrefixOpSize()){
-            this->Error("Not implmented: op_size=32bit on read mode at %s::Run", this->code_name.c_str());
+            uint16_t effective_addr = this->GetEffectiveAddr(emu);
+            emu.cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, emu.mem->Read32(emu.cpu->GetLinearAddrForDataAccess(effective_addr)));
+            emu.cpu->SetR16(DS, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+4)));
+            return;
         }
         uint16_t effective_addr;
         effective_addr = this->GetEffectiveAddr(emu);
