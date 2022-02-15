@@ -6574,9 +6574,7 @@ RepeScasM8::RepeScasM8(string code_name):Instruction(code_name){
 }
 
 void RepeScasM8::Run(const Emulator& emu){
-    this->Error("Not implemented: %s::Run", this->code_name.c_str());
     emu.cpu->AddEip(1);
-    this->Error("Not implemented %s::Run", this->code_name.c_str());
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
@@ -6584,22 +6582,22 @@ void RepeScasM8::Run(const Emulator& emu){
         this->Error("Not implemented: op_size=32bits && addr_size=16bits at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
-        uint32_t cx = emu.cpu->GetR32(ECX);
-        uint32_t d = emu.cpu->IsFlag(DF)? -1:1;
+        uint16_t cx = emu.cpu->GetR16(ECX);//ecxかcxは、アドレスサイズで決定される
+        uint16_t d = emu.cpu->IsFlag(DF)? -1:1;
         uint32_t base_es = emu.cpu->GetBaseAddr(ES);
         for(uint32_t i = 0; i<cx; i++){
-            uint32_t edi;
-            uint32_t base_es_edi;
+            uint16_t di;
+            uint32_t base_es_di;
             uint8_t al, m8;
             uint32_t result;
-            edi     = emu.cpu->GetR32(EDI);
-            base_es_edi = base_es+edi;
-            m8      = emu.mem->Read8(base_es_edi);
+            di     = emu.cpu->GetR16(EDI);
+            base_es_di = base_es+di;
+            m8      = emu.mem->Read8(base_es_di);
             al = emu.cpu->GetR8L(EAX);
             result = (uint32_t)al - (uint32_t)m8;
             emu.cpu->UpdateEflagsForSub8(result, al, m8);
-            emu.cpu->SetR32(EDI, edi+d);
-            emu.cpu->SetR32(ECX, emu.cpu->GetR32(ECX)-1);
+            emu.cpu->SetR16(EDI, di+d);
+            emu.cpu->SetR16(ECX, emu.cpu->GetR16(ECX)-1);
             if(!emu.cpu->IsFlag(ZF)){
                 break;
             }
