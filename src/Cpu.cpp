@@ -663,15 +663,22 @@ void Cpu::Debug(FILE *f, bool h) {
 
 bool Cpu::Run(const Emulator& emu){
     static vector<uint32_t> eip_history;
+    static long long cnt=0;
+    cnt++;
     try{//TODO: エラー処理はtry catchで処理するようにする。まだ未実装の箇所が多い。
         eip_history.push_back(this->eip);
-        if(this->eip==0xD58F){
-            for(int i=eip_history.size()-100; i<eip_history.size(); i++){
+        //if(this->eip==0xD58F){
+        if(cnt==790738){
+            cnt = cnt;
+        }
+        if(this->eip==0x000013E7){
+            for(int i=eip_history.size()-5000; i<eip_history.size(); i++){
                 fprintf(stderr, "EIP=0x%08X\n", eip_history[i]);
             }
+            fprintf(stderr, "cnt=%d\n", cnt);
             exit(EXIT_FAILURE);
         }
-        if(this->eip==0x00000CD2){
+        if(this->eip==0x00001414){
             int i=0;
             i++;
         }

@@ -4439,6 +4439,19 @@ void CallM1632::Run(const Emulator& emu){
         this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
         return;
     }
+    //リアルモードにもcall命令で32bit op sizeはある。
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        uint16_t effective_addr;
+        uint32_t eip;
+        effective_addr = this->GetEffectiveAddr(emu);
+        eip      = emu.mem->Read32(emu.cpu->GetLinearAddrForDataAccess(effective_addr));
+        selector = emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+4));
+        InstructionHelper::Push32(emu, emu.cpu->GetR16(CS));
+        InstructionHelper::Push32(emu, (uint16_t)emu.cpu->GetEip());
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetR16(CS, selector);
+        return;
+    }
     uint16_t effective_addr;
     uint16_t eip;
     effective_addr = this->GetEffectiveAddr(emu);
