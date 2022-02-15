@@ -195,6 +195,16 @@ class Cpu:public Object{
                 unsigned PG:1;
             }flgs;
         }cr0;
+        union{
+            uint32_t raw;
+            struct{
+                unsigned reserve1:3;
+                unsigned pwd:1;
+                unsigned pcd:1;
+                unsigned reserve2:7;
+                unsigned page_dir_base:20;
+            }flgs;
+        }cr3;
         uint32_t eip = IPL_START_ADDR;
         uint32_t* gprs[GENERAL_PURPOSE_REGISTER32_COUNT];
         std::unique_ptr<SegmentRegister> segment_registers[SEGMENT_REGISTER_COUNT];
