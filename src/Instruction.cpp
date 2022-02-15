@@ -6393,7 +6393,7 @@ void RepStosM32::Run(const Emulator& emu){
             es = emu.cpu->GetR16(ES)*16;
             di = emu.cpu->GetR16(EDI);
             emu.mem->Write(es+di, eax);
-            d = emu.cpu->IsFlag(DF)? -2:2;
+            d = emu.cpu->IsFlag(DF)? -4:4;
             emu.cpu->SetR16(EDI, di+d);
             emu.cpu->SetR16(ECX, emu.cpu->GetR16(ECX)-1);
         }
