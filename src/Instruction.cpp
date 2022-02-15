@@ -6525,7 +6525,6 @@ RepeCmpsM32M32::RepeCmpsM32M32(string code_name):Instruction(code_name){
 }
 
 void RepeCmpsM32M32::Run(const Emulator& emu){
-    this->Error("Not implemented: %s::Run", this->code_name.c_str());
     if(emu.cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
         this->Error("Not implemented: op_size=16bit protected mode at %s::Run", this->code_name.c_str());
     }
@@ -6533,12 +6532,12 @@ void RepeCmpsM32M32::Run(const Emulator& emu){
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
     }
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+        this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+    }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
         this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }else{//16bit op_size
-        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-            this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
-        }
         uint16_t cx = emu.cpu->GetR16(ECX);
         for(uint16_t i = 0; i<cx; i++){
             uint32_t base_ds, base_es;
@@ -6556,8 +6555,8 @@ void RepeCmpsM32M32::Run(const Emulator& emu){
             m1      = emu.mem->Read16(base_ds_si);
             m2      = emu.mem->Read16(base_es_di);
             result = (uint32_t)m1 - (uint32_t)m2;
-            emu.cpu->UpdateEflagsForSub8(result, m1, m2);
-            d = emu.cpu->IsFlag(DF)? -1:1;
+            emu.cpu->UpdateEflagsForSub16(result, m1, m2);
+            d = emu.cpu->IsFlag(DF)? -2:2;
             emu.cpu->SetR16(ESI, si+d);
             emu.cpu->SetR16(EDI, di+d);
             emu.cpu->SetR16(ECX, emu.cpu->GetR16(ECX)-1);
