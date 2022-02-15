@@ -1586,3 +1586,9 @@ class LssR32M1632:public Instruction{
         LssR32M1632(std::string code_name);
         void Run(const Emulator& emu);
 };
+
+class LfsR32M1632:public Instruction{
+    public: 
+        LfsR32M1632(std::string code_name);
+        void Run(const Emulator& emu);
+};
