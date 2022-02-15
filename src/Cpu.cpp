@@ -670,7 +670,7 @@ bool Cpu::Run(const Emulator& emu){
             }
             exit(EXIT_FAILURE);
         }
-        if(this->eip==0x00000ADA){
+        if(this->eip==0x00000CD2){
             int i=0;
             i++;
         }
