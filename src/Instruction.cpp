@@ -6687,17 +6687,16 @@ RepeScasM32::RepeScasM32(string code_name):Instruction(code_name){
 }
 
 void RepeScasM32::Run(const Emulator& emu){
-    this->Error("Not implemented %s::Run", this->code_name.c_str());
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+        this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+    }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
         this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }else{//16bit op_size
-        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-            this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
-        }
         uint16_t cx = emu.cpu->GetR16(ECX);
         for(uint16_t i = 0; i<cx; i++){
             uint32_t base_es;
