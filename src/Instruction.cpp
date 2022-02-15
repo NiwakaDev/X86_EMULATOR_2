@@ -4917,7 +4917,9 @@ CallRm32::CallRm32(string code_name):Instruction(code_name){
 
 void CallRm32::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-            this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
+        uint32_t rm32 = this->GetRM32(emu);
+        InstructionHelper::Push32(emu, emu.cpu->GetEip());
+        emu.cpu->SetEip(rm32);
         return;
     }
     uint16_t rm16 = this->GetRM16(emu);
