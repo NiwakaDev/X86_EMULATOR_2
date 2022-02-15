@@ -6380,13 +6380,25 @@ void RepStosM32::Run(const Emulator& emu){
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+        this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+    }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        uint16_t cx = emu.cpu->GetR16(ECX);
+        uint32_t eax = emu.cpu->GetR32(EAX);
+        for(uint16_t i = 0; i<cx; i++){
+            uint32_t es;
+            uint16_t di;
+            uint16_t d;
+            es = emu.cpu->GetR16(ES)*16;
+            di = emu.cpu->GetR16(EDI);
+            emu.mem->Write(es+di, eax);
+            d = emu.cpu->IsFlag(DF)? -2:2;
+            emu.cpu->SetR16(EDI, di+d);
+            emu.cpu->SetR16(ECX, emu.cpu->GetR16(ECX)-1);
+        }
         return;
     }else{//16bit op_size
-        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-            this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
-        }
         uint16_t cx = emu.cpu->GetR16(ECX);
         uint16_t ax = emu.cpu->GetR16(EAX);
         for(uint16_t i = 0; i<cx; i++){
