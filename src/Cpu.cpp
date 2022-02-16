@@ -171,52 +171,59 @@ Cpu::~Cpu(){
 
 }
 
-
-union{
-    uint32_t raw;
-    struct{
-        unsigned P   : 1;
-        unsigned RW  : 1;
-        unsigned US  : 1;
-        unsigned PWT : 1;
-        unsigned PCD : 1;
-        unsigned A   : 1;
-        unsigned reserve2 : 1;
-        unsigned PS  : 1;
-        unsigned reserve1 :4;
-        unsigned base_addr:20;
-    }flgs;
-}PDE;
-
-union{
-    uint32_t raw;
-    struct{
-        unsigned P    : 1;
-        unsigned RW   : 1;
-        unsigned US   : 1;
-        unsigned PWT  : 1;
-        unsigned PCD  : 1;
-        unsigned A    : 1;
-        unsigned D    : 1;
-        unsigned PAT  : 1;
-        unsigned G    : 3;
-        unsigned base_addr:20;
-    }flgs;
-}PTE;
-
 uint32_t Cpu::GetPhysicalAddr(uint32_t linear_addr){
     //TODO : ページングに対応させる。
+    //TODO : 綺麗にする
+    union{
+        uint32_t raw;
+        struct{
+            unsigned P   : 1;
+            unsigned RW  : 1;
+            unsigned US  : 1;
+            unsigned PWT : 1;
+            unsigned PCD : 1;
+            unsigned A   : 1;
+            unsigned reserve2 : 1;
+            unsigned PS  : 1;
+            unsigned reserve1 :4;
+            unsigned base_addr:20;
+        }flgs;
+    }PDE;
+
+    union{
+        uint32_t raw;
+        struct{
+            unsigned P    : 1;
+            unsigned RW   : 1;
+            unsigned US   : 1;
+            unsigned PWT  : 1;
+            unsigned PCD  : 1;
+            unsigned A    : 1;
+            unsigned D    : 1;
+            unsigned PAT  : 1;
+            unsigned G    : 3;
+            unsigned base_addr:20;
+        }flgs;
+    }PTE;
     if(this->cr0.flgs.PG){
-        //TODO : リニアアドレスを共用体にする。
         uint32_t dir_idx;
         uint32_t table_idx;
         uint32_t offset;
         dir_idx   = (linear_addr&0xffc00000)>>22;
         table_idx = (linear_addr&0x003FF000)>>12;
         offset    = (linear_addr&0x00000FFF);
-        uint32_t dir_base_addr = this->cr3.flgs.page_dir_base<<12;
-        uint32_t dir_addr      = dir_base_addr+(dir_idx<<2);
-        this->Error("Not implemented: paging at Cpu::SetCr");
+        uint32_t dir_base_addr  = this->cr3.raw&0xFFFFF000;
+        uint32_t dir_addr       = dir_base_addr+(dir_idx<<2);
+        PDE.raw  = this->mem->Read32(dir_addr); 
+        uint32_t page_base_addr = PDE.raw&0xFFFFF000;
+        uint32_t page_addr      = page_base_addr+(table_idx<<2);
+        PTE.raw  = this->mem->Read32(page_addr);
+        uint32_t physical_base_addr = PTE.raw&0xFFFFF000;
+        uint32_t physical_addr = physical_base_addr+offset;
+        if((!PTE.flgs.P)||(!PDE.flgs.P)){//P (Present) : 1(exist), 0(not exist)
+            this->Error("Not implemented: page fault at Cpu::GetPhysicalAddr");
+        }
+        return physical_addr;
     }
     return linear_addr;
 }
@@ -244,7 +251,7 @@ void Cpu::SetCr(CONTROL_REGISTER control_register_type, uint32_t data){
     switch(control_register_type){
         case CR0:
             this->cr0.raw = data;
-            if(this->cr0.flgs.PG)this->Error("Not implemented: paging at Cpu::SetCr");
+            //if(this->cr0.flgs.PG)this->Error("Not implemented: paging at Cpu::SetCr");
             break;
         case CR3:
             this->cr3.raw = data;
