@@ -5153,21 +5153,18 @@ LesR32M1632::LesR32M1632(string code_name):Instruction(code_name){
 void LesR32M1632::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
-    if(emu.cpu->IsProtectedMode()){
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
-    }else{
-        if(emu.cpu->Is32bitsMode()^emu.cpu->IsPrefixOpSize()){
-            uint16_t effective_addr = this->GetEffectiveAddr(emu);
-            emu.cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, emu.mem->Read32(emu.cpu->GetLinearAddrForDataAccess(effective_addr)));
-            emu.cpu->SetR16(ES, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+4)));
-            return;
-        }
-        uint16_t effective_addr;
-        effective_addr = this->GetEffectiveAddr(emu);
-        emu.cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr)));
-        //fprintf(stderr, "ES=%04X\n", emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+2)));
-        emu.cpu->SetR16(ES, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+2)));
+    if(emu.cpu->Is32bitsMode()^emu.cpu->IsPrefixOpSize()){
+        uint32_t effective_addr = this->GetEffectiveAddr(emu);
+        emu.cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, emu.mem->Read32(emu.cpu->GetLinearAddrForDataAccess(effective_addr)));
+        emu.cpu->SetR16(ES, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+4)));
+        return;
     }
+    uint32_t effective_addr;
+    effective_addr = this->GetEffectiveAddr(emu);
+    emu.cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr)));
+    //fprintf(stderr, "ES=%04X\n", emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+2)));
+    emu.cpu->SetR16(ES, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+2)));
+
 }
 
 MulRm8::MulRm8(string code_name):Instruction(code_name){
@@ -7138,12 +7135,12 @@ void LssR32M1632::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(emu.cpu->Is32bitsMode()^emu.cpu->IsPrefixOpSize()){
-        uint16_t effective_addr = this->GetEffectiveAddr(emu);
+        uint32_t effective_addr = this->GetEffectiveAddr(emu);
         emu.cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, emu.mem->Read32(emu.cpu->GetLinearAddrForDataAccess(effective_addr)));
         emu.cpu->SetR16(SS, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+4)));
         return;
     }
-    uint16_t effective_addr = this->GetEffectiveAddr(emu);
+    uint32_t effective_addr = this->GetEffectiveAddr(emu);
     emu.cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr)));
     emu.cpu->SetR16(SS, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+2)));
     return;
