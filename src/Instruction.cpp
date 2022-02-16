@@ -3345,9 +3345,9 @@ PopAd::PopAd(string code_name):Instruction(code_name){
 }
 
 void PopAd::Run(const Emulator& emu){
-    uint32_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        uint32_t eax, ecx, edx, ebx, esp, ebp, esi, edi;
         edi = InstructionHelper::Pop32(emu);
         esi = InstructionHelper::Pop32(emu);
         ebp = InstructionHelper::Pop32(emu);
@@ -3365,8 +3365,26 @@ void PopAd::Run(const Emulator& emu){
         emu.cpu->SetR32(EBP, ebp);
         emu.cpu->SetR32(ESI, esi);
         emu.cpu->SetR32(EDI, edi);
+        return;
     }else{
-        this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+        uint16_t ax, cx, dx, bx, sp, bp, si, di;
+        di = InstructionHelper::Pop16(emu);
+        si = InstructionHelper::Pop16(emu);
+        bp = InstructionHelper::Pop16(emu);
+        sp = InstructionHelper::Pop16(emu);
+        bx = InstructionHelper::Pop16(emu);
+        dx = InstructionHelper::Pop16(emu);
+        cx = InstructionHelper::Pop16(emu);
+        ax = InstructionHelper::Pop16(emu);
+
+        emu.cpu->SetR16(EAX, ax);
+        emu.cpu->SetR16(ECX, cx);
+        emu.cpu->SetR16(EDX, dx);
+        emu.cpu->SetR16(EBX, bx);
+        //espは無視する
+        emu.cpu->SetR16(EBP, bp);
+        emu.cpu->SetR16(ESI, si);
+        emu.cpu->SetR16(EDI, di);
     }
     return;
 }
