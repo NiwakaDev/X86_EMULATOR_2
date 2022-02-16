@@ -2210,7 +2210,20 @@ void JmpPtr1632::Run(const Emulator& emu){
             emu.cpu->SetEip(offset);
             return;
         }
-        this->Error("Not implemented: op_size=16 at %s::Run", this->code_name.c_str());
+        uint16_t offset;
+        uint16_t selector;
+        emu.cpu->AddEip(1);
+        offset = emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess());
+        emu.cpu->AddEip(2);
+        selector = emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess());
+        gdt_gate = emu.cpu->GetGdtGate(selector);
+        if((gdt_gate->access_right&0x1D)==TSS_TYPE){
+            emu.cpu->SaveTask(selector);
+            emu.cpu->SwitchTask();
+            return;
+        }
+        emu.cpu->SetR16(CS, selector);
+        emu.cpu->SetEip(offset);
         return;
     }
     //リアルモード処理
