@@ -988,6 +988,7 @@ Code0F::Code0F(string code_name):Instruction(code_name){
     this->instructions[0x9D] = new SetgeRm8("SetgeRm8");
     this->instructions[0x9F] = new SetgRm8("SetgRm8");
     this->instructions[0xA0] = new PushFs("PushFs");
+    this->instructions[0xA1] = new PopFs("PopFs");
     this->instructions[0xAC] = new ShrdRm32R32Imm8("ShrdRm32R32Imm8");
     this->instructions[0xAF] = new ImulR32Rm32("ImulR32Rm32");
     this->instructions[0xB2] = new LssR32M1632("LssR32M1632");
@@ -7204,15 +7205,33 @@ PushFs::PushFs(string code_name):Instruction(code_name){
 
 void PushFs::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t ds;
+        uint32_t fs;
         emu.cpu->AddEip(1);
-        ds = (uint32_t)emu.cpu->GetR16(FS);
-        InstructionHelper::Push32(emu, ds);
+        fs = (uint32_t)emu.cpu->GetR16(FS);
+        InstructionHelper::Push32(emu, fs);
         return;
     }
-    uint16_t ds;
+    uint16_t fs;
     emu.cpu->AddEip(1);
-    ds = emu.cpu->GetR16(FS);
-    InstructionHelper::Push16(emu, ds);
+    fs = emu.cpu->GetR16(FS);
+    InstructionHelper::Push16(emu, fs);
+    return;
+}
+
+PopFs::PopFs(string code_name):Instruction(code_name){
+
+}
+
+void PopFs::Run(const Emulator& emu){
+    emu.cpu->AddEip(1);
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        uint32_t fs;
+        fs = InstructionHelper::Pop32(emu);
+        emu.cpu->SetR16(FS, fs);
+        return;
+    }
+    uint16_t fs;
+    fs = InstructionHelper::Pop16(emu);
+    emu.cpu->SetR16(FS, fs);
     return;
 }
