@@ -989,6 +989,8 @@ Code0F::Code0F(string code_name):Instruction(code_name){
     this->instructions[0x9F] = new SetgRm8("SetgRm8");
     this->instructions[0xA0] = new PushFs("PushFs");
     this->instructions[0xA1] = new PopFs("PopFs");
+    this->instructions[0xA8] = new PushGs("PushGs");
+    this->instructions[0xA9] = new PopGs("PopGs");
     this->instructions[0xAC] = new ShrdRm32R32Imm8("ShrdRm32R32Imm8");
     this->instructions[0xAF] = new ImulR32Rm32("ImulR32Rm32");
     this->instructions[0xB2] = new LssR32M1632("LssR32M1632");
@@ -5926,9 +5928,12 @@ void PopM32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=16bit at %s::Run", this->code_name.c_str());
+        uint32_t effective_addr;
+        effective_addr        = this->GetEffectiveAddr(emu);
+        emu.mem->Write(emu.cpu->GetLinearAddrForDataAccess(effective_addr), InstructionHelper::Pop32(emu));
+        return;
     }
-    uint16_t effective_addr;
+    uint32_t effective_addr;
     effective_addr        = this->GetEffectiveAddr(emu);
     emu.mem->Write(emu.cpu->GetLinearAddrForDataAccess(effective_addr), InstructionHelper::Pop16(emu));
     return;
@@ -7252,5 +7257,23 @@ void PushGs::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     gs = emu.cpu->GetR16(GS);
     InstructionHelper::Push16(emu, gs);
+    return;
+}
+
+PopGs::PopGs(string code_name):Instruction(code_name){
+
+}
+
+void PopGs::Run(const Emulator& emu){
+    emu.cpu->AddEip(1);
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        uint32_t gs;
+        gs = InstructionHelper::Pop32(emu);
+        emu.cpu->SetR16(GS, gs);
+        return;
+    }
+    uint16_t gs;
+    gs = InstructionHelper::Pop16(emu);
+    emu.cpu->SetR16(GS, gs);
     return;
 }
