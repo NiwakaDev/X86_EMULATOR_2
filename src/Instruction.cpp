@@ -2480,7 +2480,8 @@ void PushImm32::Run(const Emulator& emu){
         emu.cpu->AddEip(4);
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    InstructionHelper::Push16(emu, emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess()));
+    emu.cpu->AddEip(2);
     return;
 }
 
