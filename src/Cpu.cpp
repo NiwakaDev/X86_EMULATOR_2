@@ -340,6 +340,9 @@ uint32_t Cpu::GetLinearStackAddr(){
     uint32_t offset;
     if(this->cr0.flgs.PE){
         offset    = *this->gprs[ESP];
+        if(!this->IsStackAddr32()){
+            offset = offset&0x0000FFFF;
+        }
         base_addr = this->segment_registers[this->default_stack_selector]->GetBaseAddr();
         return this->GetPhysicalAddr(offset + base_addr);
     }
@@ -745,7 +748,7 @@ bool Cpu::Run(const Emulator& emu){
             fprintf(stderr, "cnt=%d\n", cnt);
             throw "\n";
         }
-        if(this->eip==0x000021FC){
+        if(this->eip==0x00002214){
             int i=0;
             i++;
         }
