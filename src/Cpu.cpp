@@ -171,6 +171,12 @@ Cpu::~Cpu(){
 
 }
 
+uint32_t Cpu::GetPhysicalAddr(uint32_t linear_addr){
+    //TODO : ページングに対応させる。
+    if(this->cr0.flgs.PG)this->Error("Not implemented: paging at Cpu::SetCr");
+    return linear_addr;
+}
+
 void Cpu::UpdateEflagsForInc16(uint16_t result, uint16_t d1, uint16_t d2){
     this->UpdateZF(result);
     this->UpdateSF(result);
@@ -193,8 +199,8 @@ void Cpu::SetIdtr(uint16_t limit, uint32_t base){
 void Cpu::SetCr(CONTROL_REGISTER control_register_type, uint32_t data){
     switch(control_register_type){
         case CR0:
-            if(this->cr0.flgs.PG)this->Error("Not implemented: paging at Cpu::SetCr");
             this->cr0.raw = data;
+            if(this->cr0.flgs.PG)this->Error("Not implemented: paging at Cpu::SetCr");
             break;
         case CR3:
             this->cr3.raw = data;
@@ -263,7 +269,7 @@ uint32_t Cpu::GetLinearAddrForCodeAccess(){
     
     if(this->cr0.flgs.PE){
         base_addr = this->segment_registers[this->default_code_selector]->GetBaseAddr();
-        return base_addr + this->GetEip();
+        return this->GetPhysicalAddr(base_addr + this->GetEip());
     }
     base_addr = ((uint32_t)this->segment_registers[CS]->GetData())*16;
     offset    = 0x0000FFFF & this->eip;
@@ -274,7 +280,7 @@ uint32_t Cpu::GetLinearAddrForDataAccess(uint32_t offset){
     uint32_t base_addr;
     if(this->cr0.flgs.PE){
         base_addr = this->segment_registers[this->default_data_selector]->GetBaseAddr();
-        return base_addr + offset;
+        return this->GetPhysicalAddr(base_addr + offset);
     }
     base_addr = ((uint32_t)this->segment_registers[this->default_data_selector]->GetData())*16;
     offset    = 0x0000FFFF & offset;
@@ -287,7 +293,7 @@ uint32_t Cpu::GetLinearStackAddr(){
     if(this->cr0.flgs.PE){
         offset    = *this->gprs[ESP];
         base_addr = this->segment_registers[this->default_stack_selector]->GetBaseAddr();
-        return offset + base_addr;
+        return this->GetPhysicalAddr(offset + base_addr);
     }
     offset    = 0x0000FFFF & *this->gprs[ESP];
     base_addr = ((uint32_t)this->segment_registers[this->default_stack_selector]->GetData())*16;
@@ -555,6 +561,10 @@ void Cpu::SaveTask(uint16_t selector){
     this->mem->Write(task_addr+24*4, this->ldtr->GetData());
 }
 
+void Cpu::SetLdtr(uint16_t data){
+    this->ldtr->Set(data, *this);
+}
+
 void Cpu::SwitchTask(){
     GdtGate* gdt_gate = this->GetGdtGate(this->task_register->GetData());
     uint32_t task_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
@@ -652,6 +662,7 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "TR =%04X %08X\n", this->task_register->GetData(), this->task_register->GetBaseAddr());
     fprintf(stderr, "GDT=%08X\n", this->gdtr->GetBase());
     fprintf(stderr, "IDT=%08X\n", this->idtr->GetBase());
+    fprintf(stderr, "CR0=%08X\n", this->cr0.raw);
     fprintf(stderr, "MODE = %s\n", this->IsProtectedMode()?"PROTECTED" : "REAL");
 }
 
@@ -682,7 +693,7 @@ bool Cpu::Run(const Emulator& emu){
             fprintf(stderr, "cnt=%d\n", cnt);
             throw "\n";
         }
-        if(this->eip==0x00001D3D){
+        if(this->eip==0x0000220a){
             int i=0;
             i++;
         }

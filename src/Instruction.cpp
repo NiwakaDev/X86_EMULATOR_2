@@ -1034,6 +1034,7 @@ Code0F00::Code0F00(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
+    this->instructions[2] = new LldtRm16("LldtRm16");
     this->instructions[3] = new LtrRm16("LtrRm16");
 }
 
@@ -7147,5 +7148,14 @@ void LgsR32M1632::Run(const Emulator& emu){
     uint16_t effective_addr = this->GetEffectiveAddr(emu);
     emu.cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr)));
     emu.cpu->SetR16(GS, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+2)));
+    return;
+}
+
+LldtRm16::LldtRm16(string code_name):Instruction(code_name){
+
+}
+
+void LldtRm16::Run(const Emulator& emu){
+    emu.cpu->SetLdtr(this->GetRM16(emu));
     return;
 }

@@ -96,6 +96,7 @@ class Cpu:public Object{
         inline void SetR32(GENERAL_PURPOSE_REGISTER32 register_type, uint32_t data);
         void SetGdtr(uint16_t limit, uint32_t base);
         void SetIdtr(uint16_t limit, uint32_t base);
+        void SetLdtr(uint16_t data);
         void SetCr(CONTROL_REGISTER control_register_type, uint32_t data);
         void SetTr(uint16_t selector);
         inline void SetDataSelector(SEGMENT_REGISTER register_type);
@@ -158,6 +159,7 @@ class Cpu:public Object{
         void SetVectorNumber(int vector_number);
         int GetVectorNumber();
         void SetPrefix66();
+        uint32_t GetPhysicalAddr(uint32_t linear_addr);
     private:
         Registers registers;
         Bios* bios = NULL;
