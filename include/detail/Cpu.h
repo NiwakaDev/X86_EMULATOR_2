@@ -56,7 +56,7 @@ inline void Cpu::SetDataSelector(SEGMENT_REGISTER register_type){
 }
 
 inline void Cpu::SetEflgs(uint32_t eflgs){
-    this->eflags.raw = eflgs|0x0000F002;;
+    this->eflags.raw = eflgs|0x00000002;;
 }
 
 inline uint8_t Cpu::GetR8(uint32_t register_type){

@@ -2493,7 +2493,7 @@ void PushFd::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         uint32_t eflgs = emu.cpu->GetEflgs();
-        InstructionHelper::Push32(emu, eflgs);
+        InstructionHelper::Push32(emu, eflgs&0x00FCFFFF);
         return;
     }
     uint16_t eflgs = emu.cpu->GetEflgs();

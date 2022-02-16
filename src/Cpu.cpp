@@ -748,7 +748,7 @@ bool Cpu::Run(const Emulator& emu){
             fprintf(stderr, "cnt=%d\n", cnt);
             throw "\n";
         }
-        if(this->eip==0x00002DBA){
+        if(this->eip==0x00002E39){
             int i=0;
             i++;
         }
