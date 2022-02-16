@@ -2300,16 +2300,16 @@ PushImm8::PushImm8(string code_name):Instruction(code_name){
 }
 
 void PushImm8::Run(const Emulator& emu){
-    uint16_t imm8_16bit;
-    uint32_t imm8_32bit;
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        uint32_t imm8_32bit;
         imm8_32bit = (int32_t)(int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
         InstructionHelper::Push32(emu, imm8_32bit);
         emu.cpu->AddEip(1);
         return;
     }
-    imm8_16bit = (uint16_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
+    uint16_t imm8_16bit;
+    imm8_16bit = (uint16_t)(int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
     InstructionHelper::Push16(emu, imm8_16bit);
     emu.cpu->AddEip(1);
     return;
