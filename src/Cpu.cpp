@@ -171,9 +171,53 @@ Cpu::~Cpu(){
 
 }
 
+
+union{
+    uint32_t raw;
+    struct{
+        unsigned P   : 1;
+        unsigned RW  : 1;
+        unsigned US  : 1;
+        unsigned PWT : 1;
+        unsigned PCD : 1;
+        unsigned A   : 1;
+        unsigned reserve2 : 1;
+        unsigned PS  : 1;
+        unsigned reserve1 :4;
+        unsigned base_addr:20;
+    }flgs;
+}PDE;
+
+union{
+    uint32_t raw;
+    struct{
+        unsigned P    : 1;
+        unsigned RW   : 1;
+        unsigned US   : 1;
+        unsigned PWT  : 1;
+        unsigned PCD  : 1;
+        unsigned A    : 1;
+        unsigned D    : 1;
+        unsigned PAT  : 1;
+        unsigned G    : 3;
+        unsigned base_addr:20;
+    }flgs;
+}PTE;
+
 uint32_t Cpu::GetPhysicalAddr(uint32_t linear_addr){
     //TODO : ページングに対応させる。
-    if(this->cr0.flgs.PG)this->Error("Not implemented: paging at Cpu::SetCr");
+    if(this->cr0.flgs.PG){
+        //TODO : リニアアドレスを共用体にする。
+        uint32_t dir_idx;
+        uint32_t table_idx;
+        uint32_t offset;
+        dir_idx   = (linear_addr&0xffc00000)>>22;
+        table_idx = (linear_addr&0x003FF000)>>12;
+        offset    = (linear_addr&0x00000FFF);
+        uint32_t dir_base_addr = this->cr3.flgs.page_dir_base<<12;
+        uint32_t dir_addr      = dir_base_addr+(dir_idx<<2);
+        this->Error("Not implemented: paging at Cpu::SetCr");
+    }
     return linear_addr;
 }
 
