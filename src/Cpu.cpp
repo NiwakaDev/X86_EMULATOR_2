@@ -352,9 +352,6 @@ uint32_t Cpu::GetLinearStackAddr(){
 }
 
 uint32_t Cpu::GetBaseAddr(SEGMENT_REGISTER register_type){
-    if(!this->IsProtectedMode()){//read mode
-        return this->segment_registers[register_type]->GetData()*16;
-    }
     return this->segment_registers[register_type]->GetBaseAddr();
 }
 
