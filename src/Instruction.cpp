@@ -5688,9 +5688,12 @@ PopSs::PopSs(string code_name):Instruction(code_name){
 void PopSs::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        uint32_t ss;
+        ss = InstructionHelper::Pop32(emu);
+        emu.cpu->SetR16(SS, ss);
+        return;
     }
-    uint16_t ss = 0;
+    uint16_t ss;
     ss = InstructionHelper::Pop16(emu);
     emu.cpu->SetR16(SS, ss);
     return;
