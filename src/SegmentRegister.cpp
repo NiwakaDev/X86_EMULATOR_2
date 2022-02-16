@@ -38,6 +38,7 @@ void SegmentRegister::Set(const uint16_t data, const Cpu& cpu){
         return;
     }
     this->selector.raw = data;
+    this->cache.base_addr = data*16;
 }
 
 uint8_t SegmentRegister::GetDpl(){

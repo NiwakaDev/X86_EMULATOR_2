@@ -2193,25 +2193,29 @@ JmpPtr1632::JmpPtr1632(string code_name):Instruction(code_name){
 void JmpPtr1632::Run(const Emulator& emu){
     GdtGate* gdt_gate;
     if(emu.cpu->IsProtectedMode()){
-        uint32_t offset;
-        uint16_t selector;
-        emu.cpu->AddEip(1);
-        offset = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
-        emu.cpu->AddEip(4);
-        selector = emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess());
-        gdt_gate = emu.cpu->GetGdtGate(selector);
-        if((gdt_gate->access_right&0x1D)==TSS_TYPE){
-            emu.cpu->SaveTask(selector);
-            emu.cpu->SwitchTask();
+        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+            uint32_t offset;
+            uint16_t selector;
+            emu.cpu->AddEip(1);
+            offset = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
+            emu.cpu->AddEip(4);
+            selector = emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess());
+            gdt_gate = emu.cpu->GetGdtGate(selector);
+            if((gdt_gate->access_right&0x1D)==TSS_TYPE){
+                emu.cpu->SaveTask(selector);
+                emu.cpu->SwitchTask();
+                return;
+            }
+            emu.cpu->SetR16(CS, selector);
+            emu.cpu->SetEip(offset);
             return;
         }
-        emu.cpu->SetR16(CS, selector);
-        emu.cpu->SetEip(offset);
+        this->Error("Not implemented: op_size=16 at %s::Run", this->code_name.c_str());
         return;
     }
     //リアルモード処理
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32 at JmpPtr1632::Run");
+        this->Error("Not implemented: op_size=32 at %s::Run", this->code_name.c_str());
         return;
     }
     uint16_t offset;

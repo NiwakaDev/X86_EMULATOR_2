@@ -92,7 +92,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         InstructionHelper::InstructionFactory instruction_factory;
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }
-    
+
     /***
     this->bios = &bios;
     this->mem  = &mem;
@@ -193,7 +193,11 @@ void Cpu::SetIdtr(uint16_t limit, uint32_t base){
 void Cpu::SetCr(CONTROL_REGISTER control_register_type, uint32_t data){
     switch(control_register_type){
         case CR0:
+            if(this->cr0.flgs.PG)this->Error("Not implemented: paging at Cpu::SetCr");
             this->cr0.raw = data;
+            break;
+        case CR3:
+            this->cr3.raw = data;
             break;
         default:
             this->Error("Not implemented: cr%d at Cpu::SetCr", control_register_type);
@@ -647,7 +651,7 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "LDT=%04X %08X\n", this->ldtr->GetData(), this->ldtr->GetBaseAddr());
     fprintf(stderr, "TR =%04X %08X\n", this->task_register->GetData(), this->task_register->GetBaseAddr());
     fprintf(stderr, "GDT=%08X\n", this->gdtr->GetBase());
-    fprintf(stderr, "GDT=%08X\n", this->idtr->GetBase());
+    fprintf(stderr, "IDT=%08X\n", this->idtr->GetBase());
     fprintf(stderr, "MODE = %s\n", this->IsProtectedMode()?"PROTECTED" : "REAL");
 }
 
@@ -671,14 +675,14 @@ bool Cpu::Run(const Emulator& emu){
         if(cnt==790738){
             cnt = cnt;
         }
-        if(this->eip==0x000013E7){
-            for(int i=eip_history.size()-5000; i<eip_history.size(); i++){
+        if(this->eip==0x0000D58F){
+            for(int i=eip_history.size()-100; i<eip_history.size(); i++){
                 fprintf(stderr, "EIP=0x%08X\n", eip_history[i]);
             }
             fprintf(stderr, "cnt=%d\n", cnt);
-            exit(EXIT_FAILURE);
+            throw "\n";
         }
-        if(this->eip==0x00001414){
+        if(this->eip==0x00001D3D){
             int i=0;
             i++;
         }
