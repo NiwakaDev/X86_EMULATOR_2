@@ -7135,9 +7135,6 @@ LssR32M1632::LssR32M1632(string code_name):Instruction(code_name){
 }
 
 void LssR32M1632::Run(const Emulator& emu){
-    if(emu.cpu->IsProtectedMode()){
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
-    }
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(emu.cpu->Is32bitsMode()^emu.cpu->IsPrefixOpSize()){
