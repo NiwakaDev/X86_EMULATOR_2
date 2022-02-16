@@ -7235,3 +7235,22 @@ void PopFs::Run(const Emulator& emu){
     emu.cpu->SetR16(FS, fs);
     return;
 }
+
+PushGs::PushGs(string code_name):Instruction(code_name){
+
+}
+
+void PushGs::Run(const Emulator& emu){
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        uint32_t gs;
+        emu.cpu->AddEip(1);
+        gs = (uint32_t)emu.cpu->GetR16(GS);
+        InstructionHelper::Push32(emu, gs);
+        return;
+    }
+    uint16_t gs;
+    emu.cpu->AddEip(1);
+    gs = emu.cpu->GetR16(GS);
+    InstructionHelper::Push16(emu, gs);
+    return;
+}

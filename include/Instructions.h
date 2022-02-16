@@ -1616,3 +1616,9 @@ class PopFs:public Instruction{
         PopFs(std::string code_name);
         void Run(const Emulator& emu);
 };
+
+class PushGs:public Instruction{
+    public: 
+        PushGs(std::string code_name);
+        void Run(const Emulator& emu);
+};
