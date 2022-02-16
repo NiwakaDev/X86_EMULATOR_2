@@ -22,12 +22,20 @@ namespace InstructionHelper{
         cout << instruction.GetInstructionName() << endl;
     }
     inline static void Push16(const Emulator& emu, const uint16_t data){
-        emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)-2);
+        if(emu.cpu->IsStackAddr32()){
+            emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)-2);
+        }else{
+            emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)-2);
+        }
         emu.mem->Write(emu.cpu->GetLinearStackAddr(), data);
     }
 
     inline static void Push32(const Emulator& emu, const uint32_t data){
-        emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)-4);
+        if(emu.cpu->IsStackAddr32()){
+            emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)-4);
+        }else{
+            emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)-4);
+        }
         emu.mem->Write(emu.cpu->GetLinearStackAddr(), data);
     }
 
@@ -45,7 +53,11 @@ namespace InstructionHelper{
         uint16_t data;
         addr = emu.cpu->GetLinearStackAddr();
         data = emu.mem->Read16(addr);
-        emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+2);
+        if(emu.cpu->IsStackAddr32()){
+            emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)+2);
+        }else{
+            emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+2);
+        }
         return data;
     }
 
@@ -54,7 +66,11 @@ namespace InstructionHelper{
         uint32_t data;
         addr = emu.cpu->GetLinearStackAddr();
         data = emu.mem->Read32(addr);
-        emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)+4);
+        if(emu.cpu->IsStackAddr32()){
+            emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)+4);
+        }else{
+            emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+4);
+        }
         return data;
     }
 }

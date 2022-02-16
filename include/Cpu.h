@@ -86,6 +86,7 @@ class Cpu:public Object{
         uint32_t GetLinearStackAddr();
         inline bool IsProtectedMode() const;
         bool Is32bitsMode();
+        bool IsStackAddr32();//true : 32bit addr, false : 16bit
         inline bool IsPrefixAddrSize();
         inline bool IsPrefixOpSize();
         inline void SetR8L(GENERAL_PURPOSE_REGISTER32 register_type, uint8_t data);

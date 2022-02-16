@@ -206,12 +206,9 @@ uint32_t Cpu::GetPhysicalAddr(uint32_t linear_addr){
         }flgs;
     }PTE;
     if(this->cr0.flgs.PG){
-        uint32_t dir_idx;
-        uint32_t table_idx;
-        uint32_t offset;
-        dir_idx   = (linear_addr&0xffc00000)>>22;
-        table_idx = (linear_addr&0x003FF000)>>12;
-        offset    = (linear_addr&0x00000FFF);
+        uint32_t dir_idx   = (linear_addr&0xffc00000)>>22;
+        uint32_t table_idx = (linear_addr&0x003FF000)>>12;
+        uint32_t offset    = (linear_addr&0x00000FFF);
         uint32_t dir_base_addr  = this->cr3.raw&0xFFFFF000;
         uint32_t dir_addr       = dir_base_addr+(dir_idx<<2);
         PDE.raw  = this->mem->Read32(dir_addr); 
@@ -581,6 +578,10 @@ void Cpu::ClearFlag(EFLAGS_KIND eflags_kind){
     }
 }
 
+bool Cpu::IsStackAddr32(){
+    return this->segment_registers[SS]->Is32bitsMode();
+}
+
 inline void Cpu::Push16(uint16_t data){
     *this->gprs[ESP] = *this->gprs[ESP]-2;
     uint32_t addr   = this->GetLinearStackAddr();
@@ -744,7 +745,7 @@ bool Cpu::Run(const Emulator& emu){
             fprintf(stderr, "cnt=%d\n", cnt);
             throw "\n";
         }
-        if(this->eip==0x0000220a){
+        if(this->eip==0x000021FC){
             int i=0;
             i++;
         }
