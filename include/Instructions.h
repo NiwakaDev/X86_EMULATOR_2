@@ -1604,3 +1604,9 @@ class LldtRm16:public Instruction{
         LldtRm16(std::string code_name);
         void Run(const Emulator& emu);
 };
+
+class PushFs:public Instruction{
+    public: 
+        PushFs(std::string code_name);
+        void Run(const Emulator& emu);
+};
