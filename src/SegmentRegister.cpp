@@ -34,11 +34,11 @@ void SegmentRegister::SetCache(const Cpu& cpu, const uint16_t idx){
 void SegmentRegister::Set(const uint16_t data, const Cpu& cpu){
     if(cpu.IsProtectedMode()){
         this->selector.raw = data;
-        this->SetCache(cpu, this->selector.idx<<3);
+        if(data!=0)this->SetCache(cpu, this->selector.idx<<3);
         return;
     }
     this->selector.raw = data;
-    this->cache.base_addr = data*16;
+    if(data!=0)this->cache.base_addr = data*16;
 }
 
 uint8_t SegmentRegister::GetDpl(){
