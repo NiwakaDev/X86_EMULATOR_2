@@ -704,12 +704,12 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "EAX=%08X EBX=%08X ECX=%08X EDX=%08X\n", *this->gprs[EAX], *this->gprs[EBX], *this->gprs[ECX], *this->gprs[EDX]);
     fprintf(stderr, "ESI=%08X EDI=%08X EBP=%08X ESP=%08X\n", *this->gprs[ESI], *this->gprs[EDI], *this->gprs[EBP], *this->gprs[ESP]);
     fprintf(stderr, "EIP=%08X\n", this->eip);
-    fprintf(stderr, "ES =%04X %08X\n", this->segment_registers[ES]->GetData(), this->segment_registers[ES]->GetBaseAddr());
-    fprintf(stderr, "CS =%04X %08X\n", this->segment_registers[CS]->GetData(), this->segment_registers[CS]->GetBaseAddr());
-    fprintf(stderr, "SS =%04X %08X\n", this->segment_registers[SS]->GetData(), this->segment_registers[SS]->GetBaseAddr());
-    fprintf(stderr, "DS =%04X %08X\n", this->segment_registers[DS]->GetData(), this->segment_registers[DS]->GetBaseAddr());
-    fprintf(stderr, "FS =%04X %08X\n", this->segment_registers[FS]->GetData(), this->segment_registers[FS]->GetBaseAddr());
-    fprintf(stderr, "GS =%04X %08X\n", this->segment_registers[GS]->GetData(), this->segment_registers[GS]->GetBaseAddr());
+    fprintf(stderr, "ES =%04X %08X DPL=%d\n", this->segment_registers[ES]->GetData(), this->segment_registers[ES]->GetBaseAddr(), this->segment_registers[ES]->GetDpl());
+    fprintf(stderr, "CS =%04X %08X DPL=%d\n", this->segment_registers[CS]->GetData(), this->segment_registers[CS]->GetBaseAddr(), this->segment_registers[CS]->GetDpl());
+    fprintf(stderr, "SS =%04X %08X DPL=%d\n", this->segment_registers[SS]->GetData(), this->segment_registers[SS]->GetBaseAddr(), this->segment_registers[SS]->GetDpl());
+    fprintf(stderr, "DS =%04X %08X DPL=%d\n", this->segment_registers[DS]->GetData(), this->segment_registers[DS]->GetBaseAddr(), this->segment_registers[DS]->GetDpl());
+    fprintf(stderr, "FS =%04X %08X DPL=%d\n", this->segment_registers[FS]->GetData(), this->segment_registers[FS]->GetBaseAddr(), this->segment_registers[FS]->GetDpl());
+    fprintf(stderr, "GS =%04X %08X DPL=%d\n", this->segment_registers[GS]->GetData(), this->segment_registers[GS]->GetBaseAddr(), this->segment_registers[GS]->GetDpl());
     fprintf(stderr, "LDT=%04X %08X\n", this->ldtr->GetData(), this->ldtr->GetBaseAddr());
     fprintf(stderr, "TR =%04X %08X\n", this->task_register->GetData(), this->task_register->GetBaseAddr());
     fprintf(stderr, "GDT=%08X\n", this->gdtr->GetBase());
@@ -745,7 +745,7 @@ bool Cpu::Run(const Emulator& emu){
             fprintf(stderr, "cnt=%d\n", cnt);
             throw "\n";
         }
-        if(this->eip==0x00002E39){
+        if(this->eip==0x00002197){
             int i=0;
             i++;
         }

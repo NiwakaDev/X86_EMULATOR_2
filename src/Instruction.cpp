@@ -3466,7 +3466,15 @@ void Iretd::Run(const Emulator& emu){
             emu.cpu->SetR16(CS, cs);
             emu.cpu->SetEip(eip);
             emu.cpu->SetEflgs(eflags);
-            //emu.cpu->SetCpl(CS, rpl);
+            SEGMENT_REGISTER array[] = {ES, FS, GS, DS};
+            for(auto segment_register_type:array){
+                uint16_t selector = emu.cpu->GetR16(segment_register_type);
+                GdtGate* gdt_gate = emu.cpu->GetGdtGate(selector);
+                uint8_t dpl = CpuHelper::GetDpl(gdt_gate->access_right);
+                if(emu.cpu->GetCpl()>dpl){
+                    emu.cpu->SetR16(segment_register_type, 0);
+                }
+            }
         }else if(rpl==cpl){//rpl<=cpl
             emu.cpu->SetR16(CS, cs);
             emu.cpu->SetEip(eip);
