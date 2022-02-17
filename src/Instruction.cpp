@@ -2873,7 +2873,26 @@ void SalRm32Imm8::Run(const Emulator& emu){
         this->SetRM32(emu, rm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    uint16_t rm16;
+    uint16_t imm8;
+    rm16 = this->GetRM16(emu);
+    imm8 = (uint32_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
+    emu.cpu->AddEip(1);
+    if(imm8==0){
+        return;
+    }
+    if(imm8==1){
+        this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
+    }
+    rm16 = rm16 << (imm8-1);
+    if(rm16&0x8000){
+        emu.cpu->SetFlag(CF);
+    }else{
+        emu.cpu->ClearFlag(CF);
+    }
+    rm16 = rm16 << 1;
+    this->SetRM16(emu, rm16);
+    return;
 }
 
 MovsxR32Rm8::MovsxR32Rm8(string code_name):Instruction(code_name){
