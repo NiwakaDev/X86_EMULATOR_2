@@ -293,7 +293,8 @@ uint32_t Cpu::GetIdtBase(){
 
 GdtGate* Cpu::GetGdtGate(uint16_t selector) const{
     if((selector-4)%8==0){
-        this->Error("Not implement: Ldt at Cpu::GetGdtGate");
+        selector = selector&0xFFF8;
+        return (GdtGate*)this->mem->GetPointer(selector+this->ldtr->GetBaseAddr());
     }
     selector = selector&0xFFF8;
     return (GdtGate*)this->mem->GetPointer(selector+this->GetGdtBaseAddr());
