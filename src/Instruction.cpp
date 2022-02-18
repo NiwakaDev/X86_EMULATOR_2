@@ -1639,9 +1639,12 @@ Hlt::Hlt(string code_name):Instruction(code_name){
 }
 
 void Hlt::Run(const Emulator& emu){
+    if(emu.cpu->GetCpl()!=0){
+        emu.cpu->SetException(0);
+        emu.cpu->SetVectorNumber(CpuEnum::GP);
+    }
     emu.cpu->AddEip(1);
     this_thread::sleep_for(milliseconds(10));
-    //this->Error("Hlt::Run");
 }
 
 JaeRel8::JaeRel8(string code_name):Instruction(code_name){
