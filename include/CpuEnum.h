@@ -32,6 +32,7 @@ enum EFLAGS_KIND{
 namespace CpuEnum{
     enum VECTOR_NUMBER{
         UD = 6,
-        VECTOR_NUMBER_CNT=1,
+        GP = 13,
+        VECTOR_NUMBER_CNT=2,
     };
 };

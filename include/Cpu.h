@@ -156,11 +156,12 @@ class Cpu:public Object{
         bool IsBflg(SEGMENT_REGISTER register_type);//セグメントディスクリプタのBフラグ
         void Debug(FILE *f, bool h);
         bool IsException();
-        void SetException();
+        void SetException(int error_code);
         void SetVectorNumber(int vector_number);
         int GetVectorNumber();
         void SetPrefix66();
         uint32_t GetPhysicalAddr(uint32_t linear_addr);
+        uint8_t GetIopl();
     private:
         Registers registers;
         Bios* bios = NULL;
@@ -245,6 +246,7 @@ class Cpu:public Object{
         bool segment_override;
         bool is_exception_; //今度からメンバ変数の最後に_をつける
         int vector_number_;
+        int error_code_;
 };
 
 #include "detail/Cpu.h"

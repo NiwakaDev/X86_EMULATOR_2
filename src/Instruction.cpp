@@ -820,7 +820,7 @@ void MovSregRm16::Run(const Emulator& emu){
     SEGMENT_REGISTER register_type = (SEGMENT_REGISTER)this->modrm.reg_index;
     if(register_type==CS){
         emu.cpu->SetEip(eip);
-        emu.cpu->SetException();
+        emu.cpu->SetException(-1);
         emu.cpu->SetVectorNumber(CpuEnum::UD);
         return;
     }
@@ -1851,13 +1851,41 @@ void Nop::Run(const Emulator& emu){
     return;
 }
 
+/***
+void MovSregRm16::Run(const Emulator& emu){
+    uint32_t eip = emu.cpu->GetEip();
+    emu.cpu->AddEip(1);
+    this->ParseModRM(emu);
+    SEGMENT_REGISTER register_type = (SEGMENT_REGISTER)this->modrm.reg_index;
+    if(register_type==CS){
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetException();
+        emu.cpu->SetVectorNumber(CpuEnum::UD);
+        return;
+    }
+    uint16_t rm16                  = this->GetRM16(emu);
+    emu.cpu->SetR16(register_type, rm16);
+}   
+***/
+
 Cli::Cli(string code_name):Instruction(code_name){
 
 }
 
 void Cli::Run(const Emulator& emu){
+    uint32_t eip = emu.cpu->GetEip();
     emu.cpu->AddEip(1);
-    emu.cpu->ClearFlag(IF);
+    if(!emu.cpu->IsProtectedMode()){
+        emu.cpu->ClearFlag(IF);
+        return;
+    }
+    if(emu.cpu->GetIopl()>=emu.cpu->GetCpl()){
+        emu.cpu->ClearFlag(IF);
+    }else{
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetException(0);
+        emu.cpu->SetVectorNumber(CpuEnum::GP);
+    }
     return;
 }
 

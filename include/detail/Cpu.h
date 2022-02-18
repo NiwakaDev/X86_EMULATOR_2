@@ -208,8 +208,9 @@ inline bool Cpu::IsException(){
     return this->is_exception_;
 }
 
-inline void Cpu::SetException(){
+inline void Cpu::SetException(int error_code){
     this->is_exception_ = true;
+    this->error_code_   = error_code;
 }
 
 inline void Cpu::SetVectorNumber(int vector_number){
@@ -222,4 +223,8 @@ inline int Cpu::GetVectorNumber(){
 
 inline void Cpu::SetPrefix66(){
     this->prefix_flgs[FLG_66] = true;
+}
+
+inline uint8_t Cpu::GetIopl(){
+    return this->eflags.flgs.IOPL;
 }

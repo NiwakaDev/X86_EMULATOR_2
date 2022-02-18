@@ -645,7 +645,8 @@ void Cpu::HandleInterrupt(int irq_num){
         return;
     }
     //TODO : 変数の宣言のスコープを縮める。
-    irq_num = irq_num + 0x20;
+    //irq_num = irq_num + 0x20;
+    if(this->is_exception_)this->is_exception_=false;
     uint16_t selector, cs, ss;
     uint32_t eip, eflags, esp;
     uint32_t offset_addr;
@@ -660,6 +661,9 @@ void Cpu::HandleInterrupt(int irq_num){
         this->Push32(this->eflags.raw);
         this->Push32(this->segment_registers[CS]->GetData());
         this->Push32(this->eip);
+        if(this->vector_number_==CpuEnum::GP){
+            this->Push32(this->error_code_);
+        }
         this->eip = offset_addr;
         this->segment_registers[CS]->Set(idt_gate->selector, *this);
         this->eflags.flgs.IF = 0;
@@ -677,6 +681,9 @@ void Cpu::HandleInterrupt(int irq_num){
         this->Push32(eflags);
         this->Push32(cs);
         this->Push32(eip);
+        if(this->vector_number_==CpuEnum::GP){
+            this->Push32(this->error_code_);
+        }
         this->SetEip(offset_addr);
         this->SetR16(CS, idt_gate->selector);
         //this->SetRpl(CS, cpl);
@@ -746,7 +753,7 @@ bool Cpu::Run(const Emulator& emu){
             fprintf(stderr, "cnt=%d\n", cnt);
             throw "\n";
         }
-        if(this->eip==0x00002197){
+        if(this->eip==0x00003C67){
             int i=0;
             i++;
         }
