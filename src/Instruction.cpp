@@ -825,7 +825,63 @@ void MovSregRm16::Run(const Emulator& emu){
         return;
     }
     uint16_t rm16                  = this->GetRM16(emu);
-    emu.cpu->SetR16(register_type, rm16);
+    if(emu.cpu->IsProtectedMode()&&((rm16&0xFFFC)/8+1)>((emu.cpu->GetGdtLimit()+1)/8)){
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetException(rm16&0xFFFC);
+        emu.cpu->SetVectorNumber(CpuEnum::GP);
+        return;
+    }
+    GdtGate* gdt_gate = emu.cpu->GetGdtGate(rm16);
+    if(emu.cpu->IsProtectedMode()&&(rm16!=0)&&((gdt_gate->access_right&CpuEnum::S)==0)){
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetException(rm16&0xFFFC);
+        emu.cpu->SetVectorNumber(CpuEnum::GP);
+        return;
+    }
+    if(emu.cpu->IsProtectedMode()&&(rm16!=0)&&((gdt_gate->access_right&CpuEnum::P)==0)){
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetException(rm16&0xFFFC);
+        if(register_type!=SS){
+            emu.cpu->SetVectorNumber(CpuEnum::NP);
+        }else{
+            emu.cpu->SetVectorNumber(CpuEnum::SS_VECTOR);
+        }
+        return;
+    }
+    if(emu.cpu->IsProtectedMode()&&rm16==0&&register_type==SS){
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetException(0);
+        emu.cpu->SetVectorNumber(CpuEnum::GP);
+        return;
+    }
+    uint8_t dpl = CpuHelper::GetDpl(gdt_gate->access_right);
+    uint8_t rpl = CpuHelper::GetRpl(rm16);
+    uint8_t cpl = emu.cpu->GetCpl();
+    if(emu.cpu->IsProtectedMode()&&cpl>dpl&&rpl>dpl){
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetException(rm16&0xFFFC);
+        emu.cpu->SetVectorNumber(CpuEnum::GP);
+        return;
+    }
+    if(emu.cpu->IsProtectedMode()&&(register_type==SS)&&(cpl!=rpl)){
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetException(rm16&0xFFFC);
+        emu.cpu->SetVectorNumber(CpuEnum::GP);
+        return;
+    }
+    if(emu.cpu->IsProtectedMode()&&(register_type==SS)&&((gdt_gate->access_right&0x000F)==CpuEnum::READ_AND_ACCESS)){
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetException(rm16&0xFFFC);
+        emu.cpu->SetVectorNumber(CpuEnum::GP);
+        return;
+    }
+    if(emu.cpu->IsProtectedMode()&&(register_type==SS)&&((gdt_gate->access_right&0x000F)==CpuEnum::READ_ONLY)){
+        emu.cpu->SetEip(eip);
+        emu.cpu->SetException(rm16&0xFFFC);
+        emu.cpu->SetVectorNumber(CpuEnum::GP);
+        return;
+    }
+    emu.cpu->SetR16(register_type, rm16&0xFFFC);
 }   
 
 MovR8Rm8::MovR8Rm8(string code_name):Instruction(code_name){
@@ -2094,7 +2150,7 @@ void MovzxR32Rm8::Run(const Emulator& emu){
         emu.cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, (uint32_t)((uint8_t)this->GetRM8(emu)));
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    emu.cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, (uint16_t)((uint8_t)this->GetRM8(emu)));
     return;
 }
 
@@ -4474,6 +4530,42 @@ void CallPtr1632::Run(const Emulator& emu){
             emu.cpu->SetR16(CS, selector);
             return;
         }
+        /***
+        #define TSS_TYPE 0x09
+        #define LDT_TYPE 0x0082
+        #define SEGMENT_DESC_TYPE_FLG 1<<4
+        ***/
+       if((gdt_gate->access_right&CpuEnum::CALL_GATE)!=0){
+           uint8_t cpl                    = emu.cpu->GetCpl();
+           uint8_t call_gate_dpl          = CpuHelper::GetDpl(gdt_gate->access_right);
+           uint8_t call_gate_selector_rpl = CpuHelper::GetRpl(selector);
+           uint8_t call_segment_selector  = gdt_gate->base_low;
+           uint8_t call_segment_dpl       = CpuHelper::GetDpl(call_segment_selector);
+           //GdtGate* call_segment_desc     = emu.cpu->GetGdtGate(call_segment_selector);
+           if((call_gate_dpl<cpl)||(call_gate_dpl<call_gate_selector_rpl)){
+               this->Error("Not implemented: #GP at %s::Run", this->code_name.c_str());
+           }
+           if(call_segment_dpl<cpl){// MORE-PRIVILEGE
+                uint16_t ss  = emu.cpu->GetR16(SS);
+                uint32_t eip = emu.cpu->GetEip();
+                uint32_t esp = emu.cpu->GetR32(ESP);
+                Tss* tss = emu.cpu->GetCurrentTss();
+                emu.cpu->SetR16(SS, tss->ss0);
+                emu.cpu->SetR32(ESP, tss->esp0);
+                InstructionHelper::Push32(emu, ss);
+                InstructionHelper::Push32(emu, esp);
+                InstructionHelper::Push32(emu, emu.cpu->GetR16(CS));
+                InstructionHelper::Push32(emu, eip);
+                CallGate* call_gate = (CallGate*)emu.cpu->GetGdtGate(selector);
+                uint32_t offset = (((uint32_t)call_gate->offset_high)<<16) | ((uint32_t)call_gate->offset_low);
+                emu.cpu->SetEip(offset);
+                emu.cpu->SetR16(CS, call_segment_selector);
+                return;
+           }else{//SAME-PRIVILEGE
+                this->Error("Not implemented: SAME-PRIVILEGE at %s::Run", this->code_name.c_str());
+           }
+           this->Error("Not implemented: CALL_GATE at %s::Run", this->code_name.c_str());
+       }
         this->Error("Not implemented: TSS at %s::Run", this->code_name.c_str());
         return;
     }

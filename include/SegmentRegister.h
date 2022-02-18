@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include "CpuEnum.h"
 
 typedef struct _Cache{
     uint32_t base_addr;

@@ -1,3 +1,4 @@
+#pragma once
 enum SEGMENT_REGISTER {ES, CS, SS, DS, FS, GS, SEGMENT_REGISTER_COUNT};
 enum GENERAL_PURPOSE_REGISTER32 {EAX , ECX, EDX, EBX, ESP, EBP, ESI, EDI, GENERAL_PURPOSE_REGISTER32_COUNT};
 enum CONTROL_REGISTER {CR0, CR1, CR2, CR3, CR4, CONTROL_REGISTERS_COUNT};
@@ -32,7 +33,23 @@ enum EFLAGS_KIND{
 namespace CpuEnum{
     enum VECTOR_NUMBER{
         UD = 6,
+        NP = 11,
+        SS_VECTOR = 12,
         GP = 13,
         VECTOR_NUMBER_CNT=2,
     };
+    enum GATE_DESC_TYPE{
+        CALL_GATE = 0x0C,
+        GATE_DESC_TYPE_CNT=1,
+    };
+    enum ACCESS_RIGHT{
+        P = 1<<7,
+        S = 1<<4,
+        ACESS_RIGHT = 1,
+    };
+    enum TYPE_FIELD{
+        READ_ONLY       = 0x00,
+        READ_AND_ACCESS = 0x01,
+    };
 };
+

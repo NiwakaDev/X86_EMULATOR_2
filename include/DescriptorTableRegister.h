@@ -9,4 +9,5 @@ class DescriptorTableRegister:public Object{
         DescriptorTableRegister(std::string name, uint16_t limit, uint32_t base);
         void Set(uint16_t limit, uint32_t base);
         uint32_t GetBase();
+        uint16_t GetLimit();
 };

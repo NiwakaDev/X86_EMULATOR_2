@@ -48,6 +48,14 @@ struct _IdtGate{
     uint16_t offset_high;
 }__attribute__((__packed__));  
 
+struct _CallGate{
+    uint16_t offset_low;
+    uint16_t selector;
+    uint8_t  param_cnt;
+    uint8_t  access_right;
+    uint16_t offset_high;
+}__attribute__((__packed__));  
+
 struct _Tss{
 	uint32_t backlink, esp0, ss0, esp1, ss1, esp2, ss2, cr3;
 	uint32_t eip, eflags, eax, ecx, edx, ebx, esp, ebp, esi, edi;
@@ -58,6 +66,7 @@ struct _Tss{
 typedef _GdtGate GdtGate;
 typedef _IdtGate IdtGate;
 typedef _Tss Tss;
+typedef _CallGate CallGate;
 
 const int DB = 0x40;
 
@@ -162,6 +171,8 @@ class Cpu:public Object{
         void SetPrefix66();
         uint32_t GetPhysicalAddr(uint32_t linear_addr);
         uint8_t GetIopl();
+        uint16_t GetGdtLimit();
+        uint8_t GetDpl(uint16_t selector);
     private:
         Registers registers;
         Bios* bios = NULL;

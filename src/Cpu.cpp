@@ -292,6 +292,7 @@ uint32_t Cpu::GetIdtBase(){
 }
 
 GdtGate* Cpu::GetGdtGate(uint16_t selector) const{
+    selector=selector&0xFFFC;
     if((selector-4)%8==0){
         selector = selector&0xFFF8;
         return (GdtGate*)this->mem->GetPointer(selector+this->ldtr->GetBaseAddr());
@@ -420,6 +421,11 @@ inline void Cpu::CheckPrefixCode(const Memory& mem){
             case FLG_26:
                 this->prefix_flgs[FLG_26] = true;
                 this->default_data_selector = ES;
+                this->segment_override = true;
+                break;
+            case FLG_64:
+                this->prefix_flgs[FLG_64] = true;
+                this->default_data_selector = FS;
                 this->segment_override = true;
                 break;
             case FLG_36:
@@ -661,7 +667,7 @@ void Cpu::HandleInterrupt(int irq_num){
         this->Push32(this->eflags.raw);
         this->Push32(this->segment_registers[CS]->GetData());
         this->Push32(this->eip);
-        if(this->vector_number_==CpuEnum::GP){
+        if(this->vector_number_==CpuEnum::GP||(this->vector_number_==CpuEnum::NP)||(this->vector_number_==CpuEnum::SS_VECTOR)){
             this->Push32(this->error_code_);
         }
         this->eip = offset_addr;
@@ -681,7 +687,7 @@ void Cpu::HandleInterrupt(int irq_num){
         this->Push32(eflags);
         this->Push32(cs);
         this->Push32(eip);
-        if(this->vector_number_==CpuEnum::GP){
+        if((this->vector_number_==CpuEnum::GP)||(this->vector_number_==CpuEnum::NP)||(this->vector_number_==CpuEnum::SS_VECTOR)){
             this->Push32(this->error_code_);
         }
         this->SetEip(offset_addr);
@@ -693,6 +699,10 @@ void Cpu::HandleInterrupt(int irq_num){
     }
 
     return;
+}
+
+uint16_t Cpu::GetGdtLimit(){
+    return this->gdtr->GetLimit();
 }
 
 //#define OFFSET 10
@@ -720,8 +730,8 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "GS =%04X %08X DPL=%d\n", this->segment_registers[GS]->GetData(), this->segment_registers[GS]->GetBaseAddr(), this->segment_registers[GS]->GetDpl());
     fprintf(stderr, "LDT=%04X %08X\n", this->ldtr->GetData(), this->ldtr->GetBaseAddr());
     fprintf(stderr, "TR =%04X %08X\n", this->task_register->GetData(), this->task_register->GetBaseAddr());
-    fprintf(stderr, "GDT=%08X\n", this->gdtr->GetBase());
-    fprintf(stderr, "IDT=%08X\n", this->idtr->GetBase());
+    fprintf(stderr, "GDT=%08X %08X\n", this->gdtr->GetBase(), this->gdtr->GetLimit());
+    fprintf(stderr, "IDT=%08X %08X\n", this->idtr->GetBase(), this->idtr->GetLimit());
     fprintf(stderr, "CR0=%08X\n", this->cr0.raw);
     fprintf(stderr, "MODE = %s\n", this->IsProtectedMode()?"PROTECTED" : "REAL");
 }
@@ -753,7 +763,7 @@ bool Cpu::Run(const Emulator& emu){
             fprintf(stderr, "cnt=%d\n", cnt);
             throw "\n";
         }
-        if(this->eip==0x00003D82){
+        if(this->eip==0x00005413){
             int i=0;
             i++;
         }
