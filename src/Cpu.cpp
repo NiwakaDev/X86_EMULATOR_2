@@ -428,6 +428,11 @@ inline void Cpu::CheckPrefixCode(const Memory& mem){
                 this->default_data_selector = FS;
                 this->segment_override = true;
                 break;
+            case FLG_65:
+                this->prefix_flgs[FLG_65] = true;
+                this->default_data_selector = GS;
+                this->segment_override = true;
+                break;
             case FLG_36:
                 this->prefix_flgs[FLG_36] = true;
                 this->default_data_selector = SS;
