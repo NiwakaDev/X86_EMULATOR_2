@@ -5281,19 +5281,26 @@ LodsM8::LodsM8(string code_name):Instruction(code_name){
 }
 
 void LodsM8::Run(const Emulator& emu){
-    if(emu.cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    if(emu.cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-        this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
+        uint32_t ds;
+        uint32_t esi;
+        uint32_t d = emu.cpu->IsFlag(DF)? -1:1;;
+        ds = emu.cpu->GetBaseAddr(DS);
+        esi = emu.cpu->GetR32(ESI);
+        emu.cpu->SetR8L(EAX, emu.mem->Read8(emu.cpu->GetPhysicalAddr(ds+esi)));
+        emu.cpu->SetR32(ESI, esi+d);
+        return;
     }
     uint32_t ds;
     uint16_t si;
     uint16_t d;
-    ds = emu.cpu->GetR16(DS)*16;
+    ds = emu.cpu->GetBaseAddr(DS);
     si = emu.cpu->GetR16(ESI);
-    emu.cpu->SetR8L(EAX, emu.mem->Read8(ds+si));
+    emu.cpu->SetR8L(EAX, emu.mem->Read8(emu.cpu->GetPhysicalAddr(ds+si)));
     d = emu.cpu->IsFlag(DF)? -1:1;
     emu.cpu->SetR16(ESI, si+d);
     return;
@@ -5445,31 +5452,31 @@ StosM32::StosM32(string code_name):Instruction(code_name){
 
 void StosM32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
-    if(emu.cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+    if(emu.cpu->IsSegmentOverride()){
+        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
+    uint32_t edi;
+    uint32_t d;
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        d = emu.cpu->IsFlag(DF)? -4:4;
+    }else{
+        d = emu.cpu->IsFlag(DF)? -2:2;
+    }
+    uint32_t es = emu.cpu->GetBaseAddr(ES);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-        this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
+        edi = emu.cpu->GetR32(EDI);
+    }else{
+        edi = emu.cpu->GetR16(EDI);
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t es;
-        uint16_t di;
-        uint32_t d;
-        es = emu.cpu->GetR16(ES)*16;//リアルモードは16倍
-        di = emu.cpu->GetR16(EDI);
-        emu.mem->Write(es+di, emu.cpu->GetR32(EAX));
-        d = emu.cpu->IsFlag(DF)? -4:4;
-        emu.cpu->SetR16(EDI, di+d);
-        return;
+        emu.mem->Write(emu.cpu->GetPhysicalAddr(es+edi), emu.cpu->GetR32(EAX));
     }else{
-        uint32_t es;
-        uint16_t di;
-        uint16_t d;
-        es = emu.cpu->GetR16(ES)*16;
-        di = emu.cpu->GetR16(EDI);
-        emu.mem->Write(es+di, emu.cpu->GetR16(EAX));
-        d = emu.cpu->IsFlag(DF)? -2:2;
-        emu.cpu->SetR16(EDI, di+d);
+        emu.mem->Write(emu.cpu->GetPhysicalAddr(es+edi), emu.cpu->GetR16(EAX));
+    }
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+        emu.cpu->SetR32(EDI, edi+d);
+    }else{
+        emu.cpu->SetR16(EDI, edi+d);
     }
     return;
 }
