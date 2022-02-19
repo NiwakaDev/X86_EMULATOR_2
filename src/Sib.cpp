@@ -5,11 +5,11 @@ using namespace std;
 uint32_t Sib::GetAddress(Cpu& cpu){
     uint32_t addr = 0;
     if(this->base==4){
-        cpu.SetDataSelector(SS);
+        if(!cpu.IsSegmentOverride())cpu.SetDataSelector(SS);
     }
     if(this->base==5&&(this->mod==1 || this->mod==2)){
         addr = cpu.GetR32(EBP);
-        cpu.SetDataSelector(SS);
+        if(!cpu.IsSegmentOverride())cpu.SetDataSelector(SS);
 
     }
     else if(this->base==5 && this->mod==0x00){

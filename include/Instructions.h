@@ -1628,3 +1628,9 @@ class PopGs:public Instruction{
         PopGs(std::string code_name);
         void Run(const Emulator& emu);
 };
+
+class SalRm8Imm8:public Instruction{
+    public: 
+        SalRm8Imm8(std::string code_name);
+        void Run(const Emulator& emu);
+};

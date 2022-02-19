@@ -748,6 +748,7 @@ void Cpu::Debug(FILE *f, bool h) {
 
 bool Cpu::Run(const Emulator& emu){
     static vector<uint32_t> eip_history;
+    static vector<string> instruction_history;
     static long long cnt=0;
     cnt++;
     try{//TODO: エラー処理はtry catchで処理するようにする。まだ未実装の箇所が多い。
@@ -758,12 +759,12 @@ bool Cpu::Run(const Emulator& emu){
         }
         if(this->eip==0x0000D58F){
             for(int i=eip_history.size()-100; i<eip_history.size(); i++){
-                fprintf(stderr, "EIP=0x%08X\n", eip_history[i]);
+                fprintf(stderr, "EIP=0x%08X %s\n", eip_history[i], instruction_history[i].c_str());
             }
             fprintf(stderr, "cnt=%d\n", cnt);
             throw "\n";
         }
-        if(this->eip==0x00005413){
+        if(this->eip==0x000058D6){
             int i=0;
             i++;
         }
@@ -776,6 +777,7 @@ bool Cpu::Run(const Emulator& emu){
             this->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
         }
         this->instructions[op_code]->Run(emu);
+        instruction_history.push_back(this->instructions[op_code]->GetInstructionName());
         //fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
         return true;
     }catch(const char* error_message){

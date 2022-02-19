@@ -107,7 +107,7 @@ inline void Instruction::ParseModRM(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode()^emu.cpu->IsPrefixAddrSize()){
         if((this->modrm.mod==0x01&&this->modrm.rm==0x05) || (this->modrm.mod==0x10&&this->modrm.rm==0x05)){
-            emu.cpu->SetDataSelector(SS);
+            if(!emu.cpu->IsSegmentOverride())emu.cpu->SetDataSelector(SS);
         }
         //SIB判定
         if(this->modrm.mod!=3 && this->modrm.rm==4){
@@ -232,13 +232,13 @@ inline uint16_t Instruction::GetR16ForEffectiveAddr(const Emulator& emu){
             data = r1+r2;
             return data;
         case 2:
-            emu.cpu->SetDataSelector(SS);
+            if(!emu.cpu->IsSegmentOverride())emu.cpu->SetDataSelector(SS);
             r1   = (uint16_t)emu.cpu->GetR32(EBP);
             r2   = (uint16_t)emu.cpu->GetR32(ESI);
             data = r1+r2;
             return data;
         case 3:
-            emu.cpu->SetDataSelector(SS);
+            if(!emu.cpu->IsSegmentOverride())emu.cpu->SetDataSelector(SS);
             r1   = (uint16_t)emu.cpu->GetR32(EBP);
             r2   = (uint16_t)emu.cpu->GetR32(EDI);
             data = r1+r2;
@@ -252,7 +252,7 @@ inline uint16_t Instruction::GetR16ForEffectiveAddr(const Emulator& emu){
             data = r1;
             return data;
         case 6:
-            emu.cpu->SetDataSelector(SS);
+            if(!emu.cpu->IsSegmentOverride())emu.cpu->SetDataSelector(SS);
             r1   = (uint16_t)emu.cpu->GetR32(EBP);
             data = r1;
             return data;
@@ -901,6 +901,7 @@ CodeC0::CodeC0(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
+    this->instructions[4] = new SalRm8Imm8("SalRm8Imm8");
     this->instructions[5] = new ShrRm8Imm8("ShrRm8Imm8");
     this->instructions[7] = new SarRm8Imm8("SarRm8Imm8");
 }
@@ -7468,5 +7469,40 @@ void PopGs::Run(const Emulator& emu){
     uint16_t gs;
     gs = InstructionHelper::Pop16(emu);
     emu.cpu->SetR16(GS, gs);
+    return;
+}
+
+SalRm8Imm8::SalRm8Imm8(string code_name):Instruction(code_name){
+
+}
+
+void SalRm8Imm8::Run(const Emulator& emu){
+    uint8_t rm8;
+    uint8_t imm8;
+    rm8  = this->GetRM8(emu);
+    imm8 = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
+    emu.cpu->AddEip(1);
+    bool flg = imm8==1;
+    if(imm8==0){//cl==0の時、何もしない。
+        return;
+    }
+    for(uint16_t i=0; i<imm8; i++){
+        if(rm8&SIGN_FLG1){
+            emu.cpu->SetFlag(CF);
+        }else{
+            emu.cpu->ClearFlag(CF);
+        }
+        rm8 = rm8 << 1;
+    }
+    this->SetRM8(emu, rm8);
+    emu.cpu->UpdateEflagsForShr(rm8);
+    if(flg){
+        bool msb_dest= (SIGN_FLG1&rm8)?true:false;
+        if(msb_dest^emu.cpu->IsFlag(CF)){
+            emu.cpu->SetFlag(OF);
+        }else{
+            emu.cpu->ClearFlag(OF);
+        }
+    } 
     return;
 }
