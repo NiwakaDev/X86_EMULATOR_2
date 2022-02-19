@@ -6868,70 +6868,57 @@ RepeCmpsM32M32::RepeCmpsM32M32(string code_name):Instruction(code_name){
 }
 
 void RepeCmpsM32M32::Run(const Emulator& emu){
-    if(emu.cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
-        this->Error("Not implemented: op_size=16bit protected mode at %s::Run", this->code_name.c_str());
-    }
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
     }
+    uint32_t cnt;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-        this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+        cnt = emu.cpu->GetR32(ECX);
+    }else{
+        cnt = emu.cpu->GetR16(ECX);
     }
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
-        uint16_t cx = emu.cpu->GetR16(ECX);
-        for(uint16_t i = 0; i<cx; i++){
-            uint32_t base_ds, base_es;
-            uint32_t base_ds_si, base_es_di;
-            uint16_t si, di;
-            uint16_t d;
-            uint32_t m1, m2;
-            uint64_t result;
-            base_ds = emu.cpu->GetR16(DS)*16;
-            si = emu.cpu->GetR16(ESI);
-            base_es = emu.cpu->GetR16(ES)*16;
-            di = emu.cpu->GetR16(EDI);
-            base_ds_si = base_ds+si;
-            base_es_di = base_es+di;
-            m1      = emu.mem->Read32(emu.cpu->GetPhysicalAddr(base_ds_si));
-            m2      = emu.mem->Read32(emu.cpu->GetPhysicalAddr(base_es_di));
-            result = (uint64_t)m1 - (uint64_t)m2;
-            emu.cpu->UpdateEflagsForSub(result, m1, m2);
-            d = emu.cpu->IsFlag(DF)? -4:4;
-            emu.cpu->SetR16(ESI, si+d);
-            emu.cpu->SetR16(EDI, di+d);
-            emu.cpu->SetR16(ECX, emu.cpu->GetR16(ECX)-1);
-            if(!emu.cpu->IsFlag(ZF)){
-                return;
-            }
+    uint32_t d;
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        d = emu.cpu->IsFlag(DF)? -4:4;
+    }else{
+        d = emu.cpu->IsFlag(DF)? -2:2;
+    }
+    for(uint32_t i = 0; i<cnt; i++){
+        uint32_t esi, edi;
+        uint32_t base_ds = emu.cpu->GetBaseAddr(DS);
+        uint32_t base_es = emu.cpu->GetBaseAddr(ES);
+        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+            esi = emu.cpu->GetR32(ESI);
+            edi = emu.cpu->GetR32(EDI);
+        }else{
+            esi = emu.cpu->GetR16(ESI);
+            edi = emu.cpu->GetR16(EDI);
         }
-        return;
-    }else{//16bit op_size
-        uint16_t cx = emu.cpu->GetR16(ECX);
-        for(uint16_t i = 0; i<cx; i++){
-            uint32_t base_ds, base_es;
-            uint32_t base_ds_si, base_es_di;
-            uint16_t si, di;
-            uint16_t d;
-            uint16_t m1, m2;
-            uint32_t result;
-            base_ds = emu.cpu->GetR16(DS)*16;
-            si = emu.cpu->GetR16(ESI);
-            base_es = emu.cpu->GetR16(ES)*16;
-            di = emu.cpu->GetR16(EDI);
-            base_ds_si = base_ds+si;
-            base_es_di = base_es+di;
-            m1      = emu.mem->Read16(base_ds_si);
-            m2      = emu.mem->Read16(base_es_di);
-            result = (uint32_t)m1 - (uint32_t)m2;
+        uint32_t base_ds_esi = base_ds+esi;
+        uint32_t base_es_edi = base_es+edi;
+        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+            uint32_t m1      = emu.mem->Read32(emu.cpu->GetPhysicalAddr(emu.cpu->GetPhysicalAddr(base_ds_esi)));
+            uint32_t m2      = emu.mem->Read32(emu.cpu->GetPhysicalAddr(emu.cpu->GetPhysicalAddr(base_es_edi)));
+            uint64_t result = (uint64_t)m1 - (uint64_t)m2;
+            emu.cpu->UpdateEflagsForSub(result, m1, m2);
+        }else{
+            uint16_t m1      = emu.mem->Read16(emu.cpu->GetPhysicalAddr(base_ds_esi));
+            uint16_t m2      = emu.mem->Read16(emu.cpu->GetPhysicalAddr(base_es_edi));
+            uint32_t result = (uint32_t)m1 - (uint32_t)m2;
             emu.cpu->UpdateEflagsForSub16(result, m1, m2);
-            d = emu.cpu->IsFlag(DF)? -2:2;
-            emu.cpu->SetR16(ESI, si+d);
-            emu.cpu->SetR16(EDI, di+d);
+        }
+        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+            emu.cpu->SetR32(ESI, esi+d);
+            emu.cpu->SetR32(EDI, edi+d);
+            emu.cpu->SetR32(ECX, emu.cpu->GetR32(ECX)-1);
+        }else{
+            emu.cpu->SetR16(ESI, esi+d);
+            emu.cpu->SetR16(EDI, edi+d);
             emu.cpu->SetR16(ECX, emu.cpu->GetR16(ECX)-1);
-            if(!emu.cpu->IsFlag(ZF)){
-                return;
-            }
+        }
+        if(!emu.cpu->IsFlag(ZF)){
+            return;
         }
     }
     return;
