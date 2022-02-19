@@ -19,13 +19,23 @@ using namespace std;
 const int BIOS_ROM_SIZE = 65536;
 
 Emulator::Emulator(int argc, char* argv[]){
-    if(this->ParseArgv(argc, argv)<=1){
-        fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
-        fprintf(stderr, "       -image, -i : disk-image-name\n");
-        fprintf(stderr, "               -d : debug\n");
-        fprintf(stderr, "               -b : bios-name\n");
-        exit(EXIT_FAILURE);
-    }
+    #ifdef DEBUG
+        if(this->ParseArgv(argc, argv)<=1){
+            fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
+            fprintf(stderr, "       -image, -i : disk-image-name\n");
+            fprintf(stderr, "               -d : debug\n");
+            fprintf(stderr, "               -b : bios-name\n");
+            exit(EXIT_FAILURE);
+        }
+    #else
+        if(this->ParseArgv(argc, argv)==0){
+            fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
+            fprintf(stderr, "       -image, -i : disk-image-name\n");
+            fprintf(stderr, "               -d : debug\n");
+            fprintf(stderr, "               -b : bios-name\n");
+            exit(EXIT_FAILURE);
+        }
+    #endif
     for(int i=0; i<16; i++){
         this->io_devices[i] = NULL;
     }
@@ -51,15 +61,17 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<0x20; i++){//8086runを参考にした
         this->mem->Write(i<<2, i);
     }
-    //biosをロードする。
-    fstream bios_stream;
-    bios_stream.open(this->bios_name, ios::in|ios::binary);
-    if(!bios_stream.is_open()){
-        this->Error("Cant open : %s", this->bios_name);
-    }
-    bios_stream.read((char*)this->mem->GetPointer(0x000f0000), BIOS_ROM_SIZE);
-    //bios_stream.read((char*)this->mem->GetPointer(0xffff0000), BIOS_ROM_SIZE);
-    bios_stream.close();
+    #ifdef DEBUG
+        //biosをロードする。
+        fstream bios_stream;
+        bios_stream.open(this->bios_name, ios::in|ios::binary);
+        if(!bios_stream.is_open()){
+            this->Error("Cant open : %s", this->bios_name);
+        }
+        bios_stream.read((char*)this->mem->GetPointer(0x000f0000), BIOS_ROM_SIZE);
+        //bios_stream.read((char*)this->mem->GetPointer(0xffff0000), BIOS_ROM_SIZE);
+        bios_stream.close();
+    #endif
 }
 
 Emulator::~Emulator(){
@@ -67,6 +79,7 @@ Emulator::~Emulator(){
 }
 
 int Emulator::ParseArgv(int argc, char* argv[]){
+    #ifdef DEBUG
     int parse_result = 0;
     argv++;
     argc--;
@@ -96,6 +109,22 @@ int Emulator::ParseArgv(int argc, char* argv[]){
         return 0;
     }
    return parse_result;
+    #else
+    int parse_result = 0;
+    argv++;
+    argc--;
+    while(argc>0){
+        if ((strcmp("-image", argv[0])==0) || (strcmp("-i", argv[0])==0)) {
+            this->disk_image_name = argv[1];
+            argc -= 2;
+            argv += 2;
+            parse_result += 1;
+            continue;
+        }
+        return 0;
+    }
+   return parse_result;
+    #endif
 }
 
 void Emulator::ThreadJoin(){
@@ -104,7 +133,7 @@ void Emulator::ThreadJoin(){
 
 void Emulator::RunMainLoop(){
     #ifdef DEBUG
-        this->Run();
+        this->MainLoop();
     #else
         this->emu_thread = make_unique<thread>(&Emulator::MainLoop, this);
         this->gui->Display();
@@ -124,6 +153,7 @@ void Emulator::MainLoop(){
     
     //TODO : テストコードのせいで汚くなったメイン関数の修正
     while(!this->gui->IsQuit()){
+        /***
         #ifdef DEBUG
             static int i = 0;
             static bool log = false;
@@ -146,21 +176,20 @@ void Emulator::MainLoop(){
                 fclose(out);
                 return;
             }
-        #else
-            if((this->cpu->IsException())||(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode())){
-                if(this->cpu->IsException()){
-                    this->cpu->HandleInterrupt(this->cpu->GetVectorNumber());
-                }else if(this->pic->HasIrq()){
-                    this->cpu->HandleInterrupt(this->pic->GetNowIrq()+0x20);                
-                }
+        ***/
+        if((this->cpu->IsException())||(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode())){
+            if(this->cpu->IsException()){
+                this->cpu->HandleInterrupt(this->cpu->GetVectorNumber());
+            }else if(this->pic->HasIrq()){
+                this->cpu->HandleInterrupt(this->pic->GetNowIrq()+0x20);                
             }
-            if(this->cpu->Run(*this)){
-                //正常
-                continue;
-            }else{
-                this->gui->Finish();
-                break;
-            }
-        #endif
+        }
+        if(this->cpu->Run(*this)){
+            //正常
+            continue;
+        }else{
+            this->gui->Finish();
+            break;
+        }
     }
 }
