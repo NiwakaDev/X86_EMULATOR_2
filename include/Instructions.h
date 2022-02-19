@@ -1634,3 +1634,9 @@ class SalRm8Imm8:public Instruction{
         SalRm8Imm8(std::string code_name);
         void Run(const Emulator& emu);
 };
+
+class RolRm32Imm8:public Instruction{
+    public: 
+        RolRm32Imm8(std::string code_name);
+        void Run(const Emulator& emu);
+};

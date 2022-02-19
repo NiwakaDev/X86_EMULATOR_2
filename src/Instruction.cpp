@@ -1082,6 +1082,7 @@ CodeC1::CodeC1(string code_name):Instruction(code_name){
     for(int i=0; i<256; i++){
         this->instructions[i] = NULL;
     }
+    this->instructions[0] = new RolRm32Imm8("RolRm32Imm8");
     this->instructions[2] = new RclRm32Imm8("RclRm32Imm8");
     this->instructions[4] = new SalRm32Imm8("SalRm32Imm8");
     this->instructions[5] = new ShrRm32Imm8("ShrRm32Imm8");
@@ -7505,4 +7506,32 @@ void SalRm8Imm8::Run(const Emulator& emu){
         }
     } 
     return;
+}
+
+RolRm32Imm8::RolRm32Imm8(string code_name):Instruction(code_name){
+
+}
+
+void RolRm32Imm8::Run(const Emulator& emu){
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        uint8_t imm8 = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
+        emu.cpu->AddEip(1);
+        uint32_t rm32 = this->GetRM32(emu);
+        if(imm8==1){
+            this->Error("Not implemented: update OF at %s::Run", this->code_name.c_str());
+        }
+        for(uint8_t i=0; i<imm8; i++){
+            if(rm32&SIGN_FLG4){
+                emu.cpu->SetFlag(CF);
+            }else{
+                emu.cpu->ClearFlag(CF);
+            }
+            rm32 = rm32 << 1;
+            rm32 = rm32|(emu.cpu->IsFlag(CF)?1:0);
+        }
+        this->SetRM32(emu, rm32);
+        return;
+    }else{
+        this->Error("Not implemented: op_size=16bit at %s::Run", this->code_name.c_str());
+    }
 }
