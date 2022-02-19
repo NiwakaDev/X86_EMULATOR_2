@@ -6192,15 +6192,26 @@ ScasM8::ScasM8(string code_name):Instruction(code_name){
 }
 
 void ScasM8::Run(const Emulator& emu){
-    if(emu.cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
-    }
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-        this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+        uint32_t base_es;
+        uint32_t edi;
+        uint32_t base_es_edi;
+        uint8_t al, m8;
+        uint64_t result;
+        uint32_t d = emu.cpu->IsFlag(DF)? -1:1;;
+        base_es = emu.cpu->GetBaseAddr(ES);
+        edi     = emu.cpu->GetR32(EDI);
+        base_es_edi = base_es+edi;
+        m8      = emu.mem->Read8(emu.cpu->GetPhysicalAddr(base_es_edi));
+        al = emu.cpu->GetR8L(EAX);
+        result = (uint32_t)al - (uint32_t)m8;
+        emu.cpu->UpdateEflagsForSub8(result, al, m8);
+        emu.cpu->SetR32(EDI, edi+d);
+        return;
     }
     uint32_t base_es;
     uint32_t di;
@@ -6208,10 +6219,10 @@ void ScasM8::Run(const Emulator& emu){
     uint8_t al, m8;
     uint32_t result;
     uint16_t d;
-    base_es = emu.cpu->GetR16(ES)*16;
+    base_es = emu.cpu->GetBaseAddr(ES);
     di     = emu.cpu->GetR16(EDI);
     base_es_di = base_es+di;
-    m8      = emu.mem->Read8(base_es_di);
+    m8      = emu.mem->Read8(emu.cpu->GetPhysicalAddr(base_es_di));
     al = emu.cpu->GetR8L(EAX);
     result = (uint32_t)al - (uint32_t)m8;
     emu.cpu->UpdateEflagsForSub8(result, al, m8);
