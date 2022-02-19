@@ -6106,24 +6106,31 @@ MovsM8M8::MovsM8M8(string code_name):Instruction(code_name){
 }
 
 void MovsM8M8::Run(const Emulator& emu){
-    if(emu.cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
-    }
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-        this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
+        uint32_t ds, es;
+        uint32_t esi, edi;
+        uint32_t d = emu.cpu->IsFlag(DF)? -1:1;
+        ds = emu.cpu->GetBaseAddr(DS);
+        esi = emu.cpu->GetR32(ESI);
+        es = emu.cpu->GetBaseAddr(ES);
+        edi = emu.cpu->GetR32(EDI);
+        emu.mem->Write(emu.cpu->GetPhysicalAddr(es+edi), emu.mem->Read8(emu.cpu->GetPhysicalAddr(ds+esi)));
+        emu.cpu->SetR32(EDI, edi+d);
+        emu.cpu->SetR32(ESI, esi+d);
+        return;
     }
     uint32_t ds, es;
     uint16_t si, di;
     uint16_t d;
-    ds = emu.cpu->GetR16(DS)*16;
+    ds = emu.cpu->GetBaseAddr(DS);
     si = emu.cpu->GetR16(ESI);
-    es = emu.cpu->GetR16(ES)*16;
+    es = emu.cpu->GetBaseAddr(ES);
     di = emu.cpu->GetR16(EDI);
-    emu.mem->Write(es+di, emu.mem->Read8(ds+si));
+    emu.mem->Write(emu.cpu->GetPhysicalAddr(es+di), emu.mem->Read8(emu.cpu->GetPhysicalAddr(ds+si)));
     d = emu.cpu->IsFlag(DF)? -1:1;
     emu.cpu->SetR16(EDI, di+d);
     emu.cpu->SetR16(ESI, si+d);
