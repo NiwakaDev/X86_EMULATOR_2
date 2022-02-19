@@ -205,7 +205,7 @@ uint32_t Cpu::GetPhysicalAddr(uint32_t linear_addr){
             unsigned base_addr:20;
         }flgs;
     }PTE;
-    if(this->cr0.flgs.PG){
+    if(this->IsProtectedMode()&&this->cr0.flgs.PG){
         uint32_t dir_idx   = (linear_addr&0xffc00000)>>22;
         uint32_t table_idx = (linear_addr&0x003FF000)>>12;
         uint32_t offset    = (linear_addr&0x00000FFF);

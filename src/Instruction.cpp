@@ -6153,14 +6153,24 @@ StosM8::StosM8(string code_name):Instruction(code_name){
 
 void StosM8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
-    if(emu.cpu->IsProtectedMode()){//下のESやDSはリアルモード仕様
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
-    }
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bits at %s::Run", this->code_name.c_str());
+        uint32_t es = emu.cpu->GetBaseAddr(ES);;
+        uint32_t edi;
+        uint32_t d  = emu.cpu->IsFlag(DF)? -1:1;;
+        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+            edi = emu.cpu->GetR32(EDI);
+        }else{
+            edi = emu.cpu->GetR16(EDI);
+        }
+        emu.mem->Write(emu.cpu->GetPhysicalAddr(es+edi), emu.cpu->GetR8L(EAX));
+        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+            emu.cpu->SetR32(EDI, edi+d);
+        }else{
+            emu.cpu->SetR16(EDI, edi+d);
+        }
     }else{
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
             this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
@@ -6168,9 +6178,9 @@ void StosM8::Run(const Emulator& emu){
         uint32_t es;
         uint16_t di;
         uint16_t d;
-        es = emu.cpu->GetR16(ES)*16;
+        es = emu.cpu->GetBaseAddr(ES);
         di = emu.cpu->GetR16(EDI);
-        emu.mem->Write(es+di, emu.cpu->GetR8L(EAX));
+        emu.mem->Write(emu.cpu->GetPhysicalAddr(es+di), emu.cpu->GetR8L(EAX));
         d = emu.cpu->IsFlag(DF)? -1:1;
         emu.cpu->SetR16(EDI, di+d);
     }
