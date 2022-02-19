@@ -5663,7 +5663,7 @@ RepneScasM8::RepneScasM8(string code_name):Instruction(code_name){
 }
 
 void RepneScasM8::Run(const Emulator& emu){
-    this->Error("Not implemented: %s::Run", this->code_name.c_str());
+    //this->Error("Not implemented: %s::Run", this->code_name.c_str());
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());

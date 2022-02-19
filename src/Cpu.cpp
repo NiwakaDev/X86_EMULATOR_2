@@ -18,6 +18,7 @@ const int  CR2_INIT_VALUE    = 0x00000000;
 const int  CS_INIT_VALUE     = 0x0000F000;
 
 Cpu::Cpu(Bios& bios, Memory& mem){
+    /***
     this->bios = &bios;
     this->mem  = &mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
@@ -92,8 +93,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         InstructionHelper::InstructionFactory instruction_factory;
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }
-
-    /***
+    ***/
     this->bios = &bios;
     this->mem  = &mem;
     this->eflags.raw = EFLAGS_INIT_VALUE;
@@ -163,7 +163,6 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         InstructionHelper::InstructionFactory instruction_factory;
         this->instructions[i] = instruction_factory.CreateInstruction(i);
     }
-    ***/
    this->is_exception_ = false;
 }
 
@@ -757,8 +756,9 @@ bool Cpu::Run(const Emulator& emu){
     static long long cnt=0;
     cnt++;
     try{//TODO: エラー処理はtry catchで処理するようにする。まだ未実装の箇所が多い。
-        eip_history.push_back(this->eip);
+        //eip_history.push_back(this->eip);
         //if(this->eip==0xD58F){
+        /***
         if(cnt==790738){
             cnt = cnt;
         }
@@ -773,16 +773,20 @@ bool Cpu::Run(const Emulator& emu){
             int i=0;
             i++;
         }
+        ***/
+        if(this->eip==0x00000026){
+            int i=0;
+            i++;
+        }
         this->InitSelector();
         this->ResetPrefixFlg();
         this->CheckPrefixCode(*(this->mem));
         uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
         if(this->instructions[op_code].get()==NULL){
-            //Dump(this->mem, this->GetLinearAddrForCodeAccess(), 512);
             this->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
         }
         this->instructions[op_code]->Run(emu);
-        instruction_history.push_back(this->instructions[op_code]->GetInstructionName());
+        //instruction_history.push_back(this->instructions[op_code]->GetInstructionName());
         //fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
         return true;
     }catch(const char* error_message){

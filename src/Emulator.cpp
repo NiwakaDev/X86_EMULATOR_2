@@ -151,7 +151,7 @@ void Emulator::MainLoop(){
                 if(this->cpu->IsException()){
                     this->cpu->HandleInterrupt(this->cpu->GetVectorNumber());
                 }else if(this->pic->HasIrq()){
-                    this->cpu->HandleInterrupt(this->pic->GetNowIrq());                
+                    this->cpu->HandleInterrupt(this->pic->GetNowIrq()+0x20);                
                 }
             }
             if(this->cpu->Run(*this)){
