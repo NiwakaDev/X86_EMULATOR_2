@@ -82,3 +82,83 @@ https://github.com/dhepper/font8x8
 <h2>フロッピーディスクの音源について</h2>
 <p>OtoLogicの素材を使用(https://otologic.jp/)</p>
 <p>フロッピーディスクの音源ファイル:Floppy_Disk_Drive02-1(Operating_Noise).mp3</p>
+
+<h2>TEST(test386)</h2>
+ <table border="1">
+    <tr>
+      <th>diagnostic code</th>
+      <th>Status</th>
+    </tr>
+    <tr>
+      <td>0x01(Conditional jumps and loops)</td>
+      <td>passed</td>
+    </tr>
+    <tr>
+      <td>0x02(Quick tests of unsigned 32-bit multiplication and division)</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x03(Move segment registers in real mode)</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x04(Store, move, scan, and compare string data in real mode)</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x05(Calls in real mode)</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x06(Load full pointer in real mode)</td>
+      <td>passed</td>
+    </tr>
+    <tr>
+      <td>0x08(GDT, LDT, PDT, and PT setup, enter protected mode)</td>
+      <td>passed</td>
+    </tr>
+    <tr>
+      <td>0x09(Stack functionality)</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x0A(Test user mode (ring 3) switching)</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x0B(Moving segment registers)</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x0A(Test user mode (ring 3) switching)</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x0C(Zero and sign-extension)</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x0D(16-bit addressing modes (LEA))</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x0E(32-bit addressing modes (LEA))</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x0F(Access memory using various addressing modes)</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x10(Store, move, scan, and compare string data in protected mode)</td>
+      <td>passed</td>
+    </tr>
+     <tr>
+      <td>0x11(Page faults and PTE bits)</td>
+      <td>failed</td>
+    </tr>
+
+  </table>
+  
+ 
+  
