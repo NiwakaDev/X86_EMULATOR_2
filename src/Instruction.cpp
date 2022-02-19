@@ -6946,56 +6946,38 @@ void RepeScasM8::Run(const Emulator& emu){
     if(emu.cpu->IsSegmentOverride()){
         this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
+    uint32_t cnt;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-        this->Error("Not implemented: op_size=32bits && addr_size=16bits at %s::Run", this->code_name.c_str());
+        cnt = emu.cpu->GetR32(ECX);
+    }else{
+        cnt = emu.cpu->GetR16(ECX);
     }
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
-        uint16_t cx = emu.cpu->GetR16(ECX);//ecxかcxは、アドレスサイズで決定される
-        uint16_t d = emu.cpu->IsFlag(DF)? -1:1;
-        uint32_t base_es = emu.cpu->GetBaseAddr(ES);
-        for(uint32_t i = 0; i<cx; i++){
-            uint16_t di;
-            uint32_t base_es_di;
-            uint8_t al, m8;
-            uint32_t result;
-            di     = emu.cpu->GetR16(EDI);
-            base_es_di = base_es+di;
-            m8      = emu.mem->Read8(base_es_di);
-            al = emu.cpu->GetR8L(EAX);
-            result = (uint32_t)al - (uint32_t)m8;
-            emu.cpu->UpdateEflagsForSub8(result, al, m8);
-            emu.cpu->SetR16(EDI, di+d);
-            emu.cpu->SetR16(ECX, emu.cpu->GetR16(ECX)-1);
-            if(!emu.cpu->IsFlag(ZF)){
-                break;
-            }
-        }
-        return;
-    }else{//16bit op_size
+    uint32_t d = emu.cpu->IsFlag(DF)? -1:1;
+    uint32_t base_es = emu.cpu->GetBaseAddr(ES);
+    for(uint32_t i = 0; i<cnt; i++){
+        uint32_t edi;
+        uint32_t base_es_edi;
+        uint8_t al, m8;
+        uint32_t result;
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-            this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+            edi     = emu.cpu->GetR32(EDI);
+        }else{
+            edi     = emu.cpu->GetR16(EDI);
         }
-        uint16_t cx = emu.cpu->GetR16(ECX);
-        for(uint16_t i = 0; i<cx; i++){
-            uint32_t base_es;
-            uint32_t di;
-            uint32_t base_es_di;
-            uint8_t al, m8;
-            uint32_t result;
-            uint16_t d;
-            base_es = emu.cpu->GetBaseAddr(ES);
-            di     = emu.cpu->GetR16(EDI);
-            base_es_di = base_es+di;
-            m8      = emu.mem->Read8(base_es_di);
-            al = emu.cpu->GetR8L(EAX);
-            result = (uint32_t)al - (uint32_t)m8;
-            emu.cpu->UpdateEflagsForSub8(result, al, m8);
-            d = emu.cpu->IsFlag(DF)? -1:1;
-            emu.cpu->SetR16(EDI, di+d);
+        base_es_edi = base_es+edi;
+        m8      = emu.mem->Read8(emu.cpu->GetPhysicalAddr(base_es_edi));
+        al = emu.cpu->GetR8L(EAX);
+        result = (uint32_t)al - (uint32_t)m8;
+        emu.cpu->UpdateEflagsForSub8(result, al, m8);
+        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+            emu.cpu->SetR32(EDI, edi+d);
+            emu.cpu->SetR32(ECX, emu.cpu->GetR32(ECX)-1);
+        }else{
+            emu.cpu->SetR16(EDI, edi+d);
             emu.cpu->SetR16(ECX, emu.cpu->GetR16(ECX)-1);
-            if(!emu.cpu->IsFlag(ZF)){//等しくなったら終了
-                break;
-            }
+        }
+        if(!emu.cpu->IsFlag(ZF)){
+            break;
         }
     }
     return;
