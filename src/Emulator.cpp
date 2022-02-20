@@ -58,7 +58,7 @@ Emulator::Emulator(int argc, char* argv[]){
     this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse.get()));
     this->fdc->gui = this->gui.get();
     this->bios->LoadIpl(this->disk_image_name, *(this->mem.get()));
-    for(int i=0; i<0x20; i++){//8086runを参考にした
+    for(int i=0; i<0x20; i++){//full.img and fd.imgで利用, 8086runを参考
         this->mem->Write(i<<2, i);
     }
     #ifdef DEBUG
@@ -143,7 +143,7 @@ void Emulator::RunMainLoop(){
 void Emulator::MainLoop(){
     #ifdef DEBUG
         FILE* out = NULL;
-        out = fopen("niwaka_output.txt", "w");
+        out = fopen("output.txt", "w");
         if(out==NULL){
             fprintf(stderr, "Error: fopen");
             exit(1);
@@ -177,6 +177,20 @@ void Emulator::MainLoop(){
                 return;
             }
         ***/
+        /***
+        #ifdef DEBUG
+            for(int i=0; i<1500000; i++){
+                if(i==1033353){
+                    i = i;
+                }
+                fprintf(out, "i:%d\n", i);
+                this->cpu->Debug(out, true);
+                this->cpu->Run(*this);
+            }
+            this->gui->Finish();
+            break;
+        #else
+        ***/
         if((this->cpu->IsException())||(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode())){
             if(this->cpu->IsException()){
                 this->cpu->HandleInterrupt(this->cpu->GetVectorNumber());
@@ -192,4 +206,7 @@ void Emulator::MainLoop(){
             break;
         }
     }
+    #ifdef DEBUG
+        fclose(out);
+    #endif
 }

@@ -156,7 +156,8 @@ Cpu::Cpu(Bios& bios, Memory& mem){
             this->instructions[i] = instruction_factory.CreateInstruction(i);
         }
     #endif
-   this->is_exception_ = false;
+    this->is_exception_ = false;
+
 }
 
 Cpu::~Cpu(){
@@ -346,7 +347,11 @@ uint32_t Cpu::GetLinearStackAddr(){
 }
 
 uint32_t Cpu::GetBaseAddr(SEGMENT_REGISTER register_type){
-    return this->segment_registers[register_type]->GetBaseAddr();
+    if(this->IsProtectedMode()){
+        return this->segment_registers[register_type]->GetBaseAddr();
+    }
+    //リアルモードでは、cacheを利用しない。なぜならセグメントセレクタの値は0もあり得るから。
+    return this->segment_registers[register_type]->GetData()*16;
 }
 
 uint16_t Cpu::GetLdtr(){

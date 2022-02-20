@@ -881,7 +881,11 @@ void MovSregRm16::Run(const Emulator& emu){
         emu.cpu->SetVectorNumber(CpuEnum::GP);
         return;
     }
-    emu.cpu->SetR16(register_type, rm16&0xFFFC);
+    if(emu.cpu->IsProtectedMode()){
+        emu.cpu->SetR16(register_type, rm16&0xFFFC);
+    }else{
+        emu.cpu->SetR16(register_type, rm16);
+    }
 }   
 
 MovR8Rm8::MovR8Rm8(string code_name):Instruction(code_name){
