@@ -244,6 +244,9 @@ void Cpu::SetCr(CONTROL_REGISTER control_register_type, uint32_t data){
             this->cr0.raw = data;
             //if(this->cr0.flgs.PG)this->Error("Not implemented: paging at Cpu::SetCr");
             break;
+        case CR2:
+            this->cr2 = data;
+            break;
         case CR3:
             this->cr3.raw = data;
             break;
@@ -735,7 +738,7 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "TR =%04X %08X\n", this->task_register->GetData(), this->task_register->GetBaseAddr());
     fprintf(stderr, "GDT=%08X %08X\n", this->gdtr->GetBase(), this->gdtr->GetLimit());
     fprintf(stderr, "IDT=%08X %08X\n", this->idtr->GetBase(), this->idtr->GetLimit());
-    fprintf(stderr, "CR0=%08X\n", this->cr0.raw);
+    fprintf(stderr, "CR0=%08X CR2=%08X\n", this->cr0.raw, this->cr2);
     fprintf(stderr, "MODE = %s\n", this->IsProtectedMode()?"PROTECTED" : "REAL");
 }
 
