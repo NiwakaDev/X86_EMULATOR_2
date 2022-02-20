@@ -5265,9 +5265,6 @@ LodsM8::LodsM8(string code_name):Instruction(code_name){
 }
 
 void LodsM8::Run(const Emulator& emu){
-    if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
-    }
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
         uint32_t ds;
