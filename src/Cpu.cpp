@@ -26,6 +26,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         this->eip = EIP_INIT_VALUE;
         this->eflags.raw = EFLAGS_INIT_VALUE;
         this->cr0.raw = CR0_INIT_VALUE;
+        this->cr2     = CR2_INIT_VALUE;
         for(int i=0; i<SEGMENT_REGISTER_COUNT; i++){
             if(i==CS){
                 this->segment_registers[CS] = make_unique<SegmentRegister>(CS_INIT_VALUE);

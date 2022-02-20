@@ -210,6 +210,7 @@ class Cpu:public Object{
                 unsigned PG:1;
             }flgs;
         }cr0;
+        uint32_t cr2;//cr2は全体がページフォルトリニアアドレスとなり、unionである必要はない。
         union{
             uint32_t raw;
             struct{
