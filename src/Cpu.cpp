@@ -212,6 +212,7 @@ uint32_t Cpu::GetPhysicalAddr(uint32_t linear_addr){
         uint32_t physical_base_addr = PTE.raw&0xFFFFF000;
         uint32_t physical_addr = physical_base_addr+offset;
         if((!PTE.flgs.P)||(!PDE.flgs.P)){//P (Present) : 1(exist), 0(not exist)
+            this->cr2 = linear_addr;
             this->Error("Not implemented: page fault at Cpu::GetPhysicalAddr");
         }
         return physical_addr;

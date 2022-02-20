@@ -36,6 +36,7 @@ namespace CpuEnum{
         NP = 11,
         SS_VECTOR = 12,
         GP = 13,
+        PF = 14,
         VECTOR_NUMBER_CNT=2,
     };
     enum GATE_DESC_TYPE{
