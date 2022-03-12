@@ -94,6 +94,13 @@
 
   </table>
   
+<h3>How to test on test386.bin</h3>
+
+```
+make clean
+make x86_test
+./x86_test -i haribote.img -b test386.bin
+```
 
 <h2>1.ビルド</h2>
 

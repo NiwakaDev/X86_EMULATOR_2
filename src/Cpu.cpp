@@ -213,7 +213,20 @@ uint32_t Cpu::GetPhysicalAddr(uint32_t linear_addr){
         uint32_t physical_addr = physical_base_addr+offset;
         if((!PTE.flgs.P)||(!PDE.flgs.P)){//P (Present) : 1(exist), 0(not exist)
             this->cr2 = linear_addr;
-            this->Error("Not implemented: page fault at Cpu::GetPhysicalAddr");
+            this->SetException(0);
+            this->SetVectorNumber(CpuEnum::PF);
+            this->HandleInterrupt(this->GetVectorNumber());
+            uint32_t dir_idx   = (linear_addr&0xffc00000)>>22;
+            uint32_t table_idx = (linear_addr&0x003FF000)>>12;
+            uint32_t offset    = (linear_addr&0x00000FFF);
+            uint32_t dir_base_addr  = this->cr3.raw&0xFFFFF000;
+            uint32_t dir_addr       = dir_base_addr+(dir_idx<<2);
+            PDE.raw  = this->mem->Read32(dir_addr); 
+            uint32_t page_base_addr = PDE.raw&0xFFFFF000;
+            uint32_t page_addr      = page_base_addr+(table_idx<<2);
+            PTE.raw  = this->mem->Read32(page_addr);
+            uint32_t physical_base_addr = PTE.raw&0xFFFFF000;
+            uint32_t physical_addr = physical_base_addr+offset;
         }
         return physical_addr;
     }
@@ -276,6 +289,8 @@ uint32_t Cpu::GetCr(CONTROL_REGISTER control_register_type){
     switch(control_register_type){
         case CR0:
             return this->cr0.raw;
+        case CR2:
+            return this->cr2;
         default:
             this->Error("Not implemented: cr%d at Cpu::GetCr", control_register_type);
     }
@@ -674,7 +689,7 @@ void Cpu::HandleInterrupt(int irq_num){
         this->Push32(this->eflags.raw);
         this->Push32(this->segment_registers[CS]->GetData());
         this->Push32(this->eip);
-        if(this->vector_number_==CpuEnum::GP||(this->vector_number_==CpuEnum::NP)||(this->vector_number_==CpuEnum::SS_VECTOR)){
+        if(this->vector_number_==CpuEnum::GP||(this->vector_number_==CpuEnum::NP)||(this->vector_number_==CpuEnum::SS_VECTOR)||(this->vector_number_==CpuEnum::PF)){
             this->Push32(this->error_code_);
         }
         this->eip = offset_addr;
@@ -694,7 +709,7 @@ void Cpu::HandleInterrupt(int irq_num){
         this->Push32(eflags);
         this->Push32(cs);
         this->Push32(eip);
-        if((this->vector_number_==CpuEnum::GP)||(this->vector_number_==CpuEnum::NP)||(this->vector_number_==CpuEnum::SS_VECTOR)){
+        if(this->vector_number_==CpuEnum::GP||(this->vector_number_==CpuEnum::NP)||(this->vector_number_==CpuEnum::SS_VECTOR)||(this->vector_number_==CpuEnum::PF)){
             this->Push32(this->error_code_);
         }
         this->SetEip(offset_addr);
@@ -760,24 +775,22 @@ bool Cpu::Run(const Emulator& emu){
         static long long cnt=0;
         cnt++;
         try{//TODO: エラー処理はtry catchで処理するようにする。まだ未実装の箇所が多い。
-            //eip_history.push_back(this->eip);
+            eip_history.push_back(this->eip);
             //if(this->eip==0xD58F){
-            /***
             if(cnt==790738){
                 cnt = cnt;
             }
             if(this->eip==0x0000D58F){
-                for(int i=eip_history.size()-100; i<eip_history.size(); i++){
+                for(int i=eip_history.size()-1000; i<eip_history.size(); i++){
                     fprintf(stderr, "EIP=0x%08X %s\n", eip_history[i], instruction_history[i].c_str());
                 }
                 fprintf(stderr, "cnt=%d\n", cnt);
                 throw "\n";
             }
-            if(this->eip==0x000057f9){
+            if(this->eip==0x000077AC){
                 int i=0;
                 i++;
             }
-            ***/
             if(this->eip==0x00000026){
                 int i=0;
                 i++;
@@ -790,7 +803,7 @@ bool Cpu::Run(const Emulator& emu){
                 this->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
             }
             this->instructions[op_code]->Run(emu);
-            //instruction_history.push_back(this->instructions[op_code]->GetInstructionName());
+            instruction_history.push_back(this->instructions[op_code]->GetInstructionName());
             //fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
             return true;
         }catch(const char* error_message){
@@ -812,6 +825,9 @@ bool Cpu::Run(const Emulator& emu){
         }catch(const char* error_message){
             cerr << error_message << endl;
             this->ShowRegisters();
+            return false;
+        }catch(const int page_fault){
+            fprintf(stderr, "Error\n");
             return false;
         }
     #endif
