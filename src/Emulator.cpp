@@ -20,6 +20,7 @@ const int BIOS_ROM_SIZE = 65536;
 
 Emulator::Emulator(int argc, char* argv[]){
     #ifdef DEBUG
+        /***
         if(this->ParseArgv(argc, argv)<=1){
             fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
             fprintf(stderr, "       -image, -i : disk-image-name\n");
@@ -27,6 +28,9 @@ Emulator::Emulator(int argc, char* argv[]){
             fprintf(stderr, "               -b : bios-name\n");
             exit(EXIT_FAILURE);
         }
+        ***/
+        this->disk_image_name = "haribote.img";
+        this->bios_name       = "test386.bin";
     #else
         if(this->ParseArgv(argc, argv)==0){
             fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");

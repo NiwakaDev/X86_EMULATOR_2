@@ -99,7 +99,7 @@
 ```
 make clean
 make x86_test
-./x86_test -i haribote.img -b test386.bin
+./x86_test
 ```
 
 <h2>1.ビルド</h2>
