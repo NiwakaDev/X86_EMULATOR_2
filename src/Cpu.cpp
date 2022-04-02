@@ -745,6 +745,7 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "EAX=%08X EBX=%08X ECX=%08X EDX=%08X\n", *this->gprs[EAX], *this->gprs[EBX], *this->gprs[ECX], *this->gprs[EDX]);
     fprintf(stderr, "ESI=%08X EDI=%08X EBP=%08X ESP=%08X\n", *this->gprs[ESI], *this->gprs[EDI], *this->gprs[EBP], *this->gprs[ESP]);
     fprintf(stderr, "EIP=%08X\n", this->eip);
+    fprintf(stderr, "EFLAGS=%08X\n", this->eflags.raw);
     fprintf(stderr, "ES =%04X %08X DPL=%d\n", this->segment_registers[ES]->GetData(), this->segment_registers[ES]->GetBaseAddr(), this->segment_registers[ES]->GetDpl());
     fprintf(stderr, "CS =%04X %08X DPL=%d\n", this->segment_registers[CS]->GetData(), this->segment_registers[CS]->GetBaseAddr(), this->segment_registers[CS]->GetDpl());
     fprintf(stderr, "SS =%04X %08X DPL=%d\n", this->segment_registers[SS]->GetData(), this->segment_registers[SS]->GetBaseAddr(), this->segment_registers[SS]->GetDpl());
@@ -771,9 +772,11 @@ void Cpu::Debug(FILE *f, bool h) {
 
 bool Cpu::Run(const Emulator& emu){
     #ifdef DEBUG
+        static FILE* fp=NULL;
         static vector<uint32_t> eip_history;
         static vector<string> instruction_history;
         static long long cnt=0;
+        static bool flg=false;
         cnt++;
         try{//TODO: エラー処理はtry catchで処理するようにする。まだ未実装の箇所が多い。
             eip_history.push_back(this->eip);
@@ -788,13 +791,23 @@ bool Cpu::Run(const Emulator& emu){
                 fprintf(stderr, "cnt=%d\n", cnt);
                 throw "\n";
             }
+            if(this->eip==0x000078A1){
+                int i=0;
+                i++;
+            }
             if(this->eip==0x000077A7){
                 int i=0;
                 i++;
             }
-            if(this->eip==0x000077AC){
+            if((!flg)&&this->eip==0x000077AC){
                 int i=0;
                 i++;
+                flg = true;
+                fp = fopen("x86_linearaddr_log.txt", "w");
+            }
+            if(flg){
+                fprintf(fp, "0x%08X\n", this->eip);
+                fprintf(stderr, "0x%08X\n", this->GetLinearAddrForCodeAccess());
             }
             if(this->eip==0x00000026){
                 int i=0;
@@ -805,6 +818,9 @@ bool Cpu::Run(const Emulator& emu){
             this->CheckPrefixCode(*(this->mem));
             uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
             if(this->instructions[op_code].get()==NULL){
+                if(fp!=NULL){
+                    fclose(fp);
+                }
                 this->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
             }
             this->instructions[op_code]->Run(emu);

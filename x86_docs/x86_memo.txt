@@ -152,7 +152,7 @@ bochsrcという設定ファイルを用意し、そこに書き込んだもの�
 
 SDL2のbochsのビルド方法(bochs-2.6.11の場合)
 
-./configure --with-sdl2
+./configure --enable-debugger --with-sdl2
 make
 
 はりぼてOSが動く.bochsrcの設定
@@ -165,3 +165,23 @@ vgaromimage: file=./bios/VGABIOS-lgpl-latest
  ./bochs -q -f ./.bochsrc
  で動く
 
+
+bochsによるデバッグ方法
+    b EIP値
+    ->ブレークポイント
+
+現時点のバグ
+2回目のリニアアドレス=0x000F77ACの時点で、
+bochsでは、eax=0x0049f000
+自作エミュ、eax=0x50465046
+となっている。
+x86_line   = 0x000F76C2
+bochs_line = 0x000F76C1
+で一致しない
+直前の命令をEIPを見ると、
+どちらも0x000F78A1となっている。
+つまり、その命令から戻るときにおかしくなっている。
+0x000078A1は自作エミュレータだと一回しか訪れていない。
+
+bochsエミュレータにはコマンド列をまとめて渡せる仕組みがあるので、そこ
+いじれば、各機械語命令ごとのレジスタ値が手に入るかも?
