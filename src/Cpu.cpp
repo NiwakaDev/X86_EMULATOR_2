@@ -288,6 +288,7 @@ uint16_t Cpu::GetR16(SEGMENT_REGISTER register_type){
 uint32_t Cpu::GetCr(CONTROL_REGISTER control_register_type){
     switch(control_register_type){
         case CR0:
+            if(this->cr0.flgs.WP)this->Error("Not implemented: CR0.WP=1 at Cpu::GetCr");
             return this->cr0.raw;
         case CR2:
             return this->cr2;
@@ -786,6 +787,10 @@ bool Cpu::Run(const Emulator& emu){
                 }
                 fprintf(stderr, "cnt=%d\n", cnt);
                 throw "\n";
+            }
+            if(this->eip==0x000077A7){
+                int i=0;
+                i++;
             }
             if(this->eip==0x000077AC){
                 int i=0;
