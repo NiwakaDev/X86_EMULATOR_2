@@ -149,3 +149,19 @@ bochsrcという設定ファイルを用意し、そこに書き込んだもの�
 上の例だと、30M.sampleがディスクイメージとして採用され、起動デバイスとして、ハードディスクが採用される。
 使用するディスクイメージや起動ディスクの指定が行える。
 詳しくは、https://bochs.sourceforge.io/doc/docbook/user/bochsrc.htmlが参考になる。
+
+SDL2のbochsのビルド方法(bochs-2.6.11の場合)
+
+./configure --with-sdl2
+make
+
+はりぼてOSが動く.bochsrcの設定
+floppya: 1_44=floppya.img, status=inserted
+boot: floppy
+romimage: file=./bios/BIOS-bochs-latest, address=0xfffe0000
+vgaromimage: file=./bios/VGABIOS-lgpl-latest
+
+ターミナルから、
+ ./bochs -q -f ./.bochsrc
+ で動く
+
