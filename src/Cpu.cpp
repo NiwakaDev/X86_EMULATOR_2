@@ -786,9 +786,9 @@ bool Cpu::Run(const Emulator& emu){
             }
             if(this->eip==0x0000D58F){
                 for(int i=eip_history.size()-1000; i<eip_history.size(); i++){
-                    fprintf(stderr, "EIP=0x%08X %s\n", eip_history[i], instruction_history[i].c_str());
+                    //fprintf(stderr, "EIP=0x%08X %s\n", eip_history[i], instruction_history[i].c_str());
                 }
-                fprintf(stderr, "cnt=%d\n", cnt);
+                //fprintf(stderr, "cnt=%d\n", cnt);
                 throw "\n";
             }
             if(this->eip==0x000078A1){
@@ -806,8 +806,11 @@ bool Cpu::Run(const Emulator& emu){
                 fp = fopen("x86_linearaddr_log.txt", "w");
             }
             if(flg){
-                fprintf(fp, "0x%08X\n", this->eip);
-                fprintf(stderr, "0x%08X\n", this->GetLinearAddrForCodeAccess());
+                //fprintf(fp, "0x%08X\n", this->eip);
+                //fprintf(stderr, "0x%08X\n", this->GetLinearAddrForCodeAccess());
+            }
+            if(this->eip==0x000076c1){
+                fprintf(stderr, "0x%08X", this->eip);
             }
             if(this->eip==0x00000026){
                 int i=0;
