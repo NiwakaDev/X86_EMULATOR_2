@@ -676,7 +676,6 @@ void Cpu::HandleInterrupt(int irq_num){
     //TODO : 変数の宣言のスコープを縮める。
     //irq_num = irq_num + 0x20;
     if(this->is_exception_)this->is_exception_=false;
-    uint16_t cs, ss;
     uint32_t eip, eflags, esp;
     uint32_t offset_addr;
     uint8_t cpl, dest_code_segment_dpl;
@@ -697,10 +696,10 @@ void Cpu::HandleInterrupt(int irq_num){
         this->segment_registers[CS]->Set(idt_gate->selector, *this);
         this->eflags.flgs.IF = 0;
     }else if(dest_code_segment_dpl<cpl){
-        ss = this->GetR16(SS);
+        uint16_t ss = this->GetR16(SS);
         eflags = this->GetEflgs();
         esp = this->GetR32(ESP);
-        cs = this->GetR16(CS);
+        uint16_t cs = this->GetR16(CS);
         eip = this->GetEip();
         tss = this->GetCurrentTss();
         this->SetR16(SS, tss->ss0);
@@ -785,7 +784,7 @@ bool Cpu::Run(const Emulator& emu){
                 cnt = cnt;
             }
             if(this->eip==0x0000D58F){
-                for(int i=eip_history.size()-1000; i<eip_history.size(); i++){
+                for(int i=eip_history.size()-100; i<eip_history.size(); i++){
                     fprintf(stderr, "EIP=0x%08X %s\n", eip_history[i], instruction_history[i].c_str());
                 }
                 fprintf(stderr, "cnt=%d\n", cnt);
