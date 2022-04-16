@@ -676,7 +676,7 @@ void Cpu::HandleInterrupt(int irq_num){
     //TODO : 変数の宣言のスコープを縮める。
     //irq_num = irq_num + 0x20;
     if(this->is_exception_)this->is_exception_=false;
-    uint16_t selector, cs, ss;
+    uint16_t cs, ss;
     uint32_t eip, eflags, esp;
     uint32_t offset_addr;
     uint8_t cpl, dest_code_segment_dpl;
@@ -786,9 +786,9 @@ bool Cpu::Run(const Emulator& emu){
             }
             if(this->eip==0x0000D58F){
                 for(int i=eip_history.size()-1000; i<eip_history.size(); i++){
-                    //fprintf(stderr, "EIP=0x%08X %s\n", eip_history[i], instruction_history[i].c_str());
+                    fprintf(stderr, "EIP=0x%08X %s\n", eip_history[i], instruction_history[i].c_str());
                 }
-                //fprintf(stderr, "cnt=%d\n", cnt);
+                fprintf(stderr, "cnt=%d\n", cnt);
                 throw "\n";
             }
             if(this->eip==0x000078A1){
@@ -796,6 +796,10 @@ bool Cpu::Run(const Emulator& emu){
                 i++;
             }
             if(this->eip==0x000077A7){
+                int i=0;
+                i++;
+            }
+            if(this->eip==0x000078A2){
                 int i=0;
                 i++;
             }

@@ -187,5 +187,13 @@ bochs_line = 0x000F76C1
 が実行されている。ここで、bochsはページフォールトが発生しており、
 自作エミュレータではページフォールトが発生していない。
 
+   3611     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+-> 3612         emu.cpu->SetR32(EAX, emu.mem->Read32(emu.cpu->GetLinearAddrForDataAccess(emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess()))));
+   3613         emu.cpu->AddEip(4);
+   3614         return;
+
+3612行のemu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess())を実行する前と後でページアドレスに変化が生じている。
+一度ページフォールトが発生することで、eipが内部で変更されているのかもしれない。
+
 bochsエミュレータにはコマンド列をまとめて渡せる仕組みがあるので、そこ
 いじれば、各機械語命令ごとのレジスタ値が手に入るかも?
