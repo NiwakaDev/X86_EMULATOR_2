@@ -29,20 +29,20 @@ void Timer::Out8(const uint16_t addr, const uint8_t data){
                 this->timer_thread->join();
                 delete this->timer_thread;
             }
-            break;
+            return;
         case PIT_CHANNEL_0:
             if(mode==0){
                 cycle = 0;
                 cycle = data;
                 mode = 1;
-                break;
+                return;
             }else if(mode==1){
                 cycle  = cycle | (((uint32_t)data)<<8);  
                 cycle  = (uint32_t)ceil(((double)clock) / ((double)cycle));
                 mode   = 3;
                 this->enable = true;
                 this->timer_thread =  new thread(&Timer::Run, this, cycle);
-                break;
+                return;
             }
         default:
             this->Error("Not implemented: io_addr(0x%02X) at Timer::Out8");
