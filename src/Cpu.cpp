@@ -748,34 +748,34 @@ void Cpu::ShowRegisters(){
     fprintf(stderr, "MODE = %s\n", this->IsProtectedMode()?"PROTECTED" : "REAL");
 }
 
-//TODO : bool引数はenumに変更すべき
+//TODO : bool hの削除
 void Cpu::Debug(FILE *f, bool h) {
-    if(this->IsProtectedMode()){
-        //TODO: ShowRegistersと似ている処理なので、関数化する予定
-        fprintf(f, "EAX=%08X EBX=%08X ECX=%08X EDX=%08X\n", *this->gprs[EAX], *this->gprs[EBX], *this->gprs[ECX], *this->gprs[EDX]);
-        fprintf(f, "ESI=%08X EDI=%08X EBP=%08X ESP=%08X\n", *this->gprs[ESI], *this->gprs[EDI], *this->gprs[EBP], *this->gprs[ESP]);
-        fprintf(f, "EIP=%08X\n", this->eip);
-        fprintf(f, "EFLAGS=%08X\n", this->eflags.raw);
-        fprintf(f, "ES =%04X %08X DPL=%d\n", this->segment_registers[ES]->GetData(), this->segment_registers[ES]->GetBaseAddr(), this->segment_registers[ES]->GetDpl());
-        fprintf(f, "CS =%04X %08X DPL=%d\n", this->segment_registers[CS]->GetData(), this->segment_registers[CS]->GetBaseAddr(), this->segment_registers[CS]->GetDpl());
-        fprintf(f, "SS =%04X %08X DPL=%d\n", this->segment_registers[SS]->GetData(), this->segment_registers[SS]->GetBaseAddr(), this->segment_registers[SS]->GetDpl());
-        fprintf(f, "DS =%04X %08X DPL=%d\n", this->segment_registers[DS]->GetData(), this->segment_registers[DS]->GetBaseAddr(), this->segment_registers[DS]->GetDpl());
-        fprintf(f, "FS =%04X %08X DPL=%d\n", this->segment_registers[FS]->GetData(), this->segment_registers[FS]->GetBaseAddr(), this->segment_registers[FS]->GetDpl());
-        fprintf(f, "GS =%04X %08X DPL=%d\n", this->segment_registers[GS]->GetData(), this->segment_registers[GS]->GetBaseAddr(), this->segment_registers[GS]->GetDpl());
-        fprintf(f, "LDT=%04X %08X\n", this->ldtr->GetData(), this->ldtr->GetBaseAddr());
-        fprintf(f, "TR =%04X %08X\n", this->task_register->GetData(), this->task_register->GetBaseAddr());
-        fprintf(f, "GDT=%08X %08X\n", this->gdtr->GetBase(), this->gdtr->GetLimit());
-        fprintf(f, "IDT=%08X %08X\n", this->idtr->GetBase(), this->idtr->GetLimit());
-        fprintf(f, "CR0=%08X CR2=%08X\n", this->cr0.raw, this->cr2);
-        fprintf(f, "MODE = %s\n", this->IsProtectedMode()?"PROTECTED" : "REAL");
-        return; 
-    }
+    //TODO: ShowRegistersと似ている処理なので、関数化する予定
+    fprintf(f, "EAX=%08X EBX=%08X ECX=%08X EDX=%08X\n", *this->gprs[EAX], *this->gprs[EBX], *this->gprs[ECX], *this->gprs[EDX]);
+    fprintf(f, "ESI=%08X EDI=%08X EBP=%08X ESP=%08X\n", *this->gprs[ESI], *this->gprs[EDI], *this->gprs[EBP], *this->gprs[ESP]);
+    fprintf(f, "EIP=%08X\n", this->eip);
+    fprintf(f, "EFLAGS=%08X\n", this->eflags.raw);
+    fprintf(f, "ES =%04X %08X DPL=%d\n", this->segment_registers[ES]->GetData(), this->segment_registers[ES]->GetBaseAddr(), this->segment_registers[ES]->GetDpl());
+    fprintf(f, "CS =%04X %08X DPL=%d\n", this->segment_registers[CS]->GetData(), this->segment_registers[CS]->GetBaseAddr(), this->segment_registers[CS]->GetDpl());
+    fprintf(f, "SS =%04X %08X DPL=%d\n", this->segment_registers[SS]->GetData(), this->segment_registers[SS]->GetBaseAddr(), this->segment_registers[SS]->GetDpl());
+    fprintf(f, "DS =%04X %08X DPL=%d\n", this->segment_registers[DS]->GetData(), this->segment_registers[DS]->GetBaseAddr(), this->segment_registers[DS]->GetDpl());
+    fprintf(f, "FS =%04X %08X DPL=%d\n", this->segment_registers[FS]->GetData(), this->segment_registers[FS]->GetBaseAddr(), this->segment_registers[FS]->GetDpl());
+    fprintf(f, "GS =%04X %08X DPL=%d\n", this->segment_registers[GS]->GetData(), this->segment_registers[GS]->GetBaseAddr(), this->segment_registers[GS]->GetDpl());
+    fprintf(f, "LDT=%04X %08X\n", this->ldtr->GetData(), this->ldtr->GetBaseAddr());
+    fprintf(f, "TR =%04X %08X\n", this->task_register->GetData(), this->task_register->GetBaseAddr());
+    fprintf(f, "GDT=%08X %08X\n", this->gdtr->GetBase(), this->gdtr->GetLimit());
+    fprintf(f, "IDT=%08X %08X\n", this->idtr->GetBase(), this->idtr->GetLimit());
+    fprintf(f, "CR0=%08X CR2=%08X\n", this->cr0.raw, this->cr2);
+    fprintf(f, "MODE = %s\n", this->IsProtectedMode()?"PROTECTED" : "REAL");
+    /***
+    //8086runというエミュレータとの比較に使えるので、残しておく。
     //if (h) fprintf(f, " AX   BX   CX   DX   SP   BP   SI   DI    FLAGS    ES   SS   DS   CS   IP  dump\n");
     if (h) fprintf(f, " AX   BX   CX   DX   SP   BP   SI   DI   ES   SS   DS   CS   IP   P(EFLAGS) S(EFLAGS)\n");
         fprintf(f,
             "%04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %04x %c %c\n",
             this->GetR16(EAX), this->GetR16(EBX), this->GetR16(ECX), this->GetR16(EDX), this->GetR16(ESP), this->GetR16(EBP), this->GetR16(ESI), this->GetR16(EDI),
             this->segment_registers[ES]->GetData(), this->segment_registers[SS]->GetData(), this->segment_registers[DS]->GetData(), this->segment_registers[CS]->GetData(), this->eip, this->eflags.flgs.PF?'P':'-', this->eflags.flgs.SF?'S':'-');
+    ***/
 }
 
 bool Cpu::Run(const Emulator& emu){

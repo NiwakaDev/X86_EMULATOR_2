@@ -34,6 +34,7 @@ Emulator::Emulator(int argc, char* argv[]){
         //TODO : ステップ数を指定できる。(デフォルトは無限ループ)
         //TODO : 各機械語命令実行前と実行後の状態を、ファイルとして出力する。(ただし、無限ループではそれを許可しない。)
         //int steps = -1;
+        this->steps=100;
     #else
         if(this->ParseArgv(argc, argv)==0){
             fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
@@ -149,6 +150,7 @@ void Emulator::RunMainLoop(){
 
 void Emulator::MainLoop(){
     #ifdef DEBUG
+        int now_steps=0;
         FILE* out = NULL;
         out = fopen("output.txt", "w");
         if(out==NULL){
@@ -157,7 +159,6 @@ void Emulator::MainLoop(){
         }
         fprintf(stderr, "DEBUG\n");
     #endif
-    
     //TODO : テストコードのせいで汚くなったメイン関数の修正
     while(!this->gui->IsQuit()){
         /***
@@ -212,6 +213,18 @@ void Emulator::MainLoop(){
             this->gui->Finish();
             break;
         }
+        #ifdef DEBUG
+            now_steps++;
+            //this->steps!=-1が真の場合は、実行回数に制限をかける。
+            bool limit = this->steps!=-1;
+            if(limit){
+                this->cpu->Debug(out, true);
+            }
+            if(limit&&(now_steps>=this->steps)){
+                this->gui->Finish();
+                break;
+            }
+        #endif
     }
     #ifdef DEBUG
         fclose(out);

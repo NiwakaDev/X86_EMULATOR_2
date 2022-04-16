@@ -18,6 +18,7 @@ IoPort::IoPort(Vga& vga, Pic& pic, Kbc& kbc, Timer& timer, Fdc& fdc){
     this->fdc   = &fdc;
 }
 
+//TODO : マジックナンバーを定数化
 void IoPort::Out8(const uint16_t addr, const uint8_t data){
     switch(addr){
         case FDC_CONFIGURATION_CONTROL_REGISTER:

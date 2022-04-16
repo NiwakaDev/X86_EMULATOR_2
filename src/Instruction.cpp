@@ -8,6 +8,7 @@
 using namespace std;
 using namespace chrono;
 
+//TODO : defineをconstに変更
 #define LSB 0x01
 #define MSB_8 0x80
 #define MSB_16 0x8000
@@ -148,6 +149,8 @@ inline void Instruction::ParseRegIdx(const Emulator& emu){
     emu.cpu->AddEip(1);//ModRMの内容を読み込んだので、次の番地へ
 }
 
+//TODO : 
+//modrm関連の処理のリファクタリング
 inline uint32_t Instruction::GetEffectiveAddr(const Emulator& emu){
     uint32_t disp8;
     uint32_t disp32;

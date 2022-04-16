@@ -6,6 +6,8 @@
 
 using namespace std;
 
+//SCALEの設定に深い意味はないです。
+//それっぽい数値にしただけです。
 const int MOVE_SCALE           = 5;
 const int WIDTH_DISPLAY_SCALE  = 1;
 const int HEIGHT_DISPLAY_SCALE = 2;
