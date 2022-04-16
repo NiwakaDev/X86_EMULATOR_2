@@ -327,43 +327,37 @@ void Cpu::CallFunctionOnRealMode(uint8_t selector){
     this->bios->CallFunction(*this, *this->mem, selector);
 }
 
-uint32_t Cpu::GetLinearAddrForCodeAccess(){
-    uint32_t base_addr;
-    uint32_t offset;
-    
+uint32_t Cpu::GetLinearAddrForCodeAccess(){    
     if(this->cr0.flgs.PE){
-        base_addr = this->segment_registers[this->default_code_selector]->GetBaseAddr();
+        uint32_t base_addr = this->segment_registers[this->default_code_selector]->GetBaseAddr();
         return this->GetPhysicalAddr(base_addr + this->GetEip());
     }
-    base_addr = ((uint32_t)this->segment_registers[CS]->GetData())*16;
-    offset    = 0x0000FFFF & this->eip;
+    uint32_t base_addr = ((uint32_t)this->segment_registers[CS]->GetData())*16;
+    uint32_t offset    = 0x0000FFFF & this->eip;
     return (base_addr + offset)&0x000FFFFF;//下位20bitがリアルモードにおいてのリニアアドレス
 }
 
 uint32_t Cpu::GetLinearAddrForDataAccess(uint32_t offset){
-    uint32_t base_addr;
     if(this->cr0.flgs.PE){
-        base_addr = this->segment_registers[this->default_data_selector]->GetBaseAddr();
+        uint32_t base_addr = this->segment_registers[this->default_data_selector]->GetBaseAddr();
         return this->GetPhysicalAddr(base_addr + offset);
     }
-    base_addr = ((uint32_t)this->segment_registers[this->default_data_selector]->GetData())*16;
+    uint32_t base_addr = ((uint32_t)this->segment_registers[this->default_data_selector]->GetData())*16;
     offset    = 0x0000FFFF & offset;
     return (base_addr + offset)&0x000FFFFF;//下位20bitがリアルモードにおいてのリニアアドレス
 }
 
 uint32_t Cpu::GetLinearStackAddr(){
-    uint32_t base_addr;
-    uint32_t offset;
     if(this->cr0.flgs.PE){
-        offset    = *this->gprs[ESP];
+        uint32_t offset    = *this->gprs[ESP];
         if(!this->IsStackAddr32()){
             offset = offset&0x0000FFFF;
         }
-        base_addr = this->segment_registers[this->default_stack_selector]->GetBaseAddr();
+        uint32_t base_addr = this->segment_registers[this->default_stack_selector]->GetBaseAddr();
         return this->GetPhysicalAddr(offset + base_addr);
     }
-    offset    = 0x0000FFFF & *this->gprs[ESP];
-    base_addr = ((uint32_t)this->segment_registers[this->default_stack_selector]->GetData())*16;
+    uint32_t offset    = 0x0000FFFF & *this->gprs[ESP];
+    uint32_t base_addr = ((uint32_t)this->segment_registers[this->default_stack_selector]->GetData())*16;
     return (base_addr + offset)&0x000FFFFF;//下位20bitがリアルモードにおいてのリニアアドレス
 }
 
@@ -626,8 +620,7 @@ inline void Cpu::Push32(uint32_t data){
 }
 
 void Cpu::SaveTask(uint16_t selector){
-    uint16_t prev_selector;
-    prev_selector = this->task_register->GetData();
+    uint16_t prev_selector = this->task_register->GetData();
     this->task_register->Set(selector, *this);
     GdtGate*gdt_gate = this->GetGdtGate(prev_selector);
     uint32_t task_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
