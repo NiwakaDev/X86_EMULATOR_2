@@ -97,6 +97,12 @@
 <h3>How to test on test386.bin</h3>
 
 ```
+./test.sh
+```
+
+or
+
+```
 make clean
 make x86_test
 ./x86_test
