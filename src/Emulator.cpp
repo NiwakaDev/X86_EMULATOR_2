@@ -31,6 +31,9 @@ Emulator::Emulator(int argc, char* argv[]){
         ***/
         this->disk_image_name = "haribote.img";
         this->bios_name       = "test386.bin";
+        //TODO : ステップ数を指定できる。(デフォルトは無限ループ)
+        //TODO : 各機械語命令実行前と実行後の状態を、ファイルとして出力する。(ただし、無限ループではそれを許可しない。)
+        //int steps = -1;
     #else
         if(this->ParseArgv(argc, argv)==0){
             fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");

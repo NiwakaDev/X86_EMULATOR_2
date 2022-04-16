@@ -22,6 +22,9 @@ class Emulator:public Object{
         ~Emulator();
         void ThreadJoin();
         void RunMainLoop();
+        #ifdef DEBUG
+            int steps=-1;
+        #endif
     private:
         std::unique_ptr<Bios> bios;
         std::unique_ptr<Gui> gui;
