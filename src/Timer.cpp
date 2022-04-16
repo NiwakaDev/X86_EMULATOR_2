@@ -12,7 +12,7 @@ Timer::Timer():IoDevice(){
 Timer::~Timer(){
     if(this->timer_thread!=nullptr){
         this->enable = false;
-        this->timer_thread->join();//それまでのタイマースレッドを終了させる。
+        this->timer_thread->join();
         delete this->timer_thread;
     }
 }
@@ -26,7 +26,7 @@ void Timer::Out8(const uint16_t addr, const uint8_t data){
             mode = 0;
             this->enable = false;
             if(this->timer_thread!=nullptr){
-                this->timer_thread->join();//それまでのタイマースレッドを終了させる。
+                this->timer_thread->join();
                 delete this->timer_thread;
             }
             break;
@@ -57,8 +57,13 @@ uint8_t Timer::In8(const uint16_t addr){
 
 void Timer::Run(uint32_t cycle){
     while(this->enable){
-        sleep_for(milliseconds(cycle));
-        this->Push(0);
+        #ifdef DEBUG
+            //デバッグ状態では、レジスタ状態を再現性のあるものにしたい。
+            //だから、何もしない。
+        #else
+            sleep_for(milliseconds(cycle));
+            this->Push(0);
+        #endif
     }
 }
 
