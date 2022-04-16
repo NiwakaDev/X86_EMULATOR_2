@@ -758,6 +758,7 @@ void Cpu::ShowRegisters(){
 //TODO : bool引数はenumに変更すべき
 void Cpu::Debug(FILE *f, bool h) {
     if(this->IsProtectedMode()){
+        //TODO: ShowRegistersと似ている処理なので、関数化する予定
         fprintf(f, "EAX=%08X EBX=%08X ECX=%08X EDX=%08X\n", *this->gprs[EAX], *this->gprs[EBX], *this->gprs[ECX], *this->gprs[EDX]);
         fprintf(f, "ESI=%08X EDI=%08X EBP=%08X ESP=%08X\n", *this->gprs[ESI], *this->gprs[EDI], *this->gprs[EBP], *this->gprs[ESP]);
         fprintf(f, "EIP=%08X\n", this->eip);
