@@ -11,11 +11,11 @@
 
 using namespace std;
 
-const int  EFLAGS_INIT_VALUE = 0x00000002;
-const int  EIP_INIT_VALUE    = 0x0000FFF0;
-const int  CR0_INIT_VALUE    = 0x60000010;
-const int  CR2_INIT_VALUE    = 0x00000000;
-const int  CS_INIT_VALUE     = 0x0000F000;
+static const int  EFLAGS_INIT_VALUE = 0x00000002;
+static const int  EIP_INIT_VALUE    = 0x0000FFF0;
+static const int  CR0_INIT_VALUE    = 0x60000010;
+static const int  CR2_INIT_VALUE    = 0x00000000;
+static const int  CS_INIT_VALUE     = 0x0000F000;
 
 Cpu::Cpu(Bios& bios, Memory& mem){
     #ifdef DEBUG
