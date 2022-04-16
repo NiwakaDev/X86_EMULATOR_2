@@ -676,15 +676,11 @@ void Cpu::HandleInterrupt(int irq_num){
     //TODO : 変数の宣言のスコープを縮める。
     //irq_num = irq_num + 0x20;
     if(this->is_exception_)this->is_exception_=false;
-    uint32_t eip, eflags, esp;
-    uint32_t offset_addr;
-    uint8_t cpl, dest_code_segment_dpl;
-    Tss* tss;
     IdtGate* idt_gate = (IdtGate*)this->mem->GetPointer(this->idtr->GetBase()+irq_num*8);
     GdtGate* gdt_gate = this->GetGdtGate(idt_gate->selector);
-    dest_code_segment_dpl = CpuHelper::GetDpl(gdt_gate->access_right);
-    cpl = this->GetCpl();
-    offset_addr = (((uint32_t)idt_gate->offset_high)<<16) | ((uint32_t)idt_gate->offset_low);
+    uint8_t dest_code_segment_dpl = CpuHelper::GetDpl(gdt_gate->access_right);
+    uint8_t cpl = this->GetCpl();
+    uint32_t offset_addr = (((uint32_t)idt_gate->offset_high)<<16) | ((uint32_t)idt_gate->offset_low);
     if(dest_code_segment_dpl==cpl){
         this->Push32(this->eflags.raw);
         this->Push32(this->segment_registers[CS]->GetData());
@@ -697,11 +693,11 @@ void Cpu::HandleInterrupt(int irq_num){
         this->eflags.flgs.IF = 0;
     }else if(dest_code_segment_dpl<cpl){
         uint16_t ss = this->GetR16(SS);
-        eflags = this->GetEflgs();
-        esp = this->GetR32(ESP);
+        uint32_t eflags = this->GetEflgs();
+        uint32_t esp = this->GetR32(ESP);
         uint16_t cs = this->GetR16(CS);
-        eip = this->GetEip();
-        tss = this->GetCurrentTss();
+        uint32_t eip = this->GetEip();
+        Tss* tss = this->GetCurrentTss();
         this->SetR16(SS, tss->ss0);
         this->SetR32(ESP, tss->esp0);
         this->Push32(ss);
