@@ -1,15 +1,15 @@
 .PHONY:clean build all test
 
-EMULATOR = x86
-EMULATOR_TEST = x86_test
+EMULATOR            = x86
+EMULATOR_TEST       = x86_test
 
 CC = clang++
 
-#G++_OPTIONS = -std=c++14 -O2 -I $(INCLUDE_DIR)
 G++_OPTIONS = -std=c++14 -O3 -I $(INCLUDE_DIR)
 G++_OPTIONS_DEBUG = -Wall -std=c++14 -O0 -g -I $(INCLUDE_DIR) -DDEBUG
-#G++_OPTIONS = -Wall -std=c++14 -O0 -g -I $(INCLUDE_DIR)
-LD_FLGS += -lSDL2 -lSDL2_mixer
+LD_FLGS += -lSDL2
+#LD_FLGS += -lSDL2 -lSDL2_mixer
+
 
 SOURCE_DIR         = ./src/
 INCLUDE_DIR        = ./include/

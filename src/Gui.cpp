@@ -55,6 +55,8 @@ static inline int GuiHelper::GetModState(){
 }
 
 Gui::Gui(Vga& vga):pimpl(make_unique<Gui::Pimpl>()){
+    /***
+     * //音機能は外す予定。コメントアウトからも外す予定。ライブラリ依存度を避けるために、外す。
     if (SDL_Init(SDL_INIT_AUDIO) < 0) {
         printf("Failed to init SDL\n");
         exit(1);
@@ -71,10 +73,6 @@ Gui::Gui(Vga& vga):pimpl(make_unique<Gui::Pimpl>()){
     }
     char *MP3_FILE_PATH = "Floppy_Disk_Drive02-1(Operating_Noise).mp3";
     this->pimpl->music = Mix_LoadMUS(MP3_FILE_PATH);
-    /***
-    if(Mix_PlayMusic(this->music, -1)==-1){
-        this->Error("Error : Mix_PlayMusic");
-    }
     ***/
     this->pimpl->vga = &vga;
 
@@ -119,11 +117,14 @@ void Gui::Finish(){
     this->pimpl->quit = true;
 }
 
+/***
+//音ライブラリに対する依存度を避けるために、Gui::SoundFdc関数は廃止予定。
 void Gui::SoundFdc(){
     if(Mix_PlayMusic(this->pimpl->music, 1)==-1){
         this->Error("Error : Mix_PlayMusic");
     }
 }
+***/
 
 inline void Gui::Pimpl::Resize(){
     SDL_SetWindowSize(this->window, this->screen_width, this->screen_height);
