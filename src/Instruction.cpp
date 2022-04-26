@@ -1,5 +1,14 @@
 #include "Instruction.h"
 #include "Instructions.h"
+//TODO : Instruction.cppはCpuとEmulatorを知らない状態にする。
+//Cpu.hとEmulator.hを削除するために、デリゲートのようなものを用意する。
+/***依存関係を削除するイメージ
+class Instruction{
+    void SetCallBack(){//コールバック関数を登録する
+
+    }
+}
+***/
 #include "Cpu.h"
 #include "Memory.h"
 #include "IoPort.h"

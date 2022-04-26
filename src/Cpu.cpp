@@ -624,16 +624,16 @@ void Cpu::SaveTask(uint16_t selector){
     this->task_register->Set(selector, *this);
     GdtGate*gdt_gate = this->GetGdtGate(prev_selector);
     uint32_t task_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
-    this->mem->Write(task_addr+8*4, this->GetEip());
-    this->mem->Write(task_addr+9*4, this->GetEflgs());
-    this->mem->Write(task_addr+10*4, this->registers);
-    this->mem->Write(task_addr+18*4, this->GetR16(ES));
-    this->mem->Write(task_addr+19*4, this->GetR16(CS));
-    this->mem->Write(task_addr+20*4, this->GetR16(SS));
-    this->mem->Write(task_addr+21*4, this->GetR16(DS));
-    this->mem->Write(task_addr+22*4, this->GetR16(FS));
-    this->mem->Write(task_addr+23*4, this->GetR16(GS));
-    this->mem->Write(task_addr+24*4, this->ldtr->GetData());
+    this->mem->Write(task_addr+8*sizeof(uint32_t), this->GetEip());
+    this->mem->Write(task_addr+9*sizeof(uint32_t), this->GetEflgs());
+    this->mem->Write(task_addr+10*sizeof(uint32_t), this->registers);
+    this->mem->Write(task_addr+18*sizeof(uint32_t), this->GetR16(ES));
+    this->mem->Write(task_addr+19*sizeof(uint32_t), this->GetR16(CS));
+    this->mem->Write(task_addr+20*sizeof(uint32_t), this->GetR16(SS));
+    this->mem->Write(task_addr+21*sizeof(uint32_t), this->GetR16(DS));
+    this->mem->Write(task_addr+22*sizeof(uint32_t), this->GetR16(FS));
+    this->mem->Write(task_addr+23*sizeof(uint32_t), this->GetR16(GS));
+    this->mem->Write(task_addr+24*sizeof(uint32_t), this->ldtr->GetData());
 }
 
 void Cpu::SetLdtr(uint16_t data){
