@@ -1,6 +1,5 @@
 #include "Fdc.h"
 #include "IoSpace.h"
-#include "Gui.h"
 using namespace std;
 
 #define SECTOR_SIZE 512
@@ -11,13 +10,13 @@ Fdc::Fdc(const char* const file_name):IoDevice(){
     FILE* disk_image_stream = NULL;
     disk_image_stream = fopen(file_name, "rb");
     if(disk_image_stream==NULL)this->Error("can`t open %s at Fdc::Fdc\n", file_name);
-    this->buff = (uint8_t*)malloc(FLOPPY_DISK_SIZE);
-    fread(this->buff, 1, FLOPPY_DISK_SIZE, disk_image_stream);
+    //this->buff = (uint8_t*)malloc(FLOPPY_DISK_SIZE);
+    this->buff = make_unique<uint8_t[]>(FLOPPY_DISK_SIZE);
+    fread(this->buff.get(), 1, FLOPPY_DISK_SIZE, disk_image_stream);
     fclose(disk_image_stream);
 }
 
 Fdc::~Fdc(){
-    delete[] this->buff;
 }
 
 void Fdc::ProcessCommand(uint8_t command){
@@ -100,6 +99,7 @@ void Fdc::ProcessCommandForOut8(uint8_t data){
             switch (this->fdc_command_type){
                 static int count_in_fdc_in_execution_write_sector=0;
                 case FDC_COMMAND_WRITE_SECTOR:
+                    //TODO : マジックナンバーを修正する。
                     this->buff[this->head*18*SECTOR_SIZE+this->track*18*2*SECTOR_SIZE+(this->sector-1)*SECTOR_SIZE+count_in_fdc_in_execution_write_sector] = data;
                     count_in_fdc_in_execution_write_sector++;
                     if(count_in_fdc_in_execution_write_sector==SECTOR_SIZE){

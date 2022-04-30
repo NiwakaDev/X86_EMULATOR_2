@@ -21,7 +21,6 @@ class Fdc:public IoDevice{
             FDC_RESULT_MODE, 
             FDC_MODE_TOTAL
         };
-        Gui* gui=NULL;
     private:
         Fdc(const Fdc& other);
         void operator=(const Fdc& other);
@@ -68,7 +67,7 @@ class Fdc:public IoDevice{
         uint8_t head;
         uint8_t track;
         uint8_t sector;
-        uint8_t* buff = NULL;
+        std::unique_ptr<uint8_t []> buff;
         uint8_t ProcessCommandForIn8();
         void    ProcessCommandForOut8(uint8_t data);
 };

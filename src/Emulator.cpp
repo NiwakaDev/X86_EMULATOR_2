@@ -64,7 +64,7 @@ Emulator::Emulator(int argc, char* argv[]){
     this->gui     = make_unique<Gui>(*(this->vga.get()));
     this->gui->AddIoDevice(Gui::KBD, *(this->kbc.get()));
     this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse.get()));
-    this->fdc->gui = this->gui.get();
+    //this->fdc->gui = this->gui.get();
     this->bios->LoadIpl(this->disk_image_name, *(this->mem.get()));
     for(int i=0; i<0x20; i++){//full.img and fd.imgで利用, 8086runを参考
         this->mem->Write(i<<2, i);
