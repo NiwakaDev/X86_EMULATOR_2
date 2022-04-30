@@ -16,8 +16,6 @@ using namespace std;
     extern bool niwaka_start_flg;
 #endif 
 
-const int BIOS_ROM_SIZE = 65536;
-
 Emulator::Emulator(int argc, char* argv[]){
     #ifdef DEBUG
         /***
@@ -52,6 +50,7 @@ Emulator::Emulator(int argc, char* argv[]){
     this->timer   = make_unique<Timer>();
     this->mouse   = make_unique<Mouse>();
     this->kbc     = make_unique<Kbc>(*(this->mouse.get()));
+    //TODO : マジックナンバーを修正
     this->io_devices[0x00] = this->timer.get();
     this->io_devices[0x01] = this->kbc.get();
     this->io_devices[0x06] = this->fdc.get();
@@ -76,6 +75,7 @@ Emulator::Emulator(int argc, char* argv[]){
         if(!bios_stream.is_open()){
             this->Error("Cant open : %s", this->bios_name);
         }
+        const int BIOS_ROM_SIZE = 65536;
         bios_stream.read((char*)this->mem->GetPointer(0x000f0000), BIOS_ROM_SIZE);
         //bios_stream.read((char*)this->mem->GetPointer(0xffff0000), BIOS_ROM_SIZE);
         bios_stream.close();

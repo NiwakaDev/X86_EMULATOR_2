@@ -45,6 +45,8 @@ bool Pic::HasIrq(){
         if((!this->irq_list[i])||(this->io_devices[i]==NULL)){
             continue;
         }
+        //TODO : 入出力デバイスが割り込み番号を知っていない実装に変更
+        //MOUSEと
         if((this->now_irq_num=this->io_devices[i]->IsEmpty())==-1){
             continue;
         }
