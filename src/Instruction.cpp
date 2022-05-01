@@ -982,6 +982,7 @@ Code0F::Code0F(string code_name):Instruction(code_name){
     for(int i=0; i<256; i++){
         this->instructions[i] = NULL;
     }
+    //TODO : 生ポインタをスマートポインタに変更
     this->instructions[0x00] = new Code0F00("Code0F00");
     this->instructions[0x01] = new Code0F01("Code0F01"); 
     this->instructions[0x20] = new MovR32CRX("MovR32CRX"); 
@@ -1009,9 +1010,9 @@ Code0F::Code0F(string code_name):Instruction(code_name){
     this->instructions[0x9D] = new SetgeRm8("SetgeRm8");
     this->instructions[0x9F] = new SetgRm8("SetgRm8");
     this->instructions[0xA0] = new PushFs("PushFs");
-    this->instructions[0xA1] = new PopFs("PopFs");
+    this->instructions[0xA1] = new PopSegmentRegister("PopSegmentRegister");
     this->instructions[0xA8] = new PushGs("PushGs");
-    this->instructions[0xA9] = new PopGs("PopGs");
+    this->instructions[0xA9] = new PopSegmentRegister("PopSegmentRegister");
     this->instructions[0xAC] = new ShrdRm32R32Imm8("ShrdRm32R32Imm8");
     this->instructions[0xAF] = new ImulR32Rm32("ImulR32Rm32");
     this->instructions[0xB2] = new LssR32M1632("LssR32M1632");
@@ -3467,40 +3468,6 @@ void PopAd::Run(const Emulator& emu){
     return;
 }
 
-PopDs::PopDs(string code_name):Instruction(code_name){
-
-}
-
-void PopDs::Run(const Emulator& emu){
-    uint32_t ds;
-    emu.cpu->AddEip(1);
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        ds = emu.cpu->Pop32();
-        emu.cpu->SetR16(DS, ds);
-        return;
-    }
-    ds = emu.cpu->Pop16();
-    emu.cpu->SetR16(DS, ds);
-    return;
-}
-
-PopEs::PopEs(string code_name):Instruction(code_name){
-
-}
-
-void PopEs::Run(const Emulator& emu){
-    uint32_t es = 0;
-    emu.cpu->AddEip(1);
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        es = emu.cpu->Pop32();
-        emu.cpu->SetR16(ES, es);
-        return;
-    }
-    es = emu.cpu->Pop16();
-    emu.cpu->SetR16(ES, es);
-    return;
-}
-
 Iretd::Iretd(string code_name):Instruction(code_name){
 
 }
@@ -5759,24 +5726,6 @@ void OrAlImm8::Run(const Emulator& emu){
     return;
 }
 
-PopSs::PopSs(string code_name):Instruction(code_name){
-
-}
-
-void PopSs::Run(const Emulator& emu){
-    emu.cpu->AddEip(1);
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t ss;
-        ss = emu.cpu->Pop32();
-        emu.cpu->SetR16(SS, ss);
-        return;
-    }
-    uint16_t ss;
-    ss = emu.cpu->Pop16();
-    emu.cpu->SetR16(SS, ss);
-    return;
-}
-
 SbbRm32R32::SbbRm32R32(string code_name):Instruction(code_name){
 
 }
@@ -7333,24 +7282,6 @@ void PushFs::Run(const Emulator& emu){
     return;
 }
 
-PopFs::PopFs(string code_name):Instruction(code_name){
-
-}
-
-void PopFs::Run(const Emulator& emu){
-    emu.cpu->AddEip(1);
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t fs;
-        fs = emu.cpu->Pop32();
-        emu.cpu->SetR16(FS, fs);
-        return;
-    }
-    uint16_t fs;
-    fs = emu.cpu->Pop16();
-    emu.cpu->SetR16(FS, fs);
-    return;
-}
-
 PushGs::PushGs(string code_name):Instruction(code_name){
 
 }
@@ -7367,24 +7298,6 @@ void PushGs::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     gs = emu.cpu->GetR16(GS);
     emu.cpu->Push16( gs);
-    return;
-}
-
-PopGs::PopGs(string code_name):Instruction(code_name){
-
-}
-
-void PopGs::Run(const Emulator& emu){
-    emu.cpu->AddEip(1);
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t gs;
-        gs = emu.cpu->Pop32();
-        emu.cpu->SetR16(GS, gs);
-        return;
-    }
-    uint16_t gs;
-    gs = emu.cpu->Pop16();
-    emu.cpu->SetR16(GS, gs);
     return;
 }
 
@@ -7449,4 +7362,43 @@ void RolRm32Imm8::Run(const Emulator& emu){
     }else{
         this->Error("Not implemented: op_size=16bit at %s::Run", this->code_name.c_str());
     }
+}
+
+PopSegmentRegister::PopSegmentRegister(string code_name):Instruction(code_name){
+
+}
+
+void PopSegmentRegister::Run(const Emulator& emu){
+    SEGMENT_REGISTER segment_register;
+    switch(emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess())){
+        case 0x1F:
+            segment_register = DS;
+            break;
+        case 0x07:
+            segment_register = ES;
+            break;
+        case 0x17:
+            segment_register = SS;
+            break;
+        case 0xA1:
+            segment_register = FS;
+            break;
+        case 0xA9:
+            segment_register = GS;
+            break;
+        default:
+            this->Error("Not supported: segment_register=%d at %s", emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()), this->code_name.c_str());
+            break;
+    }
+    emu.cpu->AddEip(1);
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        uint32_t data;
+        data = emu.cpu->Pop32();
+        emu.cpu->SetR16(segment_register, data);
+        return;
+    }
+    uint16_t data;
+    data = emu.cpu->Pop16();
+    emu.cpu->SetR16(segment_register, data);
+    return;
 }

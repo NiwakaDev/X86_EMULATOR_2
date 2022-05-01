@@ -20,7 +20,7 @@ unique_ptr<Instruction> InstructionHelper::InstructionFactory::CreateInstruction
         case 0x06:
             return make_unique<PushEs>("PushEs");
         case 0x07:
-            return make_unique<PopEs>("PopEs");
+            return make_unique<PopSegmentRegister>("PopSegmentRegister");
         case 0x08:
             return make_unique<OrRm8R8>("OrRm8R8");
         case 0x09:
@@ -48,7 +48,7 @@ unique_ptr<Instruction> InstructionHelper::InstructionFactory::CreateInstruction
         case 0x16:
             return make_unique<PushSs>("PushSs");
         case 0x17:
-            return make_unique<PopSs>("PopSs");
+            return make_unique<PopSegmentRegister>("PopSegmentRegister");
         case 0x18:
             return make_unique<SbbRm8R8>("SbbRm8R8");
         case 0x19:
@@ -60,7 +60,7 @@ unique_ptr<Instruction> InstructionHelper::InstructionFactory::CreateInstruction
         case 0x1E:
             return make_unique<PushDs>("PushDs");
         case 0x1F:
-            return make_unique<PopDs>("PopDs");
+            return make_unique<PopSegmentRegister>("PopSegmentRegister");
         case 0x20:
             return make_unique<AndRm8R8>("AndRm8R8");
         case 0x21:

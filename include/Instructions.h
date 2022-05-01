@@ -742,18 +742,6 @@ class PopAd:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class PopDs:public Instruction{
-    public: 
-        PopDs(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class PopEs:public Instruction{
-    public: 
-        PopEs(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class Iretd:public Instruction{
     public: 
         Iretd(std::string code_name);
@@ -1263,12 +1251,6 @@ class OrAlImm8:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class PopSs:public Instruction{
-    public: 
-        PopSs(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class SbbRm32R32:public Instruction{
     public: 
         SbbRm32R32(std::string code_name);
@@ -1611,21 +1593,9 @@ class PushFs:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class PopFs:public Instruction{
-    public: 
-        PopFs(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class PushGs:public Instruction{
     public: 
         PushGs(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class PopGs:public Instruction{
-    public: 
-        PopGs(std::string code_name);
         void Run(const Emulator& emu);
 };
 
@@ -1638,5 +1608,11 @@ class SalRm8Imm8:public Instruction{
 class RolRm32Imm8:public Instruction{
     public: 
         RolRm32Imm8(std::string code_name);
+        void Run(const Emulator& emu);
+};
+
+class PopSegmentRegister:public Instruction{
+    public:
+        PopSegmentRegister(std::string code_name);
         void Run(const Emulator& emu);
 };
