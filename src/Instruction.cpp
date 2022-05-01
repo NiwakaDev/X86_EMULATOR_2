@@ -232,83 +232,19 @@ inline uint8_t Instruction::GetRM8(const Emulator& emu){
 
 inline uint16_t Instruction::GetRM16(const Emulator& emu){
     uint16_t rm16;
-    uint32_t disp32;
     uint32_t addr;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bitアドレスサイズ
-        uint32_t disp8;
-        if(this->modrm.mod!=3 && this->modrm.rm==4){
-            addr = this->sib.GetAddress(*(emu.cpu));
-            //this->Error("Sib is not implemented at Instruction::GetRM16", this->code_name.c_str());
-        }
-        if(this->modrm.mod==0){
-            if(this->modrm.rm==5){
-                addr = this->modrm.disp32;
-                addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-                rm16 = emu.mem->Read16(addr);
-                return rm16;
-            }
-            if(this->modrm.rm==4){
-                rm16 = emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(addr));
-                return rm16;
-            }
-            addr = emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm);
+        if(this->modrm.mod!=3){
+            addr = this->GetEffectiveAddr(emu);
             addr = emu.cpu->GetLinearAddrForDataAccess(addr);
             rm16 = emu.mem->Read16(addr);
             return rm16;
         }
-        if(this->modrm.mod==1){
-            if(this->modrm.rm==4){
-                addr = addr + (int32_t)this->modrm.disp8;
-                rm16 = emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(addr));
-                return rm16;
-            }
-            disp8 = (int32_t)this->modrm.disp8;
-            addr = emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm)+disp8;
-            addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-            rm16 = emu.mem->Read16(addr);
-            return rm16;
-        }
-        if(this->modrm.mod==2){
-            if(this->modrm.rm==4){
-                addr = addr + (int32_t)this->modrm.disp32;
-                rm16 = emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(addr));
-                return rm16;
-            }
-            disp32 = (int32_t)this->modrm.disp32;
-            addr = emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm)+disp32;
-            addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-            rm16 = emu.mem->Read16(addr);
-            return rm16;
-        }
-        if(this->modrm.mod==3){
-            rm16 = emu.cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.rm);
-            return rm16;
-        }
+        rm16 = emu.cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.rm);
+        return rm16;
     }else{//16bitアドレス
-        uint16_t disp8;
-        uint16_t disp16;
-        if(this->modrm.mod==0){
-            if(this->modrm.rm==6){
-                addr = this->modrm.disp16;
-                addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-                rm16   = emu.mem->Read16(addr);
-                return rm16;
-            }
-            addr = this->GetR16ForEffectiveAddr(emu);
-            addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-            rm16 = emu.mem->Read16(addr);
-            return rm16;
-        }
-        if(this->modrm.mod==1){
-            disp8 = (int16_t)this->modrm.disp8;
-            addr  = disp8 + this->GetR16ForEffectiveAddr(emu);
-            addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-            rm16  = emu.mem->Read16(addr);
-            return rm16;
-        }
-        if(this->modrm.mod==2){
-            disp16 = this->modrm.disp16;
-            addr  = disp16 + this->GetR16ForEffectiveAddr(emu);
+        if(this->modrm.mod!=3){
+            addr = this->GetEffectiveAddr(emu);
             addr = emu.cpu->GetLinearAddrForDataAccess(addr);
             rm16  = emu.mem->Read16(addr);
             return rm16;
