@@ -80,16 +80,12 @@ inline void Instruction::ParseRegIdx(const Emulator& emu){
     this->modrm.mod = ((code&0xC0)>>6);
     this->modrm.op_code = ((code&0x38) >> 3);
     this->modrm.rm = code & 0x07;
-    emu.cpu->AddEip(1);//ModRMの内容を読み込んだので、次の番地へ
+    emu.cpu->AddEip(1);
 }
 
-//TODO : 
-//modrm関連の処理のリファクタリング
 inline uint32_t Instruction::GetEffectiveAddr(const Emulator& emu){
-    uint32_t disp8;
-    uint32_t disp32;
-    uint32_t addr = 0;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
+        uint32_t addr;
         if(this->modrm.mod!=3 && this->modrm.rm==4){
             addr = this->sib.GetAddress(*(emu.cpu));
         }
@@ -106,21 +102,21 @@ inline uint32_t Instruction::GetEffectiveAddr(const Emulator& emu){
         }
         if(this->modrm.mod==1){
             if(this->modrm.rm==4){
-                disp8 = (int32_t)this->modrm.disp8;
+                uint32_t disp8 = (int32_t)this->modrm.disp8;
                 addr = addr + disp8;
                 return addr;
             }
-            disp8 = (int32_t)this->modrm.disp8;
+            uint32_t disp8 = (int32_t)this->modrm.disp8;
             addr = emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm)+disp8;
             return addr;
         }
         if(this->modrm.mod==2){
             if(this->modrm.rm==4){
-                disp32 = (int32_t)this->modrm.disp32;
+                uint32_t disp32 = (int32_t)this->modrm.disp32;
                 addr = addr+disp32;
                 return addr;
             }
-            disp32 = (int32_t)this->modrm.disp32;
+            uint32_t disp32 = (int32_t)this->modrm.disp32;
             addr = emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm)+disp32;
             return addr;
         }
@@ -129,7 +125,7 @@ inline uint32_t Instruction::GetEffectiveAddr(const Emulator& emu){
             return addr;
         }
     }else{
-        uint16_t disp16;
+        uint16_t addr;
         if(this->modrm.mod==0){
             if(this->modrm.rm==6){
                 addr = this->modrm.disp16;
@@ -139,12 +135,12 @@ inline uint32_t Instruction::GetEffectiveAddr(const Emulator& emu){
             return addr;
         }
         if(this->modrm.mod==1){
-            disp8 = (int16_t)this->modrm.disp8;
+            uint16_t disp8 = (int16_t)this->modrm.disp8;
             addr  = disp8 + this->GetR16ForEffectiveAddr(emu);
             return addr;
         }
         if(this->modrm.mod==2){
-            disp16 = this->modrm.disp16;
+            uint16_t disp16 = this->modrm.disp16;
             addr  = disp16 + this->GetR16ForEffectiveAddr(emu);
             return addr;
         }
