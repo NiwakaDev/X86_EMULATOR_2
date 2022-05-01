@@ -1088,18 +1088,13 @@ IntImm8::IntImm8(string code_name):Instruction(code_name){
 
 }
 
-//TODO : 変数のスコープ範囲を縮める
 void IntImm8::Run(const Emulator& emu){
-    IdtGate* idt_gate;
-    uint16_t selector, cs, ss;
-    uint32_t eip, eflags, esp;
-    uint32_t offset_addr;
     emu.cpu->AddEip(1);
-    selector = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
+    uint16_t selector = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
     emu.cpu->AddEip(1);
     if(emu.cpu->IsProtectedMode()){
-        idt_gate    = emu.cpu->GetIdtGate(selector*8);
-        offset_addr = (((uint32_t)idt_gate->offset_high)<<16) | ((uint32_t)idt_gate->offset_low);
+        IdtGate* idt_gate    = emu.cpu->GetIdtGate(selector*8);
+        uint32_t offset_addr = (((uint32_t)idt_gate->offset_high)<<16) | ((uint32_t)idt_gate->offset_low);
         uint8_t idt_gate_dpl = CpuHelper::GetDpl(idt_gate->access_right);
         uint8_t cpl = emu.cpu->GetCpl();
         GdtGate* gdt_gate = emu.cpu->GetGdtGate(idt_gate->selector);
@@ -1108,15 +1103,12 @@ void IntImm8::Run(const Emulator& emu){
             this->Error("Not implemented: dpl(idt_gate)<cpl at %s::Run", this->code_name.c_str());
         }
         if(dest_code_segment_dpl<cpl){
-            uint16_t ss;
-            uint32_t esp;
-            Tss* tss;
-            ss = emu.cpu->GetR16(SS);
-            eflags = emu.cpu->GetEflgs();
-            esp = emu.cpu->GetR32(ESP);
-            cs = emu.cpu->GetR16(CS);
-            eip = emu.cpu->GetEip();
-            tss = emu.cpu->GetCurrentTss();
+            uint16_t ss = emu.cpu->GetR16(SS);
+            uint32_t eflags = emu.cpu->GetEflgs();
+            uint32_t esp = emu.cpu->GetR32(ESP);
+            uint16_t cs = emu.cpu->GetR16(CS);
+            uint32_t eip = emu.cpu->GetEip();
+            Tss* tss = emu.cpu->GetCurrentTss();
             emu.cpu->SetR16(SS, tss->ss0);
             emu.cpu->SetR32(ESP, tss->esp0);
             emu.cpu->Push32( ss);
@@ -1144,13 +1136,7 @@ void IntImm8::Run(const Emulator& emu){
     if(selector<0x20){
         emu.cpu->CallFunctionOnRealMode(selector);
     }else{
-        //PUSH EFLAGSの下位16bit
-        //IFをクリア
-        //TFをクリア
-        //ACをクリア
-        //PUSH CS
-        //PUSH IP
-        //割り込みテーブルからCSとIPを取り出す
+        //リアルモードではEFLAGSは下位16bitだけでいい。
         //割り込みテーブルでは、IP、CSの順に並んでいる。
         uint16_t eflags = emu.cpu->GetEflgs();
         uint16_t ip     = emu.cpu->GetEip();
