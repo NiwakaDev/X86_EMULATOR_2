@@ -228,15 +228,12 @@ inline uint16_t Instruction::GetRM16(const Emulator& emu){
 }
 
 inline uint32_t Instruction::GetRM32(const Emulator& emu){
-    uint32_t rm32;
     if(this->modrm.mod!=3){
         uint32_t addr = this->GetEffectiveAddr(emu);
         addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-        rm32  = emu.mem->Read32(addr);
-        return rm32;
+        return emu.mem->Read32(addr);
     }
-    rm32 = emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm);
-    return rm32;
+    return emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm);
 
 }
 
