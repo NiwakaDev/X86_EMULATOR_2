@@ -1075,14 +1075,10 @@ MovR8Imm8::MovR8Imm8(string code_name):Instruction(code_name){
 
 }
 
-
-//ADD命令のフラグレジスタ更新処理を今後やる。
 void MovR8Imm8::Run(const Emulator& emu){
-    uint8_t imm8;
-    uint32_t register_type;
-    register_type = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess())-0xB0;
+    uint32_t register_type = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess())-0xB0;
     emu.cpu->AddEip(1);
-    imm8 = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
+    uint8_t imm8 = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
     emu.cpu->AddEip(1);
     emu.cpu->SetR8(register_type, imm8);
     return;
@@ -1092,6 +1088,7 @@ IntImm8::IntImm8(string code_name):Instruction(code_name){
 
 }
 
+//TODO : 変数のスコープ範囲を縮める
 void IntImm8::Run(const Emulator& emu){
     IdtGate* idt_gate;
     uint16_t selector, cs, ss;
