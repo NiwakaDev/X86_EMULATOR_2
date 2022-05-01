@@ -83,6 +83,7 @@ struct _Registers{
 }__attribute__((__packed__));
 typedef struct _Registers Registers;
 
+//TODO : 神クラスを何とかして整理
 class Cpu:public Object{
     public:
         Cpu(Bios& bios, Memory& mem);
@@ -173,6 +174,8 @@ class Cpu:public Object{
         uint8_t GetIopl();
         uint16_t GetGdtLimit();
         uint8_t GetDpl(uint16_t selector);
+        void Push16(uint16_t data);
+        void Push32(uint32_t data);
     private:
         Registers registers;
         Bios* bios = NULL;
@@ -253,8 +256,6 @@ class Cpu:public Object{
         void InitSelector();
         void ResetPrefixFlg();
         void CheckPrefixCode(const Memory& mem);
-        void Push32(uint32_t data);
-        void Push16(uint16_t data);
         bool segment_override;
         bool is_exception_; //今度からメンバ変数の最後に_をつける
         int vector_number_;

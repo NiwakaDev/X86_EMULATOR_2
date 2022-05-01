@@ -606,18 +606,60 @@ bool Cpu::IsStackAddr32(){
     return this->segment_registers[SS]->Is32bitsMode();
 }
 
-inline void Cpu::Push16(uint16_t data){
-    *this->gprs[ESP] = *this->gprs[ESP]-2;
-    uint32_t addr   = this->GetLinearStackAddr();
-    this->mem->Write(addr, data);
+void Cpu::Push16(uint16_t data){
+    if(this->IsStackAddr32()){
+        this->SetR32(ESP, this->GetR32(ESP)-2);
+    }else{
+        this->SetR16(ESP, this->GetR16(ESP)-2);
+    }
+    this->mem->Write(this->GetLinearStackAddr(), data);
 }
 
-
-inline void Cpu::Push32(uint32_t data){
-    *this->gprs[ESP] = *this->gprs[ESP]-4;
-    uint32_t addr   = this->GetLinearStackAddr();
-    this->mem->Write(addr, data);
+void Cpu::Push32(uint32_t data){
+    if(this->IsStackAddr32()){
+        this->SetR32(ESP, this->GetR32(ESP)-4);
+    }else{
+        this->SetR16(ESP, this->GetR16(ESP)-4);
+    }
+    this->mem->Write(this->GetLinearStackAddr(), data);
 }
+
+/***
+inline static uint8_t Pop8(const Emulator& emu){
+    uint32_t addr;
+    uint8_t data;
+    addr = emu.cpu->GetLinearStackAddr();
+    data = emu.mem->Read8(addr);
+    emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+1);
+    return data;
+}
+
+inline static uint16_t Pop16(const Emulator& emu){
+    uint32_t addr;
+    uint16_t data;
+    addr = emu.cpu->GetLinearStackAddr();
+    data = emu.mem->Read16(addr);
+    if(emu.cpu->IsStackAddr32()){
+        emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)+2);
+    }else{
+        emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+2);
+    }
+    return data;
+}
+
+inline static uint32_t Pop32(const Emulator& emu){
+    uint32_t addr;
+    uint32_t data;
+    addr = emu.cpu->GetLinearStackAddr();
+    data = emu.mem->Read32(addr);
+    if(emu.cpu->IsStackAddr32()){
+        emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)+4);
+    }else{
+        emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+4);
+    }
+    return data;
+}
+***/
 
 void Cpu::SaveTask(uint16_t selector){
     uint16_t prev_selector = this->task_register->GetData();

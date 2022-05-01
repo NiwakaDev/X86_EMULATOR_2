@@ -1,6 +1,5 @@
 #include "../Cpu.h"
 
-
 inline void Cpu::AddEip(uint32_t data){
     this->eip += data;
     if(!this->IsProtectedMode()){
