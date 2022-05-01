@@ -203,15 +203,12 @@ inline uint16_t Instruction::GetR16ForEffectiveAddr(const Emulator& emu){
 
 
 inline uint8_t Instruction::GetRM8(const Emulator& emu){
-    uint8_t rm8;
     if(this->modrm.mod!=3){
         uint32_t addr = this->GetEffectiveAddr(emu);
         addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-        rm8  = emu.mem->Read8(addr);
-        return rm8;
+        return emu.mem->Read8(addr);
     }
-    rm8 = emu.cpu->GetR8(this->modrm.rm);
-    return rm8;
+    return emu.cpu->GetR8(this->modrm.rm);
 }
 
 inline uint16_t Instruction::GetRM16(const Emulator& emu){
@@ -231,7 +228,6 @@ inline uint32_t Instruction::GetRM32(const Emulator& emu){
         return emu.mem->Read32(addr);
     }
     return emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm);
-
 }
 
 inline void Instruction::SetRM8(const Emulator& emu, const uint8_t data){
