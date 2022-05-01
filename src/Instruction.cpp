@@ -2845,19 +2845,15 @@ DecRm32::DecRm32(string code_name):Instruction(code_name){
 
 void DecRm32::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t rm32;
-        uint32_t result;
-        rm32 = this->GetRM32(emu);
-        result = rm32 - 1;
+        uint32_t rm32 = this->GetRM32(emu);
+        uint32_t result = rm32 - 1;
         this->SetRM32(emu, result);
         emu.cpu->UpdateEflagsForDec(result, rm32, (uint32_t)0xFFFFFFFF);
         return;
     }
-    uint16_t rm16;
-    uint16_t result;
     uint16_t d = 0xFFFF;
-    rm16 = this->GetRM16(emu);
-    result = rm16+d;
+    uint16_t rm16 = this->GetRM16(emu);
+    uint16_t result = rm16+d;
     this->SetRM16(emu, result);
     emu.cpu->UpdateEflagsForDec(result, rm16, d);
     return;
