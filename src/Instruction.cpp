@@ -1060,7 +1060,6 @@ JzRel8::JzRel8(string code_name):Instruction(code_name){
 
 }
 
-//ADD命令のフラグレジスタ更新処理を今後やる。
 void JzRel8::Run(const Emulator& emu){
     uint32_t rel8;
     emu.cpu->AddEip(1);
