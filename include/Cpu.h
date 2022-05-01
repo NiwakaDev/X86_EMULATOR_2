@@ -176,6 +176,9 @@ class Cpu:public Object{
         uint8_t GetDpl(uint16_t selector);
         void Push16(uint16_t data);
         void Push32(uint32_t data);
+        uint8_t  Pop8();
+        uint16_t Pop16();
+        uint32_t Pop32();
     private:
         Registers registers;
         Bios* bios = NULL;

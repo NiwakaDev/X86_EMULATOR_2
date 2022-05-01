@@ -606,6 +606,8 @@ bool Cpu::IsStackAddr32(){
     return this->segment_registers[SS]->Is32bitsMode();
 }
 
+//TODO : Push16、Push32、Pop8、Pop16、Pop32関数内で
+//       呼び出しているメンバ関数をメンバ変数に直接アクセスするように変更
 void Cpu::Push16(uint16_t data){
     if(this->IsStackAddr32()){
         this->SetR32(ESP, this->GetR32(ESP)-2);
@@ -624,42 +626,40 @@ void Cpu::Push32(uint32_t data){
     this->mem->Write(this->GetLinearStackAddr(), data);
 }
 
-/***
-inline static uint8_t Pop8(const Emulator& emu){
+uint8_t Cpu::Pop8(){
     uint32_t addr;
     uint8_t data;
-    addr = emu.cpu->GetLinearStackAddr();
-    data = emu.mem->Read8(addr);
-    emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+1);
+    addr = this->GetLinearStackAddr();
+    data = this->mem->Read8(addr);
+    this->SetR16(ESP, this->GetR16(ESP)+1);
     return data;
 }
 
-inline static uint16_t Pop16(const Emulator& emu){
+uint16_t Cpu::Pop16(){
     uint32_t addr;
     uint16_t data;
-    addr = emu.cpu->GetLinearStackAddr();
-    data = emu.mem->Read16(addr);
-    if(emu.cpu->IsStackAddr32()){
-        emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)+2);
+    addr = this->GetLinearStackAddr();
+    data = this->mem->Read16(addr);
+    if(this->IsStackAddr32()){
+        this->SetR32(ESP, this->GetR32(ESP)+2);
     }else{
-        emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+2);
+        this->SetR16(ESP, this->GetR16(ESP)+2);
     }
     return data;
 }
 
-inline static uint32_t Pop32(const Emulator& emu){
+uint32_t Cpu::Pop32(){
     uint32_t addr;
     uint32_t data;
-    addr = emu.cpu->GetLinearStackAddr();
-    data = emu.mem->Read32(addr);
-    if(emu.cpu->IsStackAddr32()){
-        emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)+4);
+    addr = this->GetLinearStackAddr();
+    data = this->mem->Read32(addr);
+    if(this->IsStackAddr32()){
+        this->SetR32(ESP, this->GetR32(ESP)+4);
     }else{
-        emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)+4);
+        this->SetR16(ESP, this->GetR16(ESP)+4);
     }
     return data;
 }
-***/
 
 void Cpu::SaveTask(uint16_t selector){
     uint16_t prev_selector = this->task_register->GetData();
