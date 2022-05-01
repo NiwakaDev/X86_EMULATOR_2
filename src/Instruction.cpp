@@ -2799,30 +2799,28 @@ PushAd::PushAd(string code_name):Instruction(code_name){
 }
 
 void PushAd::Run(const Emulator& emu){
-    uint32_t esp;
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        esp = emu.cpu->GetR32(ESP);
-        emu.cpu->Push32( emu.cpu->GetR32(EAX));
-        emu.cpu->Push32( emu.cpu->GetR32(ECX));
-        emu.cpu->Push32( emu.cpu->GetR32(EDX));
-        emu.cpu->Push32( emu.cpu->GetR32(EBX));
-        emu.cpu->Push32( esp);
-        emu.cpu->Push32( emu.cpu->GetR32(EBP));
-        emu.cpu->Push32( emu.cpu->GetR32(ESI));
-        emu.cpu->Push32( emu.cpu->GetR32(EDI));
+        uint32_t esp = emu.cpu->GetR32(ESP);
+        emu.cpu->Push32(emu.cpu->GetR32(EAX));
+        emu.cpu->Push32(emu.cpu->GetR32(ECX));
+        emu.cpu->Push32(emu.cpu->GetR32(EDX));
+        emu.cpu->Push32(emu.cpu->GetR32(EBX));
+        emu.cpu->Push32(esp);
+        emu.cpu->Push32(emu.cpu->GetR32(EBP));
+        emu.cpu->Push32(emu.cpu->GetR32(ESI));
+        emu.cpu->Push32(emu.cpu->GetR32(EDI));
         return;
     }
-    uint16_t sp;
-    sp = emu.cpu->GetR16(ESP);
-    emu.cpu->Push16( emu.cpu->GetR16(EAX));
-    emu.cpu->Push16( emu.cpu->GetR16(ECX));
-    emu.cpu->Push16( emu.cpu->GetR16(EDX));
-    emu.cpu->Push16( emu.cpu->GetR16(EBX));
-    emu.cpu->Push16( sp);
-    emu.cpu->Push16( emu.cpu->GetR16(EBP));
-    emu.cpu->Push16( emu.cpu->GetR16(ESI));
-    emu.cpu->Push16( emu.cpu->GetR16(EDI));
+    uint16_t sp = emu.cpu->GetR16(ESP);
+    emu.cpu->Push16(emu.cpu->GetR16(EAX));
+    emu.cpu->Push16(emu.cpu->GetR16(ECX));
+    emu.cpu->Push16(emu.cpu->GetR16(EDX));
+    emu.cpu->Push16(emu.cpu->GetR16(EBX));
+    emu.cpu->Push16(sp);
+    emu.cpu->Push16(emu.cpu->GetR16(EBP));
+    emu.cpu->Push16(emu.cpu->GetR16(ESI));
+    emu.cpu->Push16(emu.cpu->GetR16(EDI));
     return;
 }
 
