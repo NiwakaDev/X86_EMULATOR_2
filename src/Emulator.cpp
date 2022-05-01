@@ -88,50 +88,50 @@ Emulator::~Emulator(){
 
 int Emulator::ParseArgv(int argc, char* argv[]){
     #ifdef DEBUG
-    int parse_result = 0;
-    argv++;
-    argc--;
-    while(argc>0){
-        if ((strcmp("-image", argv[0])==0) || (strcmp("-i", argv[0])==0)) {
-            this->disk_image_name = argv[1];
-            argc -= 2;
-            argv += 2;
-            parse_result += 1;
-            continue;
-        }
-        if ((strcmp("-bios", argv[0])==0) || (strcmp("-b", argv[0])==0)) {
-            this->bios_name = argv[1];
-            argc -= 2;
-            argv += 2;
-            parse_result += 1;
-            continue;
-        }
-        //プログラムを動かしてみたい時のオプション
-        //私のために用意しているオプションなので、指定しないことをお勧めします。
-        if ((strcmp("-headstart", argv[0])==0) || (strcmp("-h", argv[0])==0)) {//バイナリファイルの先頭から実行する。
-            this->head_start = true;
-            argc -= 1;
-            argv += 1;
-            continue;
-        }
+        int parse_result = 0;
+        argv++;
+        argc--;
+        while(argc>0){
+            if ((strcmp("-image", argv[0])==0) || (strcmp("-i", argv[0])==0)) {
+                this->disk_image_name = argv[1];
+                argc -= 2;
+                argv += 2;
+                parse_result += 1;
+                continue;
+            }
+            if ((strcmp("-bios", argv[0])==0) || (strcmp("-b", argv[0])==0)) {
+                this->bios_name = argv[1];
+                argc -= 2;
+                argv += 2;
+                parse_result += 1;
+                continue;
+            }
+            //プログラムを動かしてみたい時のオプション
+            //私のために用意しているオプションなので、指定しないことをお勧めします。
+            if ((strcmp("-headstart", argv[0])==0) || (strcmp("-h", argv[0])==0)) {//バイナリファイルの先頭から実行する。
+                this->head_start = true;
+                argc -= 1;
+                argv += 1;
+                continue;
+            }
         return 0;
-    }
-   return parse_result;
+        }
+        return parse_result;
     #else
-    int parse_result = 0;
-    argv++;
-    argc--;
-    while(argc>0){
-        if ((strcmp("-image", argv[0])==0) || (strcmp("-i", argv[0])==0)) {
-            this->disk_image_name = argv[1];
-            argc -= 2;
-            argv += 2;
-            parse_result += 1;
-            continue;
+        int parse_result = 0;
+        argv++;
+        argc--;
+        while(argc>0){
+            if ((strcmp("-image", argv[0])==0) || (strcmp("-i", argv[0])==0)) {
+                this->disk_image_name = argv[1];
+                argc -= 2;
+                argv += 2;
+                parse_result += 1;
+                continue;
+            }
+            return 0;
         }
-        return 0;
-    }
-   return parse_result;
+        return parse_result;
     #endif
 }
 

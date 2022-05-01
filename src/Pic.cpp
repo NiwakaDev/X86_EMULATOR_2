@@ -42,11 +42,13 @@ uint8_t Pic::In8(const uint16_t addr){
 
 bool Pic::HasIrq(){
     for(int i=0; i<16; i++){
-        if((!this->irq_list[i])||(this->io_devices[i]==NULL)){
+        if(this->io_devices[i]==NULL){
+            continue;
+        }
+        if(!this->irq_list[i]){
             continue;
         }
         //TODO : 入出力デバイスが割り込み番号を知っていない実装に変更
-        //MOUSEと
         if((this->now_irq_num=this->io_devices[i]->IsEmpty())==-1){
             continue;
         }
