@@ -7318,13 +7318,12 @@ void PushSegmentRegister::Run(const Emulator& emu){
             this->Error("Not supported: segment_register=%d at %s", emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()), this->code_name.c_str());
             break;
     }
+    emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        emu.cpu->AddEip(1);
         uint32_t segment_register_value = (uint32_t)emu.cpu->GetR16(segment_register);
         emu.cpu->Push32(segment_register_value);
         return;
     }
-    emu.cpu->AddEip(1);
     uint16_t segment_register_value = emu.cpu->GetR16(segment_register);
     emu.cpu->Push16(segment_register_value);
     return;
