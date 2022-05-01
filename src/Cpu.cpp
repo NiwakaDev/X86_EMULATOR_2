@@ -626,20 +626,18 @@ void Cpu::Push32(uint32_t data){
     this->mem->Write(this->GetLinearStackAddr(), data);
 }
 
+//Pop8関数はリアルモードでしか利用しないので、
+//16bit幅のスタックポインタしかサポートしていない。
 uint8_t Cpu::Pop8(){
-    uint32_t addr;
-    uint8_t data;
-    addr = this->GetLinearStackAddr();
-    data = this->mem->Read8(addr);
+    uint32_t addr = this->GetLinearStackAddr();
+    uint8_t data = this->mem->Read8(addr);
     this->SetR16(ESP, this->GetR16(ESP)+1);
     return data;
 }
 
 uint16_t Cpu::Pop16(){
-    uint32_t addr;
-    uint16_t data;
-    addr = this->GetLinearStackAddr();
-    data = this->mem->Read16(addr);
+    uint32_t addr = this->GetLinearStackAddr();
+    uint16_t data = this->mem->Read16(addr);
     if(this->IsStackAddr32()){
         this->SetR32(ESP, this->GetR32(ESP)+2);
     }else{
@@ -649,10 +647,8 @@ uint16_t Cpu::Pop16(){
 }
 
 uint32_t Cpu::Pop32(){
-    uint32_t addr;
-    uint32_t data;
-    addr = this->GetLinearStackAddr();
-    data = this->mem->Read32(addr);
+    uint32_t addr = this->GetLinearStackAddr();
+    uint32_t data = this->mem->Read32(addr);
     if(this->IsStackAddr32()){
         this->SetR32(ESP, this->GetR32(ESP)+4);
     }else{
