@@ -144,8 +144,11 @@ void Emulator::RunMainLoop(){
         this->MainLoop();
     #else
         this->emu_thread = make_unique<thread>(&Emulator::MainLoop, this);
-        this->gui->Display();
     #endif
+}
+
+void Emulator::RunGuiThread(){
+    this->gui->Display();
 }
 
 void Emulator::MainLoop(){

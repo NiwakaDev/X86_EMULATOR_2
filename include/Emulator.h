@@ -22,6 +22,7 @@ class Emulator:public Object{
         ~Emulator();
         void ThreadJoin();
         void RunMainLoop();
+        void RunGuiThread();
         #ifdef DEBUG
             int steps=-1;
         #endif
