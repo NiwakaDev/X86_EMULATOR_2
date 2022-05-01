@@ -11,11 +11,12 @@
 
 using namespace std;
 
-static const int  EFLAGS_INIT_VALUE = 0x00000002;
-static const int  EIP_INIT_VALUE    = 0x0000FFF0;
-static const int  CR0_INIT_VALUE    = 0x60000010;
-static const int  CR2_INIT_VALUE    = 0x00000000;
-static const int  CS_INIT_VALUE     = 0x0000F000;
+static const uint32_t  EFLAGS_INIT_VALUE = 0x00000002;
+static const uint32_t  EIP_INIT_VALUE    = 0x0000FFF0;
+static const uint32_t  CR0_INIT_VALUE    = 0x60000010;
+static const uint32_t  CR2_INIT_VALUE    = 0x00000000;
+static const uint32_t  CS_INIT_VALUE     = 0x0000F000;
+static const uint32_t  GPR_INIT_VALUE    = 0x00000000;
 
 Cpu::Cpu(Bios& bios, Memory& mem){
     #ifdef DEBUG
@@ -39,14 +40,14 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         this->gdtr = make_unique<Gdtr>("Gdtr", 0, 0);
         this->idtr = make_unique<Idtr>("Idtr", 0, 0);
 
-        this->registers.eax  =0x00000000;
-        this->registers.ebx  =0x00000000;
-        this->registers.ecx  =0x00000000;
-        this->registers.edx  =0x00000000;
-        this->registers.esp  =0x00000000;
-        this->registers.ebp  =0x00000000;
-        this->registers.esi  =0x00000000;
-        this->registers.edi  =0x00000000;
+        this->registers.eax  = GPR_INIT_VALUE;
+        this->registers.ebx  = GPR_INIT_VALUE;
+        this->registers.ecx  = GPR_INIT_VALUE;
+        this->registers.edx  = GPR_INIT_VALUE;
+        this->registers.esp  = GPR_INIT_VALUE;
+        this->registers.ebp  = GPR_INIT_VALUE;
+        this->registers.esi  = GPR_INIT_VALUE;
+        this->registers.edi  = GPR_INIT_VALUE;
 
         this->gprs[EAX] = &(this->registers.eax);
         this->gprs[EBX] = &(this->registers.ebx);
@@ -105,14 +106,14 @@ Cpu::Cpu(Bios& bios, Memory& mem){
         this->gdtr = make_unique<Gdtr>("Gdtr", 0, 0);
         this->idtr = make_unique<Idtr>("Idtr", 0, 0);
 
-        this->registers.eax  =0x00000000;
-        this->registers.ebx  =0x00000000;
-        this->registers.ecx  =0x00000000;
-        this->registers.edx  =0x00000000;
-        this->registers.esp  =0x00000000;
-        this->registers.ebp  =0x00000000;
-        this->registers.esi  =0x00000000;
-        this->registers.edi  =0x00000000;
+        this->registers.eax  = GPR_INIT_VALUE;
+        this->registers.ebx  = GPR_INIT_VALUE;
+        this->registers.ecx  = GPR_INIT_VALUE;
+        this->registers.edx  = GPR_INIT_VALUE;
+        this->registers.esp  = GPR_INIT_VALUE;
+        this->registers.ebp  = GPR_INIT_VALUE;
+        this->registers.esi  = GPR_INIT_VALUE;
+        this->registers.edi  = GPR_INIT_VALUE;
 
         this->gprs[EAX] = &(this->registers.eax);
         this->gprs[EBX] = &(this->registers.ebx);
