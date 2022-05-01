@@ -18,7 +18,7 @@ unique_ptr<Instruction> InstructionHelper::InstructionFactory::CreateInstruction
         case 0x05:
             return make_unique<AddEaxImm32>("AddEaxImm32");
         case 0x06:
-            return make_unique<PushEs>("PushEs");
+            return make_unique<PushSegmentRegister>("PushSegmentRegister");
         case 0x07:
             return make_unique<PopSegmentRegister>("PopSegmentRegister");
         case 0x08:
@@ -34,7 +34,7 @@ unique_ptr<Instruction> InstructionHelper::InstructionFactory::CreateInstruction
         case 0x0D:
             return make_unique<OrEaxImm32>("OrEaxImm32");
         case 0x0E:
-            return make_unique<PushCs>("PushCs");
+            return make_unique<PushSegmentRegister>("PushSegmentRegister");
         case 0x0F:
             return make_unique<Code0F>("Code0F");
         case 0x10:
@@ -46,7 +46,7 @@ unique_ptr<Instruction> InstructionHelper::InstructionFactory::CreateInstruction
         case 0x15:
             return make_unique<AdcEaxImm32>("AdcEaxImm32");
         case 0x16:
-            return make_unique<PushSs>("PushSs");
+            return make_unique<PushSegmentRegister>("PushSegmentRegister");
         case 0x17:
             return make_unique<PopSegmentRegister>("PopSegmentRegister");
         case 0x18:
@@ -58,7 +58,7 @@ unique_ptr<Instruction> InstructionHelper::InstructionFactory::CreateInstruction
         case 0x1B:
             return make_unique<SbbR32Rm32>("SbbR32Rm32");
         case 0x1E:
-            return make_unique<PushDs>("PushDs");
+            return make_unique<PushSegmentRegister>("PushSegmentRegister");
         case 0x1F:
             return make_unique<PopSegmentRegister>("PopSegmentRegister");
         case 0x20:

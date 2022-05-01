@@ -694,24 +694,6 @@ class Sti:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class PushEs:public Instruction{
-    public: 
-        PushEs(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class PushCs:public Instruction{
-    public: 
-        PushCs(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class PushDs:public Instruction{
-    public: 
-        PushDs(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class PushAd:public Instruction{
     public: 
         PushAd(std::string code_name);
@@ -991,12 +973,6 @@ class Ret32Far:public Instruction{
 class CallM1632:public Instruction{
     public: 
         CallM1632(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class PushSs:public Instruction{
-    public: 
-        PushSs(std::string code_name);
         void Run(const Emulator& emu);
 };
 
@@ -1587,18 +1563,6 @@ class LldtRm16:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class PushFs:public Instruction{
-    public: 
-        PushFs(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class PushGs:public Instruction{
-    public: 
-        PushGs(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class SalRm8Imm8:public Instruction{
     public: 
         SalRm8Imm8(std::string code_name);
@@ -1614,5 +1578,11 @@ class RolRm32Imm8:public Instruction{
 class PopSegmentRegister:public Instruction{
     public:
         PopSegmentRegister(std::string code_name);
+        void Run(const Emulator& emu);
+};
+
+class PushSegmentRegister:public Instruction{
+    public:
+        PushSegmentRegister(std::string code_name);
         void Run(const Emulator& emu);
 };

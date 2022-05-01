@@ -1009,9 +1009,9 @@ Code0F::Code0F(string code_name):Instruction(code_name){
     this->instructions[0x97] = new SetaRm8("SetaRm8");
     this->instructions[0x9D] = new SetgeRm8("SetgeRm8");
     this->instructions[0x9F] = new SetgRm8("SetgRm8");
-    this->instructions[0xA0] = new PushFs("PushFs");
+    this->instructions[0xA0] = new PushSegmentRegister("PushSegmentRegister");
     this->instructions[0xA1] = new PopSegmentRegister("PopSegmentRegister");
-    this->instructions[0xA8] = new PushGs("PushGs");
+    this->instructions[0xA8] = new PushSegmentRegister("PushSegmentRegister");
     this->instructions[0xA9] = new PopSegmentRegister("PopSegmentRegister");
     this->instructions[0xAC] = new ShrdRm32R32Imm8("ShrdRm32R32Imm8");
     this->instructions[0xAF] = new ImulR32Rm32("ImulR32Rm32");
@@ -3278,63 +3278,6 @@ void Sti::Run(const Emulator& emu){
     return;
 }
 
-PushEs::PushEs(string code_name):Instruction(code_name){
-
-}
-
-void PushEs::Run(const Emulator& emu){
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t es = 0;
-        emu.cpu->AddEip(1);
-        es = (uint32_t)emu.cpu->GetR16(ES);
-        emu.cpu->Push32( es);
-        return;
-    }
-    uint16_t es;
-    emu.cpu->AddEip(1);
-    es = emu.cpu->GetR16(ES);
-    emu.cpu->Push16( es);
-    return;
-}
-
-PushDs::PushDs(string code_name):Instruction(code_name){
-
-}
-
-void PushDs::Run(const Emulator& emu){
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t ds = 0;
-        emu.cpu->AddEip(1);
-        ds = (uint32_t)emu.cpu->GetR16(DS);
-        emu.cpu->Push32( ds);
-        return;
-    }
-    uint16_t ds;
-    emu.cpu->AddEip(1);
-    ds = emu.cpu->GetR16(DS);
-    emu.cpu->Push16( ds);
-    return;
-}
-
-PushCs::PushCs(string code_name):Instruction(code_name){
-
-}
-
-void PushCs::Run(const Emulator& emu){
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t cs = 0;
-        emu.cpu->AddEip(1);
-        cs = (uint32_t)emu.cpu->GetR16(CS);
-        emu.cpu->Push32( cs);
-        return;
-    }
-    uint16_t cs;
-    emu.cpu->AddEip(1);
-    cs = emu.cpu->GetR16(CS);
-    emu.cpu->Push16( cs);
-    return;
-}
-
 PushAd::PushAd(string code_name):Instruction(code_name){
 
 }
@@ -4598,25 +4541,6 @@ void CallM1632::Run(const Emulator& emu){
     emu.cpu->Push16( (uint16_t)emu.cpu->GetEip());
     emu.cpu->SetEip(eip);
     emu.cpu->SetR16(CS, selector);
-}
-
-PushSs::PushSs(string code_name):Instruction(code_name){
-
-}
-
-void PushSs::Run(const Emulator& emu){
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t ss = 0;
-        emu.cpu->AddEip(1);
-        ss = (uint32_t)emu.cpu->GetR16(SS);
-        emu.cpu->Push32( ss);
-        return;
-    }
-    uint16_t ss;
-    emu.cpu->AddEip(1);
-    ss = emu.cpu->GetR16(SS);
-    emu.cpu->Push16( ss);
-    return;
 }
 
 CmpR8Rm8::CmpR8Rm8(string code_name):Instruction(code_name){
@@ -7263,44 +7187,6 @@ void LldtRm16::Run(const Emulator& emu){
     return;
 }
 
-PushFs::PushFs(string code_name):Instruction(code_name){
-
-}
-
-void PushFs::Run(const Emulator& emu){
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t fs;
-        emu.cpu->AddEip(1);
-        fs = (uint32_t)emu.cpu->GetR16(FS);
-        emu.cpu->Push32( fs);
-        return;
-    }
-    uint16_t fs;
-    emu.cpu->AddEip(1);
-    fs = emu.cpu->GetR16(FS);
-    emu.cpu->Push16( fs);
-    return;
-}
-
-PushGs::PushGs(string code_name):Instruction(code_name){
-
-}
-
-void PushGs::Run(const Emulator& emu){
-    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t gs;
-        emu.cpu->AddEip(1);
-        gs = (uint32_t)emu.cpu->GetR16(GS);
-        emu.cpu->Push32( gs);
-        return;
-    }
-    uint16_t gs;
-    emu.cpu->AddEip(1);
-    gs = emu.cpu->GetR16(GS);
-    emu.cpu->Push16( gs);
-    return;
-}
-
 SalRm8Imm8::SalRm8Imm8(string code_name):Instruction(code_name){
 
 }
@@ -7400,5 +7286,46 @@ void PopSegmentRegister::Run(const Emulator& emu){
     uint16_t data;
     data = emu.cpu->Pop16();
     emu.cpu->SetR16(segment_register, data);
+    return;
+}
+
+PushSegmentRegister::PushSegmentRegister(string code_name):Instruction(code_name){
+
+}
+
+void PushSegmentRegister::Run(const Emulator& emu){
+    SEGMENT_REGISTER segment_register;
+    switch(emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess())){
+        case 0x0E:
+            segment_register = CS;
+            break;
+        case 0x1E:
+            segment_register = DS;
+            break;
+        case 0x06:
+            segment_register = ES;
+            break;
+        case 0x16:
+            segment_register = SS;
+            break;
+        case 0xA0:
+            segment_register = FS;
+            break;
+        case 0xA8:
+            segment_register = GS;
+            break;
+        default:
+            this->Error("Not supported: segment_register=%d at %s", emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()), this->code_name.c_str());
+            break;
+    }
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
+        emu.cpu->AddEip(1);
+        uint32_t segment_register_value = (uint32_t)emu.cpu->GetR16(segment_register);
+        emu.cpu->Push32(segment_register_value);
+        return;
+    }
+    emu.cpu->AddEip(1);
+    uint16_t segment_register_value = emu.cpu->GetR16(segment_register);
+    emu.cpu->Push16(segment_register_value);
     return;
 }
