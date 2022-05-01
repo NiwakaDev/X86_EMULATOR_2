@@ -10,13 +10,13 @@ Bios::Bios(const char* const file_name, Vga& vga, Kbc& kbc){
     for(int i=0; i<Bios::BIOS_FUNCTION_SIZE; i++){
         this->bios_functions[i] = NULL;
     }
-    this->bios_functions[0x10] = make_unique<VideoFunction>(vga);
-    this->bios_functions[0x11] = make_unique<EquipmentListFunction>();
-    this->bios_functions[0x12] = make_unique<MemoryFunction>();
-    this->bios_functions[0x13] = make_unique<FloppyFunction>(file_name);
-    this->bios_functions[0x15] = make_unique<GeneralSystemServicesFunction>();
-    this->bios_functions[0x16] = make_unique<KeyFunction>(kbc);
-    this->bios_functions[0x1A] = make_unique<TimerFunction>();
+    this->bios_functions[BIOS_FUNCTION::VIDEO_FUNCTION]           = make_unique<VideoFunction>(vga);
+    this->bios_functions[BIOS_FUNCTION::EQUIPMENTLIST_FUNCTION]   = make_unique<EquipmentListFunction>();
+    this->bios_functions[BIOS_FUNCTION::MEMORY_FUNCTION]          = make_unique<MemoryFunction>();
+    this->bios_functions[BIOS_FUNCTION::FLOPPY_FUNCTION]          = make_unique<FloppyFunction>(file_name);
+    this->bios_functions[BIOS_FUNCTION::GENERAL_PURPOSE_FUNCTION] = make_unique<GeneralSystemServicesFunction>();
+    this->bios_functions[BIOS_FUNCTION::KEY_FUNCTION]             = make_unique<KeyFunction>(kbc);
+    this->bios_functions[BIOS_FUNCTION::TIMER_FUNCTION]           = make_unique<TimerFunction>();
 }
 
 Bios::~Bios(){

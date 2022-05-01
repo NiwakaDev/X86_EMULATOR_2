@@ -1,14 +1,5 @@
 #include "Instruction.h"
 #include "Instructions.h"
-//TODO : Instruction.cppはCpuとEmulatorを知らない状態にする。
-//Cpu.hとEmulator.hを削除するために、デリゲートのようなものを用意する。
-/***依存関係を削除するイメージ
-class Instruction{
-    void SetCallBack(){//コールバック関数を登録する
-
-    }
-}
-***/
 #include "Cpu.h"
 #include "Memory.h"
 #include "IoPort.h"
@@ -41,20 +32,6 @@ Instruction::Instruction(string code_name){
 Instruction::~Instruction(){
 
 }
-
-/***
- * このコードは3代目x86エミュレータに組み込む予定
- * 無理やりこのコードを今のエミュレータに使うのは怖い。
-template<typename type>void Instruction::Push(const Emulator& emu, type data){
-    //スタックのアドレスサイズはスタックセグメントのBフラグで決定される。
-    if(emu.cpu->IsBflg(SS)){//セットされていたら32bitサイズ
-        emu.cpu->SetR32(ESP, emu.cpu->GetR32(ESP)-4);
-        emu.mem->Write(emu.cpu->GetLinearStackAddr(), data);
-    }  
-    emu.cpu->SetR16(ESP, emu.cpu->GetR16(ESP)-2);
-    emu.mem->Write(emu.cpu->GetLinearStackAddr(), data);
-}
-***/
 
 inline void Instruction::ParseModRM(const Emulator& emu){
     uint8_t code;
