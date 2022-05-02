@@ -1056,21 +1056,6 @@ void CmpAlImm8::Run(const Emulator& emu){
     return;
 }
 
-JzRel8::JzRel8(string code_name):Instruction(code_name){
-
-}
-
-void JzRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(emu.cpu->IsFlag(ZF)){
-        emu.cpu->AddEip(rel8);
-    }
-    return;
-}
-
 MovR8Imm8::MovR8Imm8(string code_name):Instruction(code_name){
 
 }
@@ -1169,22 +1154,6 @@ void Hlt::Run(const Emulator& emu){
     this_thread::sleep_for(milliseconds(10));
 }
 
-JaeRel8::JaeRel8(string code_name):Instruction(code_name){
-
-}
-
-void JaeRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-
-    if(!emu.cpu->IsFlag(CF)){
-        emu.cpu->AddEip(rel8);
-    }
-    return;
-}
-
 MovRm16Sreg::MovRm16Sreg(string code_name):Instruction(code_name){
 
 }
@@ -1213,51 +1182,6 @@ void CmpRm8Imm8::Run(const Emulator& emu){
     rm8  = this->GetRM8(emu);
     result = (uint32_t)rm8 - (uint32_t)imm8;
     emu.cpu->UpdateEflagsForSub8(result, rm8, imm8);
-    return;
-}
-
-JbeRel8::JbeRel8(string code_name):Instruction(code_name){
-
-}
-
-void JbeRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(emu.cpu->IsFlag(CF)||emu.cpu->IsFlag(ZF)){
-        emu.cpu->AddEip(rel8);
-    }
-    return;
-}
-
-JnzRel8::JnzRel8(string code_name):Instruction(code_name){
-
-}
-
-void JnzRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(!emu.cpu->IsFlag(ZF)){
-        emu.cpu->AddEip(rel8);
-    }
-    return;
-}
-
-JcRel8::JcRel8(string code_name):Instruction(code_name){
-
-}
-
-void JcRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(emu.cpu->IsFlag(CF)){
-        emu.cpu->AddEip(rel8);
-    }
     return;
 }
 
@@ -1918,21 +1842,6 @@ void CmpRm32Imm32::Run(const Emulator& emu){
     return;
 }
 
-JleRel8::JleRel8(string code_name):Instruction(code_name){
-
-}
-
-void JleRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(emu.cpu->IsFlag(ZF) || (emu.cpu->IsFlag(OF)!=emu.cpu->IsFlag(SF))){
-        emu.cpu->AddEip(rel8);
-    }
-    return;
-}
-
 AndRm32Imm8::AndRm32Imm8(string code_name):Instruction(code_name){
 
 }
@@ -2202,21 +2111,6 @@ void CmpR32Rm32::Run(const Emulator& emu){
     return;
 }
 
-JgRel8::JgRel8(string code_name):Instruction(code_name){
-
-}
-
-void JgRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if((!emu.cpu->IsFlag(ZF)) && (emu.cpu->IsFlag(SF)==emu.cpu->IsFlag(OF))){
-        emu.cpu->AddEip(rel8);
-    }
-    return;
-}
-
 ImulR32Rm32::ImulR32Rm32(string code_name):Instruction(code_name){
 
 }
@@ -2325,21 +2219,6 @@ void TestRm8R8::Run(const Emulator& emu){
     r8  = emu.cpu->GetR8(this->modrm.reg_index); 
     result = rm8 & r8;
     emu.cpu->UpdateEflagsForAnd(result);
-    return;
-}
-
-JnsRel8::JnsRel8(string code_name):Instruction(code_name){
-
-}
-
-void JnsRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(!emu.cpu->IsFlag(SF)){
-        emu.cpu->AddEip(rel8);
-    }
     return;
 }
 
@@ -2530,21 +2409,6 @@ void TestRm32R32::Run(const Emulator& emu){
     return;
 }
 
-JsRel8::JsRel8(string code_name):Instruction(code_name){
-
-}
-
-void JsRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(emu.cpu->IsFlag(SF)){
-        emu.cpu->AddEip(rel8);
-    }
-    return;
-}
-
 DivRm32::DivRm32(string code_name):Instruction(code_name){
 
 }
@@ -2591,21 +2455,6 @@ void NotRm32::Run(const Emulator& emu){
     rm16 = this->GetRM16(emu);
     rm16 = ~rm16;
     this->SetRM16(emu, rm16);
-    return;
-}
-
-JgeRel8::JgeRel8(string code_name):Instruction(code_name){
-
-}
-
-void JgeRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(emu.cpu->IsFlag(SF)==emu.cpu->IsFlag(OF)){
-        emu.cpu->AddEip(rel8);
-    }
     return;
 }
 
@@ -2751,21 +2600,6 @@ void IdivRm32::Run(const Emulator& emu){
     return;
 }
 
-JlRel8::JlRel8(string code_name):Instruction(code_name){
-
-}
-
-void JlRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(emu.cpu->IsFlag(SF)!=emu.cpu->IsFlag(OF)){
-        emu.cpu->AddEip(rel8);
-    }
-    return;
-}
-
 Sti::Sti(string code_name):Instruction(code_name){
 
 }
@@ -2836,21 +2670,6 @@ void DecRm32::Run(const Emulator& emu){
     uint16_t result = rm16+d;
     this->SetRM16(emu, result);
     emu.cpu->UpdateEflagsForDec(result, rm16, d);
-    return;
-}
-
-JaRel8::JaRel8(string code_name):Instruction(code_name){
-
-}
-
-void JaRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if((!emu.cpu->IsFlag(CF))&&(!emu.cpu->IsFlag(ZF))){
-        emu.cpu->AddEip(rel8);
-    }
     return;
 }
 
@@ -6417,36 +6236,6 @@ void Sahf::Run(const Emulator& emu){
     return;
 }
 
-JnpRel8::JnpRel8(string code_name):Instruction(code_name){
-
-}
-
-void JnpRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(!emu.cpu->IsFlag(PF)){
-        emu.cpu->AddEip(rel8);
-    }
-    return;
-}
-
-JpRel8::JpRel8(string code_name):Instruction(code_name){
-
-}
-
-void JpRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(emu.cpu->IsFlag(PF)){
-        emu.cpu->AddEip(rel8);
-    }
-    return;
-}
-
 SalRm8::SalRm8(string code_name):Instruction(code_name){
 
 }
@@ -6475,31 +6264,69 @@ void SalRm8::Run(const Emulator& emu){
     return;
 }
 
-JnoRel8::JnoRel8(string code_name):Instruction(code_name){
+JccRel8::JccRel8(string code_name): Instruction(code_name){
 
 }
 
-void JnoRel8::Run(const Emulator& emu){
-    uint32_t rel8;
-    emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
-    emu.cpu->AddEip(1);
-    if(!emu.cpu->IsFlag(OF)){
-        emu.cpu->AddEip(rel8);
+void JccRel8::Run(const Emulator& emu){
+    uint8_t jcc_type = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
+    bool condition;
+    switch(jcc_type){
+        case 0x70:
+            condition = emu.cpu->IsFlag(OF);
+            break;
+        case 0x71:
+            condition = !emu.cpu->IsFlag(OF);
+            break;
+        case 0x72:
+            condition = emu.cpu->IsFlag(CF);
+            break;
+        case 0x73:
+            condition = !emu.cpu->IsFlag(CF);
+            break;
+        case 0x74:
+            condition = emu.cpu->IsFlag(ZF);
+            break;
+        case 0x75:
+            condition = !emu.cpu->IsFlag(ZF);
+            break;
+        case 0x76:
+            condition = emu.cpu->IsFlag(CF)||emu.cpu->IsFlag(ZF);
+            break;
+        case 0x77:
+            condition = (!emu.cpu->IsFlag(CF))&&(!emu.cpu->IsFlag(ZF));
+            break;
+        case 0x78:
+            condition = emu.cpu->IsFlag(SF);
+            break;
+        case 0x79:
+            condition = !emu.cpu->IsFlag(SF);
+            break;
+        case 0x7A:
+            condition = emu.cpu->IsFlag(PF);
+            break;
+        case 0x7B:
+            condition = !emu.cpu->IsFlag(PF);
+            break;
+        case 0x7C:
+            condition = emu.cpu->IsFlag(SF)!=emu.cpu->IsFlag(OF);
+            break;
+        case 0x7D:
+            condition = emu.cpu->IsFlag(SF)==emu.cpu->IsFlag(OF);
+            break;
+        case 0x7E:
+            condition = emu.cpu->IsFlag(ZF) || (emu.cpu->IsFlag(OF)!=emu.cpu->IsFlag(SF));
+            break;
+        case 0x7F:
+            condition = (!emu.cpu->IsFlag(ZF)) && (emu.cpu->IsFlag(SF)==emu.cpu->IsFlag(OF));
+            break;
+        default:
+            this->Error("Not implemented: jcc_type=0x%02X at %s::Run", jcc_type, this->code_name.c_str());
     }
-    return;
-}
-
-JoRel8::JoRel8(string code_name):Instruction(code_name){
-
-}
-
-void JoRel8::Run(const Emulator& emu){
-    uint32_t rel8;
     emu.cpu->AddEip(1);
-    rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
+    uint32_t rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
     emu.cpu->AddEip(1);
-    if(emu.cpu->IsFlag(OF)){
+    if(condition){
         emu.cpu->AddEip(rel8);
     }
     return;
@@ -6567,16 +6394,14 @@ void JccRel32::Run(const Emulator& emu){
     }
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t rel32;
-        rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
+        uint32_t rel32 = emu.mem->Read32(emu.cpu->GetLinearAddrForCodeAccess());
         emu.cpu->AddEip(4);
         if(condition){
             emu.cpu->AddEip(rel32);
         }
         return;
     }
-    uint32_t rel16;
-    rel16 = (int32_t)((int16_t)emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess()));
+    uint32_t rel16 = (int32_t)((int16_t)emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess()));
     emu.cpu->AddEip(2);
     if(condition){
         emu.cpu->AddEip(rel16);

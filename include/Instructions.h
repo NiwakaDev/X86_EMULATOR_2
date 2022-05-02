@@ -196,18 +196,6 @@ class CmpAlImm8:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class JaeRel8:public Instruction{
-    public: 
-        JaeRel8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JzRel8:public Instruction{
-    public: 
-        JzRel8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class MovR8Imm8:public Instruction{
     public: 
         MovR8Imm8(std::string code_name);
@@ -241,24 +229,6 @@ class AddEaxImm32:public Instruction{
 class CmpRm8Imm8:public Instruction{
     public: 
         CmpRm8Imm8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JbeRel8:public Instruction{
-    public: 
-        JbeRel8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JnzRel8:public Instruction{
-    public: 
-        JnzRel8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JcRel8:public Instruction{
-    public: 
-        JcRel8(std::string code_name);
         void Run(const Emulator& emu);
 };
 
@@ -436,12 +406,6 @@ class CmpRm32Imm32:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class JleRel8:public Instruction{
-    public: 
-        JleRel8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class AndRm32Imm8:public Instruction{
     public: 
         AndRm32Imm8(std::string code_name);
@@ -526,12 +490,6 @@ class CmpR32Rm32:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class JgRel8:public Instruction{
-    public: 
-        JgRel8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class ImulR32Rm32:public Instruction{
     public: 
         ImulR32Rm32(std::string code_name);
@@ -571,12 +529,6 @@ class DecR32:public Instruction{
 class TestRm8R8:public Instruction{
     public: 
         TestRm8R8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JnsRel8:public Instruction{
-    public: 
-        JnsRel8(std::string code_name);
         void Run(const Emulator& emu);
 };
 
@@ -622,12 +574,6 @@ class TestRm32R32:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class JsRel8:public Instruction{
-    public: 
-        JsRel8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class DivRm32:public Instruction{
     public: 
         DivRm32(std::string code_name);
@@ -637,12 +583,6 @@ class DivRm32:public Instruction{
 class NotRm32:public Instruction{
     public: 
         NotRm32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JgeRel8:public Instruction{
-    public: 
-        JgeRel8(std::string code_name);
         void Run(const Emulator& emu);
 };
 
@@ -682,12 +622,6 @@ class IdivRm32:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class JlRel8:public Instruction{
-    public: 
-        JlRel8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class Sti:public Instruction{
     public: 
         Sti(std::string code_name);
@@ -709,12 +643,6 @@ class InAlDx:public Instruction{
 class DecRm32:public Instruction{
     public: 
         DecRm32(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JaRel8:public Instruction{
-    public: 
-        JaRel8(std::string code_name);
         void Run(const Emulator& emu);
 };
 
@@ -1491,33 +1419,9 @@ class Sahf:public Instruction{
         void Run(const Emulator& emu);
 };
 
-class JnpRel8:public Instruction{
-    public: 
-        JnpRel8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JpRel8:public Instruction{
-    public: 
-        JpRel8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
 class SalRm8:public Instruction{
     public: 
         SalRm8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JnoRel8:public Instruction{
-    public: 
-        JnoRel8(std::string code_name);
-        void Run(const Emulator& emu);
-};
-
-class JoRel8:public Instruction{
-    public: 
-        JoRel8(std::string code_name);
         void Run(const Emulator& emu);
 };
 
@@ -1584,5 +1488,11 @@ class PopSegmentRegister:public Instruction{
 class PushSegmentRegister:public Instruction{
     public:
         PushSegmentRegister(std::string code_name);
+        void Run(const Emulator& emu);
+};
+
+class JccRel8:public Instruction{
+    public:
+        JccRel8(std::string code_name);
         void Run(const Emulator& emu);
 };

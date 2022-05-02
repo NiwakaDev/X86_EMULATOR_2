@@ -156,37 +156,22 @@ unique_ptr<Instruction> InstructionHelper::InstructionFactory::CreateInstruction
         case 0x6B:
             return make_unique<ImulR32Rm32Imm8>("ImulR32Rm32Imm8");
         case 0x70:
-            return make_unique<JoRel8>("JoRel8");
         case 0x71:
-            return make_unique<JnoRel8>("JnoRel8");
         case 0x72:
-            return make_unique<JcRel8>("JcRel8");
         case 0x73:
-            return make_unique<JaeRel8>("JaeRel8");
         case 0x74:
-            return make_unique<JzRel8>("JzRel8");
         case 0x75:
-            return make_unique<JnzRel8>("JnzRel8");
         case 0x76:
-            return make_unique<JbeRel8>("JbeRel8");
         case 0x77:
-            return make_unique<JaRel8>("JaRel8");
         case 0x78:
-            return make_unique<JsRel8>("JsRel8");
         case 0x79:
-            return make_unique<JnsRel8>("JnsRel8");
         case 0x7A:
-            return make_unique<JpRel8>("JpRel8");
         case 0x7B:
-            return make_unique<JnpRel8>("JnpRel8");
         case 0x7C:
-            return make_unique<JlRel8>("JlRel8");
         case 0x7D:
-            return make_unique<JgeRel8>("JgeRel8");
         case 0x7E:
-            return make_unique<JleRel8>("JleRel8");
         case 0x7F:
-            return make_unique<JgRel8>("JgRel8");
+            return make_unique<JccRel8>("JccRel8");
         case 0x80:
             return make_unique<Code80>("Code80");
         case 0x81:
