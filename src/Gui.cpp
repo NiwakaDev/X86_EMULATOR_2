@@ -30,7 +30,6 @@ class Gui::Pimpl{
         SDL_Window* window = NULL;
         SDL_Renderer *renderer = NULL;
         SDL_Texture *texture   = NULL;
-        SDL_DisplayMode display_mode;
         //Mix_Music *music;
         void HandleKeyDown(SDL_Event& e);
         void HandleKeyUp(SDL_Event& e);
