@@ -1,4 +1,5 @@
 #include "Memory.h"
+#include "Font.h"
 #include "Vga.h"
 
 extern uint8_t font8x8_basic[128][8];

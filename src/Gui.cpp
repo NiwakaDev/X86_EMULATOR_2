@@ -2,7 +2,6 @@
 #include "IoDevice.h"
 #include "Gui.h"
 #include "KbcEnum.h"
-#include "Font.h"
 
 using namespace std;
 
@@ -104,6 +103,8 @@ Gui::~Gui(){
     SDL_Quit();
 }
 
+//MEMO : Push関数しか利用しないから、抽象クラスを用意するのは無駄な気がする。
+//callback関数で十分な気がする。こっちの方が参照しなくて済むので、メリットは大きい
 void Gui::AddIoDevice(IO_DEVICE_KIND io_device_kind, IoDevice& io_device){
     if(io_device_kind==IO_DEVICE_KIND_TOTAL)return;
     this->pimpl->io_devices[io_device_kind] = &io_device;
