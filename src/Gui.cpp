@@ -405,12 +405,9 @@ inline void Gui::Pimpl::ShowCursor(){
     SDL_SetRelativeMouseMode(SDL_FALSE);
 }
 
-inline void Gui::Pimpl::HandleMouseMotion(SDL_Event& e){
-
-    int rel_x, rel_y;
-   
-    rel_x = e.motion.xrel / MOVE_SCALE;
-    rel_y = e.motion.yrel / MOVE_SCALE;
+inline void Gui::Pimpl::HandleMouseMotion(SDL_Event& e){   
+    int rel_x = e.motion.xrel / MOVE_SCALE;
+    int rel_y = e.motion.yrel / MOVE_SCALE;
     if(rel_x>127){
         rel_x = 127;
     }else if(rel_x < -127){
