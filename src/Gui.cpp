@@ -21,7 +21,6 @@ class Gui::Pimpl{
         void Update();
         void Update(const int x, const int y, const int w, const int h);
         bool quit = false;
-        int mouse_x, mouse_y;
         Vga* vga = NULL;
         IoDevice* io_devices[IO_DEVICE_KIND_TOTAL];
         Pixel* vram_mem = NULL;
