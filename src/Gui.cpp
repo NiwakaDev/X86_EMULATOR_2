@@ -23,7 +23,6 @@ class Gui::Pimpl{
         bool quit = false;
         Vga* vga = NULL;
         IoDevice* io_devices[IO_DEVICE_KIND_TOTAL];
-        Pixel* vram_mem = NULL;
         int screen_width;
         int screen_height;
         SDL_Window* window = NULL;
