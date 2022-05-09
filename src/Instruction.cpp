@@ -381,17 +381,9 @@ CodeC0::CodeC0(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[4] = new SalRm8Imm8("SalRm8Imm8");
-    this->instructions[5] = new ShrRm8Imm8("ShrRm8Imm8");
-    this->instructions[7] = new SarRm8Imm8("SarRm8Imm8");
-}
-
-CodeC0::~CodeC0(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
+    this->instructions[4] = make_unique<SalRm8Imm8>("SalRm8Imm8");
+    this->instructions[5] = make_unique<ShrRm8Imm8>("ShrRm8Imm8");
+    this->instructions[7] = make_unique<SarRm8Imm8>("SarRm8Imm8");
 }
 
 void CodeC0::Run(const Emulator& emu){
