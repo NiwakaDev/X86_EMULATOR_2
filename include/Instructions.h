@@ -28,19 +28,16 @@ class MovR8Rm8:public Instruction{
 
 class CodeC0:public Instruction{
     private:
-        //Instruction* instructions[InstructionHelper::INSTRUCTION_SET_SMALL_SIZE];
         std::unique_ptr<Instruction> instructions[InstructionHelper::INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        //~CodeC0();
         CodeC0(std::string code_name);
         void Run(const Emulator& emu);
 };
 
 class CodeC6:public Instruction{
     private:
-        Instruction* instructions[InstructionHelper::INSTRUCTION_SET_SMALL_SIZE];
+        std::unique_ptr<Instruction> instructions[InstructionHelper::INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        ~CodeC6();
         CodeC6(std::string code_name);
         void Run(const Emulator& emu);
 };

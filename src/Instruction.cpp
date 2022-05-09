@@ -397,19 +397,11 @@ void CodeC0::Run(const Emulator& emu){
     return;
 }
 
-CodeC6::~CodeC6(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
-}
-
 CodeC6::CodeC6(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[0] = new MovRm8Imm8("MovRm8Imm8");
+    this->instructions[0] = make_unique<MovRm8Imm8>("MovRm8Imm8");
 }
 
 void CodeC6::Run(const Emulator& emu){
