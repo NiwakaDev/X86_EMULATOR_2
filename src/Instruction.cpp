@@ -419,21 +419,13 @@ Code80::Code80(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[0] = new AddRm8Imm8("AddRm8Imm8");
-    this->instructions[1] = new OrRm8Imm8("OrRm8Imm8");
-    this->instructions[2] = new AdcRm8Imm8("AdcRm8Imm8");
-    this->instructions[4] = new AndRm8Imm8("AndRm8Imm8");
-    this->instructions[5] = new SubRm8Imm8("SubRm8Imm8");
-    this->instructions[6] = new XorRm8Imm8("XorRm8Imm8");
-    this->instructions[7] = new CmpRm8Imm8("CmpRm8Imm8");
-}
-
-Code80::~Code80(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
+    this->instructions[0] = make_unique<AddRm8Imm8>("AddRm8Imm8");
+    this->instructions[1] = make_unique<OrRm8Imm8>("OrRm8Imm8");
+    this->instructions[2] = make_unique<AdcRm8Imm8>("AdcRm8Imm8");
+    this->instructions[4] = make_unique<AndRm8Imm8>("AndRm8Imm8");
+    this->instructions[5] = make_unique<SubRm8Imm8>("SubRm8Imm8");
+    this->instructions[6] = make_unique<XorRm8Imm8>("XorRm8Imm8");
+    this->instructions[7] = make_unique<CmpRm8Imm8>("CmpRm8Imm8");
 }
 
 void Code80::Run(const Emulator& emu){

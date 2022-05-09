@@ -44,9 +44,8 @@ class CodeC6:public Instruction{
 
 class Code80:public Instruction{
     private:
-        Instruction* instructions[InstructionHelper::INSTRUCTION_SET_SMALL_SIZE];
+        std::unique_ptr<Instruction> instructions[InstructionHelper::INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        ~Code80();
         Code80(std::string code_name);
         void Run(const Emulator& emu);
 };
