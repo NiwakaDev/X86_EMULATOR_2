@@ -608,13 +608,13 @@ CodeF7::CodeF7(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[0] = new TestRm32Imm32("TestRm32Imm32");
-    this->instructions[2] = new NotRm32("NotRm32");
-    this->instructions[3] = new NegRm32("NegRm32");
-    this->instructions[4] = new MulRm32("MulRm32");
-    this->instructions[5] = new ImulRm16("ImulRm16");
-    this->instructions[6] = new DivRm32("DivRm32");
-    this->instructions[7] = new IdivRm32("IdivRm32");
+    this->instructions[0] = make_unique<TestRm32Imm32>("TestRm32Imm32");
+    this->instructions[2] = make_unique<NotRm32>("NotRm32");
+    this->instructions[3] = make_unique<NegRm32>("NegRm32");
+    this->instructions[4] = make_unique<MulRm32>("MulRm32");
+    this->instructions[5] = make_unique<ImulRm16>("ImulRm16");
+    this->instructions[6] = make_unique<DivRm32>("DivRm32");
+    this->instructions[7] = make_unique<IdivRm32>("IdivRm32");
 }
 
 void CodeF7::Run(const Emulator& emu){
