@@ -583,22 +583,14 @@ Code83::Code83(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[1] = new OrRm32Imm8("OrRm32Imm8");
-    this->instructions[0] = new AddRm32Imm8("AddRm32Imm8");
-    this->instructions[2] = new AdcRm32Imm8("AdcRm32Imm8");
-    this->instructions[3] = new SbbRm32Imm8("SbbRm32Imm8");
-    this->instructions[4] = new AndRm32Imm8("AndRm32Imm8");
-    this->instructions[5] = new SubRm32Imm8("SubRm32Imm8");
-    this->instructions[6] = new XorRm32Imm8("XorRm32Imm8");
-    this->instructions[7] = new CmpRm32Imm8("CmpRm32Imm8");
-}
-
-Code83::~Code83(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
+    this->instructions[1] = make_unique<OrRm32Imm8>("OrRm32Imm8");
+    this->instructions[0] = make_unique<AddRm32Imm8>("AddRm32Imm8");
+    this->instructions[2] = make_unique<AdcRm32Imm8>("AdcRm32Imm8");
+    this->instructions[3] = make_unique<SbbRm32Imm8>("SbbRm32Imm8");
+    this->instructions[4] = make_unique<AndRm32Imm8>("AndRm32Imm8");
+    this->instructions[5] = make_unique<SubRm32Imm8>("SubRm32Imm8");
+    this->instructions[6] = make_unique<XorRm32Imm8>("XorRm32Imm8");
+    this->instructions[7] = make_unique<CmpRm32Imm8>("CmpRm32Imm8");
 }
 
 void Code83::Run(const Emulator& emu){
