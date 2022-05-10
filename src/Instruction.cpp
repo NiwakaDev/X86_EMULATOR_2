@@ -564,18 +564,9 @@ Code0F01::Code0F01(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[0x02] = new Lgdt("Lgdt");
-    this->instructions[0x03] = new Lidt("Lidt");
+    this->instructions[0x02] = make_unique<Lgdt>("Lgdt");
+    this->instructions[0x03] = make_unique<Lidt>("Lidt");
 }
-
-Code0F01::~Code0F01(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
-}
-
 
 void Code0F01::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
