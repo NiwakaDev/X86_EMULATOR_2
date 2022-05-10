@@ -84,9 +84,8 @@ class CodeFE:public Instruction{
 
 class CodeD2:public Instruction{
     private:
-        Instruction* instructions[InstructionHelper::INSTRUCTION_SET_SMALL_SIZE];
+        std::unique_ptr<Instruction> instructions[InstructionHelper::INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        ~CodeD2();
         CodeD2(std::string code_name);
         void Run(const Emulator& emu);
 };
