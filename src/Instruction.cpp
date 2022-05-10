@@ -545,18 +545,9 @@ Code0F00::Code0F00(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[2] = new LldtRm16("LldtRm16");
-    this->instructions[3] = new LtrRm16("LtrRm16");
+    this->instructions[2] = make_unique<LldtRm16>("LldtRm16");
+    this->instructions[3] = make_unique<LtrRm16>("LtrRm16");
 }
-
-Code0F00::~Code0F00(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
-}
-
 
 void Code0F00::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
