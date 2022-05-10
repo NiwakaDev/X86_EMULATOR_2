@@ -533,7 +533,7 @@ CodeC1::CodeC1(string code_name):Instruction(code_name){
 void CodeC1::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
-    if(this->instructions[this->modrm.reg_index]==NULL){
+    if(this->instructions[this->modrm.reg_index].get()==NULL){
             this->Error("Not implemented: C1 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
