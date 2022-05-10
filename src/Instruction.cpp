@@ -689,28 +689,19 @@ CodeFF::CodeFF(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[0] = new IncRm32("IncRm32");
-    this->instructions[1] = new DecRm32("DecRm32");
-    this->instructions[2] = new CallRm32("CallRm32");
-    this->instructions[3] = new CallM1632("CallM1632");
-    this->instructions[4] = new JmpRm32("JmpRm32");
-    this->instructions[5] = new JmpM1632("JmpM1632");
-    this->instructions[6] = new PushRm32("PushRm32");
+    this->instructions[0] = make_unique<IncRm32>("IncRm32");
+    this->instructions[1] = make_unique<DecRm32>("DecRm32");
+    this->instructions[2] = make_unique<CallRm32>("CallRm32");
+    this->instructions[3] = make_unique<CallM1632>("CallM1632");
+    this->instructions[4] = make_unique<JmpRm32>("JmpRm32");
+    this->instructions[5] = make_unique<JmpM1632>("JmpM1632");
+    this->instructions[6] = make_unique<PushRm32>("PushRm32");
 }
-
-CodeFF::~CodeFF(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
-}
-
 
 void CodeFF::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
-    if(this->instructions[this->modrm.reg_index]==NULL){
+    if(this->instructions[this->modrm.reg_index].get()==NULL){
             this->Error("Not implemented: FF /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
