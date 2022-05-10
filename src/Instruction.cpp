@@ -407,8 +407,8 @@ CodeC6::CodeC6(string code_name):Instruction(code_name){
 void CodeC6::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
-    if(this->instructions[this->modrm.reg_index]==NULL){
-            this->Error("Not implemented: C6 %02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+    if(this->instructions[this->modrm.reg_index].get()==NULL){
+        this->Error("Not implemented: C6 %02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
