@@ -158,10 +158,9 @@ class Code0F01:public Instruction{
 
 class Code0F:public Instruction{
     private:
-        Instruction* instructions[InstructionHelper::INSTRUCTION_SIZE];
+        std::unique_ptr<Instruction> instructions[InstructionHelper::INSTRUCTION_SIZE];
     public: 
         Code0F(std::string code_name);
-        ~Code0F();
         void Run(const Emulator& emu);
 };
 

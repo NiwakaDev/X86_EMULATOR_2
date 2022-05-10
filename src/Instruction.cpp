@@ -467,53 +467,45 @@ Code0F::Code0F(string code_name):Instruction(code_name){
         this->instructions[i] = NULL;
     }
     //TODO : 生ポインタをスマートポインタに変更
-    this->instructions[0x00] = new Code0F00("Code0F00");
-    this->instructions[0x01] = new Code0F01("Code0F01"); 
-    this->instructions[0x20] = new MovR32CRX("MovR32CRX"); 
-    this->instructions[0x22] = new MovCRXR32("MovCRXR32");
-    this->instructions[0x80] = new JccRel32("JccRel32");
-    this->instructions[0x81] = new JccRel32("JccRel32");
-    this->instructions[0x82] = new JccRel32("JccRel32");
-    this->instructions[0x83] = new JccRel32("JccRel32");
-    this->instructions[0x84] = new JccRel32("JccRel32"); 
-    this->instructions[0x85] = new JccRel32("JccRel32");
-    this->instructions[0x86] = new JccRel32("JccRel32");
-    this->instructions[0x87] = new JccRel32("JccRel32");
-    this->instructions[0x88] = new JccRel32("JccRel32");
-    this->instructions[0x89] = new JccRel32("JccRel32");
-    this->instructions[0x8A] = new JccRel32("JccRel32");
-    this->instructions[0x8B] = new JccRel32("JccRel32");
-    this->instructions[0x8C] = new JccRel32("JccRel32");
-    this->instructions[0x8D] = new JccRel32("JccRel32");
-    this->instructions[0x8E] = new JccRel32("JccRel32");
-    this->instructions[0x8F] = new JccRel32("JccRel32");
-    this->instructions[0x92] = new SetbRm8("SetbRm8");
-    this->instructions[0x94] = new SeteRm8("SeteRm8");
-    this->instructions[0x95] = new SetneRm8("SetneRm8");
-    this->instructions[0x97] = new SetaRm8("SetaRm8");
-    this->instructions[0x9D] = new SetgeRm8("SetgeRm8");
-    this->instructions[0x9F] = new SetgRm8("SetgRm8");
-    this->instructions[0xA0] = new PushSegmentRegister("PushSegmentRegister");
-    this->instructions[0xA1] = new PopSegmentRegister("PopSegmentRegister");
-    this->instructions[0xA8] = new PushSegmentRegister("PushSegmentRegister");
-    this->instructions[0xA9] = new PopSegmentRegister("PopSegmentRegister");
-    this->instructions[0xAC] = new ShrdRm32R32Imm8("ShrdRm32R32Imm8");
-    this->instructions[0xAF] = new ImulR32Rm32("ImulR32Rm32");
-    this->instructions[0xB2] = new LssR32M1632("LssR32M1632");
-    this->instructions[0xB4] = new LfsR32M1632("LfsR32M1632");
-    this->instructions[0xB5] = new LgsR32M1632("LgsR32M1632");
-    this->instructions[0xB6] = new MovzxR32Rm8("MovzxR32Rm8");
-    this->instructions[0xB7] = new MovzxR32Rm16("MovzxR32Rm16");
-    this->instructions[0xBE] = new MovsxR32Rm8("MovsxR32Rm8");
-    this->instructions[0xBF] = new MovsxR32Rm16("MovsxR32Rm16");
-}
-
-Code0F::~Code0F(){
-    for(int i=0; i<256; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
+    this->instructions[0x00] = make_unique<Code0F00>("Code0F00");
+    this->instructions[0x01] = make_unique<Code0F01>("Code0F01"); 
+    this->instructions[0x20] = make_unique<MovR32CRX>("MovR32CRX"); 
+    this->instructions[0x22] = make_unique<MovCRXR32>("MovCRXR32");
+    this->instructions[0x80] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x81] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x82] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x83] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x84] = make_unique<JccRel32>("JccRel32"); 
+    this->instructions[0x85] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x86] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x87] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x88] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x89] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x8A] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x8B] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x8C] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x8D] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x8E] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x8F] = make_unique<JccRel32>("JccRel32");
+    this->instructions[0x92] = make_unique<SetbRm8>("SetbRm8");
+    this->instructions[0x94] = make_unique<SeteRm8>("SeteRm8");
+    this->instructions[0x95] = make_unique<SetneRm8>("SetneRm8");
+    this->instructions[0x97] = make_unique<SetaRm8>("SetaRm8");
+    this->instructions[0x9D] = make_unique<SetgeRm8>("SetgeRm8");
+    this->instructions[0x9F] = make_unique<SetgRm8>("SetgRm8");
+    this->instructions[0xA0] = make_unique<PushSegmentRegister>("PushSegmentRegister");
+    this->instructions[0xA1] = make_unique<PopSegmentRegister>("PopSegmentRegister");
+    this->instructions[0xA8] = make_unique<PushSegmentRegister>("PushSegmentRegister");
+    this->instructions[0xA9] = make_unique<PopSegmentRegister>("PopSegmentRegister");
+    this->instructions[0xAC] = make_unique<ShrdRm32R32Imm8>("ShrdRm32R32Imm8");
+    this->instructions[0xAF] = make_unique<ImulR32Rm32>("ImulR32Rm32");
+    this->instructions[0xB2] = make_unique<LssR32M1632>("LssR32M1632");
+    this->instructions[0xB4] = make_unique<LfsR32M1632>("LfsR32M1632");
+    this->instructions[0xB5] = make_unique<LgsR32M1632>("LgsR32M1632");
+    this->instructions[0xB6] = make_unique<MovzxR32Rm8>("MovzxR32Rm8");
+    this->instructions[0xB7] = make_unique<MovzxR32Rm16>("MovzxR32Rm16");
+    this->instructions[0xBE] = make_unique<MovsxR32Rm8>("MovsxR32Rm8");
+    this->instructions[0xBF] = make_unique<MovsxR32Rm16>("MovsxR32Rm16");
 }
 
 void Code0F::Run(const Emulator& emu){
