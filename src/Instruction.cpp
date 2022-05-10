@@ -632,18 +632,9 @@ CodeFE::CodeFE(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[0] = new IncRm8("IncRm8");
-    this->instructions[1] = new DecRm8("DecRm8");
+    this->instructions[0] = make_unique<IncRm8>("IncRm8");
+    this->instructions[1] = make_unique<DecRm8>("DecRm8");
 }
-
-CodeFE::~CodeFE(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
-}
-
 
 void CodeFE::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
