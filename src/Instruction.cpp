@@ -512,7 +512,7 @@ void Code0F::Run(const Emulator& emu){
     uint8_t op_code;
     emu.cpu->AddEip(1);
     op_code = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
-    if(this->instructions[op_code]==NULL){
+    if(this->instructions[op_code].get()==NULL){
         this->Error("Not implemented: 0F %02X at %s::Run", op_code, this->code_name.c_str());
     }
     this->instructions[op_code]->Run(emu);
