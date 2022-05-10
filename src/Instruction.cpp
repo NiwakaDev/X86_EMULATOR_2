@@ -523,19 +523,11 @@ CodeC1::CodeC1(string code_name):Instruction(code_name){
     for(int i=0; i<256; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[0] = new RolRm32Imm8("RolRm32Imm8");
-    this->instructions[2] = new RclRm32Imm8("RclRm32Imm8");
-    this->instructions[4] = new SalRm32Imm8("SalRm32Imm8");
-    this->instructions[5] = new ShrRm32Imm8("ShrRm32Imm8");
-    this->instructions[7] = new SarRm32Imm8("SarRm32Imm8");
-}
-
-CodeC1::~CodeC1(){
-    for(int i=0; i<256; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
+    this->instructions[0] = make_unique<RolRm32Imm8>("RolRm32Imm8");
+    this->instructions[2] = make_unique<RclRm32Imm8>("RclRm32Imm8");
+    this->instructions[4] = make_unique<SalRm32Imm8>("SalRm32Imm8");
+    this->instructions[5] = make_unique<ShrRm32Imm8>("ShrRm32Imm8");
+    this->instructions[7] = make_unique<SarRm32Imm8>("SarRm32Imm8");
 }
 
 void CodeC1::Run(const Emulator& emu){

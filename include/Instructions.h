@@ -166,9 +166,8 @@ class Code0F:public Instruction{
 
 class CodeC1:public Instruction{
     private:
-        Instruction* instructions[InstructionHelper::INSTRUCTION_SIZE];
+        std::unique_ptr<Instruction> instructions[InstructionHelper::INSTRUCTION_SIZE];
     public: 
-        ~CodeC1();
         CodeC1(std::string code_name);
         void Run(const Emulator& emu);
 };
