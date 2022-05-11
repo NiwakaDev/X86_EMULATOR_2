@@ -755,24 +755,16 @@ CodeF6::CodeF6(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[0] = new TestRm8Imm8("TestRm8Imm8");
-    this->instructions[2] = new NotRm8("NotRm8");
-    this->instructions[4] = new MulRm8("MulRm8");
-    this->instructions[6] = new DivRm8("DivRm8");
-}
-
-CodeF6::~CodeF6(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
+    this->instructions[0] = make_unique<TestRm8Imm8>("TestRm8Imm8");
+    this->instructions[2] = make_unique<NotRm8>("NotRm8");
+    this->instructions[4] = make_unique<MulRm8>("MulRm8");
+    this->instructions[6] = make_unique<DivRm8>("DivRm8");
 }
 
 void CodeF6::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
-    if(this->instructions[this->modrm.reg_index]==NULL){
+    if(this->instructions[this->modrm.reg_index].get()==NULL){
             this->Error("Not implemented: F6 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);

@@ -124,9 +124,8 @@ class CodeD3:public Instruction{
 
 class CodeF6:public Instruction{
     private:
-        Instruction* instructions[InstructionHelper::INSTRUCTION_SET_SMALL_SIZE];
+        std::unique_ptr<Instruction> instructions[InstructionHelper::INSTRUCTION_SET_SMALL_SIZE];
     public: 
-        ~CodeF6();
         CodeF6(std::string code_name);
         void Run(const Emulator& emu);
 };
