@@ -1088,9 +1088,8 @@ class AdcR32Rm32:public Instruction{
 
 class CodeF3:public Instruction{
     private:
-        Instruction* instructions[InstructionHelper::INSTRUCTION_SIZE];
+        std::unique_ptr<Instruction> instructions[InstructionHelper::INSTRUCTION_SIZE];
     public: 
-        ~CodeF3();
         CodeF3(std::string code_name);
         void Run(const Emulator& emu);
 };

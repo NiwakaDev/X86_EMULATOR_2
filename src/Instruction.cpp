@@ -4580,23 +4580,15 @@ CodeF3::CodeF3(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[0x66] = new Code66("Code66");
-    this->instructions[0xA4] = new RepMovsM8M8("RepMovsM8M8");
-    this->instructions[0xA5] = new RepMovsM32M32("RepMovsM32M32");
-    this->instructions[0xA6] = new RepeCmpsM8M8("RepeCmpsM8M8");
-    this->instructions[0xA7] = new RepeCmpsM32M32("RepeCmpsM32M32");
-    this->instructions[0xAA] = new RepStosM8("RepStosM8");
-    this->instructions[0xAB] = new RepStosM32("RepStosM32");
-    this->instructions[0xAE] = new RepeScasM8("RepeScasM8");
-    this->instructions[0xAF] = new RepeScasM32("RepeScasM32");
-}
-
-CodeF3::~CodeF3(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
+    this->instructions[0x66] = make_unique<Code66>("Code66");
+    this->instructions[0xA4] = make_unique<RepMovsM8M8>("RepMovsM8M8");
+    this->instructions[0xA5] = make_unique<RepMovsM32M32>("RepMovsM32M32");
+    this->instructions[0xA6] = make_unique<RepeCmpsM8M8>("RepeCmpsM8M8");
+    this->instructions[0xA7] = make_unique<RepeCmpsM32M32>("RepeCmpsM32M32");
+    this->instructions[0xAA] = make_unique<RepStosM8>("RepStosM8");
+    this->instructions[0xAB] = make_unique<RepStosM32>("RepStosM32");
+    this->instructions[0xAE] = make_unique<RepeScasM8>("RepeScasM8");
+    this->instructions[0xAF] = make_unique<RepeScasM32>("RepeScasM32");
 }
 
 void CodeF3::Run(const Emulator& emu){
@@ -4606,7 +4598,7 @@ void CodeF3::Run(const Emulator& emu){
         this->instructions[0x66]->Run(emu);
         op_code = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
     }
-    if(this->instructions[op_code]==NULL){
+    if(this->instructions[op_code].get()==NULL){
         this->Error("Not implemented: F3 %02X at %s::Run", op_code, this->code_name.c_str());
     }
     this->instructions[op_code]->Run(emu);
