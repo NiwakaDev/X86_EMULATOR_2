@@ -1,6 +1,9 @@
 # X86_EMULATOR_2
 
 
+<p>X86_EMULATOR_2 is a x86 emulator written in C++ .</p>
+<>
+
 <p>はりぼてOS</p>
 
 ![demo](https://user-images.githubusercontent.com/61189782/144729289-fe16a09d-d5dd-4b7d-8583-3b19e9381b3d.gif)
@@ -108,54 +111,50 @@ make x86_test
 ./x86_test
 ```
 
-<h2>1.ビルド</h2>
+<h2>Build</h2>
 
 ```
 make
 ```
 
-<h2>2.実行</h2>
+<h2>Run</h2>
 
 
-はりぼてOSを起動
+Run Haribote OS
 ```
 ./x86 -i haribote.img
 ```
 
-FreeDOSを起動
+Run FreeDOS
 ```
 ./x86 -i fd.img
 ```
 
-oszを起動
+Run <a href="https://github.com/neri/osz">osz</a>
 ```
 ./x86 -i full.img
 ```
 
-<h2>3.言語とライブラリ</h2>
+<h2>Language and Library</h2>
 C++14, SDL2
 
-<h2>4.マウス使用方法</h2>
+<h2>How to use mouse</h2>
 
-<h4>4-1.マウスをエミュレータに取り込みたい時</h4>
-エミュレータ上でマウスをクリック
+<h3>1.Mouse into the emulator</h3>
 
-<h4>4-2.エミュレータに取り込んだマウスを外に出したい時</h4>
+```
+Click mouse on the emulator 
+```
+
+<h3>Mouse out of the emulator</h3>
 
 ```
 left-ctrl+left-alt+g
 ```
-と押す。
-※left-ctrl+left-altを先に押してから、gを押してください。
 
-<h2>5.エミュレータで動かせるOS</h2>
-<h4><a href="https://www.amazon.co.jp/30%E6%97%A5%E3%81%A7%E3%81%A7%E3%81%8D%E3%82%8B-OS%E8%87%AA%E4%BD%9C%E5%85%A5%E9%96%80-%E5%B7%9D%E5%90%88-%E7%A7%80%E5%AE%9F/dp/4839919844/ref=pd_vtp_5/356-0188609-1667566?pd_rd_w=qrIxz&pf_rd_p=949e26f5-c2ef-4c96-bfde-49d7614d0317&pf_rd_r=FQQA4209JZRMHNABD541&pd_rd_r=2bdba9dc-9d7d-401a-b66c-053b098be917&pd_rd_wg=dpohq&pd_rd_i=4839919844&psc=1">30日でできる! OS自作入門</a></h4>
+※Press left-ctrl+left-alt first, then g .
 
-<h4>FreeDOS(REAL MODE)</h4>
-
-<h4>osz(https://github.com/neri/osz)</h4>
-
-<h2>6.参考</h2>
+<h2>Reference</h2>
 
 <h4>リアルモードの参考</h4>
 https://bitbucket.org/7shi/8086run/
@@ -163,7 +162,6 @@ https://bitbucket.org/7shi/8086run/
 
 <h4>BIOSで使用するFONTについて</h4>
 https://github.com/dhepper/font8x8
-から拝借しました。ありがとうございます。
 
 <h2>7.ビルドしても動かない場合</h2>
 連絡をくれるとありがたいです。
