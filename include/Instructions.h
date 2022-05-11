@@ -1102,12 +1102,12 @@ class RepeCmpsM8M8:public Instruction{
 
 class CodeF2:public Instruction{
     private:
-        Instruction* instructions[InstructionHelper::INSTRUCTION_SIZE];
+        std::unique_ptr<Instruction> instructions[InstructionHelper::INSTRUCTION_SIZE];
     public: 
-        ~CodeF2();
         CodeF2(std::string code_name);
         void Run(const Emulator& emu);
 };
+
 class RepneScasM8:public Instruction{
     public: 
         RepneScasM8(std::string code_name);

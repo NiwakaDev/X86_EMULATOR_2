@@ -4660,21 +4660,13 @@ CodeF2::CodeF2(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[0xAE] = new RepneScasM8("RepneScasM8");
-}
-
-CodeF2::~CodeF2(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
+    this->instructions[0xAE] = make_unique<RepneScasM8>("RepneScasM8");
 }
 
 void CodeF2::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     uint8_t op_code = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
-    if(this->instructions[op_code]==NULL){
+    if(this->instructions[op_code].get()==NULL){
         this->Error("Not implemented: F2 %02X at %s::Run", op_code, this->code_name.c_str());
     }
     this->instructions[op_code]->Run(emu);
