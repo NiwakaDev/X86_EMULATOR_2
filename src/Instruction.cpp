@@ -735,23 +735,15 @@ CodeD3::CodeD3(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[4] = new SalRm32Cl("SalRm32Cl");
-    this->instructions[5] = new ShrRm32Cl("ShrRm32Cl");
-    this->instructions[7] = new SarRm32Cl("SarRm32Cl");
-}
-
-CodeD3::~CodeD3(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
+    this->instructions[4] = make_unique<SalRm32Cl>("SalRm32Cl");
+    this->instructions[5] = make_unique<ShrRm32Cl>("ShrRm32Cl");
+    this->instructions[7] = make_unique<SarRm32Cl>("SarRm32Cl");
 }
 
 void CodeD3::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
-    if(this->instructions[this->modrm.reg_index]==NULL){
+    if(this->instructions[this->modrm.reg_index].get()==NULL){
             this->Error("Not implemented: D3 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
