@@ -713,25 +713,17 @@ CodeD1::CodeD1(string code_name):Instruction(code_name){
     for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
         this->instructions[i] = NULL;
     }
-    this->instructions[2] = new RclRm32("RclRm32");
-    this->instructions[3] = new RcrRm32("RcrRm32");
-    this->instructions[4] = new SalRm32("SalRm32");
-    this->instructions[5] = new ShrRm32("ShrRm32");
-    this->instructions[7] = new SarRm32("SarRm32");
-}
-
-CodeD1::~CodeD1(){
-    for(int i=0; i<InstructionHelper::INSTRUCTION_SET_SMALL_SIZE; i++){
-        if(this->instructions[i]!=NULL){
-            delete this->instructions[i];
-        }
-    }
+    this->instructions[2] = make_unique<RclRm32>("RclRm32");
+    this->instructions[3] = make_unique<RcrRm32>("RcrRm32");
+    this->instructions[4] = make_unique<SalRm32>("SalRm32");
+    this->instructions[5] = make_unique<ShrRm32>("ShrRm32");
+    this->instructions[7] = make_unique<SarRm32>("SarRm32");
 }
 
 void CodeD1::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
-    if(this->instructions[this->modrm.reg_index]==NULL){
+    if(this->instructions[this->modrm.reg_index].get()==NULL){
             this->Error("code D1 /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
