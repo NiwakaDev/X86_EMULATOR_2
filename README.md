@@ -2,9 +2,8 @@
 
 
 <p>X86_EMULATOR_2 is a x86 emulator written in C++ .</p>
-<>
 
-<p>はりぼてOS</p>
+<p><a href="https://www.amazon.co.jp/30%E6%97%A5%E3%81%A7%E3%81%A7%E3%81%8D%E3%82%8B-OS%E8%87%AA%E4%BD%9C%E5%85%A5%E9%96%80-%E5%B7%9D%E5%90%88-%E7%A7%80%E5%AE%9F-ebook/dp/B00IR1HYI0">Haribote OS</a></p>
 
 ![demo](https://user-images.githubusercontent.com/61189782/144729289-fe16a09d-d5dd-4b7d-8583-3b19e9381b3d.gif)
 
@@ -16,11 +15,11 @@
 
 ![FreeDOS](https://user-images.githubusercontent.com/61189782/145657637-3331b9cf-021e-4a1e-867c-b1b49b31a852.png)
 
-<p>osz(https://github.com/neri/osz)</p>
+<p><a href="https://github.com/neri/osz">osz</a></p>
 
 ![スクリーンショット 2021-12-12 21 33 31](https://user-images.githubusercontent.com/61189782/145712414-eed58221-06ef-42d8-9c6f-28fad542ae25.png)
 
-<h2>test386(https://github.com/barotto/test386.asm)</h2>
+<h2><a href="https://github.com/barotto/test386.asm">test386</a></h2>
  <table border="1">
     <tr>
       <th>diagnostic code</th>
@@ -97,20 +96,6 @@
 
   </table>
   
-<h3>How to test on test386.bin</h3>
-
-```
-./test.sh
-```
-
-or
-
-```
-make clean
-make x86_test
-./x86_test
-```
-
 <h2>Build</h2>
 
 ```
@@ -154,18 +139,34 @@ left-ctrl+left-alt+g
 
 ※Press left-ctrl+left-alt first, then g .
 
+<h2>Test</h2>
+
+```
+./test.sh
+```
+
+or
+
+```
+make clean
+make x86_test
+./x86_test
+```
+
+
 <h2>Reference</h2>
 
-<h4>リアルモードの参考</h4>
-https://bitbucket.org/7shi/8086run/
-を参考にしました。
+<h4>Real Mode</h4>
+<a href="https://bitbucket.org/7shi/8086run/">https://bitbucket.org/7shi/8086run/</a>
 
-<h4>BIOSで使用するFONTについて</h4>
-https://github.com/dhepper/font8x8
+<h4>FONT</h4>
+<a href="https://github.com/dhepper/font8x8">https://github.com/dhepper/font8x8</a>
 
-<h2>7.ビルドしても動かない場合</h2>
-連絡をくれるとありがたいです。
+<h2>Contact</h2>
+Feel free to contact me .
 
 <h2>フロッピーディスクの音源について</h2>
+<strong>※これは廃止になりました。</strong>
+
 <p>OtoLogicの素材を使用(https://otologic.jp/)</p>
 <p>フロッピーディスクの音源ファイル:Floppy_Disk_Drive02-1(Operating_Noise).mp3</p>
