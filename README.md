@@ -121,11 +121,11 @@ Run <a href="https://github.com/neri/osz">osz</a>
 ```
 
 <h2>Language and Library</h2>
-C++14, SDL2
+C++14, <a href="https://www.libsdl.org/">SDL2</a>
 
 <h2>How to use mouse</h2>
 
-<h3>1.Mouse into the emulator</h3>
+<h3>Mouse into the emulator</h3>
 
 ```
 Click mouse on the emulator 
