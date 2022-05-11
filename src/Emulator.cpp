@@ -45,7 +45,7 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<16; i++){
         this->io_devices[i] = NULL;
     }
-    this->mem     = make_unique<Memory>();
+    this->mem     = make_unique<Memory>(MEM_SIZE);
     this->fdc     = make_unique<Fdc>(this->disk_image_name);
     this->timer   = make_unique<Timer>();
     this->mouse   = make_unique<Mouse>();
