@@ -45,8 +45,13 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<16; i++){
         this->io_devices[i] = NULL;
     }
+    FILE* disk_image_stream = fopen(this->disk_image_name, "rb");
+    if(disk_image_stream==NULL){
+        cerr << "can`t open " << this->disk_image_name << " at Emulator::Emulator" << endl;
+        exit(EXIT_FAILURE);
+    }
     this->mem     = make_unique<Memory>(MEM_SIZE);
-    this->fdc     = make_unique<Fdc>(this->disk_image_name);
+    this->fdc     = make_unique<Fdc>(*disk_image_stream);
     this->timer   = make_unique<Timer>();
     this->mouse   = make_unique<Mouse>();
     this->kbc     = make_unique<Kbc>(*(this->mouse.get()));
@@ -68,6 +73,7 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<0x20; i++){//full.img and fd.imgで利用, 8086runを参考
         this->mem->Write(i<<2, i);
     }
+
     #ifdef DEBUG
         //biosをロードする。
         fstream bios_stream;

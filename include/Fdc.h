@@ -9,7 +9,7 @@ class Gui;
 
 class Fdc:public IoDevice{
     public:
-        Fdc(const char* const file_name);
+        Fdc(FILE& disk_image_stream);
         ~Fdc();
         void Out8(const uint16_t addr, const uint8_t data);
         uint8_t In8(const uint16_t addr);

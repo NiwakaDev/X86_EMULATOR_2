@@ -4,16 +4,11 @@ using namespace std;
 
 #define SECTOR_SIZE 512
 
-Fdc::Fdc(const char* const file_name):IoDevice(){
+Fdc::Fdc(FILE& disk_image_stream):IoDevice(){
     this->msr.flgs.rqm = 1;
     this->fdc_mode = FDC_IDLE_MODE;
-    FILE* disk_image_stream = NULL;
-    disk_image_stream = fopen(file_name, "rb");
-    if(disk_image_stream==NULL)this->Error("can`t open %s at Fdc::Fdc\n", file_name);
-    //this->buff = (uint8_t*)malloc(FLOPPY_DISK_SIZE);
     this->buff = make_unique<uint8_t[]>(FLOPPY_DISK_SIZE);
-    fread(this->buff.get(), 1, FLOPPY_DISK_SIZE, disk_image_stream);
-    fclose(disk_image_stream);
+    fread(this->buff.get(), 1, FLOPPY_DISK_SIZE, &disk_image_stream);
 }
 
 Fdc::~Fdc(){
