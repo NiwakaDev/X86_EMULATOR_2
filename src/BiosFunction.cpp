@@ -316,18 +316,17 @@ void FloppyFunction::Run(Cpu& cpu, Memory& mem){
 }
 
 void FloppyFunction::Read(Cpu& cpu, const Memory& mem){
-    uint32_t buff_addr;
-    this->es = (uint32_t)cpu.GetR16(ES);
-    this->bx = cpu.GetR16(EBX);
-    this->drive_number = (uint32_t)cpu.GetR8L(EDX);
-    this->head_number  = (uint32_t)cpu.GetR8H(EDX);
-    this->sector_number = 0x0000003F&((uint32_t)cpu.GetR8L(ECX));
-    this->cylinder_number = (uint32_t)cpu.GetR8H(ECX);
-    this->cylinder_number = ((((uint16_t)cpu.GetR8L(ECX))&0xC0)<<2)|this->cylinder_number;
-    this->processed_sector_number = (uint32_t)cpu.GetR8L(EAX);
-    for(int i=0; i<this->processed_sector_number; i++){
+    int32_t es = (uint32_t)cpu.GetR16(ES);
+    int32_t bx = cpu.GetR16(EBX);
+    int32_t drive_number = (uint32_t)cpu.GetR8L(EDX);
+    int32_t head_number  = (uint32_t)cpu.GetR8H(EDX);
+    int32_t sector_number = 0x0000003F&((uint32_t)cpu.GetR8L(ECX));
+    int32_t cylinder_number = (uint32_t)cpu.GetR8H(ECX);
+    cylinder_number = ((((uint16_t)cpu.GetR8L(ECX))&0xC0)<<2)|cylinder_number;
+    int32_t processed_sector_number = (uint32_t)cpu.GetR8L(EAX);
+    for(int i=0; i<processed_sector_number; i++){
         //TODO : マジックナンバーを修正
-        memcpy(mem.GetPointer(this->es*16 + this->bx+i*SECTOR_SIZE), this->buff.get()+this->head_number*18*SECTOR_SIZE+this->cylinder_number*18*2*SECTOR_SIZE+((this->sector_number+i)-1)*SECTOR_SIZE, SECTOR_SIZE);
+        memcpy(mem.GetPointer(es*16 + bx+i*SECTOR_SIZE), buff.get()+head_number*18*SECTOR_SIZE+cylinder_number*18*2*SECTOR_SIZE+((sector_number+i)-1)*SECTOR_SIZE, SECTOR_SIZE);
     }
     cpu.SetR8H(EAX, 0x00);
     cpu.ClearFlag(CF);//エラーなし

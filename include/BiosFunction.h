@@ -30,14 +30,7 @@ class VideoFunction:public BiosFunction{
 
 class FloppyFunction:public BiosFunction{
     private:
-        int32_t processed_sector_number = 0;
-        int32_t sector_number   = 0;
-        int32_t cylinder_number = 0;
-        int32_t head_number = 0;
-        int32_t drive_number = 0;
-        int32_t es=0;
-        int32_t bx=0;
-        int32_t floppy_size = 1474560;
+        const int32_t floppy_size = 1474560;
         std::unique_ptr<uint8_t[]> buff;
         void Read(Cpu& cpu, const Memory& mem);
     public:
