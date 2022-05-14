@@ -4,7 +4,7 @@
 
 class IoDevice;
 
-class Pic:public Object{
+class Pic{
     public:
         enum PIC_REGISTERS{
             PIC0_ICW1	= 	0x0020,
@@ -27,6 +27,7 @@ class Pic:public Object{
         bool HasIrq(); 
         inline int GetNowIrq();
     private:
+        std::unique_ptr<Object> obj;
         Pic(const Pic& other);
         void operator=(const Pic& other);
         IoDevice**io_devices = NULL;

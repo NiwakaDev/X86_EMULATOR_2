@@ -6,8 +6,6 @@
 #include<map>
 #include <unistd.h>
 #include <SDL2/SDL.h>
-#include <OpenGL/OpenGL.h>
-#include <SDL2/SDL_opengl.h>
 #include <thread>
 #include <chrono>
 #include <mutex>
