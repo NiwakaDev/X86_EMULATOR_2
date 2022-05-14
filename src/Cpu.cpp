@@ -166,7 +166,6 @@ Cpu::~Cpu(){
 }
 
 uint32_t Cpu::GetPhysicalAddr(uint32_t linear_addr){
-    //TODO : ページングに対応させる。
     //TODO : 綺麗にする
     union{
         uint32_t raw;

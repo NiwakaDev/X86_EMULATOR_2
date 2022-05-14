@@ -201,18 +201,18 @@ inline uint16_t Instruction::GetR16ForEffectiveAddr(const Emulator& emu){
 
 inline uint8_t Instruction::GetRM8(const Emulator& emu){
     if(this->modrm.mod!=3){
-        uint32_t addr = this->GetEffectiveAddr(emu);
-        addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-        return emu.mem->Read8(addr);
+        uint32_t effective_addr = this->GetEffectiveAddr(emu);
+        uint32_t linear_addr = emu.cpu->GetLinearAddrForDataAccess(effective_addr);
+        return emu.mem->Read8(linear_addr);
     }
     return emu.cpu->GetR8(this->modrm.rm);
 }
 
 inline uint16_t Instruction::GetRM16(const Emulator& emu){
     if(this->modrm.mod!=3){
-        uint32_t addr = this->GetEffectiveAddr(emu);
-        addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-        return emu.mem->Read16(addr);
+        uint32_t effective_addr = this->GetEffectiveAddr(emu);
+        uint32_t linear_addr = emu.cpu->GetLinearAddrForDataAccess(effective_addr);
+        return emu.mem->Read16(linear_addr);
     }
     return emu.cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.rm);
 
@@ -220,18 +220,18 @@ inline uint16_t Instruction::GetRM16(const Emulator& emu){
 
 inline uint32_t Instruction::GetRM32(const Emulator& emu){
     if(this->modrm.mod!=3){
-        uint32_t addr = this->GetEffectiveAddr(emu);
-        addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-        return emu.mem->Read32(addr);
+        uint32_t effectvie_addr = this->GetEffectiveAddr(emu);
+        uint32_t linear_addr = emu.cpu->GetLinearAddrForDataAccess(effective_addr);
+        return emu.mem->Read32(linear_addr);
     }
     return emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm);
 }
 
 inline void Instruction::SetRM8(const Emulator& emu, const uint8_t data){
     if(this->modrm.mod!=3){
-        uint32_t addr = this->GetEffectiveAddr(emu);
-        addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-        emu.mem->Write(addr, data);
+        uint32_t effective_addr = this->GetEffectiveAddr(emu);
+        uint32_t linear_addr = emu.cpu->GetLinearAddrForDataAccess(effective_addr);
+        emu.mem->Write(linear_addr, data);
         return;
     }
     emu.cpu->SetR8(this->modrm.rm, data);
@@ -239,9 +239,9 @@ inline void Instruction::SetRM8(const Emulator& emu, const uint8_t data){
 
 inline void Instruction::SetRM16(const Emulator& emu, const uint16_t data){
     if(this->modrm.mod!=3){
-        uint32_t addr = this->GetEffectiveAddr(emu);
-        addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-        emu.mem->Write(addr, data);
+        uint32_t effective_addr = this->GetEffectiveAddr(emu);
+        uint32_t linear_addr = emu.cpu->GetLinearAddrForDataAccess(effective_addr);
+        emu.mem->Write(linear_addr, data);
         return;
     }
     emu.cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.rm, data);
@@ -249,9 +249,9 @@ inline void Instruction::SetRM16(const Emulator& emu, const uint16_t data){
 
 inline void Instruction::SetRM32(const Emulator& emu, const uint32_t data){
     if(this->modrm.mod!=3){
-        uint32_t addr = this->GetEffectiveAddr(emu);
-        addr = emu.cpu->GetLinearAddrForDataAccess(addr);
-        emu.mem->Write(addr, data);
+        uint32_t effective_addr = this->GetEffectiveAddr(emu);
+        uint32_t linear_addr = emu.cpu->GetLinearAddrForDataAccess(effective_addr);
+        emu.mem->Write(linear_addr, data);
         return;
     }
     emu.cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.rm, data);
