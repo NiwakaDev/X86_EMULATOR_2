@@ -266,12 +266,8 @@ void VideoFunction::Run(Cpu& cpu, Memory& mem){
 
 FloppyFunction::FloppyFunction(FILE& disk_image_stream):BiosFunction(){
     this->function_name = "FloppyFunction";
-    this->buff = (uint8_t*)malloc(this->floppy_size);
-    fread(this->buff, 1, this->floppy_size, &disk_image_stream);
-}
-
-FloppyFunction::~FloppyFunction(){
-    delete[] this->buff;
+    this->buff = make_unique<uint8_t[]>(this->floppy_size);
+    fread(this->buff.get(), 1, this->floppy_size, &disk_image_stream);
 }
 
 void FloppyFunction::Run(Cpu& cpu, Memory& mem){
@@ -320,8 +316,6 @@ void FloppyFunction::Run(Cpu& cpu, Memory& mem){
 }
 
 void FloppyFunction::Read(Cpu& cpu, const Memory& mem){
-    static int total=0;
-    static int cnt=0;
     uint32_t buff_addr;
     this->es = (uint32_t)cpu.GetR16(ES);
     this->bx = cpu.GetR16(EBX);
@@ -332,14 +326,8 @@ void FloppyFunction::Read(Cpu& cpu, const Memory& mem){
     this->cylinder_number = ((((uint16_t)cpu.GetR8L(ECX))&0xC0)<<2)|this->cylinder_number;
     this->processed_sector_number = (uint32_t)cpu.GetR8L(EAX);
     for(int i=0; i<this->processed_sector_number; i++){
-        //fprintf(stderr, "%d\n", this->processed_sector_number);
-        /***
-        for(int j=0; j<SECTOR_SIZE; j++){
-            data = (uint8_t)this->buff[this->head_number*18*SECTOR_SIZE+this->cylinder_number*18*2*SECTOR_SIZE+((this->sector_number+i)-1)*SECTOR_SIZE+j];
-            mem.Write(buff_addr+j+i*SECTOR_SIZE, data);
-        }
-        ***/
-        memcpy(mem.GetPointer(this->es*16 + this->bx+i*SECTOR_SIZE), this->buff+this->head_number*18*SECTOR_SIZE+this->cylinder_number*18*2*SECTOR_SIZE+((this->sector_number+i)-1)*SECTOR_SIZE, SECTOR_SIZE);
+        //TODO : マジックナンバーを修正
+        memcpy(mem.GetPointer(this->es*16 + this->bx+i*SECTOR_SIZE), this->buff.get()+this->head_number*18*SECTOR_SIZE+this->cylinder_number*18*2*SECTOR_SIZE+((this->sector_number+i)-1)*SECTOR_SIZE, SECTOR_SIZE);
     }
     cpu.SetR8H(EAX, 0x00);
     cpu.ClearFlag(CF);//エラーなし

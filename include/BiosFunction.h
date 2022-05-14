@@ -38,12 +38,11 @@ class FloppyFunction:public BiosFunction{
         int32_t es=0;
         int32_t bx=0;
         int32_t floppy_size = 1474560;
-        uint8_t* buff=NULL;
+        std::unique_ptr<uint8_t[]> buff;
         void Read(Cpu& cpu, const Memory& mem);
     public:
         void Run(Cpu& cpu, Memory& mem);
         FloppyFunction(FILE& disk_image_stream);
-        ~FloppyFunction();
 };  
 
 class MemoryFunction:public BiosFunction{
