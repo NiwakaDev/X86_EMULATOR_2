@@ -6,8 +6,9 @@ class Memory;
 class Vga;
 class Kbc;
 
-class BiosFunction:public Object{
+class BiosFunction{
     protected:
+        std::unique_ptr<Object> obj;
         std::string function_name;
     public:
         BiosFunction();

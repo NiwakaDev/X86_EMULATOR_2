@@ -11,7 +11,7 @@ using namespace std;
 #endif
 
 BiosFunction::BiosFunction(){
-
+    this->obj = make_unique<Object>();
 }
 
 BiosFunction::~BiosFunction(){
@@ -76,7 +76,7 @@ void VideoFunction::Run(Cpu& cpu, Memory& mem){
                         this->ClearConsole();
                         return;
                     default:
-                        this->Error("Not implemented: video mode=0x%02X at VideoFunction::Run", al);
+                        this->obj->Error("Not implemented: video mode=0x%02X at VideoFunction::Run", al);
                         break;
                 }
                 return;
@@ -227,7 +227,7 @@ void VideoFunction::Run(Cpu& cpu, Memory& mem){
             case 0x70:
                 break;//とりあえず無視
             default:
-                this->Error("Not implemented: ah=0x%02X at VideoFunction::Run", ah);
+                this->obj->Error("Not implemented: ah=0x%02X at VideoFunction::Run", ah);
         }
     }else{//VESAサービス
         switch(mode){//TODO:マジックナンバーの修正
@@ -259,7 +259,7 @@ void VideoFunction::Run(Cpu& cpu, Memory& mem){
                 cpu.SetR8L(EAX, 0x4F);
                 return;
             default:
-                this->Error("Not implemented: vesa_mode=0x%04X at VideoFunction::Run", mode);
+                this->obj->Error("Not implemented: vesa_mode=0x%04X at VideoFunction::Run", mode);
         }
     }
 }
@@ -275,10 +275,10 @@ void FloppyFunction::Run(Cpu& cpu, Memory& mem){
     ah = cpu.GetR8H(EAX);
     switch (ah) { // ORIGINAL EXTENSIONS
         case 0xfe: // hopen
-            this->Error("Not implemented: ah=%02X at FloppyFunction::Run\n", ah);
+            this->obj->Error("Not implemented: ah=%02X at FloppyFunction::Run\n", ah);
             break;
         case 0xff: // hcopy
-            this->Error("Not implemented: ah=%02X at FloppyFunction::Run\n", ah);
+            this->obj->Error("Not implemented: ah=%02X at FloppyFunction::Run\n", ah);
             break;
     }
     if (cpu.GetR8L(EDX) >= 1) {//ドライブ番号は0しかない。フロッピーだけ
@@ -310,7 +310,7 @@ void FloppyFunction::Run(Cpu& cpu, Memory& mem){
             cpu.ClearFlag(CF);
             return;
         default:
-            this->Error("Not implemented: ah=%02X at FloppyFunction::Run\n", ah);
+            this->obj->Error("Not implemented: ah=%02X at FloppyFunction::Run\n", ah);
             break;
     }
 }
@@ -510,7 +510,7 @@ uint16_t KeyFunction::Decode(uint16_t scan_code){
             decoded_code = ((KEY_CODE_BACKSPACE)<<BYTE)|0x0;
             break;
         default:
-            this->Error("Not implemented: scan_code=%04X at KeyFunction::Decode\n", scan_code);
+            this->obj->Error("Not implemented: scan_code=%04X at KeyFunction::Decode\n", scan_code);
             break;
     }
     #ifdef DEBUG
@@ -564,7 +564,7 @@ void KeyFunction::Run(Cpu& cpu, Memory& mem){
             cpu.SetR8L(EAX, al);
             return;
         default:
-            this->Error("Not implemented: ah = 0x%02X at KeyFunction::Run", ah);
+            this->obj->Error("Not implemented: ah = 0x%02X at KeyFunction::Run", ah);
             break;
     }
 }
@@ -611,7 +611,7 @@ void TimerFunction::Run(Cpu& cpu, Memory& mem){
         case 0x05: 
             return; 
         default:
-            this->Error("Not implemented: ah = 0x%02X at TimerFunction::Run", ah);
+            this->obj->Error("Not implemented: ah = 0x%02X at TimerFunction::Run", ah);
             break;
     }
 }
@@ -637,7 +637,7 @@ void GeneralSystemServicesFunction::Run(Cpu& cpu, Memory& mem){
         case 0x24:
             break;
         default:
-            this->Error("Not implemented: ah = 0x%02X at GeneralSystemServicesFunction::Run", ah);
+            this->obj->Error("Not implemented: ah = 0x%02X at GeneralSystemServicesFunction::Run", ah);
             break;
     }
 }
