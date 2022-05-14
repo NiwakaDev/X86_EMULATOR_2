@@ -264,10 +264,10 @@ void VideoFunction::Run(Cpu& cpu, Memory& mem){
     }
 }
 
-FloppyFunction::FloppyFunction(FILE& disk_image_stream):BiosFunction(){
+FloppyFunction::FloppyFunction(fstream& disk_image_stream):BiosFunction(){
     this->function_name = "FloppyFunction";
     this->buff = make_unique<uint8_t[]>(this->floppy_size);
-    fread(this->buff.get(), 1, this->floppy_size, &disk_image_stream);
+    disk_image_stream.read((char*)this->buff.get(), this->floppy_size);
 }
 
 void FloppyFunction::Run(Cpu& cpu, Memory& mem){

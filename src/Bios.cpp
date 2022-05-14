@@ -6,7 +6,7 @@
 const int IPL_SIZE = 512;
 using namespace std;
 
-Bios::Bios(FILE& disk_image_stream, Vga& vga, Kbc& kbc){
+Bios::Bios(fstream& disk_image_stream, Vga& vga, Kbc& kbc){
     for(int i=0; i<Bios::BIOS_FUNCTION_SIZE; i++){
         this->bios_functions[i] = NULL;
     }
@@ -29,12 +29,9 @@ void Bios::CallFunction(Cpu& cpu, Memory& mem, const uint8_t bios_number){
     this->bios_functions[bios_number]->Run(cpu, mem);
 }
 
-void Bios::LoadIpl(const char* const file_name, Memory& mem){
-    fstream input_file;
-    input_file.open(file_name, ios::in|ios::binary);
-    if(!input_file.is_open()){
-        this->obj->Error("Error: input_file.open at Bios::LoadIpl");
-    }
+//TODO : 
+//LoadIpl内の処理はBIOS::BIOSに移して、LoadIpl関数は廃止にする
+void Bios::LoadIpl(fstream& input_file, Memory& mem){
     uint8_t buff[IPL_SIZE];
     input_file.read((char*)buff, IPL_SIZE);
     for(int i=0; i<IPL_SIZE; i++){

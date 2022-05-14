@@ -17,6 +17,7 @@
 #include <queue>
 #include <fstream>
 #include <memory>
+#include <fstream>
 #include "Object.h"
 
 struct _Pixel{

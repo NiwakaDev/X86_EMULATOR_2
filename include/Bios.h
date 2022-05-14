@@ -9,9 +9,9 @@ class Kbc;
 
 class Bios{
     public:
-        Bios(FILE& disk_image_straem, Vga& vga, Kbc& kbc);
+        Bios(std::fstream& disk_image_straem, Vga& vga, Kbc& kbc);
         ~Bios();
-        void LoadIpl(const char* const file_name, Memory& mem);
+        void LoadIpl(std::fstream& input_file, Memory& mem);
         void CallFunction(Cpu& cpu, Memory& mem, const uint8_t bios_number);
     private:
         enum{

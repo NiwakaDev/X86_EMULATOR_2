@@ -10,6 +10,7 @@
 #include "Mouse.h"
 #include "Timer.h"
 #include "Fdc.h"
+#include <fstream>
 using namespace std;
 
 #ifdef DEBUG
@@ -46,14 +47,15 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<16; i++){
         this->io_devices[i] = NULL;
     }
-    //TODO: FILE型ではなくfstream型を使う。
-    FILE* disk_image_stream = fopen(this->disk_image_name, "rb");
-    if(disk_image_stream==NULL){
+    fstream disk_image_stream;
+    disk_image_stream.open(disk_image_name, ios::in|ios::binary);
+    if(!disk_image_stream.is_open()){
         cerr << "can`t open " << this->disk_image_name << " at Emulator::Emulator" << endl;
         exit(EXIT_FAILURE);
     }
     this->mem     = make_unique<Memory>(MEM_SIZE);
-    this->fdc     = make_unique<Fdc>(*disk_image_stream);
+    disk_image_stream.seekg(0);
+    this->fdc     = make_unique<Fdc>(disk_image_stream);
     this->timer   = make_unique<Timer>();
     this->mouse   = make_unique<Mouse>();
     this->kbc     = make_unique<Kbc>(*(this->mouse.get()));
@@ -64,24 +66,19 @@ Emulator::Emulator(int argc, char* argv[]){
     this->io_devices[0x0C] = this->mouse.get();
     this->pic     = make_unique<Pic>(this->io_devices);
     this->vga     = make_unique<Vga>(*(this->mem.get()));
-    //TODO : fopenで再設定するのではなく、disk_image_streamに対して、seek操作を使う。
-    disk_image_stream = fopen(this->disk_image_name, "rb");
-    if(disk_image_stream==NULL){
-        cerr << "can`t open " << this->disk_image_name << " at Emulator::Emulator" << endl;
-        exit(EXIT_FAILURE);
-    }
-    this->bios    = make_unique<Bios>(*disk_image_stream, *(this->vga.get()), *(this->kbc.get()));
+    disk_image_stream.seekg(0);
+    this->bios    = make_unique<Bios>(disk_image_stream, *(this->vga.get()), *(this->kbc.get()));
     this->cpu     = make_unique<Cpu>(*(this->bios.get()), *(this->mem.get()));
     this->io_port = make_unique<IoPort>(*(this->vga.get()), *(this->pic.get()), *(this->kbc.get()), *(this->timer.get()), *(this->fdc.get()));
     this->gui     = make_unique<Gui>(*(this->vga.get()));
     this->gui->AddIoDevice(Gui::KBD, *(this->kbc.get()));
     this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse.get()));
     //this->fdc->gui = this->gui.get();
-    this->bios->LoadIpl(this->disk_image_name, *(this->mem.get()));
+    disk_image_stream.seekg(0);
+    this->bios->LoadIpl(disk_image_stream, *(this->mem.get()));
     for(int i=0; i<0x20; i++){//full.img and fd.imgで利用, 8086runを参考
         this->mem->Write(i<<2, i);
     }
-    fclose(disk_image_stream);
     #ifdef DEBUG
         //biosをロードする。
         fstream bios_stream;

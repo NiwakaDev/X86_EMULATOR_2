@@ -5,11 +5,9 @@
 
 const int FLOPPY_DISK_SIZE = 1474560;
 
-class Gui;
-
 class Fdc:public IoDevice{
     public:
-        Fdc(FILE& disk_image_stream);
+        Fdc(std::fstream& disk_image_stream);
         ~Fdc();
         void Out8(const uint16_t addr, const uint8_t data);
         uint8_t In8(const uint16_t addr);
