@@ -11,14 +11,13 @@
 
 using namespace std;
 
-static const uint32_t  EFLAGS_INIT_VALUE = 0x00000002;
-static const uint32_t  EIP_INIT_VALUE    = 0x0000FFF0;
-static const uint32_t  CR0_INIT_VALUE    = 0x60000010;
-static const uint32_t  CR2_INIT_VALUE    = 0x00000000;
-static const uint32_t  CS_INIT_VALUE     = 0x0000F000;
-static const uint32_t  GPR_INIT_VALUE    = 0x00000000;
-
 Cpu::Cpu(Bios& bios, Memory& mem){
+    static const uint32_t  EFLAGS_INIT_VALUE = 0x00000002;
+    static const uint32_t  EIP_INIT_VALUE    = 0x0000FFF0;
+    static const uint32_t  CR0_INIT_VALUE    = 0x60000010;
+    static const uint32_t  CR2_INIT_VALUE    = 0x00000000;
+    static const uint32_t  CS_INIT_VALUE     = 0x0000F000;
+    static const uint32_t  GPR_INIT_VALUE    = 0x00000000;
     #ifdef DEBUG
         this->bios = &bios;
         this->mem  = &mem;
