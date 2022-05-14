@@ -2,6 +2,7 @@
 #include "IoDevice.h"
 #include "Gui.h"
 #include "KbcEnum.h"
+#include <SDL2/SDL.h>
 
 using namespace std;
 

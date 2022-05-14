@@ -1,5 +1,6 @@
 #include "Timer.h"
 #include "IoSpace.h"
+#include <cmath>
 using namespace std;
 using namespace chrono;
 using namespace this_thread;

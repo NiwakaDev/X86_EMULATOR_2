@@ -220,7 +220,7 @@ inline uint16_t Instruction::GetRM16(const Emulator& emu){
 
 inline uint32_t Instruction::GetRM32(const Emulator& emu){
     if(this->modrm.mod!=3){
-        uint32_t effectvie_addr = this->GetEffectiveAddr(emu);
+        uint32_t effective_addr = this->GetEffectiveAddr(emu);
         uint32_t linear_addr = emu.cpu->GetLinearAddrForDataAccess(effective_addr);
         return emu.mem->Read32(linear_addr);
     }

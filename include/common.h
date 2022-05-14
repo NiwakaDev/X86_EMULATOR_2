@@ -3,9 +3,8 @@
 #include<vector>
 #include<string>
 #include <string.h>
-#include<map>
+#include <map>
 #include <unistd.h>
-#include <SDL2/SDL.h>
 #include <thread>
 #include <chrono>
 #include <mutex>
