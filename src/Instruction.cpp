@@ -859,20 +859,16 @@ void AddRm32R32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint32_t rm32, r32;
-        uint64_t result;
-        rm32 = this->GetRM32(emu);
-        r32  = emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-        result = rm32+r32;
+        uint32_t rm32 = this->GetRM32(emu);
+        uint32_t r32  = emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+        uint64_t result = rm32+r32;
         this->SetRM32(emu, result);
         emu.cpu->UpdateEflagsForAdd(result, rm32, r32);
         return;
     }
-    uint16_t rm16, r16;
-    uint32_t result;
-    rm16 = this->GetRM16(emu);
-    r16  = emu.cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = (uint32_t)rm16+(uint32_t)r16;
+    uint16_t rm16 = this->GetRM16(emu);
+    uint16_t r16  = emu.cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint32_t result = (uint32_t)rm16+(uint32_t)r16;
     this->SetRM16(emu, result);
     emu.cpu->UpdateEflagsForAdd(result, rm16, r16);
     return;

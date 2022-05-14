@@ -5,10 +5,13 @@ EMULATOR_TEST       = x86_test
 
 CC = clang++
 
+#G++_OPTIONS = -std=c++14 -O3 -I $(INCLUDE_DIR)  -arch arm64
+#G++_OPTIONS_DEBUG = -Wall -std=c++14 -O0 -g -I $(INCLUDE_DIR) -DDEBUG  -arch arm64
+#LD_FLGS += -lSDL2  -arch arm64
+
 G++_OPTIONS = -std=c++14 -O3 -I $(INCLUDE_DIR)
 G++_OPTIONS_DEBUG = -Wall -std=c++14 -O0 -g -I $(INCLUDE_DIR) -DDEBUG
 LD_FLGS += -lSDL2
-#LD_FLGS += -lSDL2 -lSDL2_mixer
 
 
 SOURCE_DIR         = ./src/
