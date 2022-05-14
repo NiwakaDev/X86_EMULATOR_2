@@ -6,14 +6,14 @@
 const int IPL_SIZE = 512;
 using namespace std;
 
-Bios::Bios(const char* const file_name, Vga& vga, Kbc& kbc){
+Bios::Bios(FILE& disk_image_stream, Vga& vga, Kbc& kbc){
     for(int i=0; i<Bios::BIOS_FUNCTION_SIZE; i++){
         this->bios_functions[i] = NULL;
     }
     this->bios_functions[BIOS_FUNCTION::VIDEO_FUNCTION]           = make_unique<VideoFunction>(vga);
     this->bios_functions[BIOS_FUNCTION::EQUIPMENTLIST_FUNCTION]   = make_unique<EquipmentListFunction>();
     this->bios_functions[BIOS_FUNCTION::MEMORY_FUNCTION]          = make_unique<MemoryFunction>();
-    this->bios_functions[BIOS_FUNCTION::FLOPPY_FUNCTION]          = make_unique<FloppyFunction>(file_name);
+    this->bios_functions[BIOS_FUNCTION::FLOPPY_FUNCTION]          = make_unique<FloppyFunction>(disk_image_stream);
     this->bios_functions[BIOS_FUNCTION::GENERAL_PURPOSE_FUNCTION] = make_unique<GeneralSystemServicesFunction>();
     this->bios_functions[BIOS_FUNCTION::KEY_FUNCTION]             = make_unique<KeyFunction>(kbc);
     this->bios_functions[BIOS_FUNCTION::TIMER_FUNCTION]           = make_unique<TimerFunction>();

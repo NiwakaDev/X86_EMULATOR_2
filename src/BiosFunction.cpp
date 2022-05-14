@@ -264,23 +264,14 @@ void VideoFunction::Run(Cpu& cpu, Memory& mem){
     }
 }
 
-FloppyFunction::FloppyFunction(const char* const file_name):BiosFunction(){
+FloppyFunction::FloppyFunction(FILE& disk_image_stream):BiosFunction(){
     this->function_name = "FloppyFunction";
-    this->Init(file_name);
+    this->buff = (uint8_t*)malloc(this->floppy_size);
+    fread(this->buff, 1, this->floppy_size, &disk_image_stream);
 }
 
 FloppyFunction::~FloppyFunction(){
     delete[] this->buff;
-}
-
-void FloppyFunction::Init(const char* const file_name){
-    this->disk_img_stream = fopen(file_name, "rb");
-    if(this->disk_img_stream==NULL){
-        this->Error("can`t open %s at FloppyFunction::Init\n", file_name);
-    }
-    this->buff = (uint8_t*)malloc(this->floppy_size);
-    fread(this->buff, 1, this->floppy_size, this->disk_img_stream);
-    fclose(this->disk_img_stream);
 }
 
 void FloppyFunction::Run(Cpu& cpu, Memory& mem){

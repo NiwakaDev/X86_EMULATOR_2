@@ -45,6 +45,7 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<16; i++){
         this->io_devices[i] = NULL;
     }
+    //TODO: FILE型ではなくfstream型を使う。
     FILE* disk_image_stream = fopen(this->disk_image_name, "rb");
     if(disk_image_stream==NULL){
         cerr << "can`t open " << this->disk_image_name << " at Emulator::Emulator" << endl;
@@ -62,7 +63,13 @@ Emulator::Emulator(int argc, char* argv[]){
     this->io_devices[0x0C] = this->mouse.get();
     this->pic     = make_unique<Pic>(this->io_devices);
     this->vga     = make_unique<Vga>(*(this->mem.get()));
-    this->bios    = make_unique<Bios>(this->disk_image_name, *(this->vga.get()), *(this->kbc.get()));
+    //TODO : fopenで再設定するのではなく、disk_image_streamに対して、seek操作を使う。
+    disk_image_stream = fopen(this->disk_image_name, "rb");
+    if(disk_image_stream==NULL){
+        cerr << "can`t open " << this->disk_image_name << " at Emulator::Emulator" << endl;
+        exit(EXIT_FAILURE);
+    }
+    this->bios    = make_unique<Bios>(*disk_image_stream, *(this->vga.get()), *(this->kbc.get()));
     this->cpu     = make_unique<Cpu>(*(this->bios.get()), *(this->mem.get()));
     this->io_port = make_unique<IoPort>(*(this->vga.get()), *(this->pic.get()), *(this->kbc.get()), *(this->timer.get()), *(this->fdc.get()));
     this->gui     = make_unique<Gui>(*(this->vga.get()));
@@ -73,7 +80,7 @@ Emulator::Emulator(int argc, char* argv[]){
     for(int i=0; i<0x20; i++){//full.img and fd.imgで利用, 8086runを参考
         this->mem->Write(i<<2, i);
     }
-
+    fclose(disk_image_stream);
     #ifdef DEBUG
         //biosをロードする。
         fstream bios_stream;

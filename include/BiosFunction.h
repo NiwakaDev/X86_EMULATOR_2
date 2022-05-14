@@ -39,12 +39,10 @@ class FloppyFunction:public BiosFunction{
         int32_t bx=0;
         int32_t floppy_size = 1474560;
         uint8_t* buff=NULL;
-        FILE* disk_img_stream;
         void Read(Cpu& cpu, const Memory& mem);
-        void Init(const char* const file_name);
     public:
         void Run(Cpu& cpu, Memory& mem);
-        FloppyFunction(const char* const file_name);
+        FloppyFunction(FILE& disk_image_stream);
         ~FloppyFunction();
 };  
 
