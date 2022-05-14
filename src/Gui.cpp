@@ -443,11 +443,10 @@ inline void Gui::Pimpl::HandleMouseButton(SDL_Event& e){
 
 //この関数はVgaクラスのvga_mutexをロックします。
 void Gui::Display(){
-    //SDL_WarpMouseInWindow(this->window, guest_x, guest_y);
-    uint8_t* prev_snap = (uint8_t*)malloc(MAX_HEIGHT*MAX_WIDTH);
-    uint8_t* new_snap  = (uint8_t*)malloc(MAX_HEIGHT*MAX_WIDTH);
-    memset(prev_snap, 0x00, MAX_HEIGHT*MAX_WIDTH);
-    memset(new_snap, 0x00, MAX_HEIGHT*MAX_WIDTH);
+    unique_ptr<uint8_t[]> prev_snap = make_unique<uint8_t[]>(MAX_HEIGHT*MAX_WIDTH);
+    unique_ptr<uint8_t[]> new_snap = make_unique<uint8_t[]>(MAX_HEIGHT*MAX_WIDTH);
+    memset(prev_snap.get(), 0x00, MAX_HEIGHT*MAX_WIDTH);
+    memset(new_snap.get(), 0x00, MAX_HEIGHT*MAX_WIDTH);
     while (!this->pimpl->quit){
         try{
             unsigned int start;
@@ -495,12 +494,12 @@ void Gui::Display(){
                 }
                 this->pimpl->Update();
             }else{
-                this->pimpl->vga->SetSnap(new_snap, this->pimpl->screen_height, this->pimpl->screen_width);
+                this->pimpl->vga->SetSnap(new_snap.get(), this->pimpl->screen_height, this->pimpl->screen_width);
                 int y_start = -1;
                 int y;//forループ抜け出した後も利用する。
                 for(y=0; y<this->pimpl->screen_height; y++){
                     //一致しないとき、再描画
-                    if(memcmp(prev_snap+y*this->pimpl->screen_width, new_snap+y*this->pimpl->screen_width, this->pimpl->screen_width)){//1行比較
+                    if(memcmp(prev_snap.get()+y*this->pimpl->screen_width, new_snap.get()+y*this->pimpl->screen_width, this->pimpl->screen_width)){//1行比較
                         for(int x=0; x<this->pimpl->screen_width; x++){
                             this->pimpl->image[x+y*this->pimpl->screen_width] = *(this->pimpl->vga->GetPixel(x, y));//一致していないので、1行転送, memcpyしない理由はGetPixelを参照してくだされば分かります。
                         }
@@ -517,7 +516,7 @@ void Gui::Display(){
                 if(y_start>=0){//最後の行まで一致しなかった時の条件式
                     this->pimpl->Update(0, y_start, this->pimpl->screen_width, y-y_start);
                 }
-                memcpy(prev_snap, new_snap, this->pimpl->screen_height*this->pimpl->screen_width);
+                memcpy(prev_snap.get(), new_snap.get(), this->pimpl->screen_height*this->pimpl->screen_width);
             }
             this->pimpl->vga->UnlockVga();
             unsigned int end;
