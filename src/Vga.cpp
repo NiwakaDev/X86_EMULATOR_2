@@ -21,6 +21,7 @@ Vga::Vga(Memory& mem){
     this->InitPalette();
     this->vga_mode = TEXT_MODE;
     this->image_text_mode = make_unique<Pixel[]>(this->height*this->width*sizeof(Pixel));
+    this->obj = make_unique<Object>();
 }
 
 //この関数はVgaクラスのvga_mutexをロックします。
@@ -50,14 +51,14 @@ void Vga::Out8(const uint16_t addr, const uint8_t data){
             internal_cnt++;
             break;
         default:
-            this->Error("Not implemented: io_port = %04X at Vga::Out8", addr);
+            this->obj->Error("Not implemented: io_port = %04X at Vga::Out8", addr);
     }
 }
 
 uint8_t Vga::In8(const uint16_t addr){
     switch(addr){
         default:
-            this->Error("Not implemented: io_port = %04X at Vga::In8", addr);
+            this->obj->Error("Not implemented: io_port = %04X at Vga::In8", addr);
     }
     return 0;
 }

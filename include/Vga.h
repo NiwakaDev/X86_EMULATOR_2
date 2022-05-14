@@ -21,7 +21,7 @@ const int DEFAULT_VRAM_START_ADDR = 0x000B8000;
 
 enum VGA_MODE {GRAPHIC_MODE, TEXT_MODE};
 
-class Vga:public Object{
+class Vga{
     public:
         VGA_MODE vga_mode;
         std::unique_ptr<Pixel[]> image_text_mode;
@@ -38,9 +38,8 @@ class Vga:public Object{
         void UnlockVga();
         VGA_MODE GetMode();
         void SetSnap(uint8_t* const snap, const int w, const int h);
-        //Vga* GetInstance();//シングルトン
     private:
-        //static Vga* vga=NULL;
+        std::unique_ptr<Object> obj;
         std::mutex vga_mtx;
         uint8_t palette[256][4];
         Memory* mem;
