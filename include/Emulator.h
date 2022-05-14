@@ -13,7 +13,7 @@ class Timer;
 class Fdc;
 class IoDevice;
 
-class Emulator:public Object{
+class Emulator{
     public:
         std::unique_ptr<Memory> mem;
         std::unique_ptr<Cpu> cpu;
@@ -27,6 +27,7 @@ class Emulator:public Object{
             int steps=-1;
         #endif
     private:
+        std::unique_ptr<Object> obj;
         std::unique_ptr<Bios> bios;
         std::unique_ptr<Gui> gui;
         std::unique_ptr<Vga> vga; 

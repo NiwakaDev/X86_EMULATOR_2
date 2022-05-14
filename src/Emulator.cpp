@@ -17,6 +17,7 @@ using namespace std;
 #endif 
 
 Emulator::Emulator(int argc, char* argv[]){
+    this->obj = make_unique<Object>();
     #ifdef DEBUG
         /***
         if(this->ParseArgv(argc, argv)<=1){
@@ -86,7 +87,7 @@ Emulator::Emulator(int argc, char* argv[]){
         fstream bios_stream;
         bios_stream.open(this->bios_name, ios::in|ios::binary);
         if(!bios_stream.is_open()){
-            this->Error("Cant open : %s", this->bios_name);
+            this->obj->Error("Cant open : %s", this->bios_name);
         }
         const int BIOS_ROM_SIZE = 65536;
         bios_stream.read((char*)this->mem->GetPointer(0x000f0000), BIOS_ROM_SIZE);
