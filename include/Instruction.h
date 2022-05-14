@@ -7,8 +7,9 @@
 class Sib;
 class Emulator;
 
-class Instruction:public Object{
+class Instruction{
     protected:
+        std::unique_ptr<Object> obj;
         Sib sib;
         ModRM modrm;
         void ParseModRM(const Emulator& emu);

@@ -26,6 +26,7 @@ namespace InstructionHelper{
 
 Instruction::Instruction(string code_name){
     this->code_name = code_name;
+    this->obj       = make_unique<Object>();
 }
 
 
@@ -390,7 +391,7 @@ void CodeC0::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("code C0 /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("code C0 /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -408,7 +409,7 @@ void CodeC6::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-        this->Error("Not implemented: C6 %02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+        this->obj->Error("Not implemented: C6 %02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -432,7 +433,7 @@ void Code80::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: 80 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: 80 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -455,7 +456,7 @@ void Code81::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: 81 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: 81 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -513,7 +514,7 @@ void Code0F::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     op_code = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
     if(this->instructions[op_code].get()==NULL){
-        this->Error("Not implemented: 0F %02X at %s::Run", op_code, this->code_name.c_str());
+        this->obj->Error("Not implemented: 0F %02X at %s::Run", op_code, this->code_name.c_str());
     }
     this->instructions[op_code]->Run(emu);
     return;
@@ -534,7 +535,7 @@ void CodeC1::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: C1 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: C1 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -553,7 +554,7 @@ void Code0F00::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: 0F 00 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: 0F 00 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -572,7 +573,7 @@ void Code0F01::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: 0F 01 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: 0F 01 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -597,7 +598,7 @@ void Code83::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("code 83 /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("code 83 /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -621,7 +622,7 @@ void CodeF7::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: F7 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: F7 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -640,7 +641,7 @@ void CodeFE::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: FE /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: FE /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -660,7 +661,7 @@ void CodeD0::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: D0 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: D0 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -678,7 +679,7 @@ void CodeD2::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: D2 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: D2 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -702,7 +703,7 @@ void CodeFF::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: FF /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: FF /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -724,7 +725,7 @@ void CodeD1::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("code D1 /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("code D1 /%02X is not implemented %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -744,7 +745,7 @@ void CodeD3::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: D3 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: D3 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -765,7 +766,7 @@ void CodeF6::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(this->instructions[this->modrm.reg_index].get()==NULL){
-            this->Error("Not implemented: F6 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
+            this->obj->Error("Not implemented: F6 /%02X at %s::Run", this->modrm.reg_index, this->code_name.c_str());
     }
     this->instructions[this->modrm.reg_index]->SetModRM(&this->modrm, &this->sib);
     this->instructions[this->modrm.reg_index]->Run(emu);
@@ -953,7 +954,7 @@ void IntImm8::Run(const Emulator& emu){
         GdtGate* gdt_gate = emu.cpu->GetGdtGate(idt_gate->selector);
         uint8_t dest_code_segment_dpl = CpuHelper::GetDpl(gdt_gate->access_right);
         if(idt_gate_dpl<cpl){
-            this->Error("Not implemented: dpl(idt_gate)<cpl at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: dpl(idt_gate)<cpl at %s::Run", this->code_name.c_str());
         }
         if(dest_code_segment_dpl<cpl){
             uint16_t ss = emu.cpu->GetR16(SS);
@@ -982,7 +983,7 @@ void IntImm8::Run(const Emulator& emu){
             //emu.cpu->SetRpl(CS, cpl);
             emu.cpu->ClearFlag(IF);
         }else{//dpl>cpl
-            this->Error("Not implemented: dest_code_segment_dpl>cpl at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: dest_code_segment_dpl>cpl at %s::Run", this->code_name.c_str());
         }
         return;
     }
@@ -1233,7 +1234,7 @@ InAlImm8::InAlImm8(string code_name):Instruction(code_name){
 void InAlImm8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsProtectedMode()){
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
         return;
     }
     uint8_t imm8;
@@ -1311,7 +1312,7 @@ void Lidt::Run(const Emulator& emu){
         base  = emu.mem->Read32(emu.cpu->GetLinearAddrForDataAccess(m32+2));
         emu.cpu->SetIdtr(limit, base);
     }else{
-        this->Error("Not implemented: %s::Run");
+        this->obj->Error("Not implemented: %s::Run");
     }
     return;
 }
@@ -1487,7 +1488,7 @@ void ImulR32Rm32Imm32::Run(const Emulator& emu){
         emu.cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, rm32*imm32);
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
     return;
 }
 
@@ -1536,7 +1537,7 @@ void ShrRm32Imm8::Run(const Emulator& emu){
             return;
         }
         if(imm8==1){
-            this->Error("imm8==1 is not implemented at %s::Run", this->code_name.c_str());
+            this->obj->Error("imm8==1 is not implemented at %s::Run", this->code_name.c_str());
         }
         rm32 = rm32 >> (imm8-1);
         if(rm32&0x01){
@@ -1549,7 +1550,7 @@ void ShrRm32Imm8::Run(const Emulator& emu){
         emu.cpu->UpdateEflagsForShr(rm32);
         return;
     }
-    this->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
 }
 
 JmpPtr1632::JmpPtr1632(string code_name):Instruction(code_name){
@@ -1594,7 +1595,7 @@ void JmpPtr1632::Run(const Emulator& emu){
     }
     //リアルモード処理
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32 at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32 at %s::Run", this->code_name.c_str());
         return;
     }
     uint16_t offset;
@@ -1777,7 +1778,7 @@ void RorRm8Cl::Run(const Emulator& emu){
     cl  = emu.cpu->GetR8L(ECX);
     rm8 = this->GetRM8(emu);
     if(cl==1){
-        this->Error("Not implemented: update OF at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: update OF at %s::Run", this->code_name.c_str());
     }
     for(uint8_t i=0; i<cl; i++){
         if(rm8&0x01){
@@ -1882,7 +1883,7 @@ void ShrRm8Imm8::Run(const Emulator& emu){
         return;
     }
     if(imm8==1){
-        this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
     }
     rm8 = rm8 >> (imm8-1);
     if(rm8&0x01){
@@ -1905,14 +1906,14 @@ void LeaR32M::Run(const Emulator& emu){
     this->ParseModRM(emu);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         if((!emu.cpu->Is32bitsMode()) ^ emu.cpu->IsPrefixAddrSize()){//16bit addr_size
-            this->Error("Not implemented: addr_size=16 at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: addr_size=16 at %s::Run", this->code_name.c_str());
         }
         uint32_t effective_addr = this->GetEffectiveAddr(emu);
         emu.cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, effective_addr);
         return;
     }else{
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bit addr_size
-            this->Error("Not implemented: addr_size=32 at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: addr_size=32 at %s::Run", this->code_name.c_str());
         }
         uint16_t effective_addr = this->GetEffectiveAddr(emu);
         emu.cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, effective_addr);
@@ -1949,7 +1950,7 @@ void Leave::Run(const Emulator& emu){
         emu.cpu->SetR32(EBP, emu.cpu->Pop32());
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 CmpR32Rm32::CmpR32Rm32(string code_name):Instruction(code_name){
@@ -1994,7 +1995,7 @@ void ImulR32Rm32::Run(const Emulator& emu){
         emu.cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, rm32*r32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
     return;
 }
 
@@ -2161,7 +2162,7 @@ void SalRm32Imm8::Run(const Emulator& emu){
             return;
         }
         if(imm8==1){
-            this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
         }
         rm32 = rm32 << (imm8-1);
         if(rm32&0x80000000){
@@ -2182,7 +2183,7 @@ void SalRm32Imm8::Run(const Emulator& emu){
         return;
     }
     if(imm8==1){
-        this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
     }
     rm16 = rm16 << (imm8-1);
     if(rm16&0x8000){
@@ -2370,7 +2371,7 @@ void SarRm32Imm8::Run(const Emulator& emu){
             return;
         }
         if(imm8==1){
-            this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
         }
         rm32 = rm32 >> (imm8-1);
         if(rm32&0x01){
@@ -2383,7 +2384,7 @@ void SarRm32Imm8::Run(const Emulator& emu){
         emu.cpu->UpdateEflagsForShr(rm32);//shrと同じ
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 OrRm32R32::OrRm32R32(string code_name):Instruction(code_name){
@@ -2598,7 +2599,7 @@ void Iretd::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(!emu.cpu->IsProtectedMode()){
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-            this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
         }else{
             uint16_t cs, ip, eflags;
             ip = emu.cpu->Pop16();
@@ -2642,11 +2643,11 @@ void Iretd::Run(const Emulator& emu){
             emu.cpu->SetEip(eip);
             emu.cpu->SetEflgs(eflags);
         }else{
-            this->Error("Not implemented: rpl<cpl %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: rpl<cpl %s::Run", this->code_name.c_str());
         }
         return;
     }else{
-        this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
     }
     return;
 }
@@ -2663,7 +2664,7 @@ void MovEaxMoffs32::Run(const Emulator& emu){
         return;
     }else{
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bit_addr
-            this->Error("Not implemented: addr_size=32bit at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: addr_size=32bit at %s::Run", this->code_name.c_str());
         }else{//16bit_addr
             emu.cpu->SetR16(EAX, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess()))));
             emu.cpu->AddEip(2);
@@ -2883,7 +2884,7 @@ void XorRm32Imm8::Run(const Emulator& emu){
         emu.cpu->UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 SubEaxImm32::SubEaxImm32(string code_name):Instruction(code_name){
@@ -2930,7 +2931,7 @@ void ImulR32Rm32Imm8::Run(const Emulator& emu){
         emu.cpu->AddEip(1);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 SetneRm8::SetneRm8(string code_name):Instruction(code_name){
@@ -2948,7 +2949,7 @@ void SetneRm8::Run(const Emulator& emu){
         }
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 SubRm8R8::SubRm8R8(string code_name):Instruction(code_name){
@@ -3098,7 +3099,7 @@ void Xlatb::Run(const Emulator& emu){
         emu.cpu->SetR8L(EAX, emu.mem->Read8(emu.cpu->GetLinearAddrForDataAccess(emu.cpu->GetR32(EBX)))+al);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 CmpRm8R8::CmpRm8R8(string code_name):Instruction(code_name){
@@ -3205,7 +3206,7 @@ JmpM1632::JmpM1632(string code_name):Instruction(code_name){
 void JmpM1632::Run(const Emulator& emu){
     if(!emu.cpu->IsProtectedMode()){//real mode
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-            this->Error("Not implemented: op_size=32bit on real mode at %s::Run");
+            this->obj->Error("Not implemented: op_size=32bit on real mode at %s::Run");
         }
         uint32_t addr;
         uint16_t offset_addr;
@@ -3234,7 +3235,7 @@ void JmpM1632::Run(const Emulator& emu){
         }
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 SeteRm8::SeteRm8(string code_name):Instruction(code_name){
@@ -3252,7 +3253,7 @@ void SeteRm8::Run(const Emulator& emu){
         }
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 MovAlMoffs8::MovAlMoffs8(string code_name):Instruction(code_name){
@@ -3289,7 +3290,7 @@ void RcrRm8Imm8::Run(const Emulator& emu){
         return;
     }
     if(imm8==1){
-        this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
     }
     for(uint32_t i=0; i<imm8; i++){
         if(rm8&0x01){
@@ -3319,7 +3320,7 @@ void SarRm8Imm8::Run(const Emulator& emu){
         return;
     }
     if(imm8==1){
-        this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
     }
     rm8 = rm8 >> (imm8-1);
     if(rm8&0x01){
@@ -3348,9 +3349,9 @@ CmpsM8M8::CmpsM8M8(string code_name):Instruction(code_name){
 }
 
 void CmpsM8M8::Run(const Emulator& emu){
-    //this->Error("Not implemented: at %s::Run", this->code_name.c_str());
+    //this->obj->Error("Not implemented: at %s::Run", this->code_name.c_str());
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
     }
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//アドレスで場合分け
@@ -3403,7 +3404,7 @@ CmpsM32M32::CmpsM32M32(string code_name):Instruction(code_name){
 
 void CmpsM32M32::Run(const Emulator& emu){
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
     }
     emu.cpu->AddEip(1);
     uint32_t base_ds, base_es;
@@ -3467,7 +3468,7 @@ void SetaRm8::Run(const Emulator& emu){
         }
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 SetbRm8::SetbRm8(string code_name):Instruction(code_name){
@@ -3485,7 +3486,7 @@ void SetbRm8::Run(const Emulator& emu){
         }
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 TestRm8Imm8::TestRm8Imm8(string code_name):Instruction(code_name){
@@ -3591,7 +3592,7 @@ void CallPtr1632::Run(const Emulator& emu){
            uint8_t call_segment_dpl       = CpuHelper::GetDpl(call_segment_selector);
            //GdtGate* call_segment_desc     = emu.cpu->GetGdtGate(call_segment_selector);
            if((call_gate_dpl<cpl)||(call_gate_dpl<call_gate_selector_rpl)){
-               this->Error("Not implemented: #GP at %s::Run", this->code_name.c_str());
+               this->obj->Error("Not implemented: #GP at %s::Run", this->code_name.c_str());
            }
            if(call_segment_dpl<cpl){// MORE-PRIVILEGE
                 uint16_t ss  = emu.cpu->GetR16(SS);
@@ -3610,14 +3611,14 @@ void CallPtr1632::Run(const Emulator& emu){
                 emu.cpu->SetR16(CS, call_segment_selector);
                 return;
            }else{//SAME-PRIVILEGE
-                this->Error("Not implemented: SAME-PRIVILEGE at %s::Run", this->code_name.c_str());
+                this->obj->Error("Not implemented: SAME-PRIVILEGE at %s::Run", this->code_name.c_str());
            }
-           this->Error("Not implemented: CALL_GATE at %s::Run", this->code_name.c_str());
+           this->obj->Error("Not implemented: CALL_GATE at %s::Run", this->code_name.c_str());
        }
-        this->Error("Not implemented: TSS at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: TSS at %s::Run", this->code_name.c_str());
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 Ret32Far::Ret32Far(string code_name):Instruction(code_name){
@@ -3667,7 +3668,7 @@ void Ret32Far::Run(const Emulator& emu){
         }
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 CallM1632::CallM1632(string code_name):Instruction(code_name){
@@ -3692,10 +3693,10 @@ void CallM1632::Run(const Emulator& emu){
                 emu.cpu->SetR16(CS, selector);
                 return;
             }
-            this->Error("Not implemented: TSS at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: TSS at %s::Run", this->code_name.c_str());
             return;
         }
-        this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
         return;
     }
     //リアルモードにもcall命令で32bit op sizeはある。
@@ -3936,7 +3937,7 @@ void SetgRm8::Run(const Emulator& emu){
         }
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 SarRm32Cl::SarRm32Cl(string code_name):Instruction(code_name){
@@ -4105,7 +4106,7 @@ void ShrdRm32R32Imm8::Run(const Emulator& emu){
     imm8 = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
     emu.cpu->AddEip(1);
     if(imm8==8){
-        this->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         uint64_t rm32, r32;
@@ -4125,7 +4126,7 @@ void ShrdRm32R32Imm8::Run(const Emulator& emu){
         emu.cpu->UpdateEflagsForShr(rm32);
         return;
     }
-    this->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
+    this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
 }
 
 SarRm32::SarRm32(string code_name):Instruction(code_name){
@@ -4241,7 +4242,7 @@ AdcRm32Imm8::AdcRm32Imm8(string code_name):Instruction(code_name){
 
 void AdcRm32Imm8::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
         return;
     }
     uint16_t imm8;
@@ -4264,7 +4265,7 @@ Cwde::Cwde(string code_name):Instruction(code_name){
 void Cwde::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
         return;
     }
     uint16_t al = (int16_t)(int8_t)emu.cpu->GetR8L(EAX);
@@ -4279,7 +4280,7 @@ void AdcRm32R32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: 32bits mode at %s::Run", this->code_name.c_str());
         return;
     }
     uint16_t rm16   = this->GetRM16(emu);
@@ -4361,7 +4362,7 @@ XchgEaxR32::XchgEaxR32(string code_name):Instruction(code_name){
 
 void XchgEaxR32::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode()^emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implmented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implmented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     GENERAL_PURPOSE_REGISTER32 register_type = (GENERAL_PURPOSE_REGISTER32)((uint32_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess())-(uint32_t)0x90);
     emu.cpu->AddEip(1);
@@ -4464,7 +4465,7 @@ StosM32::StosM32(string code_name):Instruction(code_name){
 void StosM32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     uint32_t edi;
     uint32_t d;
@@ -4499,7 +4500,7 @@ LodsM32::LodsM32(string code_name):Instruction(code_name){
 void LodsM32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     uint32_t ds = emu.cpu->GetBaseAddr(DS);
     uint32_t esi;
@@ -4550,7 +4551,7 @@ AdcR32Rm32::AdcR32Rm32(string code_name):Instruction(code_name){
 
 void AdcR32Rm32::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run");
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run");
     }
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
@@ -4599,7 +4600,7 @@ void CodeF3::Run(const Emulator& emu){
         op_code = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
     }
     if(this->instructions[op_code].get()==NULL){
-        this->Error("Not implemented: F3 %02X at %s::Run", op_code, this->code_name.c_str());
+        this->obj->Error("Not implemented: F3 %02X at %s::Run", op_code, this->code_name.c_str());
     }
     this->instructions[op_code]->Run(emu);
     return;
@@ -4612,7 +4613,7 @@ RepeCmpsM8M8::RepeCmpsM8M8(string code_name):Instruction(code_name){
 void RepeCmpsM8M8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
     }
     uint32_t base_ds, base_es;
     uint32_t base_ds_esi, base_es_edi;
@@ -4667,7 +4668,7 @@ void CodeF2::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     uint8_t op_code = emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess());
     if(this->instructions[op_code].get()==NULL){
-        this->Error("Not implemented: F2 %02X at %s::Run", op_code, this->code_name.c_str());
+        this->obj->Error("Not implemented: F2 %02X at %s::Run", op_code, this->code_name.c_str());
     }
     this->instructions[op_code]->Run(emu);
     return;
@@ -4678,14 +4679,14 @@ RepneScasM8::RepneScasM8(string code_name):Instruction(code_name){
 }
 
 void RepneScasM8::Run(const Emulator& emu){
-    //this->Error("Not implemented: %s::Run", this->code_name.c_str());
+    //this->obj->Error("Not implemented: %s::Run", this->code_name.c_str());
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
         if((!emu.cpu->Is32bitsMode()) ^ emu.cpu->IsPrefixAddrSize()){
-            this->Error("Not implemented: op_size=32bits && addr_size=16bits at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: op_size=32bits && addr_size=16bits at %s::Run", this->code_name.c_str());
         }
         uint32_t cx = emu.cpu->GetR32(ECX);
         uint32_t d = emu.cpu->IsFlag(DF)? -1:1;
@@ -4711,7 +4712,7 @@ void RepneScasM8::Run(const Emulator& emu){
         return;
     }else{//16bit op_size
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-            this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
         }
         uint16_t cx = emu.cpu->GetR16(ECX);
         for(uint16_t i = 0; i<cx; i++){
@@ -4783,7 +4784,7 @@ void OrR32Rm32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint16_t rm16;
     uint16_t r16;
@@ -4821,7 +4822,7 @@ void SbbRm32R32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint16_t rm16, r16;
     uint8_t cf = emu.cpu->IsFlag(CF)?1:0;
@@ -4841,7 +4842,7 @@ void SbbR32Rm32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint16_t rm16, r16;
     uint8_t cf = emu.cpu->IsFlag(CF)?1:0;
@@ -4932,7 +4933,7 @@ void XorR32Rm32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
         return;
     }
     uint16_t rm16;
@@ -5001,7 +5002,7 @@ XorRm32Imm32::XorRm32Imm32(string code_name):Instruction(code_name){
 
 void XorRm32Imm32::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: 32bit=op_size at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: 32bit=op_size at %s::Run", this->code_name.c_str());
     }
     uint16_t result;
     result = this->GetRM16(emu)^emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess());
@@ -5017,7 +5018,7 @@ SbbRm32Imm8::SbbRm32Imm8(string code_name):Instruction(code_name){
 
 void SbbRm32Imm8::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint16_t rm16, imm8;
     uint8_t cf = emu.cpu->IsFlag(CF)?1:0;
@@ -5067,7 +5068,7 @@ MovsM8M8::MovsM8M8(string code_name):Instruction(code_name){
 void MovsM8M8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
         uint32_t ds, es;
@@ -5120,7 +5121,7 @@ StosM8::StosM8(string code_name):Instruction(code_name){
 void StosM8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
         uint32_t es = emu.cpu->GetBaseAddr(ES);;
@@ -5139,7 +5140,7 @@ void StosM8::Run(const Emulator& emu){
         }
     }else{
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-            this->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: addr_size=32bits at %s::Run", this->code_name.c_str());
         }
         uint32_t es;
         uint16_t di;
@@ -5160,7 +5161,7 @@ ScasM8::ScasM8(string code_name):Instruction(code_name){
 void ScasM8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
         uint32_t base_es;
@@ -5204,7 +5205,7 @@ ScasD::ScasD(string code_name):Instruction(code_name){
 void ScasD::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     uint32_t base_es;
     uint32_t edi;
@@ -5254,7 +5255,7 @@ RclRm32Imm8::RclRm32Imm8(string code_name):Instruction(code_name){
 
 void RclRm32Imm8::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint8_t imm8 = emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess());
     emu.cpu->AddEip(1);
@@ -5288,11 +5289,11 @@ RetImm16::RetImm16(string code_name):Instruction(code_name){
 
 void RetImm16::Run(const Emulator& emu){
     if(emu.cpu->IsProtectedMode()){//下はリアルモード仕様なので、ストップ
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
     }
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint32_t addr;
     addr = emu.cpu->Pop16();
@@ -5320,7 +5321,7 @@ void LdsR32M1632::Run(const Emulator& emu){
             emu.cpu->SetR16(DS, emu.mem->Read16(emu.cpu->GetLinearAddrForDataAccess(effective_addr+4)));
             return;
         }
-        this->Error("Not implemented: op_size=16bit_size at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=16bit_size at %s::Run", this->code_name.c_str());
         return;
     }else{
         if(emu.cpu->Is32bitsMode()^emu.cpu->IsPrefixOpSize()){
@@ -5344,10 +5345,10 @@ RetFarImm16::RetFarImm16(string code_name):Instruction(code_name){
 void RetFarImm16::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsProtectedMode()){
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint16_t ip, cs;
     ip = emu.cpu->Pop16();
@@ -5369,7 +5370,7 @@ RclRm32::RclRm32(string code_name):Instruction(code_name){
 
 void RclRm32::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint16_t rm16;
     bool temp_cf;
@@ -5508,7 +5509,7 @@ RepMovsM8M8::RepMovsM8M8(string code_name):Instruction(code_name){
 void RepMovsM8M8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
         uint32_t cnt;
@@ -5549,7 +5550,7 @@ void RepMovsM8M8::Run(const Emulator& emu){
         return;
     }else{//16bit op_size
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
-            this->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: addr_size=32bits && addr_size=32bits at %s::Run", this->code_name.c_str());
         }
         uint16_t cx = emu.cpu->GetR16(ECX);
         uint32_t ds, es;
@@ -5577,7 +5578,7 @@ RepMovsM32M32::RepMovsM32M32(string code_name):Instruction(code_name){
 void RepMovsM32M32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     uint32_t cnt;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
@@ -5627,7 +5628,7 @@ RepStosM8::RepStosM8(string code_name):Instruction(code_name){
 void RepStosM8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     uint32_t cnt;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
@@ -5666,7 +5667,7 @@ RepStosM32::RepStosM32(string code_name):Instruction(code_name){
 void RepStosM32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     uint32_t cnt;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
@@ -5847,7 +5848,7 @@ XorEaxImm32::XorEaxImm32(string code_name):Instruction(code_name){
 void XorEaxImm32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: %s::Run", this->code_name.c_str());
     }
     uint16_t result;
     result = emu.cpu->GetR16(EAX) ^ emu.mem->Read16(emu.cpu->GetLinearAddrForCodeAccess());
@@ -5864,7 +5865,7 @@ RepeCmpsM32M32::RepeCmpsM32M32(string code_name):Instruction(code_name){
 void RepeCmpsM32M32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment_override at %s::Run", this->code_name.c_str());
     }
     uint32_t cnt;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
@@ -5925,7 +5926,7 @@ RepeScasM8::RepeScasM8(string code_name):Instruction(code_name){
 void RepeScasM8::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     uint32_t cnt;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
@@ -5971,7 +5972,7 @@ RcrRm32::RcrRm32(string code_name):Instruction(code_name){
 void RcrRm32::Run(const Emulator& emu){
     bool temp_cf;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint32_t rm16;//16bit目にCFが来るから、uint32_tにしている。
     rm16 = this->GetRM16(emu);
@@ -5999,7 +6000,7 @@ AdcEaxImm32::AdcEaxImm32(string code_name):Instruction(code_name){
 
 void AdcEaxImm32::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){//32bit op_size
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint16_t imm16;
     uint16_t ax;
@@ -6021,7 +6022,7 @@ RepeScasM32::RepeScasM32(string code_name):Instruction(code_name){
 void RepeScasM32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     if(emu.cpu->IsSegmentOverride()){
-        this->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     uint32_t cnt;
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){
@@ -6094,7 +6095,7 @@ SalRm8::SalRm8(string code_name):Instruction(code_name){
 
 void SalRm8::Run(const Emulator& emu){
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        this->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
     uint16_t rm16;
     bool msb_dest;
@@ -6173,7 +6174,7 @@ void JccRel8::Run(const Emulator& emu){
             condition = (!emu.cpu->IsFlag(ZF)) && (emu.cpu->IsFlag(SF)==emu.cpu->IsFlag(OF));
             break;
         default:
-            this->Error("Not implemented: jcc_type=0x%02X at %s::Run", jcc_type, this->code_name.c_str());
+            this->obj->Error("Not implemented: jcc_type=0x%02X at %s::Run", jcc_type, this->code_name.c_str());
     }
     emu.cpu->AddEip(1);
     uint32_t rel8 = (int32_t)((int8_t)emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()));
@@ -6242,7 +6243,7 @@ void JccRel32::Run(const Emulator& emu){
             condition = (!emu.cpu->IsFlag(ZF)) && (emu.cpu->IsFlag(SF)==emu.cpu->IsFlag(OF));
             break;
         default:
-            this->Error("Not implemented: jcc_type=0x%02X at %s::Run", jcc_type, this->code_name.c_str());
+            this->obj->Error("Not implemented: jcc_type=0x%02X at %s::Run", jcc_type, this->code_name.c_str());
     }
     emu.cpu->AddEip(1);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
@@ -6331,7 +6332,7 @@ LgsR32M1632::LgsR32M1632(string code_name):Instruction(code_name){
 
 void LgsR32M1632::Run(const Emulator& emu){
     if(emu.cpu->IsProtectedMode()){
-        this->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: protected mode at %s::Run", this->code_name.c_str());
     }
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
@@ -6401,7 +6402,7 @@ void RolRm32Imm8::Run(const Emulator& emu){
         emu.cpu->AddEip(1);
         uint32_t rm32 = this->GetRM32(emu);
         if(imm8==1){
-            this->Error("Not implemented: update OF at %s::Run", this->code_name.c_str());
+            this->obj->Error("Not implemented: update OF at %s::Run", this->code_name.c_str());
         }
         for(uint8_t i=0; i<imm8; i++){
             if(rm32&SIGN_FLG4){
@@ -6415,7 +6416,7 @@ void RolRm32Imm8::Run(const Emulator& emu){
         this->SetRM32(emu, rm32);
         return;
     }else{
-        this->Error("Not implemented: op_size=16bit at %s::Run", this->code_name.c_str());
+        this->obj->Error("Not implemented: op_size=16bit at %s::Run", this->code_name.c_str());
     }
 }
 
@@ -6442,7 +6443,7 @@ void PopSegmentRegister::Run(const Emulator& emu){
             segment_register = GS;
             break;
         default:
-            this->Error("Not supported: segment_register=%d at %s", emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()), this->code_name.c_str());
+            this->obj->Error("Not supported: segment_register=%d at %s", emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()), this->code_name.c_str());
             break;
     }
     emu.cpu->AddEip(1);
@@ -6484,7 +6485,7 @@ void PushSegmentRegister::Run(const Emulator& emu){
             segment_register = GS;
             break;
         default:
-            this->Error("Not supported: segment_register=%d at %s", emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()), this->code_name.c_str());
+            this->obj->Error("Not supported: segment_register=%d at %s", emu.mem->Read8(emu.cpu->GetLinearAddrForCodeAccess()), this->code_name.c_str());
             break;
     }
     emu.cpu->AddEip(1);
