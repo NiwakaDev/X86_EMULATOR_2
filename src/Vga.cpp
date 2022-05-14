@@ -20,11 +20,7 @@ Vga::Vga(Memory& mem){
     this->vram_start_addr = DEFAULT_VRAM_START_ADDR;
     this->InitPalette();
     this->vga_mode = TEXT_MODE;
-    this->image_text_mode = (Pixel*)malloc(this->height*this->width*sizeof(Pixel));//最大領域の場合のサイズで確保しておく。
-}
-
-Vga::~Vga(){
-    delete this->image_text_mode;
+    this->image_text_mode = make_unique<Pixel[]>(this->height*this->width*sizeof(Pixel));
 }
 
 //この関数はVgaクラスのvga_mutexをロックします。

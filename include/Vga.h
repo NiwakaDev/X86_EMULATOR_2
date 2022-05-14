@@ -24,10 +24,9 @@ enum VGA_MODE {GRAPHIC_MODE, TEXT_MODE};
 class Vga:public Object{
     public:
         VGA_MODE vga_mode;
-        Pixel* image_text_mode=NULL;
+        std::unique_ptr<Pixel[]> image_text_mode;
         Pixel* GetPixel(const int x, const int y);
         Vga(Memory& mem);
-        ~Vga();
         void Out8(const uint16_t addr, const uint8_t data);
         uint8_t In8(const uint16_t addr);
         void SetInfo(const int width, const int height, const int vram_start_add);
