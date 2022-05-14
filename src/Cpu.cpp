@@ -257,7 +257,7 @@ void Cpu::SetCr(CONTROL_REGISTER control_register_type, uint32_t data){
     switch(control_register_type){
         case CR0:
             this->cr0.raw = data;
-            //if(this->cr0.flgs.PG)this->Error("Not implemented: paging at Cpu::SetCr");
+            //if(this->cr0.flgs.PG)this->obj->Error("Not implemented: paging at Cpu::SetCr");
             break;
         case CR2:
             this->cr2 = data;
@@ -266,7 +266,7 @@ void Cpu::SetCr(CONTROL_REGISTER control_register_type, uint32_t data){
             this->cr3.raw = data;
             break;
         default:
-            this->Error("Not implemented: cr%d at Cpu::SetCr", control_register_type);
+            this->obj->Error("Not implemented: cr%d at Cpu::SetCr", control_register_type);
     }
 }
 
@@ -289,12 +289,12 @@ uint16_t Cpu::GetR16(SEGMENT_REGISTER register_type){
 uint32_t Cpu::GetCr(CONTROL_REGISTER control_register_type){
     switch(control_register_type){
         case CR0:
-            if(this->cr0.flgs.WP)this->Error("Not implemented: CR0.WP=1 at Cpu::GetCr");
+            if(this->cr0.flgs.WP)this->obj->Error("Not implemented: CR0.WP=1 at Cpu::GetCr");
             return this->cr0.raw;
         case CR2:
             return this->cr2;
         default:
-            this->Error("Not implemented: cr%d at Cpu::GetCr", control_register_type);
+            this->obj->Error("Not implemented: cr%d at Cpu::GetCr", control_register_type);
     }
 }
 
@@ -457,7 +457,7 @@ inline void Cpu::CheckPrefixCode(const Memory& mem){
                 this->segment_override = true;
                 break;
             default:
-                this->Error("prefix_code : 0x%02X is not implemented at Cpu::CheckPrefixCode\n", op_code);
+                this->obj->Error("prefix_code : 0x%02X is not implemented at Cpu::CheckPrefixCode\n", op_code);
         }
         this->eip++;
         op_code = mem.Read8(this->GetLinearAddrForCodeAccess());
@@ -549,7 +549,7 @@ bool Cpu::IsFlag(EFLAGS_KIND eflags_kind){
         case PF:
             return this->eflags.flgs.PF;
         default:
-            this->Error("Not implemented: %d Cpu::IsFlag", eflags_kind);
+            this->obj->Error("Not implemented: %d Cpu::IsFlag", eflags_kind);
     }
 }
 
@@ -571,7 +571,7 @@ void Cpu::SetFlag(EFLAGS_KIND eflags_kind){
             this->eflags.flgs.ZF = 1;
             return;
         default:
-            this->Error("Not implemented: %d Cpu::SetFlag", eflags_kind);
+            this->obj->Error("Not implemented: %d Cpu::SetFlag", eflags_kind);
     }
 }
 
@@ -599,7 +599,7 @@ void Cpu::ClearFlag(EFLAGS_KIND eflags_kind){
             this->eflags.flgs.ZF = 0;
             break;
         default:
-            this->Error("Not implemented: %d Cpu::ClearFlag", eflags_kind);
+            this->obj->Error("Not implemented: %d Cpu::ClearFlag", eflags_kind);
     }
 }
 
@@ -745,7 +745,7 @@ void Cpu::HandleInterrupt(int irq_num){
         //this->SetRpl(CS, cpl);
         this->eflags.flgs.IF = 0;
     }else{
-        this->Error("Not implemented: dest_code_segment_dpl>cpl at Cpu::HandleInterrupt");
+        this->obj->Error("Not implemented: dest_code_segment_dpl>cpl at Cpu::HandleInterrupt");
     }
 
     return;
@@ -875,7 +875,7 @@ bool Cpu::Run(const Emulator& emu){
                 if(fp!=NULL){
                     fclose(fp);
                 }
-                this->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
+                this->obj->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
             }
             this->instructions[op_code]->Run(emu);
             instruction_history.push_back(this->instructions[op_code]->GetInstructionName());
@@ -893,7 +893,7 @@ bool Cpu::Run(const Emulator& emu){
             this->CheckPrefixCode(*(this->mem));
             uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
             if(this->instructions[op_code].get()==NULL){
-                this->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
+                this->obj->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
             }
             this->instructions[op_code]->Run(emu);
             return true;

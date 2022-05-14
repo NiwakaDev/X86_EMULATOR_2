@@ -17,6 +17,7 @@ Bios::Bios(FILE& disk_image_stream, Vga& vga, Kbc& kbc){
     this->bios_functions[BIOS_FUNCTION::GENERAL_PURPOSE_FUNCTION] = make_unique<GeneralSystemServicesFunction>();
     this->bios_functions[BIOS_FUNCTION::KEY_FUNCTION]             = make_unique<KeyFunction>(kbc);
     this->bios_functions[BIOS_FUNCTION::TIMER_FUNCTION]           = make_unique<TimerFunction>();
+    this->obj = make_unique<Object>();
 }
 
 Bios::~Bios(){

@@ -84,7 +84,7 @@ struct _Registers{
 typedef struct _Registers Registers;
 
 //TODO : 神クラスを何とかして整理
-class Cpu:public Object{
+class Cpu{
     public:
         Cpu(Bios& bios, Memory& mem);
         ~Cpu();
@@ -180,6 +180,7 @@ class Cpu:public Object{
         uint16_t Pop16();
         uint32_t Pop32();
     private:
+        std::unique_ptr<Object> obj;
         Registers registers;
         Bios* bios = NULL;
         Memory* mem;

@@ -105,7 +105,7 @@ inline template<typename type>void Cpu::UpdateEflagsForDec(type result, type d1,
             this->UpdateOF_Sub(result, d1, d2);
             break;
         default:
-            this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateElfagsForDec", sizeof(result));
+            this->obj->Error("Not implemented: data_size=%dbyte at Cpu::UpdateElfagsForDec", sizeof(result));
     }
 }
 
@@ -125,7 +125,7 @@ inline template<typename type1, typename type2>void Cpu::UpdateEflagsForAdd(type
             this->UpdateOF_Add((uint32_t)result, (uint32_t)d1, (uint32_t)d2);
             break;
         default:
-            this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(result));
+            this->obj->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(result));
     }
 }
 
@@ -147,7 +147,7 @@ inline template<typename type>void Cpu::UpdateOF_Add(type result, type d1, type 
             this->eflags.flgs.OF = ((d1&SIGN_FLG4)==(d2&SIGN_FLG4)) && ((result&SIGN_FLG4)!=(d1&SIGN_FLG4));
             break;
         default:
-            this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(result));
+            this->obj->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(result));
     }
 }
 
@@ -164,7 +164,7 @@ inline template<typename type> void Cpu::UpdateCfForSub(type data, int group){
             this->eflags.flgs.CF = ((data>>32)&1)? 1:0;
             break;
         default:
-            this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(data));
+            this->obj->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(data));
     }
 }
 
@@ -181,7 +181,7 @@ inline template<typename type> void Cpu::UpdateSF(type data){
             this->eflags.flgs.SF = ((data&SIGN_FLG4)==SIGN_FLG4)? 1:0;
             break;
         default:
-            this->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(data));
+            this->obj->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(data));
     }
 }
 
