@@ -3,6 +3,9 @@
 using namespace std;
 
 Pic::Pic(IoDevice** io_devices){
+    if(io_devices==NULL){
+        this->obj->Error("io_devices is NULL at Pic::Pic");
+    }
     this->obj = make_unique<Object>();
     for(int i=0; i<16; i++){
         this->irq_list[i] = false;

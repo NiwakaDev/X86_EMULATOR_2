@@ -17,6 +17,7 @@ const int MAX_HEIGHT           = 1024;
 
 class Gui::Pimpl{
     public:
+        unique_ptr<Object> obj;
         unique_ptr<Pixel[]> image;
         bool grab;
         void Update();
@@ -77,21 +78,22 @@ Gui::Gui(Vga& vga):pimpl(make_unique<Gui::Pimpl>()){
     this->pimpl->screen_width  = DEFAULT_WIDTH;
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
         cerr << SDL_GetError() << endl;
-        this->Error("at Gui::Gui");
+        this->pimpl->obj->Error("at Gui::Gui");
     }
     this->pimpl->window = SDL_CreateWindow("EMULATOR", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, this->pimpl->screen_width*WIDTH_DISPLAY_SCALE, this->pimpl->screen_height*HEIGHT_DISPLAY_SCALE, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     if(this->pimpl->window==NULL){
         cout << SDL_GetError() << endl;
-        this->Error("at Gui::Gui");
+        this->pimpl->obj->Error("at Gui::Gui");
     }
     this->pimpl->renderer      = SDL_CreateRenderer(this->pimpl->window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
     this->pimpl->texture       = SDL_CreateTexture(this->pimpl->renderer, SDL_PIXELFORMAT_BGRA8888, SDL_TEXTUREACCESS_STREAMING, this->pimpl->screen_width, this->pimpl->screen_height); 
     if(SDL_RenderSetLogicalSize(this->pimpl->renderer, this->pimpl->screen_width, this->pimpl->screen_height*HEIGHT_DISPLAY_SCALE)<0){
         cout << SDL_GetError() << endl;
-        this->Error("at Gui::Gui");
+        this->pimpl->obj->Error("at Gui::Gui");
     }
     this->pimpl->image = make_unique<Pixel[]>(MAX_WIDTH*MAX_HEIGHT);//最大領域の場合のサイズで確保しておく。
     this->pimpl->grab  = false;
+    this->pimpl->obj   = make_unique<Object>();
 }
 
 Gui::~Gui(){
@@ -120,7 +122,7 @@ void Gui::Finish(){
 //音ライブラリに対する依存度を避けるために、Gui::SoundFdc関数は廃止予定。
 void Gui::SoundFdc(){
     if(Mix_PlayMusic(this->pimpl->music, 1)==-1){
-        this->Error("Error : Mix_PlayMusic");
+        this->pimpl->obj->Error("Error : Mix_PlayMusic");
     }
 }
 ***/

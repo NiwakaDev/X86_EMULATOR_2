@@ -4,7 +4,7 @@
 class Vga;
 class IoDevice;
 
-class Gui:public Object{
+class Gui{
     public:
         Gui(Vga& vga);
         ~Gui();

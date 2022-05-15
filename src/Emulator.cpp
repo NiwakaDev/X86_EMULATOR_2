@@ -53,31 +53,36 @@ Emulator::Emulator(int argc, char* argv[]){
         cerr << "can`t open " << this->disk_image_name << " at Emulator::Emulator" << endl;
         exit(EXIT_FAILURE);
     }
-    this->mem     = make_unique<Memory>(MEM_SIZE);
-    disk_image_stream.seekg(0);
-    this->fdc     = make_unique<Fdc>(disk_image_stream);
-    this->timer   = make_unique<Timer>();
-    this->mouse   = make_unique<Mouse>();
-    this->kbc     = make_unique<Kbc>(*(this->mouse.get()));
-    //TODO : マジックナンバーを修正
-    this->io_devices[0x00] = this->timer.get();
-    this->io_devices[0x01] = this->kbc.get();
-    this->io_devices[0x06] = this->fdc.get();
-    this->io_devices[0x0C] = this->mouse.get();
-    this->pic     = make_unique<Pic>(this->io_devices);
-    this->vga     = make_unique<Vga>(*(this->mem.get()));
-    disk_image_stream.seekg(0);
-    this->bios    = make_unique<Bios>(disk_image_stream, *(this->vga.get()), *(this->kbc.get()));
-    this->cpu     = make_unique<Cpu>(*(this->bios.get()), *(this->mem.get()));
-    this->io_port = make_unique<IoPort>(*(this->vga.get()), *(this->pic.get()), *(this->kbc.get()), *(this->timer.get()), *(this->fdc.get()));
-    this->gui     = make_unique<Gui>(*(this->vga.get()));
-    this->gui->AddIoDevice(Gui::KBD, *(this->kbc.get()));
-    this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse.get()));
-    //this->fdc->gui = this->gui.get();
-    disk_image_stream.seekg(0);
-    this->bios->LoadIpl(disk_image_stream, *(this->mem.get()));
-    for(int i=0; i<0x20; i++){//full.img and fd.imgで利用, 8086runを参考
-        this->mem->Write(i<<2, i);
+    try{
+        this->mem     = make_unique<Memory>(MEM_SIZE);
+        disk_image_stream.seekg(0);
+        this->fdc     = make_unique<Fdc>(disk_image_stream);
+        this->timer   = make_unique<Timer>();
+        this->mouse   = make_unique<Mouse>();
+        this->kbc     = make_unique<Kbc>(*(this->mouse.get()));
+        //TODO : マジックナンバーを修正
+        this->io_devices[0x00] = this->timer.get();
+        this->io_devices[0x01] = this->kbc.get();
+        this->io_devices[0x06] = this->fdc.get();
+        this->io_devices[0x0C] = this->mouse.get();
+        this->pic     = make_unique<Pic>(this->io_devices);
+        this->vga     = make_unique<Vga>(*(this->mem.get()));
+        disk_image_stream.seekg(0);
+        this->bios    = make_unique<Bios>(disk_image_stream, *(this->vga.get()), *(this->kbc.get()));
+        this->cpu     = make_unique<Cpu>(*(this->bios.get()), *(this->mem.get()));
+        this->io_port = make_unique<IoPort>(*(this->vga.get()), *(this->pic.get()), *(this->kbc.get()), *(this->timer.get()), *(this->fdc.get()));
+        this->gui     = make_unique<Gui>(*(this->vga.get()));
+        this->gui->AddIoDevice(Gui::KBD, *(this->kbc.get()));
+        this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse.get()));
+        //this->fdc->gui = this->gui.get();
+        disk_image_stream.seekg(0);
+        this->bios->LoadIpl(disk_image_stream, *(this->mem.get()));
+        for(int i=0; i<0x20; i++){//full.img and fd.imgで利用, 8086runを参考
+            this->mem->Write(i<<2, i);
+        }
+    }catch(const char* error_message){
+        cout << error_message << endl;
+        exit(EXIT_FAILURE);
     }
     #ifdef DEBUG
         //biosをロードする。
