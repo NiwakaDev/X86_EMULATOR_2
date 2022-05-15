@@ -2,9 +2,10 @@
 #include "common.h"
 #include "Fifo.h"
 
-class IoDevice:public Object{
+class IoDevice{
     protected:
         std::unique_ptr<Fifo<uint8_t>> fifo;
+        std::unique_ptr<Object> obj;
     public:
         IoDevice();
         virtual ~IoDevice();

@@ -46,13 +46,13 @@ void Timer::Out8(const uint16_t addr, const uint8_t data){
                 return;
             }
         default:
-            this->Error("Not implemented: io_addr(0x%02X) at Timer::Out8");
+            this->obj->Error("Not implemented: io_addr(0x%02X) at Timer::Out8");
             break;
     }
 }
 
 uint8_t Timer::In8(const uint16_t addr){
-    this->Error("Not implemented: Timer::In8");
+    this->obj->Error("Not implemented: Timer::In8");
     return 0;
 }
 

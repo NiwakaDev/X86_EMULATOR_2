@@ -11,7 +11,7 @@ Mouse::~Mouse(){
 }
 
 void Mouse::Out8(const uint16_t addr, const uint8_t data){
-    this->Error("Not implmented: Mouse::Out8");
+    this->obj->Error("Not implmented: Mouse::Out8");
 }
 
 uint8_t Mouse::In8(const uint16_t addr){
@@ -19,7 +19,7 @@ uint8_t Mouse::In8(const uint16_t addr){
         case 0x60:
             return this->fifo->Pop();
         default:
-            this->Error("Not implemented: addr=0x%02X at Mouse::In8", addr);
+            this->obj->Error("Not implemented: addr=0x%02X at Mouse::In8", addr);
     }
 }
 

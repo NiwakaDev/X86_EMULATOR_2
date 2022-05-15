@@ -3,6 +3,7 @@ using namespace std;
 
 IoDevice::IoDevice(){
     this->fifo = make_unique<Fifo<uint8_t>>();
+    this->obj  = make_unique<Object>();
 }
 
 IoDevice::~IoDevice(){

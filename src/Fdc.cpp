@@ -19,7 +19,7 @@ Fdc::~Fdc(){
 void Fdc::ProcessCommand(uint8_t command){
     switch (command){
         default:
-            this->Error("Not implemented: command = 0x%02X at Fdc::ProcessCommand", command);
+            this->obj->Error("Not implemented: command = 0x%02X at Fdc::ProcessCommand", command);
             break;
     }
 }
@@ -38,7 +38,7 @@ Fdc::FDC_COMMAND_TYPE Fdc::GetFdcCommandType(uint8_t data){
         case FDC_COMMAND_WRITE_SECTOR:
             return FDC_COMMAND_WRITE_SECTOR;
         default:
-            this->Error("Not implemented: fdc_command_type=%02X at Fdc::GetFdcCommandType", data);
+            this->obj->Error("Not implemented: fdc_command_type=%02X at Fdc::GetFdcCommandType", data);
     }
 }
 
@@ -89,7 +89,7 @@ void Fdc::ProcessCommandForOut8(uint8_t data){
                     }
                     break;
                 default:    
-                    this->Error("Not implemented: fdc_command_tyep=%d at Fdc::ProcessCommandForOut8", this->fdc_command_type);
+                    this->obj->Error("Not implemented: fdc_command_tyep=%d at Fdc::ProcessCommandForOut8", this->fdc_command_type);
             }
             break;
         case FDC_EXECUTION_MODE:
@@ -105,11 +105,11 @@ void Fdc::ProcessCommandForOut8(uint8_t data){
                     }
                     break;
                 default:
-                    this->Error("Not implemented: fdc_command_type=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
+                    this->obj->Error("Not implemented: fdc_command_type=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
             }
             break;
         default:
-            this->Error("Not implemented: fdc_mode=%d Fdc::ProcessCommandForOut8", this->fdc_mode);
+            this->obj->Error("Not implemented: fdc_mode=%d Fdc::ProcessCommandForOut8", this->fdc_mode);
     }   
 }
 
@@ -130,7 +130,7 @@ void Fdc::Out8(const uint16_t addr, const uint8_t data){
             this->ProcessCommandForOut8(data);
             break;
         default:
-            this->Error("Not implemented: addr=0x%04X at Fdc::Out8", addr);
+            this->obj->Error("Not implemented: addr=0x%04X at Fdc::Out8", addr);
     }
 }
 
@@ -148,7 +148,7 @@ uint8_t Fdc::ProcessCommandForIn8(){
                     }
                     break;
                 default:
-                    this->Error("Not implemented: fdc_command_type=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
+                    this->obj->Error("Not implemented: fdc_command_type=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
             }
             break;
         case FDC_EXECUTION_MODE:
@@ -164,7 +164,7 @@ uint8_t Fdc::ProcessCommandForIn8(){
                     }
                     break;
                 default:
-                    this->Error("Not implemented: fdc_command_type=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
+                    this->obj->Error("Not implemented: fdc_command_type=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
             }
             break;
         case FDC_RESULT_MODE:
@@ -178,11 +178,11 @@ uint8_t Fdc::ProcessCommandForIn8(){
                     }
                     break;
                 default:    
-                    this->Error("Not implemented: fdc_command_tyep=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
+                    this->obj->Error("Not implemented: fdc_command_tyep=%d at Fdc::ProcessCommandForIn8", this->fdc_command_type);
             }
             break;
         default:
-            this->Error("Not implemented: fdc_cmode=%d at Fdc::ProcessCommandForIn8", this->fdc_mode);
+            this->obj->Error("Not implemented: fdc_cmode=%d at Fdc::ProcessCommandForIn8", this->fdc_mode);
     }
     return data;
 }
@@ -199,7 +199,7 @@ uint8_t Fdc::In8(const uint16_t addr){
             data = this->msr.raw;
             break;
         default:
-            this->Error("Not implemented: io_addr=0x%04X at Fdc::In8", addr);
+            this->obj->Error("Not implemented: io_addr=0x%04X at Fdc::In8", addr);
     }
     return data;
 }

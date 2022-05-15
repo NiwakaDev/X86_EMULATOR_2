@@ -26,7 +26,7 @@ void Kbc::ProcessCommand(uint8_t command){
         case 0x00:
             break;
         default:
-            this->Error("Not implemented: command = 0x%02X at Kbd::ProcessCommand", command);
+            this->obj->Error("Not implemented: command = 0x%02X at Kbd::ProcessCommand", command);
             break;
     }
 }
@@ -39,7 +39,7 @@ void Kbc::Out8(const uint16_t addr, const uint8_t data){
         case 0x64:
             break;
         default:
-            this->Error("Not implemented: addr=0x%04X at Kbc::Out8", addr);
+            this->obj->Error("Not implemented: addr=0x%04X at Kbc::Out8", addr);
     }
 }
 
@@ -54,7 +54,7 @@ uint8_t Kbc::In8(const uint16_t addr){
             data = this->fifo->Pop();
             break;
         default:
-            this->Error("Not implemented: io_addr=0x%04X at Kbd::In8", addr);
+            this->obj->Error("Not implemented: io_addr=0x%04X at Kbd::In8", addr);
     }
     return data;
 }
