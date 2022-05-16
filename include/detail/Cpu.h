@@ -18,6 +18,10 @@ inline bool Cpu::IsProtectedMode() const{
     return (bool)this->cr0.flgs.PE;
 }
 
+inline bool Cpu::IsRealMode() const{
+    return !((bool)this->cr0.flgs.PE);
+}
+
 inline bool Cpu::IsPrefixAddrSize(){
     return this->prefix_flgs[FLG_67];
 }

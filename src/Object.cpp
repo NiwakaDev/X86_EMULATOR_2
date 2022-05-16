@@ -10,6 +10,6 @@ void Object::Error(const char* message, ...) const{
     va_start(ap, message_with_ln);
     vfprintf(stderr, message_with_ln, ap);
     va_end(ap);
-    //exit(EXIT_FAILURE);
+    free(message_with_ln);
     throw " ";//TODO このメッセージは無意味なので、変更予定
 }

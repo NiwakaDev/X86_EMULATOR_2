@@ -694,7 +694,7 @@ void Cpu::SwitchTask(){
 }
 
 void Cpu::HandleInterrupt(int irq_num){
-    if(!this->IsProtectedMode()){
+    if(this->IsRealMode()){
         this->Push16(this->eflags.raw);
         this->Push16(this->segment_registers[CS]->GetData());
         this->Push16(this->eip);
@@ -703,7 +703,7 @@ void Cpu::HandleInterrupt(int irq_num){
         this->is_exception_ = false;
         return;
     }
-    //TODO : 変数の宣言のスコープを縮める。
+
     //irq_num = irq_num + 0x20;
     if(this->is_exception_)this->is_exception_=false;
     IdtGate* idt_gate = (IdtGate*)this->mem->GetPointer(this->idtr->GetBase()+irq_num*8);

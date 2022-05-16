@@ -95,6 +95,7 @@ class Cpu{
         uint32_t GetLinearAddrForDataAccess(uint32_t offset);
         uint32_t GetLinearStackAddr();
         inline bool IsProtectedMode() const;
+        inline bool IsRealMode() const;
         bool Is32bitsMode();
         bool IsStackAddr32();//true : 32bit addr, false : 16bit
         inline bool IsPrefixAddrSize();
