@@ -1907,13 +1907,12 @@ void LeaR32M::Run(const Emulator& emu){
         uint32_t effective_addr = this->GetEffectiveAddr(emu);
         emu.cpu->SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, effective_addr);
         return;
-    }else{
-        if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bit addr_size
-            this->obj->Error("Not implemented: addr_size=32 at %s::Run", this->code_name.c_str());
-        }
-        uint16_t effective_addr = this->GetEffectiveAddr(emu);
-        emu.cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, effective_addr);
     }
+    if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixAddrSize()){//32bit addr_size
+        this->obj->Error("Not implemented: addr_size=32 at %s::Run", this->code_name.c_str());
+    }
+    uint16_t effective_addr = this->GetEffectiveAddr(emu);
+    emu.cpu->SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, effective_addr);
     return;
 }
 
