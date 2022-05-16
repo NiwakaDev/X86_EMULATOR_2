@@ -3622,7 +3622,7 @@ Ret32Far::Ret32Far(string code_name):Instruction(code_name){
 
 void Ret32Far::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
-    if(!emu.cpu->IsProtectedMode()){//リアルモードのRET FAR
+    if(emu.cpu->IsRealMode()){
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
             uint32_t eip;
             uint16_t cs;
