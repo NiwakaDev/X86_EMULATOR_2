@@ -2593,7 +2593,7 @@ Iretd::Iretd(string code_name):Instruction(code_name){
 
 void Iretd::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
-    if(!emu.cpu->IsProtectedMode()){
+    if(emu.cpu->IsRealMode()){
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
             this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
         }else{
