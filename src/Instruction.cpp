@@ -3533,7 +3533,7 @@ CallPtr1632::CallPtr1632(string code_name):Instruction(code_name){
 
 void CallPtr1632::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
-    if(!emu.cpu->IsProtectedMode()){//リアルモード
+    if(emu.cpu->IsRealMode()){
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
             uint32_t offset;
             uint16_t selector;
