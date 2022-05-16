@@ -3198,9 +3198,8 @@ JmpM1632::JmpM1632(string code_name):Instruction(code_name){
 }
 
 //Farジャンプはプロテクトモードかリアルモードかで挙動が変わる。
-//プロテクトモードな
 void JmpM1632::Run(const Emulator& emu){
-    if(!emu.cpu->IsProtectedMode()){//real mode
+    if(emu.cpu->IsRealMode()){
         if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
             this->obj->Error("Not implemented: op_size=32bit on real mode at %s::Run");
         }
