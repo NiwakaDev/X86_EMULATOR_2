@@ -53,25 +53,6 @@ static inline int GuiHelper::GetModState(){
 }
 
 Gui::Gui(Vga& vga):pimpl(make_unique<Gui::Pimpl>()){
-    /***
-     * //音機能は外す予定。コメントアウトからも外す予定。ライブラリ依存度を避けるために、外す。
-    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-        printf("Failed to init SDL\n");
-        exit(1);
-    }
-    int result = 0;
-    int flags = MIX_INIT_MP3;
-    if (flags != (result = Mix_Init(flags))) {
-        printf("Could not initialize mixer (result: %d).\n", result);
-        printf("Mix_Init: %s\n", Mix_GetError());
-        exit(1);
-    }
-    if(Mix_OpenAudio(22050, AUDIO_F32SYS, 2, 640)==-1){
-        fprintf(stderr, "error : Mix_OpenAudio\n");
-    }
-    char *MP3_FILE_PATH = "Floppy_Disk_Drive02-1(Operating_Noise).mp3";
-    this->pimpl->music = Mix_LoadMUS(MP3_FILE_PATH);
-    ***/
     this->pimpl->vga = &vga;
 
     this->pimpl->screen_height = DEFAULT_HEIGHT;
