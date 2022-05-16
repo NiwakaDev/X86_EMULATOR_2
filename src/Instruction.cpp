@@ -1189,7 +1189,7 @@ Cli::Cli(string code_name):Instruction(code_name){
 void Cli::Run(const Emulator& emu){
     uint32_t eip = emu.cpu->GetEip();
     emu.cpu->AddEip(1);
-    if(!emu.cpu->IsProtectedMode()){
+    if(emu.cpu->IsRealMode()){
         emu.cpu->ClearFlag(IF);
         return;
     }
