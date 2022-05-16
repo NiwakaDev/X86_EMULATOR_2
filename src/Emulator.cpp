@@ -228,22 +228,9 @@ void Emulator::MainLoop(){
         if(this->cpu->Run(*this)){
             //正常
             continue;
-        }else{
-            this->gui->Finish();
-            break;
         }
-        #ifdef DEBUG
-            now_steps++;
-            //this->steps!=-1が真の場合は、実行回数に制限をかける。
-            bool limit = this->steps!=-1;
-            if(limit){
-                this->cpu->Debug(out, true);
-            }
-            if(limit&&(now_steps>=this->steps)){
-                this->gui->Finish();
-                break;
-            }
-        #endif
+        this->gui->Finish();
+        break;
     }
     #ifdef DEBUG
         fclose(out);
