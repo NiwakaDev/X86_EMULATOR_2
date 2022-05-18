@@ -20,21 +20,8 @@ using namespace std;
 Emulator::Emulator(int argc, char* argv[]){
     this->obj = make_unique<Object>();
     #ifdef DEBUG
-        /***
-        if(this->ParseArgv(argc, argv)<=1){
-            fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
-            fprintf(stderr, "       -image, -i : disk-image-name\n");
-            fprintf(stderr, "               -d : debug\n");
-            fprintf(stderr, "               -b : bios-name\n");
-            exit(EXIT_FAILURE);
-        }
-        ***/
         this->disk_image_name = "haribote.img";
         this->bios_name       = "test386.bin";
-        //TODO : ステップ数を指定できる。(デフォルトは無限ループ)
-        //TODO : 各機械語命令実行前と実行後の状態を、ファイルとして出力する。(ただし、無限ループではそれを許可しない。)
-        //int steps = -1;
-        this->steps=100;
     #else
         if(this->ParseArgv(argc, argv)==0){
             fprintf(stderr, "Usage: ./x86 [ OPTIONS ]\n");
@@ -74,7 +61,6 @@ Emulator::Emulator(int argc, char* argv[]){
         this->gui     = make_unique<Gui>(*(this->vga.get()));
         this->gui->AddIoDevice(Gui::KBD, *(this->kbc.get()));
         this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse.get()));
-        //this->fdc->gui = this->gui.get();
         disk_image_stream.seekg(0);
         this->bios->LoadIpl(disk_image_stream, *(this->mem.get()));
         for(int i=0; i<0x20; i++){//full.img and fd.imgで利用, 8086runを参考
@@ -122,14 +108,6 @@ int Emulator::ParseArgv(int argc, char* argv[]){
                 parse_result += 1;
                 continue;
             }
-            //プログラムを動かしてみたい時のオプション
-            //私のために用意しているオプションなので、指定しないことをお勧めします。
-            if ((strcmp("-headstart", argv[0])==0) || (strcmp("-h", argv[0])==0)) {//バイナリファイルの先頭から実行する。
-                this->head_start = true;
-                argc -= 1;
-                argv += 1;
-                continue;
-            }
         return 0;
         }
         return parse_result;
@@ -169,15 +147,14 @@ void Emulator::RunGuiThread(){
 
 void Emulator::MainLoop(){
     #ifdef DEBUG
-        int now_steps=0;
-        FILE* out = NULL;
-        out = fopen("output.txt", "w");
-        if(out==NULL){
-            fprintf(stderr, "Error: fopen");
-            exit(1);
+        log_stream.open("output.txt", ios::out);
+        if(!log_stream.is_open()){
+            cerr << "ファイルが開けませんでした" << endl;
+            exit(EXIT_FAILURE);
         }
         fprintf(stderr, "DEBUG\n");
     #endif
+
     while(!this->gui->IsQuit()){
         if((this->cpu->IsException())||(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode())){
             if(this->cpu->IsException()){
@@ -187,13 +164,9 @@ void Emulator::MainLoop(){
             }
         }
         if(this->cpu->Run(*this)){
-            //正常
             continue;
         }
         this->gui->Finish();
         break;
     }
-    #ifdef DEBUG
-        fclose(out);
-    #endif
 }

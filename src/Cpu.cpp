@@ -162,7 +162,7 @@ Cpu::Cpu(Bios& bios, Memory& mem){
 }
 
 Cpu::~Cpu(){
-
+    
 }
 
 uint32_t Cpu::GetPhysicalAddr(uint32_t linear_addr){
