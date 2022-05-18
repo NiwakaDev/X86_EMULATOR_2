@@ -178,46 +178,7 @@ void Emulator::MainLoop(){
         }
         fprintf(stderr, "DEBUG\n");
     #endif
-    //TODO : テストコードのせいで汚くなったメイン関数の修正
     while(!this->gui->IsQuit()){
-        /***
-        #ifdef DEBUG
-            static int i = 0;
-            static bool log = false;
-            bool result;
-            if(niwaka_start_flg){
-                log = true;
-            }
-            if(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode()){
-                int irq_num;
-                if((irq_num=this->pic->HasIrq(this->kbc, this->timer))!=-1){
-                    this->cpu->HandleInterrupt(irq_num);                
-                }
-            }
-            if(log)fprintf(out, "i:%d\n", i);
-            if(log)this->cpu->Debug(out, true);
-            result = this->cpu->Run(this);
-            if(log)this->cpu->Debug(out, true);
-            if(log)i++;
-            if(!result||i==1000000){
-                fclose(out);
-                return;
-            }
-        ***/
-        /***
-        #ifdef DEBUG
-            for(int i=0; i<1500000; i++){
-                if(i==1033353){
-                    i = i;
-                }
-                fprintf(out, "i:%d\n", i);
-                this->cpu->Debug(out, true);
-                this->cpu->Run(*this);
-            }
-            this->gui->Finish();
-            break;
-        #else
-        ***/
         if((this->cpu->IsException())||(this->cpu->IsFlag(IF)&&this->cpu->IsProtectedMode())){
             if(this->cpu->IsException()){
                 this->cpu->HandleInterrupt(this->cpu->GetVectorNumber());
