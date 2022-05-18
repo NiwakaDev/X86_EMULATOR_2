@@ -12,13 +12,13 @@
 using namespace std;
 
 Cpu::Cpu(Bios& bios, Memory& mem){
-    static const uint32_t  EFLAGS_INIT_VALUE = 0x00000002;
-    static const uint32_t  EIP_INIT_VALUE    = 0x0000FFF0;
-    static const uint32_t  CR0_INIT_VALUE    = 0x60000010;
-    static const uint32_t  CR2_INIT_VALUE    = 0x00000000;
-    static const uint32_t  CS_INIT_VALUE     = 0x0000F000;
-    static const uint32_t  GPR_INIT_VALUE    = 0x00000000;
+    const uint32_t  GPR_INIT_VALUE    = 0x00000000;
+    const uint32_t  CR0_INIT_VALUE    = 0x60000010;
+    const uint32_t  CR2_INIT_VALUE    = 0x00000000;
+    const uint32_t  EFLAGS_INIT_VALUE = 0x00000002;
     #ifdef DEBUG
+        const uint32_t  EIP_INIT_VALUE    = 0x0000FFF0;
+        const uint32_t  CS_INIT_VALUE     = 0x0000F000;
         this->bios = &bios;
         this->mem  = &mem;
         this->eflags.raw = EFLAGS_INIT_VALUE;
