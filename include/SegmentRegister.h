@@ -9,11 +9,12 @@ typedef struct _Cache{
 }Cache;
 
 class Cpu;
+struct _GdtGate;
 
 class SegmentRegister:public Object{
     protected:
         Cache cache;
-        void SetCache(const Cpu& cpu, const uint16_t idx);
+        void SetCache(const struct _GdtGate& gdt_gate, const uint16_t idx);
         union{
             uint16_t raw;
             struct{

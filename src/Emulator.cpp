@@ -147,6 +147,7 @@ void Emulator::RunGuiThread(){
 
 void Emulator::MainLoop(){
     #ifdef DEBUG
+        fstream log_stream;
         log_stream.open("output.txt", ios::out);
         if(!log_stream.is_open()){
             cerr << "ファイルが開けませんでした" << endl;
@@ -166,6 +167,7 @@ void Emulator::MainLoop(){
         if(this->cpu->Run(*this)){
             continue;
         }
+        //TODO : cpuから例外を投げて、catchでgui->Finishを呼び出す
         this->gui->Finish();
         break;
     }
