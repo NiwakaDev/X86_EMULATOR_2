@@ -11,10 +11,13 @@ typedef struct _Cache{
 class Cpu;
 struct _GdtGate;
 
-class SegmentRegister:public Object{
-    protected:
-        Cache cache;
+class SegmentRegister{
+    private:
         void SetCache(const struct _GdtGate& gdt_gate, const uint16_t idx);
+    //TODO : 継承を廃止にし、protectedを削除する
+    protected:
+        std::unique_ptr<Object> obj;
+        Cache cache;
         union{
             uint16_t raw;
             struct{

@@ -3,6 +3,7 @@
 using namespace std;
 
 SegmentRegister::SegmentRegister(uint16_t data){
+    this->obj          = make_unique<Object>();
     this->selector.raw = data;
     this->cache.base_addr = 0x0;
     this->cache.limit     = 0x0000FFFF;
