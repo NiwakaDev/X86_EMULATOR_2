@@ -2,8 +2,8 @@
 
 CC = clang++
 
-G++_OPTIONS = -Wall -std=c++14 -O0 -g -I $(INCLUDE_DIR) -DDEBUG
-#LD_FLGS += -lSDL2
+G++_OPTIONS = -Wall -std=c++14 -O0 -g -I $(INCLUDE_DIR) -DDEBUG -arch x86_64
+LD_FLGS += -lSDL2 -lgtest_main -lgtest -arch x86_64
 
 
 SOURCE_DIR         = ../../src/
@@ -21,3 +21,6 @@ test.o : test.cpp $(HEADERS) $(DETAIL_HEADERS)
 
 test_memory.o : $(SOURCE_DIR)Memory.cpp $(HEADERS) $(DETAIL_HEADERS)
 	$(CC) $(G++_OPTIONS) -o $@ -c $<
+
+clean:
+	rm *.o

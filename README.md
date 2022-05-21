@@ -123,6 +123,9 @@ Run <a href="https://github.com/neri/osz">osz</a>
 <h2>Language and Library</h2>
 C++14, <a href="https://www.libsdl.org/">SDL2</a>
 
+
+<p>test : <a href="https://github.com/google/googletest">googletest</p> 
+
 <h2>How to use mouse</h2>
 
 <h3>Mouse into the emulator</h3>
@@ -152,7 +155,6 @@ make clean
 make x86_test
 ./x86_test
 ```
-
 
 <h2>Reference</h2>
 
