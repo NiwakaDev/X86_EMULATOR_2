@@ -18,7 +18,7 @@ void SegmentRegister::On32bitMode(){
     this->cache.bit32_mode = true;
 }
 
-void SegmentRegister::SetCache(const GdtGate& gdt_gate, const uint16_t idx){
+void SegmentRegister::SetCache(const GdtGate& gdt_gate){
     this->cache.base_addr  = (((uint32_t)gdt_gate.base_high)<<24) | (((uint32_t)gdt_gate.base_mid)<<16) | (uint32_t)gdt_gate.base_low;
     this->cache.limit      = 0x03FFFFFF & ((((uint32_t)gdt_gate.limit_high)<<16) | (uint32_t)gdt_gate.limit_low);
     this->cache.bit32_mode = (gdt_gate.limit_high&DB)==DB;
@@ -36,7 +36,7 @@ void SegmentRegister::Set(const uint16_t data, function<GdtGate*(uint16_t)> GetG
         }else{
             gdt_gate  = GetGdtGate(this->selector.idx<<3);
         }
-        if(data!=0)this->SetCache(*gdt_gate, this->selector.idx<<3);
+        if(data!=0)this->SetCache(*gdt_gate);
         return;
     }
     this->selector.raw = data;

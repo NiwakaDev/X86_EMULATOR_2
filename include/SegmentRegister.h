@@ -11,7 +11,7 @@ struct _GdtGate;
 
 class SegmentRegister{
     private:
-        void SetCache(const struct _GdtGate& gdt_gate, const uint16_t idx);
+        void SetCache(const struct _GdtGate& gdt_gate);
     //TODO : 継承を廃止にし、protectedを削除する
     protected:
         std::unique_ptr<Object> obj;
