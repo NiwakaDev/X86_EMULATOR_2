@@ -4,13 +4,11 @@ using namespace std;
 
 #define SECTOR_SIZE 512
 
-Fdc::Fdc(fstream& disk_image_stream):IoDevice(){
+Fdc::Fdc(function<void(uint8_t* buff, int size)> read_callback):IoDevice(){
     this->msr.flgs.rqm = 1;
     this->fdc_mode = FDC_IDLE_MODE;
     this->buff = make_unique<uint8_t[]>(FLOPPY_DISK_SIZE);
-    //fread(this->buff.get(), 1, FLOPPY_DISK_SIZE, &disk_image_stream);
-    disk_image_stream.seekg(0);
-    disk_image_stream.read((char*)this->buff.get(), FLOPPY_DISK_SIZE);
+    read_callback(this->buff.get(), FLOPPY_DISK_SIZE);
 }
 
 Fdc::~Fdc(){

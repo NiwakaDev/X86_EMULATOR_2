@@ -40,10 +40,13 @@ Emulator::Emulator(int argc, char* argv[]){
         cerr << "can`t open " << this->disk_image_name << " at Emulator::Emulator" << endl;
         exit(EXIT_FAILURE);
     }
+    auto file_read_callback = [&](uint8_t* buff, int size){
+        disk_image_stream.seekg(0);
+        disk_image_stream.read((char*)buff, size);
+    };
     try{
         this->mem     = make_unique<Memory>(MEM_SIZE);
-        disk_image_stream.seekg(0);
-        this->fdc     = make_unique<Fdc>(disk_image_stream);
+        this->fdc     = make_unique<Fdc>(file_read_callback);
         this->timer   = make_unique<Timer>();
         this->mouse   = make_unique<Mouse>();
         this->kbc     = make_unique<Kbc>(*(this->mouse.get()));
