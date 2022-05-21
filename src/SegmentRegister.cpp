@@ -43,23 +43,6 @@ void SegmentRegister::Set(const uint16_t data, function<GdtGate*(uint16_t)> GetG
     if(data!=0)this->cache.base_addr = data*16;
 }
 
-//TODO : これを削除する。
-void SegmentRegister::Set(const uint16_t data, const Cpu& cpu){
-    if(cpu.IsProtectedMode()){
-        this->selector.raw = data;
-        GdtGate* gdt_gate;
-        if(this->selector.ti){//LDTへのアクセス
-            gdt_gate  = cpu.GetLdtGate(this->selector.idx<<3);
-        }else{
-            gdt_gate  = cpu.GetGdtGate(this->selector.idx<<3);
-        }
-        if(data!=0)this->SetCache(*gdt_gate, this->selector.idx<<3);
-        return;
-    }
-    this->selector.raw = data;
-    if(data!=0)this->cache.base_addr = data*16;
-}
-
 uint8_t SegmentRegister::GetDpl(){
     return this->cpl;
 }

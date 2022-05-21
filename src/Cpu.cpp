@@ -278,7 +278,16 @@ void Cpu::SetCr(CONTROL_REGISTER control_register_type, uint32_t data){
 }
 
 void Cpu::SetTr(uint16_t selector){
-    this->task_register->Set(selector, *this);
+    this->task_register->Set(
+        selector, 
+        [&](uint16_t selector){
+            return this->GetGdtGate(selector);
+        }, 
+        [&](uint16_t selector){
+            return this->GetLdtGate(selector);
+        },
+        this->IsProtectedMode()
+    );
 }
 
 bool Cpu::Is32bitsMode(){
@@ -667,7 +676,7 @@ uint32_t Cpu::Pop32(){
 
 void Cpu::SaveTask(uint16_t selector){
     uint16_t prev_selector = this->task_register->GetData();
-    this->task_register->Set(selector, *this);
+    this->SetTr(selector);
     GdtGate*gdt_gate = this->GetGdtGate(prev_selector);
     uint32_t task_addr = (((uint32_t)gdt_gate->base_high)<<24) | (((uint32_t)gdt_gate->base_mid)<<16) | (uint32_t)gdt_gate->base_low;
     this->mem->Write(task_addr+8*sizeof(uint32_t), this->GetEip());
@@ -683,7 +692,16 @@ void Cpu::SaveTask(uint16_t selector){
 }
 
 void Cpu::SetLdtr(uint16_t data){
-    this->ldtr->Set(data, *this);
+    this->ldtr->Set(
+        data, 
+        [&](uint16_t selector){
+            return this->GetGdtGate(selector);
+        }, 
+        [&](uint16_t selector){
+            return this->GetLdtGate(selector);
+        },
+        this->IsProtectedMode()
+    );
 }
 
 void Cpu::SwitchTask(){
@@ -699,7 +717,7 @@ void Cpu::SwitchTask(){
     this->SetR16(DS, this->mem->Read16(task_addr+21*4));
     this->SetR16(FS, this->mem->Read16(task_addr+22*4));
     this->SetR16(GS, this->mem->Read16(task_addr+23*4));
-    this->ldtr->Set(this->mem->Read16(task_addr+24*4), *this);
+    this->SetLdtr(this->mem->Read16(task_addr+24*4));
 }
 
 void Cpu::HandleInterrupt(int irq_num){
@@ -728,7 +746,7 @@ void Cpu::HandleInterrupt(int irq_num){
             this->Push32(this->error_code_);
         }
         this->eip = offset_addr;
-        this->segment_registers[CS]->Set(idt_gate->selector, *this);
+        this->SetR16(CS, idt_gate->selector);
         this->eflags.flgs.IF = 0;
     }else if(dest_code_segment_dpl<cpl){
         uint16_t ss = this->GetR16(SS);
