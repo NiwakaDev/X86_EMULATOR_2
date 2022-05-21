@@ -43,6 +43,7 @@ class SegmentRegister{
         uint8_t GetDpl();
         void SetRpl(uint8_t rpl);
         void SetCpl(uint8_t cpl);
+        void Set(const uint16_t data, std::function<struct _GdtGate*(uint16_t)> GetGdtGate, std::function<struct _GdtGate*(uint16_t)> GetLdtGate, bool protected_mode);
         void Set(const uint16_t data, const Cpu& cpu);
         void On32bitMode();
 };

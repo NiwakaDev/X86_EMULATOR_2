@@ -240,7 +240,16 @@ void Cpu::UpdateEflagsForInc16(uint16_t result, uint16_t d1, uint16_t d2){
 }
 
 void Cpu::SetR16(SEGMENT_REGISTER register_type, uint16_t data){
-    this->segment_registers[register_type]->Set(data, *this);
+    this->segment_registers[register_type]->Set(
+        data, 
+        [&](uint16_t selector){
+            return this->GetGdtGate(selector);
+        }, 
+        [&](uint16_t selector){
+            return this->GetLdtGate(selector);
+        },
+        this->IsProtectedMode()
+    );
 }
 
 void Cpu::SetGdtr(uint16_t limit, uint32_t base){
