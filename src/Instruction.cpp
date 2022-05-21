@@ -1846,21 +1846,15 @@ void CmpRm32R32::Run(const Emulator& emu){
     emu.cpu->AddEip(1);
     this->ParseModRM(emu);
     if(emu.cpu->Is32bitsMode() ^ emu.cpu->IsPrefixOpSize()){
-        uint64_t result;
-        uint32_t r32;
-        uint32_t rm32;
-        r32    = emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-        rm32   = this->GetRM32(emu);
-        result = (uint64_t)rm32 - (uint64_t)r32;
+        uint32_t r32    = emu.cpu->GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+        uint32_t rm32   = this->GetRM32(emu);
+        uint64_t result = (uint64_t)rm32 - (uint64_t)r32;
         emu.cpu->UpdateEflagsForSub(result, rm32, r32);
         return;
     }
-    uint32_t result;
-    uint16_t r16;
-    uint16_t rm16;
-    r16    = emu.cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    rm16   = this->GetRM16(emu);
-    result = (uint32_t)rm16 - (uint32_t)r16;
+    uint16_t r16    = emu.cpu->GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint16_t rm16   = this->GetRM16(emu);
+    uint32_t result = (uint32_t)rm16 - (uint32_t)r16;
     emu.cpu->UpdateEflagsForSub16(result, rm16, r16);
     return;
 }
