@@ -1,5 +1,4 @@
 #include "Vga.h"
-#include "IoDevice.h"
 #include "Gui.h"
 #include "KbcEnum.h"
 #include <SDL2/SDL.h>
@@ -39,6 +38,8 @@ class Gui::Pimpl{
         void HideCursor();
         void ShowCursor();
         void Resize();
+        function<void(uint8_t)> mouse_push;
+        function<void(uint8_t)> keyboard_push;
 };
 
 //publicメンバしか利用しないor何のメンバも使用しない関数はGuiHelper空間に実装する
@@ -84,11 +85,13 @@ Gui::~Gui(){
     SDL_Quit();
 }
 
-//MEMO : Push関数しか利用しないから、抽象クラスを用意するのは無駄な気がする。
-//callback関数で十分な気がする。こっちの方が参照しなくて済むので、メリットは大きい
-void Gui::AddIoDevice(IO_DEVICE_KIND io_device_kind, IoDevice& io_device){
+void Gui::AddIoDevice(IO_DEVICE_KIND io_device_kind, function<void(uint8_t)> push){
     if(io_device_kind==IO_DEVICE_KIND_TOTAL)return;
-    this->pimpl->io_devices[io_device_kind] = &io_device;
+    if(io_device_kind==Gui::MOUSE){
+        this->pimpl->mouse_push    = push;
+    }else{
+        this->pimpl->keyboard_push = push;
+    }
 }
 
 bool Gui::IsQuit(){
@@ -363,7 +366,7 @@ inline void Gui::Pimpl::HandleKeyDown(SDL_Event& e){
             return;
     }
     uint8_t key_code = this->SdlScancode2KeyCode(e);
-    this->io_devices[KBD]->Push(key_code);
+    this->keyboard_push(key_code);
 }
 
 inline void Gui::Pimpl::HandleKeyUp(SDL_Event& e){
@@ -374,7 +377,7 @@ inline void Gui::Pimpl::HandleKeyUp(SDL_Event& e){
             return;
     }
     uint8_t key_code = KEY_CODE_BREAK | this->SdlScancode2KeyCode(e);
-    this->io_devices[KBD]->Push(key_code);
+    this->keyboard_push(key_code);
 }
 
 inline void Gui::Pimpl::HideCursor(){
@@ -414,15 +417,15 @@ inline void Gui::Pimpl::HandleMouseMotion(SDL_Event& e){
     if(rel_y < 0){
         data0 = data0 | Y_SIGN_BIT;
     }
-    this->io_devices[MOUSE]->Push(data0);
-    this->io_devices[MOUSE]->Push((uint8_t)rel_x);
-    this->io_devices[MOUSE]->Push((uint8_t)rel_y);
+    this->mouse_push(data0);
+    this->mouse_push((uint8_t)rel_x);
+    this->mouse_push((uint8_t)rel_y);
 }
 
 inline void Gui::Pimpl::HandleMouseButton(SDL_Event& e){
-    this->io_devices[MOUSE]->Push(DEFAULT_PACKET_BYTE0|LEFT_BUTTON);
-    this->io_devices[MOUSE]->Push(0);
-    this->io_devices[MOUSE]->Push(0);
+    this->mouse_push(DEFAULT_PACKET_BYTE0|LEFT_BUTTON);
+    this->mouse_push(0);
+    this->mouse_push(0);
 }
 
 //この関数はVgaクラスのvga_mutexをロックします。

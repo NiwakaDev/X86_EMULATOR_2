@@ -59,8 +59,20 @@ Emulator::Emulator(int argc, char* argv[]){
         this->cpu     = make_unique<Cpu>(*(this->bios.get()), *(this->mem.get()));
         this->io_port = make_unique<IoPort>(*(this->vga.get()), *(this->pic.get()), *(this->kbc.get()), *(this->timer.get()), *(this->fdc.get()));
         this->gui     = make_unique<Gui>(*(this->vga.get()));
-        this->gui->AddIoDevice(Gui::KBD, *(this->kbc.get()));
-        this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse.get()));
+        //this->gui->AddIoDevice(Gui::KBD, *(this->kbc.get()));
+        //this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse.get()));
+        this->gui->AddIoDevice(
+            Gui::KBD,
+            [&](uint8_t data){
+                this->kbc->Push(data);
+            }
+        );
+        this->gui->AddIoDevice(
+            Gui::MOUSE,
+            [&](uint8_t data){
+                this->mouse->Push(data);
+            }
+        );
         disk_image_stream.seekg(0);
         this->bios->LoadIpl(disk_image_stream, *(this->mem.get()));
         for(int i=0; i<0x20; i++){//full.img and fd.imgで利用, 8086runを参考
