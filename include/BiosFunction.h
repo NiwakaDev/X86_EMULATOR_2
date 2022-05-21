@@ -36,7 +36,7 @@ class FloppyFunction:public BiosFunction{
         void Read(Cpu& cpu, const Memory& mem);
     public:
         void Run(Cpu& cpu, Memory& mem);
-        FloppyFunction(std::fstream& disk_image_stream);
+        FloppyFunction(std::function<void(uint8_t* buff, int size)> read_callback);
 };  
 
 class MemoryFunction:public BiosFunction{
