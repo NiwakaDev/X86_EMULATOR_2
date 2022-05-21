@@ -11,7 +11,7 @@ class Bios{
     public:
         Bios(std::function<void(uint8_t* buff, int size)> read_callback, Vga& vga, Kbc& kbc);
         ~Bios();
-        void LoadIpl(std::fstream& input_file, Memory& mem);
+        void LoadIpl(std::function<void(uint8_t* buff, int size)> read_callback, Memory& mem);
         void CallFunction(Cpu& cpu, Memory& mem, const uint8_t bios_number);
     private:
         enum{

@@ -31,9 +31,9 @@ void Bios::CallFunction(Cpu& cpu, Memory& mem, const uint8_t bios_number){
 
 //TODO : 
 //LoadIpl内の処理はBIOS::BIOSに移して、LoadIpl関数は廃止にする
-void Bios::LoadIpl(fstream& input_file, Memory& mem){
+void Bios::LoadIpl(function<void(uint8_t* buff, int size)> read_callback, Memory& mem){
     uint8_t buff[IPL_SIZE];
-    input_file.read((char*)buff, IPL_SIZE);
+    read_callback(buff, IPL_SIZE);
     for(int i=0; i<IPL_SIZE; i++){
         mem.Write(IPL_START_ADDR+i, buff[i]);
     }

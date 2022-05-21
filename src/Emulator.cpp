@@ -73,8 +73,7 @@ Emulator::Emulator(int argc, char* argv[]){
                 this->mouse->Push(data);
             }
         );
-        disk_image_stream.seekg(0);
-        this->bios->LoadIpl(disk_image_stream, *(this->mem.get()));
+        this->bios->LoadIpl(file_read_callback, *(this->mem.get()));
         for(int i=0; i<0x20; i++){//full.img and fd.imgで利用, 8086runを参考
             this->mem->Write(i<<2, i);
         }
