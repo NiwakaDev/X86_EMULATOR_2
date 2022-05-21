@@ -23,7 +23,6 @@ class Gui::Pimpl{
         void Update(const int x, const int y, const int w, const int h);
         bool quit = false;
         Vga* vga = NULL;
-        IoDevice* io_devices[IO_DEVICE_KIND_TOTAL];
         int screen_width;
         int screen_height;
         SDL_Window* window = NULL;

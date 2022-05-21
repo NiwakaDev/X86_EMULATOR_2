@@ -2,7 +2,6 @@
 #include "common.h"
 
 class Vga;
-class IoDevice;
 
 class Gui{
     public:
