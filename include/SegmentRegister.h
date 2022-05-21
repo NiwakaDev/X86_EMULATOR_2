@@ -1,6 +1,5 @@
 #pragma once
 #include "common.h"
-#include "CpuEnum.h"
 
 typedef struct _Cache{
     uint32_t base_addr;
@@ -8,7 +7,6 @@ typedef struct _Cache{
     bool bit32_mode;
 }Cache;
 
-class Cpu;
 struct _GdtGate;
 
 class SegmentRegister{
@@ -44,6 +42,5 @@ class SegmentRegister{
         void SetRpl(uint8_t rpl);
         void SetCpl(uint8_t cpl);
         void Set(const uint16_t data, std::function<struct _GdtGate*(uint16_t)> GetGdtGate, std::function<struct _GdtGate*(uint16_t)> GetLdtGate, bool protected_mode);
-        void Set(const uint16_t data, const Cpu& cpu);
         void On32bitMode();
 };
