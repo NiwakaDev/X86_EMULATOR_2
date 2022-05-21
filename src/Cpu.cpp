@@ -11,15 +11,15 @@
 
 using namespace std;
 
-Cpu::Cpu(Bios& bios, Memory& mem){
+Cpu::Cpu(function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> bios_callback, Memory& mem){
     const uint32_t  GPR_INIT_VALUE    = 0x00000000;
     const uint32_t  CR0_INIT_VALUE    = 0x60000010;
     const uint32_t  CR2_INIT_VALUE    = 0x00000000;
     const uint32_t  EFLAGS_INIT_VALUE = 0x00000002;
+    this->bios_call = bios_callback;
     #ifdef DEBUG
         const uint32_t  EIP_INIT_VALUE    = 0x0000FFF0;
         const uint32_t  CS_INIT_VALUE     = 0x0000F000;
-        this->bios = &bios;
         this->mem  = &mem;
         this->eflags.raw = EFLAGS_INIT_VALUE;
         //this->eip        = IPL_START_ADDR;
@@ -91,7 +91,6 @@ Cpu::Cpu(Bios& bios, Memory& mem){
             this->instructions[i] = instruction_factory.CreateInstruction(i);
         }
     #else
-        this->bios = &bios;
         this->mem  = &mem;
         this->eflags.raw = EFLAGS_INIT_VALUE;
         this->eip        = IPL_START_ADDR;
@@ -341,7 +340,7 @@ IdtGate* Cpu::GetIdtGate(uint16_t selector){
 }
 
 void Cpu::CallFunctionOnRealMode(uint8_t selector){
-    this->bios->CallFunction(*this, *this->mem, selector);
+    this->bios_call(*this, *this->mem, selector);
 }
 
 uint32_t Cpu::GetLinearAddrForCodeAccess(){    

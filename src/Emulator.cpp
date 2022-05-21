@@ -58,7 +58,12 @@ Emulator::Emulator(int argc, char* argv[]){
         this->pic     = make_unique<Pic>(this->io_devices);
         this->vga     = make_unique<Vga>(*(this->mem.get()));
         this->bios    = make_unique<Bios>(file_read_callback, *(this->vga.get()), *(this->kbc.get()));
-        this->cpu     = make_unique<Cpu>(*(this->bios.get()), *(this->mem.get()));
+        this->cpu     = make_unique<Cpu>(
+                                            [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){
+                                                this->bios->CallFunction(cpu, mem, bios_number);
+                                            },
+                                            *(this->mem.get())
+                                        );
         this->io_port = make_unique<IoPort>(*(this->vga.get()), *(this->pic.get()), *(this->kbc.get()), *(this->timer.get()), *(this->fdc.get()));
         this->gui     = make_unique<Gui>();
         this->gui->AddIoDevice(
