@@ -58,9 +58,7 @@ Emulator::Emulator(int argc, char* argv[]){
         this->bios    = make_unique<Bios>(disk_image_stream, *(this->vga.get()), *(this->kbc.get()));
         this->cpu     = make_unique<Cpu>(*(this->bios.get()), *(this->mem.get()));
         this->io_port = make_unique<IoPort>(*(this->vga.get()), *(this->pic.get()), *(this->kbc.get()), *(this->timer.get()), *(this->fdc.get()));
-        this->gui     = make_unique<Gui>(*(this->vga.get()));
-        //this->gui->AddIoDevice(Gui::KBD, *(this->kbc.get()));
-        //this->gui->AddIoDevice(Gui::MOUSE, *(this->mouse.get()));
+        this->gui     = make_unique<Gui>();
         this->gui->AddIoDevice(
             Gui::KBD,
             [&](uint8_t data){
@@ -154,7 +152,7 @@ void Emulator::RunMainLoop(){
 }
 
 void Emulator::RunGuiThread(){
-    this->gui->Display();
+    this->gui->Display(*(this->vga.get()));
 }
 
 void Emulator::MainLoop(){

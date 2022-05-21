@@ -22,7 +22,6 @@ class Gui::Pimpl{
         void Update();
         void Update(const int x, const int y, const int w, const int h);
         bool quit = false;
-        Vga* vga = NULL;
         int screen_width;
         int screen_height;
         SDL_Window* window = NULL;
@@ -52,9 +51,7 @@ static inline int GuiHelper::GetModState(){
     return (mod_state&ctrl_alt_state)==ctrl_alt_state;
 }
 
-Gui::Gui(Vga& vga):pimpl(make_unique<Gui::Pimpl>()){
-    this->pimpl->vga = &vga;
-
+Gui::Gui():pimpl(make_unique<Gui::Pimpl>()){
     this->pimpl->screen_height = DEFAULT_HEIGHT;
     this->pimpl->screen_width  = DEFAULT_WIDTH;
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
@@ -419,7 +416,7 @@ inline void Gui::Pimpl::HandleMouseButton(SDL_Event& e){
 }
 
 //この関数はVgaクラスのvga_mutexをロックします。
-void Gui::Display(){
+void Gui::Display(Vga& vga){
     unique_ptr<uint8_t[]> prev_snap = make_unique<uint8_t[]>(MAX_HEIGHT*MAX_WIDTH);
     unique_ptr<uint8_t[]> new_snap = make_unique<uint8_t[]>(MAX_HEIGHT*MAX_WIDTH);
     memset(prev_snap.get(), 0x00, MAX_HEIGHT*MAX_WIDTH);
@@ -452,33 +449,33 @@ void Gui::Display(){
                     this->pimpl->HandleMouseButton(e);
                 }
             }
-            this->pimpl->vga->LockVga();
+            vga.LockVga();
             bool full_update = false;
-            if((this->pimpl->vga->GetHeight()!=this->pimpl->screen_height)||(this->pimpl->vga->GetWidth()!=this->pimpl->screen_width)){
-                this->pimpl->screen_height = this->pimpl->vga->GetHeight();
-                this->pimpl->screen_width  = this->pimpl->vga->GetWidth();
+            if((vga.GetHeight()!=this->pimpl->screen_height)||(vga.GetWidth()!=this->pimpl->screen_width)){
+                this->pimpl->screen_height = vga.GetHeight();
+                this->pimpl->screen_width  = vga.GetWidth();
                 this->pimpl->Resize();
                 full_update = true;
             }
-            if(this->pimpl->vga->GetMode()==TEXT_MODE){
+            if(vga.GetMode()==TEXT_MODE){
                 full_update = true;//変更部分のみの描画処理はグラフィックモードでしかサポートしていない。
             }
             if(full_update){
                 for(int y=0; y<this->pimpl->screen_height; y++){
                     for(int x=0; x<this->pimpl->screen_width; x++){
-                        this->pimpl->image[x+y*this->pimpl->screen_width] = *(this->pimpl->vga->GetPixel(x, y));
+                        this->pimpl->image[x+y*this->pimpl->screen_width] = *(vga.GetPixel(x, y));
                     }
                 }
                 this->pimpl->Update();
             }else{
-                this->pimpl->vga->SetSnap(new_snap.get(), this->pimpl->screen_height, this->pimpl->screen_width);
+                vga.SetSnap(new_snap.get(), this->pimpl->screen_height, this->pimpl->screen_width);
                 int y_start = -1;
                 int y;//forループ抜け出した後も利用する。
                 for(y=0; y<this->pimpl->screen_height; y++){
                     //一致しないとき、再描画
                     if(memcmp(prev_snap.get()+y*this->pimpl->screen_width, new_snap.get()+y*this->pimpl->screen_width, this->pimpl->screen_width)){//1行比較
                         for(int x=0; x<this->pimpl->screen_width; x++){
-                            this->pimpl->image[x+y*this->pimpl->screen_width] = *(this->pimpl->vga->GetPixel(x, y));//一致していないので、1行転送, memcpyしない理由はGetPixelを参照してくだされば分かります。
+                            this->pimpl->image[x+y*this->pimpl->screen_width] = *(vga.GetPixel(x, y));//一致していないので、1行転送, memcpyしない理由はGetPixelを参照してくだされば分かります。
                         }
                         if(y_start<0){
                             y_start = y;
@@ -495,7 +492,7 @@ void Gui::Display(){
                 }
                 memcpy(prev_snap.get(), new_snap.get(), this->pimpl->screen_height*this->pimpl->screen_width);
             }
-            this->pimpl->vga->UnlockVga();
+            vga.UnlockVga();
             unsigned int end;
             end = SDL_GetTicks();
             end = end - start;

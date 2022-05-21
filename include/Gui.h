@@ -5,9 +5,9 @@ class Vga;
 
 class Gui{
     public:
-        Gui(Vga& vga);
+        Gui();
         ~Gui();
-        void Display();
+        void Display(Vga& vga);
         bool IsQuit();
         void Finish();
         enum IO_DEVICE_KIND {KBD, MOUSE, IO_DEVICE_KIND_TOTAL};
