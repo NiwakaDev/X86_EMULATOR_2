@@ -136,9 +136,6 @@ class Cpu{
         template<typename type>void UpdateEflagsForDec(type result, type d1, type d2);
         template<typename type1, typename type2>void UpdateEflagsForAdd(type1 result, type2 d1, type2 d2);
         template<typename type>void UpdateEflagsForShr(type result);
-        void UpdateOF_Sub(uint32_t result, uint32_t d1, uint32_t d2);
-        void UpdateOF_Sub16(uint16_t result, uint16_t d1, uint16_t d2);
-        void UpdateOF_Sub8(uint8_t result, uint8_t d1, uint8_t d2);
         void UpdateZF(uint32_t result);
         void UpdateCF(uint64_t result);
         template<typename type> void UpdateCfForSub(type data, int group);
@@ -260,6 +257,9 @@ class Cpu{
         int vector_number_;
         int error_code_;
         template<typename type>void UpdateOF_Add(type result, type d1, type d2);//TODO : 関数名の変更
+        void UpdateOF_Sub(uint32_t result, uint32_t d1, uint32_t d2);
+        void UpdateOF_Sub16(uint16_t result, uint16_t d1, uint16_t d2);
+        void UpdateOF_Sub8(uint8_t result, uint8_t d1, uint8_t d2);
 };
 
 #include "detail/Cpu.h"

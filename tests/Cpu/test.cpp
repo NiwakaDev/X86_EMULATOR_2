@@ -209,8 +209,26 @@ TEST(CpuTest, CheckUpdateEflagsForSub1){
     EXPECT_FALSE(cpu.IsFlag(CF)); 
 }
 
-/***
 TEST(CpuTest, CheckUpdateEflagsForSub2){
+    auto MockIoIn8    = [&](uint16_t addr){return 0;};
+    auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
+    auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+    int size = 1024*1024;
+    Memory memory(size);
+    Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
+
+    uint16_t d1     = 1;
+    uint16_t d2     = 0;
+    uint64_t result = d1-d2;
+
+    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    EXPECT_FALSE(cpu.IsFlag(ZF));
+    EXPECT_FALSE(cpu.IsFlag(SF));
+    EXPECT_FALSE(cpu.IsFlag(PF)); 
+    EXPECT_FALSE(cpu.IsFlag(CF)); 
+}
+
+TEST(CpuTest, CheckUpdateEflagsForSub3){
     auto MockIoIn8    = [&](uint16_t addr){return 0;};
     auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
     auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
@@ -228,7 +246,6 @@ TEST(CpuTest, CheckUpdateEflagsForSub2){
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
 }
-***/
 
 //INC命令により影響を受けるフラグ
 //OF

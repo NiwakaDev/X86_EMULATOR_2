@@ -15,8 +15,6 @@ class IoDevice;
 
 class Emulator{
     public:
-        std::unique_ptr<Memory> mem;
-        std::unique_ptr<Cpu> cpu;
         Emulator(int argc, char* argv[]);
         ~Emulator();
         void ThreadJoin();
@@ -26,6 +24,8 @@ class Emulator{
             int steps=-1;
         #endif
     private:
+        std::unique_ptr<Memory> mem;
+        std::unique_ptr<Cpu> cpu;
         std::unique_ptr<IoPort> io_port;
         std::unique_ptr<Object> obj;
         std::unique_ptr<Bios> bios;
@@ -41,7 +41,6 @@ class Emulator{
         int ParseArgv(int argc, char* argv[]);
         const char* disk_image_name = NULL;
         const char* bios_name       = NULL;//いずれBIOSクラスを外す予定だが、当分は共存させる。
-        bool head_start = false;
         void MainLoop();
         Emulator(const Emulator& other);
         void operator=(const Emulator& other);
