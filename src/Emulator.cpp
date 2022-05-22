@@ -186,7 +186,7 @@ void Emulator::MainLoop(){
                 this->cpu->HandleInterrupt(this->pic->GetNowIrq()+0x20);                
             }
         }
-        if(this->cpu->Run(*this)){
+        if(this->cpu->Run()){
             continue;
         }
         //TODO : cpuから例外を投げて、catchでgui->Finishを呼び出す

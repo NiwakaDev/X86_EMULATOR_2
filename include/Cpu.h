@@ -86,7 +86,7 @@ class Cpu{
     public:
         Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> bios_callback, Memory& mem, std::function<uint8_t(uint16_t addr)> io_in8, std::function<void(uint16_t addr, uint8_t data)> io_out8);
         ~Cpu();
-        bool Run(const Emulator& emu);
+        bool Run();
         inline void AddEip(uint32_t data);
         inline void SetEip(uint32_t addr);
         uint32_t GetLinearAddrForCodeAccess();

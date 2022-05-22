@@ -850,7 +850,7 @@ void Cpu::Debug(FILE *f, bool h) {
     ***/
 }
 
-bool Cpu::Run(const Emulator& emu){
+bool Cpu::Run(){
     #ifdef DEBUG
         static FILE* fp=NULL;
         static vector<uint32_t> eip_history;

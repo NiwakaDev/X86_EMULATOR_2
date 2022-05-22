@@ -11,7 +11,7 @@ DETAIL_INCLUDE_DIR = ../../include/detail/
 HEADERS        = $(wildcard $(INCLUDE_DIR)*.h)
 DETAIL_HEADERS = $(wildcard $(DETAIL_INCLUDE_DIR)*.h)
 
-test_cpu : test.o test_cpu.o object.o SegmentRegister.o Memory.o Bios.o Gdtr.o Idtr.o TaskRegister.o Instruction.o InstructionFactory.o
+test_cpu : test.o test_cpu.o object.o test_segment_register.o test_memory.o test_bios.o test_gdtr.o test_idtr.o TaskRegister.o Instruction.o InstructionFactory.o
 	$(CC) $(LD_FLGS) -o test_cpu  $^ 
 
 test.o : test.cpp $(HEADERS) $(DETAIL_HEADERS)
@@ -23,16 +23,16 @@ object.o : $(SOURCE_DIR)Object.cpp
 test_cpu.o : $(SOURCE_DIR)Cpu.cpp $(HEADERS) $(DETAIL_HEADERS)
 	$(CC) $(G++_OPTIONS) -o $@ -c $<
 
-test_segment_register.o : $(SOURCE_DIR)test_segment_register.o.cpp $(HEADERS) $(DETAIL_HEADERS)
+test_segment_register.o : $(SOURCE_DIR)SegmentRegister.cpp $(HEADERS) $(DETAIL_HEADERS)
 	$(CC) $(G++_OPTIONS) -o $@ -c $<
 
-test_memory.o : $(SOURCE_DIR)test_memory.o.cpp $(HEADERS) $(DETAIL_HEADERS)
+test_memory.o : $(SOURCE_DIR)Memory.cpp $(HEADERS) $(DETAIL_HEADERS)
 	$(CC) $(G++_OPTIONS) -o $@ -c $<
 
-test_bios.o : $(SOURCE_DIR)test_bios.o.cpp $(HEADERS) $(DETAIL_HEADERS)
+test_bios.o : $(SOURCE_DIR)Bios.cpp $(HEADERS) $(DETAIL_HEADERS)
 	$(CC) $(G++_OPTIONS) -o $@ -c $<
 
-test_gdtr.o : $(SOURCE_DIR)test_gdtr.o.cpp $(HEADERS) $(DETAIL_HEADERS)
+test_gdtr.o : $(SOURCE_DIR)Gdtr.cpp $(HEADERS) $(DETAIL_HEADERS)
 	$(CC) $(G++_OPTIONS) -o $@ -c $<
 
 clean :
