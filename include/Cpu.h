@@ -143,7 +143,7 @@ class Cpu{
         void UpdateZF(uint32_t result);
         void UpdateCF(uint64_t result);
         template<typename type> void UpdateCfForSub(type data, int group);
-        void UpdatePF(uint32_t result);
+        void UpdatePF(uint8_t result);
         template<typename type> void UpdateSF(type data);
         bool IsFlag(EFLAGS_KIND eflags_kind);
         void SetFlag(EFLAGS_KIND eflags_kind);

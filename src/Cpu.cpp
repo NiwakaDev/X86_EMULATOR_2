@@ -508,7 +508,7 @@ void Cpu::UpdateCF(uint64_t result){
     this->eflags.flgs.CF = ((result>>32)&1)? 1:0;
 }
 
-void Cpu::UpdatePF(uint32_t result){
+void Cpu::UpdatePF(uint8_t result){
     int pf_cnt=0;
     for(int i=0; i<BYTE; i++){
         if(((result>>i)&0x01)==0x01){
