@@ -5,29 +5,35 @@
 #include "InstructionHelper.h"
 
 class Sib;
-class Emulator;
+class Cpu;
+class Memory;
 
 class Instruction{
     protected:
         std::unique_ptr<Object> obj;
         Sib sib;
         ModRM modrm;
-        void ParseModRM(const Emulator& emu);
-        void ParseRegIdx(const Emulator& emu);
-        uint8_t GetRM8(const Emulator& emu);
-        uint16_t GetRM16(const Emulator& emu);
-        uint32_t GetRM32(const Emulator& emu);
-        uint16_t GetR16ForEffectiveAddr(const Emulator& emu);
-        uint32_t GetEffectiveAddr(const Emulator& emu);
-        void SetRM8(const Emulator& emu, const uint8_t data);
-        void SetRM16(const Emulator& emu, const uint16_t data);
-        void SetRM32(const Emulator& emu, const uint32_t data);
-        //TODO:SetRMをtemplate化
-        //SetRM8やSetRM16のdataに4byteサイズを指定している場合もあり、現時点ではバグの原因になります。
-        //template<typename type> void SetRM(const Emulator& emu, const type data);
+        void ParseModRM(Cpu& cpu, Memory& memory);
+        void ParseRegIdx(Cpu& cpu, Memory& memory);
+        uint8_t GetRM8(Cpu& cpu, Memory& memory);
+        uint16_t GetRM16(Cpu& cpu, Memory& memory);
+        uint32_t GetRM32(Cpu& cpu, Memory& memory);
+        uint16_t GetR16ForEffectiveAddr(Cpu& cpu, Memory& memory);
+        uint32_t GetEffectiveAddr(Cpu& cpu, Memory& memory);
+        void SetRM8(Cpu& cpu, Memory& memory, const uint8_t data);
+        void SetRM16(Cpu& cpu, Memory& memory, const uint16_t data);
+        void SetRM32(Cpu& cpu, Memory& memory, const uint32_t data);
         std::string code_name;
+        std::function<uint8_t(uint16_t addr)> io_in8;
+        std::function<void(uint16_t addr, uint8_t data)> io_out8;
     public:
-        virtual void Run(const Emulator& emu) = 0;
+        void SetIoIn8(std::function<uint8_t(uint16_t addr)> io_in8){
+            this->io_in8 = io_in8;
+        }
+        void SetIoOut8(std::function<void(uint16_t addr, uint8_t data)> io_out8){
+            this->io_out8 = io_out8;
+        }
+        virtual void Run(Cpu& cpu, Memory& memory) = 0;
         Instruction(std::string code_name);
         virtual ~Instruction();
         const std::string& GetInstructionName() const{

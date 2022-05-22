@@ -17,7 +17,6 @@ class Emulator{
     public:
         std::unique_ptr<Memory> mem;
         std::unique_ptr<Cpu> cpu;
-        std::unique_ptr<IoPort> io_port;
         Emulator(int argc, char* argv[]);
         ~Emulator();
         void ThreadJoin();
@@ -27,6 +26,7 @@ class Emulator{
             int steps=-1;
         #endif
     private:
+        std::unique_ptr<IoPort> io_port;
         std::unique_ptr<Object> obj;
         std::unique_ptr<Bios> bios;
         std::unique_ptr<Gui> gui;

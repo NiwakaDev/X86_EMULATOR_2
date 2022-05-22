@@ -62,7 +62,13 @@ Emulator::Emulator(int argc, char* argv[]){
                                             [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){
                                                 this->bios->CallFunction(cpu, mem, bios_number);
                                             },
-                                            *(this->mem.get())
+                                            *(this->mem.get()),
+                                            [&](uint16_t addr){
+                                                return this->io_port->In8(addr);
+                                            },
+                                            [&](uint16_t addr, uint8_t data){
+                                                this->io_port->Out8(addr, data);
+                                            }
                                         );
         this->io_port = make_unique<IoPort>(*(this->vga.get()), *(this->pic.get()), *(this->kbc.get()), *(this->timer.get()), *(this->fdc.get()));
         this->gui     = make_unique<Gui>();

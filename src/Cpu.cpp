@@ -1,7 +1,6 @@
 #include "Cpu.h"
 #include "SegmentRegister.h"
 #include "Memory.h"
-#include "Bios.h"
 #include "Gdtr.h"
 #include "Idtr.h"
 #include "Ldtr.h"
@@ -11,7 +10,7 @@
 
 using namespace std;
 
-Cpu::Cpu(function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> bios_callback, Memory& mem){
+Cpu::Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> bios_callback, Memory& mem, std::function<uint8_t(uint16_t addr)> io_in8, std::function<void(uint16_t addr, uint8_t data)> io_out8){
     const uint32_t  GPR_INIT_VALUE    = 0x00000000;
     const uint32_t  CR0_INIT_VALUE    = 0x60000010;
     const uint32_t  CR2_INIT_VALUE    = 0x00000000;
@@ -89,6 +88,11 @@ Cpu::Cpu(function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> bios_c
         for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
             InstructionHelper::InstructionFactory instruction_factory;
             this->instructions[i] = instruction_factory.CreateInstruction(i);
+            if(this->instructions[i].get()==NULL){
+                continue;
+            }
+            this->instructions[i]->SetIoIn8(io_in8);
+            this->instructions[i]->SetIoOut8(io_out8);
         }
     #else
         this->mem  = &mem;
@@ -154,6 +158,11 @@ Cpu::Cpu(function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> bios_c
         for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
             InstructionHelper::InstructionFactory instruction_factory;
             this->instructions[i] = instruction_factory.CreateInstruction(i);
+            if(this->instructions[i].get()==NULL){
+                continue;
+            }
+            this->instructions[i]->SetIoIn8(io_in8);
+            this->instructions[i]->SetIoOut8(io_out8);
         }
     #endif
     this->is_exception_ = false;
@@ -901,7 +910,7 @@ bool Cpu::Run(const Emulator& emu){
                 }
                 this->obj->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
             }
-            this->instructions[op_code]->Run(emu);
+            this->instructions[op_code]->Run(*this, *this->mem);
             instruction_history.push_back(this->instructions[op_code]->GetInstructionName());
             //fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
             return true;
@@ -919,7 +928,7 @@ bool Cpu::Run(const Emulator& emu){
             if(this->instructions[op_code].get()==NULL){
                 this->obj->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
             }
-            this->instructions[op_code]->Run(emu);
+            this->instructions[op_code]->Run(*this, *this->mem);
             return true;
         }catch(const char* error_message){
             cerr << error_message << endl;

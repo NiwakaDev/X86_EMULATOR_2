@@ -84,7 +84,7 @@ typedef struct _Registers Registers;
 //TODO : 神クラスを何とかして整理
 class Cpu{
     public:
-        Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> bios_callback, Memory& mem);
+        Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> bios_callback, Memory& mem, std::function<uint8_t(uint16_t addr)> io_in8, std::function<void(uint16_t addr, uint8_t data)> io_out8);
         ~Cpu();
         bool Run(const Emulator& emu);
         inline void AddEip(uint32_t data);

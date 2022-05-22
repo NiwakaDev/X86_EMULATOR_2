@@ -10,12 +10,9 @@ uint32_t Sib::GetAddress(Cpu& cpu){
     if(this->base==5&&(this->mod==1 || this->mod==2)){
         addr = cpu.GetR32(EBP);
         if(!cpu.IsSegmentOverride())cpu.SetDataSelector(SS);
-
-    }
-    else if(this->base==5 && this->mod==0x00){
+    }else if(this->base==5 && this->mod==0x00){
         addr = this->disp32;
     }
-
     if(this->scale==0){
         if(this->base!=5){
             addr = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->base);
