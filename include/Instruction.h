@@ -27,6 +27,7 @@ class Instruction{
         std::function<uint8_t(uint16_t addr)> io_in8;
         std::function<void(uint16_t addr, uint8_t data)> io_out8;
     public:
+        static std::unique_ptr<Instruction> CreateInstruction(const uint8_t op_code);
         void SetIoIn8(std::function<uint8_t(uint16_t addr)> io_in8){
             this->io_in8 = io_in8;
         }

@@ -86,8 +86,7 @@ Cpu::Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> b
         this->prefix_table[0x67] = true;
 
         for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
-            InstructionHelper::InstructionFactory instruction_factory;
-            this->instructions[i] = instruction_factory.CreateInstruction(i);
+            this->instructions[i] = Instruction::CreateInstruction(i);
             if(this->instructions[i].get()==NULL){
                 continue;
             }
@@ -156,8 +155,7 @@ Cpu::Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> b
         this->prefix_table[0x67] = true;
 
         for(int i=0; i<InstructionHelper::INSTRUCTION_SIZE; i++){
-            InstructionHelper::InstructionFactory instruction_factory;
-            this->instructions[i] = instruction_factory.CreateInstruction(i);
+            this->instructions[i] = Instruction::CreateInstruction(i);
             if(this->instructions[i].get()==NULL){
                 continue;
             }
