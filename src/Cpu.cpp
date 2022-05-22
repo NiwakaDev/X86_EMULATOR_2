@@ -238,13 +238,6 @@ uint32_t Cpu::GetPhysicalAddr(uint32_t linear_addr){
     return linear_addr;
 }
 
-void Cpu::UpdateEflagsForInc16(uint16_t result, uint16_t d1, uint16_t d2){
-    this->UpdateZF(result);
-    this->UpdateSF(result);
-    this->UpdatePF(result);
-    this->UpdateOF_Add(result, d1, d2);
-}
-
 void Cpu::SetR16(SEGMENT_REGISTER register_type, uint16_t data){
     this->segment_registers[register_type]->Set(
         data, 
@@ -538,20 +531,6 @@ void Cpu::UpdateEflagsForSub(uint64_t result, uint32_t d1, uint32_t d2){
     this->UpdateOF_Sub((uint32_t)result, d1, d2);
     this->UpdateSF((uint32_t)result);
     this->UpdatePF(result);
-}
-
-void Cpu::UpdateEflagsForInc(uint32_t result, uint32_t d1, uint32_t d2){
-    this->UpdateZF(result);
-    this->UpdateSF(result);
-    this->UpdatePF(result);
-    this->UpdateOF_Add(result, d1, d2);
-}
-
-void Cpu::UpdateEflagsForInc8(uint8_t result, uint8_t d1, uint8_t d2){
-    this->UpdateZF(result);
-    this->UpdateSF(result);
-    this->UpdatePF(result);
-    this->UpdateOF_Add(result, d1, d2);
 }
 
 bool Cpu::IsFlag(EFLAGS_KIND eflags_kind){

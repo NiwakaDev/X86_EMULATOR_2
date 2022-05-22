@@ -94,6 +94,13 @@ inline uint32_t Cpu::GetEflgs(){
     return this->eflags.raw;
 }
 
+inline template<typename type>void Cpu::UpdateEflagsForInc(type result, type d){
+    this->UpdateZF(result);
+    this->UpdateSF(result);
+    this->UpdatePF(result);
+    this->UpdateOF_Add(result, d, (type)1);
+}
+
 inline template<typename type>void Cpu::UpdateEflagsForDec(type result, type d1, type d2){
     this->UpdateZF(result);
     this->UpdateSF(result);
@@ -111,6 +118,12 @@ inline template<typename type>void Cpu::UpdateEflagsForDec(type result, type d1,
         default:
             this->obj->Error("Not implemented: data_size=%dbyte at Cpu::UpdateElfagsForDec", sizeof(result));
     }
+}
+
+//TODO : テストが通ったら、関数名をUpdateEflagsForSubに変更し、元のUpdateEflagsForSub関数を削除する
+inline template<typename type1, typename type2>void Cpu::UpdateEflagsForSub_template(type1 result, type2 d1, type2 d2){
+    this->UpdateZF((type2)result);
+    this->UpdatePF(result);
 }
 
 inline template<typename type1, typename type2>void Cpu::UpdateEflagsForAdd(type1 result, type2 d1, type2 d2){
