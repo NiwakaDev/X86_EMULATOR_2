@@ -440,15 +440,15 @@ TEST(CpuTest, CheckUpdateEflagsForSub13){
     Memory memory(size);
     Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
 
-    uint8_t d1 = 0x80;
+    uint8_t d1 = 0x00;
     uint8_t d2 = 0x01;
 
     uint8_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_FALSE(cpu.IsFlag(ZF));
-    EXPECT_FALSE(cpu.IsFlag(SF));
-    EXPECT_FALSE(cpu.IsFlag(PF)); 
-    EXPECT_FALSE(cpu.IsFlag(CF)); 
-    EXPECT_TRUE(cpu.IsFlag(OF));
+    EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_TRUE(cpu.IsFlag(PF)); 
+    EXPECT_TRUE(cpu.IsFlag(CF)); 
+    EXPECT_FALSE(cpu.IsFlag(OF));
     EXPECT_EQ(result, (uint8_t)(d1-d2));
 }
 
