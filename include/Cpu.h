@@ -128,7 +128,7 @@ class Cpu{
         IdtGate* GetIdtGate(uint16_t selector);
         Tss*     GetCurrentTss();
         uint32_t GetBaseAddr(SEGMENT_REGISTER register_type);
-        template<typename type1, typename type2>void UpdateEflagsForSub(type1 result, type2 d1, type2 d2);
+        template<typename type>type UpdateEflagsForSub(type data1, type data2);
         template<typename type>void UpdateEflagsForInc(type result, type d);
         template<typename type>void UpdateEflagsForDec(type result, type d1, type d2);
         template<typename type1, typename type2>void UpdateEflagsForAdd(type1 result, type2 d1, type2 d2);

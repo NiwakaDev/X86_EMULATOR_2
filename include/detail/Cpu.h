@@ -120,24 +120,33 @@ inline template<typename type>void Cpu::UpdateEflagsForDec(type result, type d1,
     }
 }
 
-inline template<typename type1, typename type2>void Cpu::UpdateEflagsForSub(type1 result, type2 d1, type2 d2){
-    this->UpdateZF((type2)result);
-    this->UpdatePF(result);
-    this->UpdateSF((type2)result);
-    this->UpdateCfForSub(result, sizeof(d1));
-    switch(sizeof(type2)){
+inline template<typename type>type Cpu::UpdateEflagsForSub(type data1, type data2){
+    this->UpdateZF((type)(data1-data2));
+    this->UpdatePF(data1-data2);
+    this->UpdateSF((type)(data1-data2));
+    if(sizeof(type)==1){
+        this->UpdateCfForSub((uint16_t)((uint16_t)data1-(uint16_t)data2), sizeof(type));
+    }else if(sizeof(type)==2){
+        this->UpdateCfForSub((uint32_t)((uint32_t)data1-(uint32_t)data2), sizeof(type));
+    }else if(sizeof(type)==4){
+        this->UpdateCfForSub((uint64_t)((uint64_t)data1-(uint64_t)data2), sizeof(type));
+    }else{
+        this->obj->Error("Not implemented: sizeof(type)=%d\n", sizeof(type));
+    }
+    switch(sizeof(type)){
         case 1:
-            this->UpdateOF_Sub8(result, d1, d2);
+            this->UpdateOF_Sub8(data1-data2, data1, data2);
             break;
         case 2:
-            this->UpdateOF_Sub16(result, d1, d2);
+            this->UpdateOF_Sub16(data1-data2, data1, data2);
             break;
         case 4:
-            this->UpdateOF_Sub(result, d1, d2);
+            this->UpdateOF_Sub(data1-data2, data1, data2);
             break;
         default:
-            this->obj->Error("Not implemented: data_size=%dbyte at Cpu::UpdateElfagsForDec", sizeof(result));
+            this->obj->Error("Not implemented: data_size=%dbyte at Cpu::UpdateElfagsForDec", sizeof(type));
     }
+    return data1-data2;
 }
 
 inline template<typename type1, typename type2>void Cpu::UpdateEflagsForAdd(type1 result, type2 d1, type2 d2){

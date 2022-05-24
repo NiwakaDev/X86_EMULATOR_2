@@ -182,13 +182,13 @@ TEST(CpuTest, CheckUpdateEflagsForSub0){
 
     uint16_t d1     = 0;
     uint16_t d2     = 0;
-    uint32_t result = d1-d2;
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint16_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_TRUE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)(d1-d2));
 }
 
 TEST(CpuTest, CheckUpdateEflagsForSub1){
@@ -201,14 +201,14 @@ TEST(CpuTest, CheckUpdateEflagsForSub1){
 
     uint16_t d1     = 1;
     uint16_t d2     = 0;
-    uint32_t result = d1-d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint16_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)(d1-d2));
 }
 
 TEST(CpuTest, CheckUpdateEflagsForSub2){
@@ -221,14 +221,14 @@ TEST(CpuTest, CheckUpdateEflagsForSub2){
 
     uint16_t d1     = 0;
     uint16_t d2     = 1;
-    uint32_t result = d1-d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint16_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)(d1-d2));
 }
 
 //CFのテスト
@@ -242,14 +242,14 @@ TEST(CpuTest, CheckUpdateEflagsForSub3){
 
     uint16_t d1     = 2;
     uint16_t d2     = 3;
-    uint32_t result = d1-d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint16_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)(d1-d2));
 }
 
 TEST(CpuTest, CheckUpdateEflagsForSub4){
@@ -262,14 +262,14 @@ TEST(CpuTest, CheckUpdateEflagsForSub4){
 
     uint32_t d1 = 2;
     uint32_t d2 = 3;
-    uint64_t result = (uint64_t)d1-(uint64_t)d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint32_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)(d1-d2));
 }
 
 TEST(CpuTest, CheckUpdateEflagsForSub5){
@@ -282,14 +282,14 @@ TEST(CpuTest, CheckUpdateEflagsForSub5){
 
     uint8_t d1 = 2;
     uint8_t d2 = 3;
-    uint16_t result = d1-d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint8_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)(d1-d2));
 }
 
 TEST(CpuTest, CheckUpdateEflagsForSub6){
@@ -302,14 +302,14 @@ TEST(CpuTest, CheckUpdateEflagsForSub6){
 
     uint8_t d1 = 2;
     uint8_t d2 = 2;
-    uint16_t result = d1-d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint8_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_TRUE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)(d1-d2));
 }
 
 TEST(CpuTest, CheckUpdateEflagsForSub7){
@@ -322,14 +322,14 @@ TEST(CpuTest, CheckUpdateEflagsForSub7){
 
     uint16_t d1 = 2;
     uint16_t d2 = 2;
-    uint32_t result = d1-d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint16_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_TRUE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)(d1-d2));
 }
 
 TEST(CpuTest, CheckUpdateEflagsForSub8){
@@ -342,14 +342,14 @@ TEST(CpuTest, CheckUpdateEflagsForSub8){
 
     uint32_t d1 = 2;
     uint32_t d2 = 2;
-    uint64_t result = (uint64_t)d1-(uint64_t)d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint32_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_TRUE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)(d1-d2));
 }
 
 TEST(CpuTest, CheckUpdateEflagsForSub9){
@@ -362,14 +362,14 @@ TEST(CpuTest, CheckUpdateEflagsForSub9){
 
     uint8_t d1 = 0x80;
     uint8_t d2 = 0x01;
-    uint16_t result = d1-d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint8_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_TRUE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)(d1-d2));
 }
 
 TEST(CpuTest, CheckUpdateEflagsForSub10){
@@ -382,14 +382,14 @@ TEST(CpuTest, CheckUpdateEflagsForSub10){
 
     uint16_t d1 = 0x8000;
     uint16_t d2 = 0x0001;
-    uint32_t result = d1-d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint16_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_TRUE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)(d1-d2));
 }
 
 TEST(CpuTest, CheckUpdateEflagsForSub11){
@@ -402,14 +402,14 @@ TEST(CpuTest, CheckUpdateEflagsForSub11){
 
     uint32_t d1 = 0x80000000;
     uint32_t d2 = 0x00000001;
-    uint64_t result = (uint64_t)d1-(uint64_t)d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint32_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_TRUE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)(d1-d2));
 }
 
 TEST(CpuTest, CheckUpdateEflagsForSub12){
@@ -422,14 +422,34 @@ TEST(CpuTest, CheckUpdateEflagsForSub12){
 
     uint8_t d1 = 0x80;
     uint8_t d2 = 0x01;
-    uint32_t result = (uint32_t)d1-(uint32_t)d2;
 
-    cpu.UpdateEflagsForSub_template(result, d1, d2);
+    uint8_t result = cpu.UpdateEflagsForSub(d1, d2);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_TRUE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)(d1-d2));
+}
+
+TEST(CpuTest, CheckUpdateEflagsForSub13){
+    auto MockIoIn8    = [&](uint16_t addr){return 0;};
+    auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
+    auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+    int size = 1024*1024;
+    Memory memory(size);
+    Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
+
+    uint8_t d1 = 0x80;
+    uint8_t d2 = 0x01;
+
+    uint8_t result = cpu.UpdateEflagsForSub(d1, d2);
+    EXPECT_FALSE(cpu.IsFlag(ZF));
+    EXPECT_FALSE(cpu.IsFlag(SF));
+    EXPECT_FALSE(cpu.IsFlag(PF)); 
+    EXPECT_FALSE(cpu.IsFlag(CF)); 
+    EXPECT_TRUE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)(d1-d2));
 }
 
 //INC命令により影響を受けるフラグ
