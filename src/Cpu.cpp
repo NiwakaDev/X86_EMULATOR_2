@@ -509,30 +509,6 @@ void Cpu::UpdatePF(uint8_t result){
     this->eflags.flgs.PF = (pf_cnt%2==0)? 1:0;
 }
 
-void Cpu::UpdateEflagsForSub8(uint32_t result, uint8_t d1, uint8_t d2){
-    this->UpdateCfForSub(result, 1);
-    this->UpdateZF((uint32_t)result);
-    this->UpdateOF_Sub8((uint32_t)result, d1, d2);
-    this->UpdateSF((uint8_t)result);
-    this->UpdatePF(result);
-}
-
-void Cpu::UpdateEflagsForSub16(uint32_t result, uint16_t d1, uint16_t d2){
-    this->UpdateCfForSub(result, 2);
-    this->UpdateZF((uint32_t)result);
-    this->UpdateOF_Sub16((uint32_t)result, d1, d2);
-    this->UpdateSF((uint16_t)result);
-    this->UpdatePF(result);
-}
-
-void Cpu::UpdateEflagsForSub(uint64_t result, uint32_t d1, uint32_t d2){
-    this->UpdateCfForSub(result, 4);
-    this->UpdateZF((uint32_t)result);
-    this->UpdateOF_Sub((uint32_t)result, d1, d2);
-    this->UpdateSF((uint32_t)result);
-    this->UpdatePF(result);
-}
-
 bool Cpu::IsFlag(EFLAGS_KIND eflags_kind){
     switch (eflags_kind){
         case CF:

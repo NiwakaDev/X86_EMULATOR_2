@@ -120,10 +120,24 @@ inline template<typename type>void Cpu::UpdateEflagsForDec(type result, type d1,
     }
 }
 
-//TODO : テストが通ったら、関数名をUpdateEflagsForSubに変更し、元のUpdateEflagsForSub関数を削除する
-inline template<typename type1, typename type2>void Cpu::UpdateEflagsForSub_template(type1 result, type2 d1, type2 d2){
+inline template<typename type1, typename type2>void Cpu::UpdateEflagsForSub(type1 result, type2 d1, type2 d2){
     this->UpdateZF((type2)result);
     this->UpdatePF(result);
+    this->UpdateSF((type2)result);
+    this->UpdateCfForSub(result, sizeof(d1));
+    switch(sizeof(type2)){
+        case 1:
+            this->UpdateOF_Sub8(result, d1, d2);
+            break;
+        case 2:
+            this->UpdateOF_Sub16(result, d1, d2);
+            break;
+        case 4:
+            this->UpdateOF_Sub(result, d1, d2);
+            break;
+        default:
+            this->obj->Error("Not implemented: data_size=%dbyte at Cpu::UpdateElfagsForDec", sizeof(result));
+    }
 }
 
 inline template<typename type1, typename type2>void Cpu::UpdateEflagsForAdd(type1 result, type2 d1, type2 d2){
