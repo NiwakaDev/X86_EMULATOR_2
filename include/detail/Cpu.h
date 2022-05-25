@@ -120,7 +120,12 @@ inline template<typename type>void Cpu::UpdateEflagsForDec(type result, type d1,
     }
 }
 
-inline template<typename type>type Cpu::UpdateEflagsForSub(type data1, type data2){
+inline template<typename type>type Cpu::Sub(type data1, type data2){
+    this->UpdateEflagsForSub(data1, data2);
+    return data1-data2;
+}
+
+inline template<typename type>void Cpu::UpdateEflagsForSub(type data1, type data2){
     this->UpdateZF((type)(data1-data2));
     this->UpdatePF(data1-data2);
     this->UpdateSF((type)(data1-data2));
@@ -146,7 +151,6 @@ inline template<typename type>type Cpu::UpdateEflagsForSub(type data1, type data
         default:
             this->obj->Error("Not implemented: data_size=%dbyte at Cpu::UpdateElfagsForDec", sizeof(type));
     }
-    return data1-data2;
 }
 
 inline template<typename type1, typename type2>void Cpu::UpdateEflagsForAdd(type1 result, type2 d1, type2 d2){
