@@ -133,7 +133,6 @@ class Cpu{
         template<typename type>void UpdateEflagsForInc(type result, type d);
         template<typename type>void UpdateEflagsForDec(type result, type d1, type d2);
         template<typename type>void UpdateEflagsForAdc(type d1, type d2, type c);
-        template<typename type>void UpdateEflagsForAdd(type d1, type d2);
         template<typename type>void UpdateEflagsForShr(type result);
         void UpdateZF(uint32_t result);
         void UpdateCF(uint64_t result);
@@ -260,6 +259,7 @@ class Cpu{
         void UpdateOF_Sub16(uint16_t result, uint16_t d1, uint16_t d2);
         void UpdateOF_Sub8(uint8_t result, uint8_t d1, uint8_t d2);
         template<typename type>void UpdateEflagsForSub(type data1, type data2);
+        template<typename type>void UpdateEflagsForAdd(type d1, type d2);
 };
 
 #include "detail/Cpu.h"
