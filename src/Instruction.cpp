@@ -1972,15 +1972,13 @@ IncR32::IncR32(string code_name):Instruction(code_name){
 
 void IncR32::Run(Cpu& cpu, Memory& memory){
     GENERAL_PURPOSE_REGISTER32 register_type = (GENERAL_PURPOSE_REGISTER32)((uint32_t)memory.Read8(cpu.GetLinearAddrForCodeAccess())-(uint32_t)0x40);
-    uint32_t r32;
     cpu.AddEip(1);
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        r32 = cpu.GetR32(register_type);
+        uint32_t r32 = cpu.GetR32(register_type);
         cpu.SetR32(register_type, cpu.Inc(r32));
         return;
     }
-    uint16_t r16;
-    r16 = cpu.GetR16(register_type);
+    uint16_t r16 = cpu.GetR16(register_type);
     cpu.SetR16(register_type, cpu.Inc(r16));
     return;
 }
@@ -2315,13 +2313,11 @@ IncRm32::IncRm32(string code_name):Instruction(code_name){
 
 void IncRm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        rm32 = this->GetRM32(cpu, memory);
+        uint32_t rm32 = this->GetRM32(cpu, memory);
         this->SetRM32(cpu, memory, cpu.Inc(rm32));
         return;
     }
-    uint16_t rm16;
-    rm16 = this->GetRM16(cpu, memory);
+    uint16_t rm16 = this->GetRM16(cpu, memory);
     this->SetRM16(cpu, memory, cpu.Inc(rm16));
     return;
 }
@@ -4632,8 +4628,7 @@ IncRm8::IncRm8(string code_name):Instruction(code_name){
 }
 
 void IncRm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8;
-    rm8 = this->GetRM8(cpu, memory);
+    uint8_t rm8 = this->GetRM8(cpu, memory);
     this->SetRM8(cpu, memory, cpu.Inc(rm8));
     return;
 }
