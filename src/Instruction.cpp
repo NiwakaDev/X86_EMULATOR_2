@@ -1150,7 +1150,7 @@ void AddRm8Imm8::Run(Cpu& cpu, Memory& memory){
     rm8  = this->GetRM8(cpu, memory);
     result = rm8+imm8;
     this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAdd(result, rm8, imm8);
+    cpu.UpdateEflagsForAdd(rm8, imm8);
     return;
 }
 
@@ -1170,7 +1170,7 @@ void AddRm32Imm8::Run(Cpu& cpu, Memory& memory){
         cpu.AddEip(1);
         result = (uint64_t)rm32+(uint64_t)imm8_32bits;
         this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForAdd(result, rm32, imm8_32bits);
+        cpu.UpdateEflagsForAdd(rm32, imm8_32bits);
         return;
     }
     uint16_t imm8;
@@ -1180,7 +1180,7 @@ void AddRm32Imm8::Run(Cpu& cpu, Memory& memory){
     imm8 = (int16_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
     result = (uint32_t)rm16+(uint32_t)imm8;
     this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAdd(result, rm16, imm8);
+    cpu.UpdateEflagsForAdd(rm16, imm8);
     cpu.AddEip(1);
     return;
 }
@@ -1200,7 +1200,7 @@ void AddEaxImm32::Run(Cpu& cpu, Memory& memory){
         eax   = cpu.GetR32(EAX);
         result = eax+imm32;
         cpu.SetR32(EAX, result);
-        cpu.UpdateEflagsForAdd(result, eax, imm32);
+        cpu.UpdateEflagsForAdd(eax, imm32);
         return;
     }
     uint16_t imm16;
@@ -1211,7 +1211,7 @@ void AddEaxImm32::Run(Cpu& cpu, Memory& memory){
     ax   = cpu.GetR16(EAX);
     result = (uint32_t)ax+(uint32_t)imm16;
     cpu.SetR16(EAX, result);
-    cpu.UpdateEflagsForAdd(result, ax, imm16);
+    cpu.UpdateEflagsForAdd(ax, imm16);
     return;
 }
 
@@ -1227,14 +1227,14 @@ void AddRm32R32::Run(Cpu& cpu, Memory& memory){
         uint32_t r32  = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
         uint64_t result = rm32+r32;
         this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForAdd(result, rm32, r32);
+        cpu.UpdateEflagsForAdd(rm32, r32);
         return;
     }
     uint16_t rm16 = this->GetRM16(cpu, memory);
     uint16_t r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     uint32_t result = (uint32_t)rm16+(uint32_t)r16;
     this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAdd(result, rm16, r16);
+    cpu.UpdateEflagsForAdd(rm16, r16);
     return;
 }
 
@@ -1253,7 +1253,7 @@ void AddR32Rm32::Run(Cpu& cpu, Memory& memory){
         r32  = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
         result = r32 + rm32;
         cpu.SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
-        cpu.UpdateEflagsForAdd(result, r32, rm32);
+        cpu.UpdateEflagsForAdd(r32, rm32);
         return;
     }
     uint16_t rm16;
@@ -1263,7 +1263,7 @@ void AddR32Rm32::Run(Cpu& cpu, Memory& memory){
     r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     result = (uint32_t)r16 + (uint32_t)rm16;
     cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
-    cpu.UpdateEflagsForAdd(result, r16, rm16);
+    cpu.UpdateEflagsForAdd(r16, rm16);
     return;
 }
 
@@ -1271,7 +1271,6 @@ CmpAlImm8::CmpAlImm8(string code_name):Instruction(code_name){
 
 }
 
-//ADD命令のフラグレジスタ更新処理を今後やる。
 void CmpAlImm8::Run(Cpu& cpu, Memory& memory){
     uint8_t imm8;
     uint8_t al;
@@ -3165,7 +3164,7 @@ void AddRm32Imm32::Run(Cpu& cpu, Memory& memory){
         cpu.AddEip(4);
         result = rm32+imm32;
         this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForAdd(result, rm32, imm32);
+        cpu.UpdateEflagsForAdd(rm32, imm32);
         return;
     }
     uint32_t result;
@@ -3176,7 +3175,7 @@ void AddRm32Imm32::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(2);
     result = (uint32_t)rm16 + (uint32_t)imm16;
     this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAdd(result, rm16, imm16);
+    cpu.UpdateEflagsForAdd(rm16, imm16);
     return;
 }
 
@@ -3286,7 +3285,7 @@ void AdcRm8R8::Run(Cpu& cpu, Memory& memory){
     cf  = cpu.IsFlag(CF)?1:0;
     result = (uint16_t)rm8+(uint16_t)r8+(uint16_t)cf;
     this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAdd((uint16_t)result, (uint8_t)rm8, (uint8_t)(r8+cf));
+    cpu.UpdateEflagsForAdc(rm8, r8, cf);
     return;
 }
 
@@ -3313,7 +3312,7 @@ void AddR8Rm8::Run(Cpu& cpu, Memory& memory){
     r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     result = (uint16_t)rm8+(uint16_t)r8;
     cpu.SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
-    cpu.UpdateEflagsForAdd(result, rm8, r8);
+    cpu.UpdateEflagsForAdd(rm8, r8);
 }
 
 SbbRm8R8::SbbRm8R8(string code_name):Instruction(code_name){
@@ -4077,7 +4076,7 @@ void AddRm8R8::Run(Cpu& cpu, Memory& memory){
     r8  = cpu.GetR8(this->modrm.reg_index); 
     result = (uint16_t)rm8+(uint16_t)r8;
     this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAdd(result, rm8, r8);
+    cpu.UpdateEflagsForAdd(rm8, r8);
     return;
 }
 
@@ -4535,7 +4534,7 @@ void AdcRm32Imm8::Run(Cpu& cpu, Memory& memory){
     imm8 = (int16_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
     result = (uint32_t)imm8 + (uint32_t)rm16+(uint32_t)cf;
     this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAdd(result, rm16, (uint16_t)(imm8+cf));
+    cpu.UpdateEflagsForAdc(rm16, imm8, cf);
     cpu.AddEip(1);
     return;
 }
@@ -4570,7 +4569,7 @@ void AdcRm32R32::Run(Cpu& cpu, Memory& memory){
     uint16_t cf     = cpu.IsFlag(CF)?1:0;
     uint32_t result = (uint32_t)rm16+(uint32_t)r16+(uint32_t)cf;
     this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAdd(result, rm16, (uint16_t)(r16+cf));
+    cpu.UpdateEflagsForAdc(rm16, r16, cf);
 }
 
 LodsM8::LodsM8(string code_name):Instruction(code_name){
@@ -4844,7 +4843,7 @@ void AdcR32Rm32::Run(Cpu& cpu, Memory& memory){
     rm16 = this->GetRM16(cpu, memory);
     result = (uint32_t)r16+ (uint32_t)rm16+(uint32_t)cf;
     this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAdd(result, r16, (uint16_t)(rm16+cf));
+    cpu.UpdateEflagsForAdc(r16, rm16, cf);
     return;
 }
 
@@ -5030,7 +5029,7 @@ void AddAlImm8::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     result = al+imm8;
     cpu.SetR8L(EAX, result);
-    cpu.UpdateEflagsForAdd(result, al, imm8);
+    cpu.UpdateEflagsForAdd(al, imm8);
     return;
 }
 
@@ -6090,7 +6089,7 @@ void AdcRm8Imm8::Run(Cpu& cpu, Memory& memory){
     cf  = cpu.IsFlag(CF)?1:0;
     result = (uint16_t)rm8+(uint16_t)imm8+(uint16_t)cf;
     this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAdd((uint16_t)result, (uint8_t)rm8, (uint8_t)(imm8+cf));
+    cpu.UpdateEflagsForAdc(rm8, imm8, cf);
     return;
 }
 
@@ -6259,7 +6258,7 @@ void AdcEaxImm32::Run(Cpu& cpu, Memory& memory){
     imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
     result = (uint32_t)imm16 + (uint32_t)ax+(uint32_t)cf;
     cpu.SetR16(EAX, result);
-    cpu.UpdateEflagsForAdd(result, ax, (uint16_t)(imm16+cf));
+    cpu.UpdateEflagsForAdc(ax, imm16, cf);
     cpu.AddEip(2);
     return;
 }

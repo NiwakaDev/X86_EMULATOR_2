@@ -7,7 +7,6 @@
 #include "TaskRegister.h"
 #include "Instruction.h"
 #include "InstructionHelper.h"
-
 using namespace std;
 
 Cpu::Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> bios_callback, Memory& mem, std::function<uint8_t(uint16_t addr)> io_in8, std::function<void(uint16_t addr, uint8_t data)> io_out8){
@@ -168,7 +167,7 @@ Cpu::Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)> b
 }
 
 Cpu::~Cpu(){
-    
+
 }
 
 uint32_t Cpu::GetPhysicalAddr(uint32_t linear_addr){

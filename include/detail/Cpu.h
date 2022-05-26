@@ -120,6 +120,10 @@ inline template<typename type>void Cpu::UpdateEflagsForDec(type result, type d1,
     }
 }
 
+inline template<typename type>type Cpu::Add(type data1, type data2){
+    return 0;
+}
+
 inline template<typename type>type Cpu::Sub(type data1, type data2){
     this->UpdateEflagsForSub(data1, data2);
     return data1-data2;
@@ -153,24 +157,51 @@ inline template<typename type>void Cpu::UpdateEflagsForSub(type data1, type data
     }
 }
 
-inline template<typename type1, typename type2>void Cpu::UpdateEflagsForAdd(type1 result, type2 d1, type2 d2){
-    this->UpdateZF((type2)result);
-    this->UpdateSF((type2)result);
-    this->UpdatePF(result);
-    this->UpdateCfForSub(result, sizeof(d1));
-    switch(sizeof(d1)){
-        case 1:
-            this->UpdateOF_Add((uint8_t)result, (uint8_t)d1, (uint8_t)d2);
-            break;
-        case 2:
-            this->UpdateOF_Add((uint16_t)result, (uint16_t)d1, (uint16_t)d2);
-            break;
-        case 4:
-            this->UpdateOF_Add((uint32_t)result, (uint32_t)d1, (uint32_t)d2);
-            break;
-        default:
-            this->obj->Error("Not implemented: data_size=%dbyte at Cpu::UpdateSF", sizeof(result));
+template<typename type>void Cpu::UpdateEflagsForAdc(type d1, type d2, type c){
+    this->UpdateZF((type)(d1+d2+c));
+    this->UpdateSF((type)(d1+d2+c));
+    this->UpdatePF((type)(d1+d2+c));
+    if(sizeof(d1)==1){
+        this->UpdateCfForSub((uint16_t)((uint16_t)d1+(uint16_t)d2+(uint16_t)c), sizeof(d1));
+    }else if(sizeof(d1)==2){
+        this->UpdateCfForSub((uint32_t)((uint32_t)d1+(uint32_t)d2+(uint32_t)c), sizeof(d1));
+    }else if(sizeof(d1)==4){
+        this->UpdateCfForSub((uint64_t)((uint64_t)d1+(uint64_t)d2+(uint64_t)c), sizeof(d1));
+    }else{
+        this->obj->Error("Not implemented: sizeof(type2)=%d at Cpu::UpdateEflagsForAdc\n", sizeof(d1));
     }
+    type result = d1+d2+c;
+    bool of_flg;
+    if(sizeof(d1)==1){
+        of_flg = ((~(d1 ^ d2))&(d1 ^ result)&0x80)!=0x00;
+    }else if(sizeof(d1)==2){
+        of_flg = ((~(d1 ^ d2))&(d1 ^ result)&0x8000)!=0x0000;
+    }else if(sizeof(d1)==4){
+        of_flg = ((~(d1 ^ d2))&(d1 ^ result)&0x80000000)!=0x00000000;
+    }else{
+        this->obj->Error("Not implemented: sizeof(d1)=%d at Cpu::UpdateEflagsForAdc\n", sizeof(d1));
+    }
+    if(of_flg){
+        this->SetFlag(OF);
+    }else{
+        this->ClearFlag(OF);
+    }
+}
+
+inline template<typename type>void Cpu::UpdateEflagsForAdd(type d1, type d2){
+    this->UpdateZF((type)(d1+d2));
+    this->UpdateSF((type)(d1+d2));
+    this->UpdatePF((type)(d1+d2)); 
+    if(sizeof(d1)==1){
+        this->UpdateCfForSub((uint16_t)((uint16_t)d1+(uint16_t)d2), sizeof(d1));
+    }else if(sizeof(d1)==2){
+        this->UpdateCfForSub((uint32_t)((uint32_t)d1+(uint32_t)d2), sizeof(d1));
+    }else if(sizeof(d1)==4){
+        this->UpdateCfForSub((uint64_t)((uint64_t)d1+(uint64_t)d2), sizeof(d1));
+    }else{
+        this->obj->Error("Not implemented: sizeof(type)=%d\n", sizeof(type));
+    }
+    this->UpdateOF_Add((type)(d1+d2), (type)d1, (type)d2);
 }
 
 inline template<typename type>void Cpu::UpdateEflagsForShr(type result){
