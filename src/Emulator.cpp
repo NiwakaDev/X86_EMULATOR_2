@@ -56,7 +56,15 @@ Emulator::Emulator(int argc, char* argv[]){
         this->io_devices[0x06] = this->fdc.get();
         this->io_devices[0x0C] = this->mouse.get();
         this->pic     = make_unique<Pic>(this->io_devices);
-        this->vga     = make_unique<Vga>(*(this->mem.get()));
+        //TODO : 自動フォーマッタを使う。
+        this->vga     = make_unique<Vga>(
+                                            [&](const uint32_t addr){
+                                                return this->mem->Read8(addr);
+                                            },
+                                            [&](const uint32_t addr){
+                                                return this->mem->GetPointer(addr);
+                                            }
+        );
         this->bios    = make_unique<Bios>(file_read_callback, *(this->vga.get()), *(this->kbc.get()));
         this->cpu     = make_unique<Cpu>(
                                             [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){

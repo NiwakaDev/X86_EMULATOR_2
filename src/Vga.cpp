@@ -1,6 +1,5 @@
-#include "Memory.h"
-#include "Font.h"
 #include "Vga.h"
+#include "Font.h"
 
 extern uint8_t font8x8_basic[128][8];
 using namespace std;
@@ -13,8 +12,9 @@ static const int RGB_OFFSET    = 1;
 static const int PALETTE_SIZE  = 16;
 static const int ALPHA_MAX     = 0xFF;
 
-Vga::Vga(Memory& mem){
-    this->mem = &mem;
+Vga::Vga(std::function<uint8_t(const uint32_t addr)> mem_read8, std::function<uint8_t*(const uint32_t addr)> mem_get_pointer){
+    this->mem_read8 = mem_read8;
+    this->mem_get_pointer = mem_get_pointer;
     this->height = DEFAULT_HEIGHT;
     this->width  = DEFAULT_WIDTH;
     this->vram_start_addr = DEFAULT_VRAM_START_ADDR;
@@ -134,7 +134,7 @@ Pixel* Vga::GetPixel(const int x, const int y){
         return &this->image_text_mode[x+y*this->width];
     }
     uint32_t addr = this->vram_start_addr+x+y*this->width;
-    return (Pixel*)(this->palette+this->mem->Read8(addr));
+    return (Pixel*)(this->palette+this->mem_read8(addr));
 }
 
 inline void Vga::SetColor(const int idx, const uint32_t color){
@@ -166,5 +166,5 @@ void Vga::InitPalette(){
 }
 
 void Vga::SetSnap(uint8_t* const snap, const int w, const int h){
-    memcpy(snap, this->mem->GetPointer(this->vram_start_addr), this->width*this->height);
+    memcpy(snap, this->mem_get_pointer(this->vram_start_addr), this->width*this->height);
 }

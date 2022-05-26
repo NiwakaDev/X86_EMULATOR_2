@@ -1,8 +1,6 @@
 #pragma once
 #include "common.h"
 
-class Memory;
-
 const int MODE13_HEIGHT = 200;
 const int MODE13_WIDTH  = 320;
 const int MODE13_VRAM_START_ADDR = 0x000a0000;
@@ -26,7 +24,9 @@ class Vga{
         VGA_MODE vga_mode;
         std::unique_ptr<Pixel[]> image_text_mode;
         Pixel* GetPixel(const int x, const int y);
-        Vga(Memory& mem);
+        Vga(std::function<uint8_t(const uint32_t addr)> mem_read8, std::function<uint8_t*(const uint32_t addr)> mem_get_pointer);
+        std::function<uint8_t(uint32_t addr)> mem_read8;
+        std::function<uint8_t*(uint32_t addr)> mem_get_pointer;
         void Out8(const uint16_t addr, const uint8_t data);
         uint8_t In8(const uint16_t addr);
         void SetInfo(const int width, const int height, const int vram_start_add);
@@ -42,7 +42,6 @@ class Vga{
         std::unique_ptr<Object> obj;
         std::mutex vga_mtx;
         uint8_t palette[256][4];
-        Memory* mem;
         int height;
         int width;
         int vram_start_addr;
