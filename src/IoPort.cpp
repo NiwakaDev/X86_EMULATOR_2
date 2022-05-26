@@ -11,6 +11,7 @@ using namespace std;
 //io_map : http://oswiki.osask.jp/?%28AT%29iomap
 
 IoPort::IoPort(Vga& vga, Pic& pic, Kbc& kbc, Timer& timer, Fdc& fdc){
+    this->obj   = make_unique<Object>();
     this->vga   = &vga;
     this->pic   = &pic;
     this->kbc   = &kbc;
@@ -73,6 +74,6 @@ uint8_t IoPort::In8(const uint16_t addr){
         case 0x064:
             return 0;
         default:
-            this->Error("Not implemented: io_port = %04X at IoPort::In8", addr);
+            this->obj->Error("Not implemented: io_port = %04X at IoPort::In8", addr);
     }
 }

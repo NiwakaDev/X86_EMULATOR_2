@@ -7,8 +7,9 @@ class Kbc;
 class Timer;
 class Fdc;
 
-class IoPort:public Object{
+class IoPort{
     private:
+        std::unique_ptr<Object> obj;
         Vga* vga = NULL;
         Pic* pic = NULL;
         Kbc* kbc = NULL;

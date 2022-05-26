@@ -3,7 +3,6 @@
 #include "Cpu.h"
 #include "Memory.h"
 #include "IoPort.h"
-#include "Emulator.h"
 
 using namespace std;
 using namespace chrono;
