@@ -1036,12 +1036,12 @@ TEST(CpuTest, CheckUpdateEflagsForInc0){
     Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
 
     uint32_t d = 1;
-    uint32_t result = 1+1;
-    cpu.UpdateEflagsForInc(result, d);
+    uint32_t result = cpu.Inc(d);
     EXPECT_FALSE(cpu.IsFlag(ZF)); 
     EXPECT_FALSE(cpu.IsFlag(PF));
     EXPECT_FALSE(cpu.IsFlag(OF));
     EXPECT_FALSE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint32_t)2);
 }
 
 TEST(CpuTest, CheckUpdateEflagsForInc1){
@@ -1053,12 +1053,12 @@ TEST(CpuTest, CheckUpdateEflagsForInc1){
     Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
 
     uint32_t d = 0xFFFFFFFF;
-    uint32_t result = d+1;
-    cpu.UpdateEflagsForInc(result, d);
+    uint32_t result = cpu.Inc(d);
     EXPECT_TRUE(cpu.IsFlag(ZF)); 
     EXPECT_TRUE(cpu.IsFlag(PF));
     EXPECT_FALSE(cpu.IsFlag(OF));
     EXPECT_FALSE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint32_t)0);
 }
 
 TEST(CpuTest, CheckUpdateEflagsForInc2){
@@ -1070,12 +1070,12 @@ TEST(CpuTest, CheckUpdateEflagsForInc2){
     Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
 
     uint32_t d = 0xFFFFFFFE;
-    uint32_t result = d+1;
-    cpu.UpdateEflagsForInc(result, d);
+    uint32_t result = cpu.Inc(d);
     EXPECT_FALSE(cpu.IsFlag(ZF)); 
     EXPECT_TRUE(cpu.IsFlag(PF));
     EXPECT_FALSE(cpu.IsFlag(OF));
     EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint32_t)0xFFFFFFFF);
 }
 
 TEST(CpuTest, CheckUpdateEflagsForInc3){
@@ -1087,12 +1087,12 @@ TEST(CpuTest, CheckUpdateEflagsForInc3){
     Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
 
     uint32_t d = 0x7FFFFFFF;
-    uint32_t result = d+1;
-    cpu.UpdateEflagsForInc(result, d);
+    uint32_t result = cpu.Inc(d);
     EXPECT_FALSE(cpu.IsFlag(ZF)); 
     EXPECT_TRUE(cpu.IsFlag(PF));
     EXPECT_TRUE(cpu.IsFlag(OF));
     EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint32_t)0x80000000);
 }
 
 TEST(CpuTest, CheckUpdateEflagsForInc4){
@@ -1104,12 +1104,12 @@ TEST(CpuTest, CheckUpdateEflagsForInc4){
     Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
 
     uint16_t d      = 0x0004;
-    uint16_t result = d+1;
-    cpu.UpdateEflagsForInc(result, d);
+    uint16_t result = cpu.Inc(d);
     EXPECT_FALSE(cpu.IsFlag(ZF)); 
     EXPECT_TRUE(cpu.IsFlag(PF));
     EXPECT_FALSE(cpu.IsFlag(OF));
     EXPECT_FALSE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint16_t)5);
 }
 
 TEST(CpuTest, CheckUpdateEflagsForInc5){
@@ -1121,12 +1121,12 @@ TEST(CpuTest, CheckUpdateEflagsForInc5){
     Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
 
     uint16_t d      = 0x7FFF;
-    uint16_t result = d+1;
-    cpu.UpdateEflagsForInc(result, d);
+    uint16_t result = cpu.Inc(d);
     EXPECT_FALSE(cpu.IsFlag(ZF)); 
     EXPECT_TRUE(cpu.IsFlag(PF));
     EXPECT_TRUE(cpu.IsFlag(OF));
     EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint16_t)0x8000);
 }
 
 TEST(CpuTest, CheckUpdateEflagsForInc6){
@@ -1138,12 +1138,12 @@ TEST(CpuTest, CheckUpdateEflagsForInc6){
     Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
 
     uint16_t d      = 0xFFFD;
-    uint16_t result = d+1;
-    cpu.UpdateEflagsForInc(result, d);
+    uint16_t result = cpu.Inc(d);
     EXPECT_FALSE(cpu.IsFlag(ZF)); 
     EXPECT_FALSE(cpu.IsFlag(PF));
     EXPECT_FALSE(cpu.IsFlag(OF));
     EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint16_t)0xFFFE);
 }
 
 TEST(CpuTest, CheckUpdateEflagsForInc7){
@@ -1155,12 +1155,12 @@ TEST(CpuTest, CheckUpdateEflagsForInc7){
     Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
 
     uint8_t d      = 0xFF;
-    uint8_t result = d+1;
-    cpu.UpdateEflagsForInc(result, d);
+    uint8_t result = cpu.Inc(d);
     EXPECT_TRUE(cpu.IsFlag(ZF)); 
     EXPECT_TRUE(cpu.IsFlag(PF));
     EXPECT_FALSE(cpu.IsFlag(OF));
     EXPECT_FALSE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint8_t)0);
 }
 
 TEST(CpuTest, CheckUpdateEflagsForInc8){
@@ -1172,12 +1172,12 @@ TEST(CpuTest, CheckUpdateEflagsForInc8){
     Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
 
     uint8_t d      = 0xFC;
-    uint8_t result = d+1;
-    cpu.UpdateEflagsForInc(result, d);
+    uint8_t result = cpu.Inc(d);
     EXPECT_FALSE(cpu.IsFlag(ZF)); 
     EXPECT_FALSE(cpu.IsFlag(PF));
     EXPECT_FALSE(cpu.IsFlag(OF));
     EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint8_t)0xFD);
 }
 
 TEST(CpuTest, CheckUpdateEflagsForInc9){
@@ -1189,10 +1189,10 @@ TEST(CpuTest, CheckUpdateEflagsForInc9){
     Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
 
     uint8_t d      = 0x7F;
-    uint8_t result = d+1;
-    cpu.UpdateEflagsForInc(result, d);
+    uint8_t result = cpu.Inc(d);
     EXPECT_FALSE(cpu.IsFlag(ZF)); 
     EXPECT_FALSE(cpu.IsFlag(PF));
     EXPECT_TRUE(cpu.IsFlag(OF));
     EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint8_t)0x80);
 }

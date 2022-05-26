@@ -94,7 +94,13 @@ inline uint32_t Cpu::GetEflgs(){
     return this->eflags.raw;
 }
 
-inline template<typename type>void Cpu::UpdateEflagsForInc(type result, type d){
+template<typename type>type Cpu::Inc(type data){
+    this->UpdateEflagsForInc(data);
+    return data+1;
+}
+
+inline template<typename type>void Cpu::UpdateEflagsForInc(type d){
+    type result = (type)(d+1);
     this->UpdateZF(result);
     this->UpdateSF(result);
     this->UpdatePF(result);

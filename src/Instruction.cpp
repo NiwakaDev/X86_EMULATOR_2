@@ -1976,16 +1976,12 @@ void IncR32::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         r32 = cpu.GetR32(register_type);
-        cpu.SetR32(register_type, r32+1);
-        cpu.UpdateEflagsForInc(r32+1, r32);
+        cpu.SetR32(register_type, cpu.Inc(r32));
         return;
     }
     uint16_t r16;
-    uint16_t result;
     r16 = cpu.GetR16(register_type);
-    result = r16 + 1;
-    cpu.SetR16(register_type, result);
-    cpu.UpdateEflagsForInc(result, r16);
+    cpu.SetR16(register_type, cpu.Inc(r16));
     return;
 }
 
@@ -2321,17 +2317,12 @@ void IncRm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         uint32_t rm32;
         rm32 = this->GetRM32(cpu, memory);
-        this->SetRM32(cpu, memory, rm32+1);
-        cpu.UpdateEflagsForInc(rm32+1, rm32);
+        this->SetRM32(cpu, memory, cpu.Inc(rm32));
         return;
     }
     uint16_t rm16;
-    uint16_t result;
-    uint16_t d = 1;
     rm16 = this->GetRM16(cpu, memory);
-    result = rm16+d;
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForInc(result, rm16);
+    this->SetRM16(cpu, memory, cpu.Inc(rm16));
     return;
 }
 
@@ -4642,11 +4633,8 @@ IncRm8::IncRm8(string code_name):Instruction(code_name){
 
 void IncRm8::Run(Cpu& cpu, Memory& memory){
     uint8_t rm8;
-    uint8_t result;
     rm8 = this->GetRM8(cpu, memory);
-    result = rm8 + 1;
-    this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForInc(result, rm8);
+    this->SetRM8(cpu, memory, cpu.Inc(rm8));
     return;
 }
 
