@@ -3229,15 +3229,12 @@ AdcRm8R8::AdcRm8R8(string code_name):Instruction(code_name){
 void AdcRm8R8::Run(Cpu& cpu, Memory& memory){
     uint8_t rm8, r8;
     uint8_t cf;
-    uint16_t result;
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
     rm8 = this->GetRM8(cpu, memory);
     r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     cf  = cpu.IsFlag(CF)?1:0;
-    result = (uint16_t)rm8+(uint16_t)r8+(uint16_t)cf;
-    this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAdc(rm8, r8, cf);
+    this->SetRM8(cpu, memory, cpu.Adc(rm8, r8, cf));
     return;
 }
 
@@ -4470,13 +4467,10 @@ void AdcRm32Imm8::Run(Cpu& cpu, Memory& memory){
     }
     uint16_t imm8;
     uint16_t rm16;
-    uint32_t result;
     uint16_t cf = cpu.IsFlag(CF)?1:0;
     rm16 = this->GetRM16(cpu, memory);
     imm8 = (int16_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
-    result = (uint32_t)imm8 + (uint32_t)rm16+(uint32_t)cf;
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAdc(rm16, imm8, cf);
+    this->SetRM16(cpu, memory, cpu.Adc(rm16, imm8, cf));
     cpu.AddEip(1);
     return;
 }
@@ -4509,9 +4503,7 @@ void AdcRm32R32::Run(Cpu& cpu, Memory& memory){
     uint16_t rm16   = this->GetRM16(cpu, memory);
     uint16_t r16    = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     uint16_t cf     = cpu.IsFlag(CF)?1:0;
-    uint32_t result = (uint32_t)rm16+(uint32_t)r16+(uint32_t)cf;
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAdc(rm16, r16, cf);
+    this->SetRM16(cpu, memory, cpu.Adc(rm16, r16, cf));
 }
 
 LodsM8::LodsM8(string code_name):Instruction(code_name){
@@ -4779,13 +4771,10 @@ void AdcR32Rm32::Run(Cpu& cpu, Memory& memory){
     this->ParseModRM(cpu, memory);
     uint16_t r16;
     uint16_t rm16;
-    uint32_t result;
     uint16_t cf = cpu.IsFlag(CF)?1:0;
     r16 = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     rm16 = this->GetRM16(cpu, memory);
-    result = (uint32_t)r16+ (uint32_t)rm16+(uint32_t)cf;
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAdc(r16, rm16, cf);
+    this->SetRM16(cpu, memory, cpu.Adc(r16, rm16, cf));
     return;
 }
 
@@ -6019,14 +6008,11 @@ AdcRm8Imm8::AdcRm8Imm8(string code_name):Instruction(code_name){
 void AdcRm8Imm8::Run(Cpu& cpu, Memory& memory){
     uint8_t rm8, imm8;
     uint8_t cf;
-    uint16_t result;
     rm8 = this->GetRM8(cpu, memory);
     imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
     cf  = cpu.IsFlag(CF)?1:0;
-    result = (uint16_t)rm8+(uint16_t)imm8+(uint16_t)cf;
-    this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAdc(rm8, imm8, cf);
+    this->SetRM8(cpu, memory, cpu.Adc(rm8, imm8, cf));
     return;
 }
 
@@ -6189,13 +6175,10 @@ void AdcEaxImm32::Run(Cpu& cpu, Memory& memory){
     }
     uint16_t imm16;
     uint16_t ax;
-    uint32_t result;
     uint16_t cf = cpu.IsFlag(CF)?1:0;
     ax = cpu.GetR16(EAX);
     imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
-    result = (uint32_t)imm16 + (uint32_t)ax+(uint32_t)cf;
-    cpu.SetR16(EAX, result);
-    cpu.UpdateEflagsForAdc(ax, imm16, cf);
+    cpu.SetR16(EAX, cpu.Adc(ax, imm16, cf));
     cpu.AddEip(2);
     return;
 }

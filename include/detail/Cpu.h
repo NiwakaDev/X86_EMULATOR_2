@@ -120,6 +120,11 @@ inline template<typename type>void Cpu::UpdateEflagsForDec(type result, type d1,
     }
 }
 
+inline template<typename type>type Cpu::Adc(type data1, type data2, type carry){
+    this->UpdateEflagsForAdc(data1, data2, carry);
+    return data1+data2+carry;
+}
+
 inline template<typename type>type Cpu::Add(type data1, type data2){
     this->UpdateEflagsForAdd(data1, data2);
     return data1+data2;

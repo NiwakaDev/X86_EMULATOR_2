@@ -731,12 +731,14 @@ TEST(CpuTest, CheckAdc0){
     uint8_t d1 = 0xFF;
     uint8_t d2 = 0xFF;
     uint8_t c  = 0x01;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+
+    uint8_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)0xFF);
 }
 
 TEST(CpuTest, CheckAdc1){
@@ -750,12 +752,13 @@ TEST(CpuTest, CheckAdc1){
     uint8_t d1 = 0x80;
     uint8_t d2 = 0x80;
     uint8_t c  = 0x01;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint8_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_TRUE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)1);
 }
 
 TEST(CpuTest, CheckAdc2){
@@ -769,12 +772,13 @@ TEST(CpuTest, CheckAdc2){
     uint8_t d1 = 0x80;
     uint8_t d2 = 0x00;
     uint8_t c  = 0x01;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint8_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)0x81);
 }
 
 TEST(CpuTest, CheckAdc3){
@@ -788,12 +792,13 @@ TEST(CpuTest, CheckAdc3){
     uint8_t d1 = 0xFF;
     uint8_t d2 = 0x01;
     uint8_t c  = 0x01;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint8_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)1);
 }
 
 TEST(CpuTest, CheckAdc4){
@@ -807,12 +812,13 @@ TEST(CpuTest, CheckAdc4){
     uint8_t d1 = 0xFF;
     uint8_t d2 = 0xFF;
     uint8_t c  = 0x00;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint8_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)0xFE);
 }
 
 TEST(CpuTest, CheckAdc5){
@@ -826,12 +832,13 @@ TEST(CpuTest, CheckAdc5){
     uint16_t d1 = 0xFFFF;
     uint16_t d2 = 0xFFFF;
     uint16_t c  = 0x0001;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint16_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)0xFFFF);
 }
 
 TEST(CpuTest, CheckAdc6){
@@ -845,12 +852,13 @@ TEST(CpuTest, CheckAdc6){
     uint16_t d1 = 0x8000;
     uint16_t d2 = 0x8000;
     uint16_t c  = 0x0001;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint16_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_TRUE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)1);
 }
 
 TEST(CpuTest, CheckAdc7){
@@ -864,12 +872,13 @@ TEST(CpuTest, CheckAdc7){
     uint16_t d1 = 0x8000;
     uint16_t d2 = 0x0000;
     uint16_t c  = 0x0001;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint16_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)0x8001);
 }
 
 TEST(CpuTest, CheckAdc8){
@@ -883,12 +892,13 @@ TEST(CpuTest, CheckAdc8){
     uint16_t d1 = 0xFFFF;
     uint16_t d2 = 0x0001;
     uint16_t c  = 0x0001;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint16_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)1);
 }
 
 TEST(CpuTest, CheckAdc9){
@@ -902,12 +912,13 @@ TEST(CpuTest, CheckAdc9){
     uint16_t d1 = 0xFFFF;
     uint16_t d2 = 0xFFFF;
     uint16_t c  = 0x0000;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint16_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)0xFFFE);
 }
 
 TEST(CpuTest, CheckAdc10){
@@ -921,12 +932,13 @@ TEST(CpuTest, CheckAdc10){
     uint32_t d1 = 0xFFFFFFFF;
     uint32_t d2 = 0xFFFFFFFF;
     uint32_t c  = 0x00000001;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint32_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_TRUE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)0xFFFFFFFF);
 }
 
 TEST(CpuTest, CheckAdc11){
@@ -940,12 +952,13 @@ TEST(CpuTest, CheckAdc11){
     uint32_t d1 = 0x80000000;
     uint32_t d2 = 0x80000000;
     uint32_t c  = 0x00000001;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint32_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_TRUE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)0x00000001);
 }
 
 TEST(CpuTest, CheckAdc12){
@@ -959,12 +972,13 @@ TEST(CpuTest, CheckAdc12){
     uint32_t d1 = 0x80000000;
     uint32_t d2 = 0x00000000;
     uint32_t c  = 0x00000001;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint32_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_FALSE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)0x80000001);
 }
 
 TEST(CpuTest, CheckAdc13){
@@ -978,12 +992,13 @@ TEST(CpuTest, CheckAdc13){
     uint32_t d1 = 0xFFFFFFFF;
     uint32_t d2 = 0x00000001;
     uint32_t c  = 0x00000001;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint32_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_FALSE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)1);
 }
 
 TEST(CpuTest, CheckAdc14){
@@ -997,12 +1012,13 @@ TEST(CpuTest, CheckAdc14){
     uint16_t d1 = 0xFFFFFFFF;
     uint16_t d2 = 0xFFFFFFFF;
     uint16_t c  = 0x00000000;
-    cpu.UpdateEflagsForAdc(d1, d2, c);
+    uint16_t result = cpu.Adc(d1, d2, c);
     EXPECT_FALSE(cpu.IsFlag(ZF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_FALSE(cpu.IsFlag(PF)); 
     EXPECT_TRUE(cpu.IsFlag(CF)); 
     EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)0xFFFFFFFE);
 }
 //INC命令により影響を受けるフラグ
 //OF
