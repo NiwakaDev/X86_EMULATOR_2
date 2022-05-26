@@ -121,7 +121,8 @@ inline template<typename type>void Cpu::UpdateEflagsForDec(type result, type d1,
 }
 
 inline template<typename type>type Cpu::Add(type data1, type data2){
-    return 0;
+    this->UpdateEflagsForAdd(data1, data2);
+    return data1+data2;
 }
 
 inline template<typename type>type Cpu::Sub(type data1, type data2){
