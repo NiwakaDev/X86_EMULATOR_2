@@ -129,6 +129,7 @@ class Cpu{
         Tss*     GetCurrentTss();
         uint32_t GetBaseAddr(SEGMENT_REGISTER register_type);
         template<typename type>type Inc(type data);
+        template<typename type>type Dec(type data);
         template<typename type>type Adc(type data1, type data2, type carry);
         template<typename type>type Add(type data1, type data2);
         template<typename type>type Sub(type data1, type data2);

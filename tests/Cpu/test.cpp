@@ -1027,7 +1027,7 @@ TEST(CpuTest, CheckAdc14){
 //PF
 //AF
 //ただしAFは実装しない
-TEST(CpuTest, CheckUpdateEflagsForInc0){
+TEST(CpuTest, CheckInc0){
     auto MockIoIn8    = [&](uint16_t addr){return 0;};
     auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
     auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
@@ -1044,7 +1044,7 @@ TEST(CpuTest, CheckUpdateEflagsForInc0){
     EXPECT_EQ(result, (uint32_t)2);
 }
 
-TEST(CpuTest, CheckUpdateEflagsForInc1){
+TEST(CpuTest, CheckInc1){
     auto MockIoIn8    = [&](uint16_t addr){return 0;};
     auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
     auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
@@ -1061,7 +1061,7 @@ TEST(CpuTest, CheckUpdateEflagsForInc1){
     EXPECT_EQ(result, (uint32_t)0);
 }
 
-TEST(CpuTest, CheckUpdateEflagsForInc2){
+TEST(CpuTest, CheckInc2){
     auto MockIoIn8    = [&](uint16_t addr){return 0;};
     auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
     auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
@@ -1078,7 +1078,7 @@ TEST(CpuTest, CheckUpdateEflagsForInc2){
     EXPECT_EQ(result, (uint32_t)0xFFFFFFFF);
 }
 
-TEST(CpuTest, CheckUpdateEflagsForInc3){
+TEST(CpuTest, CheckInc3){
     auto MockIoIn8    = [&](uint16_t addr){return 0;};
     auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
     auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
@@ -1095,7 +1095,7 @@ TEST(CpuTest, CheckUpdateEflagsForInc3){
     EXPECT_EQ(result, (uint32_t)0x80000000);
 }
 
-TEST(CpuTest, CheckUpdateEflagsForInc4){
+TEST(CpuTest, CheckInc4){
     auto MockIoIn8    = [&](uint16_t addr){return 0;};
     auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
     auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
@@ -1112,7 +1112,7 @@ TEST(CpuTest, CheckUpdateEflagsForInc4){
     EXPECT_EQ(result, (uint16_t)5);
 }
 
-TEST(CpuTest, CheckUpdateEflagsForInc5){
+TEST(CpuTest, CheckInc5){
     auto MockIoIn8    = [&](uint16_t addr){return 0;};
     auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
     auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
@@ -1129,7 +1129,7 @@ TEST(CpuTest, CheckUpdateEflagsForInc5){
     EXPECT_EQ(result, (uint16_t)0x8000);
 }
 
-TEST(CpuTest, CheckUpdateEflagsForInc6){
+TEST(CpuTest, CheckInc6){
     auto MockIoIn8    = [&](uint16_t addr){return 0;};
     auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
     auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
@@ -1146,7 +1146,7 @@ TEST(CpuTest, CheckUpdateEflagsForInc6){
     EXPECT_EQ(result, (uint16_t)0xFFFE);
 }
 
-TEST(CpuTest, CheckUpdateEflagsForInc7){
+TEST(CpuTest, CheckInc7){
     auto MockIoIn8    = [&](uint16_t addr){return 0;};
     auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
     auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
@@ -1163,7 +1163,7 @@ TEST(CpuTest, CheckUpdateEflagsForInc7){
     EXPECT_EQ(result, (uint8_t)0);
 }
 
-TEST(CpuTest, CheckUpdateEflagsForInc8){
+TEST(CpuTest, CheckInc8){
     auto MockIoIn8    = [&](uint16_t addr){return 0;};
     auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
     auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
@@ -1180,7 +1180,7 @@ TEST(CpuTest, CheckUpdateEflagsForInc8){
     EXPECT_EQ(result, (uint8_t)0xFD);
 }
 
-TEST(CpuTest, CheckUpdateEflagsForInc9){
+TEST(CpuTest, CheckInc9){
     auto MockIoIn8    = [&](uint16_t addr){return 0;};
     auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
     auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
@@ -1195,4 +1195,164 @@ TEST(CpuTest, CheckUpdateEflagsForInc9){
     EXPECT_TRUE(cpu.IsFlag(OF));
     EXPECT_TRUE(cpu.IsFlag(SF));
     EXPECT_EQ(result, (uint8_t)0x80);
+}
+
+//INC命令により影響を受けるフラグ
+//OF
+//SF
+//ZF
+//PF
+//AF
+//ただしAFは実装しない。CFフラグは影響を受けない。
+TEST(CpuTest, CheckDec0){
+    auto MockIoIn8    = [&](uint16_t addr){return 0;};
+    auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
+    auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+    int size = 1024*1024;
+    Memory memory(size);
+    Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
+
+    uint8_t d      = 0x00;
+    uint8_t result = cpu.Dec(d);
+    EXPECT_FALSE(cpu.IsFlag(ZF)); 
+    EXPECT_TRUE(cpu.IsFlag(PF));
+    EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint8_t)0xFF);
+}
+
+TEST(CpuTest, CheckDec1){
+    auto MockIoIn8    = [&](uint16_t addr){return 0;};
+    auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
+    auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+    int size = 1024*1024;
+    Memory memory(size);
+    Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
+
+    uint16_t d      = 0x0000;
+    uint16_t result = cpu.Dec(d);
+    EXPECT_FALSE(cpu.IsFlag(ZF)); 
+    EXPECT_TRUE(cpu.IsFlag(PF));
+    EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint16_t)0xFFFF);
+}
+
+TEST(CpuTest, CheckDec2){
+    auto MockIoIn8    = [&](uint16_t addr){return 0;};
+    auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
+    auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+    int size = 1024*1024;
+    Memory memory(size);
+    Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
+
+    uint32_t d      = 0x00000000;
+    uint32_t result = cpu.Dec(d);
+    EXPECT_FALSE(cpu.IsFlag(ZF)); 
+    EXPECT_TRUE(cpu.IsFlag(PF));
+    EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint32_t)0xFFFFFFFF);
+}
+
+TEST(CpuTest, CheckDec3){
+    auto MockIoIn8    = [&](uint16_t addr){return 0;};
+    auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
+    auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+    int size = 1024*1024;
+    Memory memory(size);
+    Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
+
+    uint8_t d      = 0xFF;
+    uint8_t result = cpu.Dec(d);
+    EXPECT_FALSE(cpu.IsFlag(ZF)); 
+    EXPECT_FALSE(cpu.IsFlag(PF));
+    EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint8_t)0xFE);
+}
+
+TEST(CpuTest, CheckDec4){
+    auto MockIoIn8    = [&](uint16_t addr){return 0;};
+    auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
+    auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+    int size = 1024*1024;
+    Memory memory(size);
+    Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
+
+    uint16_t d      = 0xFFFF;
+    uint16_t result = cpu.Dec(d);
+    EXPECT_FALSE(cpu.IsFlag(ZF)); 
+    EXPECT_FALSE(cpu.IsFlag(PF));
+    EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint16_t)0xFFFE);
+}
+
+TEST(CpuTest, CheckDec5){
+    auto MockIoIn8    = [&](uint16_t addr){return 0;};
+    auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
+    auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+    int size = 1024*1024;
+    Memory memory(size);
+    Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
+
+    uint32_t d      = 0xFFFFFFFF;
+    uint32_t result = cpu.Dec(d);
+    EXPECT_FALSE(cpu.IsFlag(ZF)); 
+    EXPECT_FALSE(cpu.IsFlag(PF));
+    EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_TRUE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint32_t)0xFFFFFFFE);
+}
+
+TEST(CpuTest, CheckDec6){
+    auto MockIoIn8    = [&](uint16_t addr){return 0;};
+    auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
+    auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+    int size = 1024*1024;
+    Memory memory(size);
+    Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
+
+    uint8_t d      = 0x01;
+    uint8_t result = cpu.Dec(d);
+    EXPECT_TRUE(cpu.IsFlag(ZF)); 
+    EXPECT_TRUE(cpu.IsFlag(PF));
+    EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_FALSE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint8_t)0x00);
+}
+
+TEST(CpuTest, CheckDec7){
+    auto MockIoIn8    = [&](uint16_t addr){return 0;};
+    auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
+    auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+    int size = 1024*1024;
+    Memory memory(size);
+    Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
+
+    uint16_t d      = 0x0001;
+    uint16_t result = cpu.Dec(d);
+    EXPECT_TRUE(cpu.IsFlag(ZF)); 
+    EXPECT_TRUE(cpu.IsFlag(PF));
+    EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_FALSE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint8_t)0x0000);
+}
+
+TEST(CpuTest, CheckDec8){
+    auto MockIoIn8    = [&](uint16_t addr){return 0;};
+    auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
+    auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+    int size = 1024*1024;
+    Memory memory(size);
+    Cpu cpu(MockBiosCall, memory, MockIoIn8, MockIoOut8);
+
+    uint32_t d      = 0x00000001;
+    uint32_t result = cpu.Dec(d);
+    EXPECT_TRUE(cpu.IsFlag(ZF)); 
+    EXPECT_TRUE(cpu.IsFlag(PF));
+    EXPECT_FALSE(cpu.IsFlag(OF));
+    EXPECT_FALSE(cpu.IsFlag(SF));
+    EXPECT_EQ(result, (uint32_t)0x00000000);
 }

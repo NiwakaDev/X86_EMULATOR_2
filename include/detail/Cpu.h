@@ -107,6 +107,12 @@ inline template<typename type>void Cpu::UpdateEflagsForInc(type d){
     this->UpdateOF_Add(result, d, (type)1);
 }
 
+template<typename type>type Cpu::Dec(type data){
+    type result = (type)(data-1);
+    this->UpdateEflagsForDec(result, data, (type)1);
+    return result;
+}
+
 inline template<typename type>void Cpu::UpdateEflagsForDec(type result, type d1, type d2){
     this->UpdateZF(result);
     this->UpdateSF(result);

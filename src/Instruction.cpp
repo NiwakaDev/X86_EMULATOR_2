@@ -2326,25 +2326,15 @@ DecR32::DecR32(string code_name):Instruction(code_name){
 }
 
 void DecR32::Run(Cpu& cpu, Memory& memory){
-    if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t r32;
-        uint32_t result;
-        GENERAL_PURPOSE_REGISTER32 register_type = (GENERAL_PURPOSE_REGISTER32)(memory.Read8(cpu.GetLinearAddrForCodeAccess())-0x48);
-        cpu.AddEip(1);
-        r32 = cpu.GetR32(register_type);
-        result = r32 - 1;
-        cpu.SetR32(register_type, result);
-        cpu.UpdateEflagsForDec(result, r32, (uint32_t)0xFFFFFFFF);
-        return;
-    }
-    uint16_t r16;
-    uint16_t result;
     GENERAL_PURPOSE_REGISTER32 register_type = (GENERAL_PURPOSE_REGISTER32)(memory.Read8(cpu.GetLinearAddrForCodeAccess())-0x48);
     cpu.AddEip(1);
-    r16 = cpu.GetR16(register_type);
-    result = r16 - 1;
-    cpu.SetR16(register_type, result);
-    cpu.UpdateEflagsForDec(result, r16, (uint16_t)0xFFFF);
+    if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
+        uint32_t r32 = cpu.GetR32(register_type);
+        cpu.SetR32(register_type, cpu.Dec(r32));
+        return;
+    }
+    uint16_t r16 = cpu.GetR16(register_type);
+    cpu.SetR16(register_type, cpu.Dec(r16));
     return;
 }
 
@@ -2793,16 +2783,11 @@ DecRm32::DecRm32(string code_name):Instruction(code_name){
 void DecRm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         uint32_t rm32 = this->GetRM32(cpu, memory);
-        uint32_t result = rm32 - 1;
-        this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForDec(result, rm32, (uint32_t)0xFFFFFFFF);
+        this->SetRM32(cpu, memory, cpu.Dec(rm32));
         return;
     }
-    uint16_t d = 0xFFFF;
     uint16_t rm16 = this->GetRM16(cpu, memory);
-    uint16_t result = rm16+d;
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForDec(result, rm16, d);
+    this->SetRM16(cpu, memory, cpu.Dec(rm16));
     return;
 }
 
@@ -2992,13 +2977,8 @@ DecRm8::DecRm8(string code_name):Instruction(code_name){
 }
 
 void DecRm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t r8;
-    uint8_t result;
-    uint8_t d = 0xFF;
-    r8 = this->GetRM8(cpu, memory);
-    result = r8 - 1;
-    this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForDec(result, r8, d);
+    uint8_t r8 = this->GetRM8(cpu, memory);
+    this->SetRM8(cpu, memory, cpu.Dec(r8));
 }
 
 OrRm32Imm32::OrRm32Imm32(string code_name):Instruction(code_name){
