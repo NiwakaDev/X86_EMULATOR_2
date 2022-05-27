@@ -137,6 +137,11 @@ inline template<typename type>type Cpu::Adc(type data1, type data2, type carry){
     return data1+data2+carry;
 }
 
+inline template<typename type>type Cpu::And(type data1, type data2){
+    this->UpdateEflagsForAnd((type)(data1&data2));
+    return data1&data2;
+}
+
 inline template<typename type>type Cpu::Add(type data1, type data2){
     this->UpdateEflagsForAdd(data1, data2);
     return data1+data2;

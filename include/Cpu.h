@@ -133,6 +133,7 @@ class Cpu{
         template<typename type>type Adc(type data1, type data2, type carry);
         template<typename type>type Add(type data1, type data2);
         template<typename type>type Sub(type data1, type data2);
+        template<typename type>type And(type data1, type data2);
         template<typename type>void UpdateEflagsForDec(type result, type d1, type d2);
         template<typename type>void UpdateEflagsForShr(type result);
         void UpdateZF(uint32_t result);

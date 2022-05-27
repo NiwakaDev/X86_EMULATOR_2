@@ -1565,14 +1565,10 @@ AndAlImm8::AndAlImm8(string code_name):Instruction(code_name){
 }
 
 void AndAlImm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t imm8;
-    uint8_t result;
     cpu.AddEip(1);
-    imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+    uint8_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
-    result = cpu.GetR8L(EAX)&imm8;
-    cpu.SetR8L(EAX, result);
-    cpu.UpdateEflagsForAnd(result);
+    cpu.SetR8L(EAX, cpu.And(cpu.GetR8L(EAX), imm8));
     return;
 }
 
@@ -1650,26 +1646,16 @@ AndEaxImm32::AndEaxImm32(string code_name):Instruction(code_name){
 void AndEaxImm32::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t imm32;
-        uint32_t result;
-        uint32_t eax;
-        imm32 = memory.Read32(cpu.GetLinearAddrForCodeAccess());
+        uint32_t imm32 = memory.Read32(cpu.GetLinearAddrForCodeAccess());
         cpu.AddEip(4);
-        eax = cpu.GetR32(EAX);
-        result = eax & imm32;
-        cpu.SetR32(EAX, result);
-        cpu.UpdateEflagsForAnd(result);
+        uint32_t eax = cpu.GetR32(EAX);
+        cpu.SetR32(EAX, cpu.And(eax, imm32));
         return;
     }
-    uint16_t imm16;
-    uint16_t result;
-    uint16_t ax;
-    imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
+    uint16_t imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(2);
-    ax = cpu.GetR16(EAX);
-    result = ax & imm16;
-    cpu.SetR16(EAX, result);
-    cpu.UpdateEflagsForAnd(result);
+    uint16_t ax = cpu.GetR16(EAX);
+    cpu.SetR16(EAX, cpu.And(ax, imm16));
     return;
 }
 
@@ -2011,22 +1997,14 @@ AndRm32Imm8::AndRm32Imm8(string code_name):Instruction(code_name){
 
 void AndRm32Imm8::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t imm8;
-        uint32_t result;
-        imm8 = (int32_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
+        uint32_t imm8 = (int32_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
         cpu.AddEip(1);
-        result = imm8 & this->GetRM32(cpu, memory);
-        this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForAnd(result);
+        this->SetRM32(cpu, memory, cpu.And(imm8, this->GetRM32(cpu, memory)));
         return;
     }
-    uint16_t imm8;
-    uint16_t result;
-    imm8 = (int16_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
+    uint16_t imm8 = (int16_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
     cpu.AddEip(1);
-    result = imm8 & this->GetRM16(cpu, memory);
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);
+    this->SetRM16(cpu, memory, cpu.And(imm8, this->GetRM16(cpu, memory)));
     return;
 }
 
@@ -2343,15 +2321,11 @@ TestRm8R8::TestRm8R8(string code_name):Instruction(code_name){
 }
 
 void TestRm8R8::Run(Cpu& cpu, Memory& memory){
-    uint8_t r8;
-    uint8_t rm8;
-    uint8_t result;
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
-    rm8 = this->GetRM8(cpu, memory);
-    r8  = cpu.GetR8(this->modrm.reg_index); 
-    result = rm8 & r8;
-    cpu.UpdateEflagsForAnd(result);
+    uint8_t rm8 = this->GetRM8(cpu, memory);
+    uint8_t r8  = cpu.GetR8(this->modrm.reg_index); 
+    cpu.And(rm8, r8);
     return;
 }
 
@@ -2384,26 +2358,16 @@ AndRm32Imm32::AndRm32Imm32(string code_name):Instruction(code_name){
 
 void AndRm32Imm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t imm32;
-        uint32_t result;
-        uint32_t rm32;
-        imm32 = memory.Read32(cpu.GetLinearAddrForCodeAccess());
+        uint32_t imm32 = memory.Read32(cpu.GetLinearAddrForCodeAccess());
         cpu.AddEip(4);
-        rm32 = this->GetRM32(cpu, memory);
-        result = rm32 & imm32;
-        this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForAnd(result);
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        this->SetRM32(cpu, memory, cpu.And(rm32, imm32));
         return;
     }
-    uint16_t imm16;
-    uint16_t result;
-    uint16_t rm16;
-    imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
+    uint16_t imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(2);
-    rm16 = this->GetRM16(cpu, memory);
-    result = rm16 & imm16;
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    this->SetRM16(cpu, memory, cpu.And(rm16, imm16));
     return;
 }
 
@@ -2480,13 +2444,9 @@ AndR8Rm8::AndR8Rm8(string code_name):Instruction(code_name){
 }
 
 void AndR8Rm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8;
-    uint8_t result;
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
-    result = cpu.GetR8(this->modrm.reg_index) & this->GetRM8(cpu, memory);
-    cpu.SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
-    cpu.UpdateEflagsForAnd(result);
+    cpu.SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, cpu.And(cpu.GetR8(this->modrm.reg_index), this->GetRM8(cpu, memory)));
 }
 
 XchgR32Rm32::XchgR32Rm32(string code_name):Instruction(code_name){
@@ -2519,22 +2479,14 @@ void TestRm32R32::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t r32;
-        uint32_t rm32;
-        uint32_t result;
-        rm32 = this->GetRM32(cpu, memory);
-        r32  = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index); 
-        result = rm32 & r32;
-        cpu.UpdateEflagsForAnd(result);
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        uint32_t r32  = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index); 
+        cpu.And(rm32, r32);
         return;
     }
-    uint16_t r16;
-    uint16_t rm16;
-    uint16_t result;
-    rm16 = this->GetRM16(cpu, memory);
-    r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index); 
-    result = rm16 & r16;
-    cpu.UpdateEflagsForAnd(result);
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    uint16_t r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index); 
+    cpu.And(rm16, r16);
     return;
 }
 
@@ -3044,14 +2996,13 @@ TestEaxImm32::TestEaxImm32(string code_name):Instruction(code_name){
 void TestEaxImm32::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        cpu.UpdateEflagsForAnd(cpu.GetR32(EAX)&memory.Read32(cpu.GetLinearAddrForCodeAccess()));
+        cpu.And(cpu.GetR32(EAX), memory.Read32(cpu.GetLinearAddrForCodeAccess()));
         cpu.AddEip(4);
         return;
     }
     uint16_t ax = cpu.GetR16(EAX);
     uint16_t imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
-    uint16_t result = ax&imm16;
-    cpu.UpdateEflagsForAnd(result);
+    cpu.And(ax, imm16);
     cpu.AddEip(2);
     return;
 }
@@ -3354,22 +3305,16 @@ TestRm32Imm32::TestRm32Imm32(string code_name):Instruction(code_name){
 
 void TestRm32Imm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        uint32_t imm32;
-        rm32 = this->GetRM32(cpu, memory);
-        imm32 = memory.Read32(cpu.GetLinearAddrForCodeAccess());
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        uint32_t imm32 = memory.Read32(cpu.GetLinearAddrForCodeAccess());
         cpu.AddEip(4);
-        cpu.UpdateEflagsForAnd(rm32&imm32);
+        cpu.And(rm32, imm32);
         return;
     }
-    uint16_t rm16;
-    uint16_t imm16;
-    uint16_t result;
-    rm16 = this->GetRM16(cpu, memory);
-    imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    uint16_t imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(2);
-    result = rm16&imm16;
-    cpu.UpdateEflagsForAnd(result);
+    cpu.And(rm16, imm16);
     return;
 }
 
@@ -3389,13 +3334,9 @@ AndRm8R8::AndRm8R8(string code_name):Instruction(code_name){
 void AndRm8R8::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
-    uint8_t rm8, r8;
-    uint8_t result;
-    rm8 = this->GetRM8(cpu, memory);
-    r8 = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = rm8&r8;
-    this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);
+    uint8_t rm8 = this->GetRM8(cpu, memory);
+    uint8_t r8 = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    this->SetRM8(cpu, memory, cpu.And(rm8, r8));
     return;
 }
 
@@ -3687,14 +3628,10 @@ TestRm8Imm8::TestRm8Imm8(string code_name):Instruction(code_name){
 }
 
 void TestRm8Imm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8;
-    uint8_t imm8;
-    uint8_t result;
-    imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+    uint8_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
-    rm8  = this->GetRM8(cpu, memory);
-    result = rm8 & imm8;
-    cpu.UpdateEflagsForAnd(result);
+    uint8_t rm8  = this->GetRM8(cpu, memory);
+    cpu.And(rm8, imm8);
     return;
 }
 
@@ -4185,24 +4122,14 @@ void AndRm32R32::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t r32;
-        uint32_t result;
-        uint32_t rm32;
-        r32 = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-        rm32 = this->GetRM32(cpu, memory);
-        result = rm32 & r32;
-        this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForAnd(result);
+        uint32_t r32 = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        this->SetRM32(cpu, memory, cpu.And(rm32, r32));
         return;
     }
-    uint16_t r16;
-    uint16_t result;
-    uint16_t rm16;
-    r16 = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    rm16 = this->GetRM16(cpu, memory);
-    result = rm16 & r16;
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);
+    uint16_t r16 = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    this->SetRM16(cpu, memory, cpu.And(rm16, r16));
     return;
 }
 
@@ -4258,24 +4185,14 @@ void AndR32Rm32::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t r32;
-        uint32_t result;
-        uint32_t rm32;
-        r32 = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-        rm32 = this->GetRM32(cpu, memory);
-        result = rm32 & r32;
-        cpu.SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
-        cpu.UpdateEflagsForAnd(result);
+        uint32_t r32 = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        cpu.SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, cpu.And(rm32, r32));
         return;
     }
-    uint16_t r16;
-    uint16_t result;
-    uint16_t rm16;
-    r16 = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    rm16 = this->GetRM16(cpu, memory);
-    result = rm16 & r16;
-    cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
-    cpu.UpdateEflagsForAnd(result);
+    uint16_t r16 = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, cpu.And(rm16, r16));
     return;
 }
 
@@ -4706,14 +4623,10 @@ AndRm8Imm8::AndRm8Imm8(string code_name):Instruction(code_name){
 }
 
 void AndRm8Imm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8, imm8;
-    uint8_t result;
-    rm8 = this->GetRM8(cpu, memory);
-    imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+    uint8_t rm8 = this->GetRM8(cpu, memory);
+    uint8_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
-    result = rm8&imm8;
-    this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);
+    this->SetRM8(cpu, memory, cpu.And(rm8, imm8));
     return;
 }
 
@@ -5244,15 +5157,11 @@ TestAlImm8::TestAlImm8(string code_name):Instruction(code_name){
 }
 
 void TestAlImm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t al;
-    uint8_t imm8;
-    uint8_t result;
     cpu.AddEip(1);
-    al = cpu.GetR8L(EAX);
-    imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+    uint8_t al = cpu.GetR8L(EAX);
+    uint8_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
-    result = al & imm8;
-    cpu.UpdateEflagsForAnd(result);
+    cpu.And(al, imm8);
     return;
 }
 
