@@ -1667,24 +1667,18 @@ void OrRm32Imm8::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         uint32_t rm32;
         uint32_t imm8;
-        uint32_t result;
         rm32 = this->GetRM32(cpu, memory);
         imm8 = (int32_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
         cpu.AddEip(1);
-        result = rm32|imm8;
-        this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+        this->SetRM32(cpu, memory, cpu.Or(rm32, imm8));
         return;
     }
     uint16_t rm16;
     uint16_t imm8;
-    uint16_t result;
     rm16 = this->GetRM16(cpu, memory);
     imm8 = (int16_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
     cpu.AddEip(1);
-    result = rm16|imm8;
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    this->SetRM16(cpu, memory, cpu.Or(rm16, imm8));
     return;
 }
 
@@ -2603,22 +2597,16 @@ void OrRm32R32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         uint32_t rm32;
         uint32_t r32;
-        uint32_t result;
         rm32 = this->GetRM32(cpu, memory);
         r32  = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-        result = rm32 | r32;
-        this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+        this->SetRM32(cpu, memory, cpu.Or(rm32, r32));
         return;
     }
     uint16_t rm16;
     uint16_t r16;
-    uint16_t result;
     rm16 = this->GetRM16(cpu, memory);
     r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = rm16 | r16;
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    this->SetRM16(cpu, memory, cpu.Or(rm16, r16));
     return;
 }
 
@@ -2939,18 +2927,16 @@ OrRm32Imm32::OrRm32Imm32(string code_name):Instruction(code_name){
 
 void OrRm32Imm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t result;
-        result = this->GetRM32(cpu, memory)|memory.Read32(cpu.GetLinearAddrForCodeAccess());
+        uint32_t rm32  = this->GetRM32(cpu, memory);
+        uint32_t imm32 = memory.Read32(cpu.GetLinearAddrForCodeAccess());
         cpu.AddEip(4);
-        this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForAnd(result);  
+        this->SetRM32(cpu, memory, cpu.Or(rm32, imm32));
         return;
     }
-    uint16_t result;
-    result = this->GetRM16(cpu, memory)|memory.Read16(cpu.GetLinearAddrForCodeAccess());
+    uint16_t rm16  = this->GetRM16(cpu, memory);
+    uint16_t imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(2);
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);  
+    this->SetRM16(cpu, memory, cpu.Or(rm16, imm16));
     return;
 }
 
@@ -3014,18 +3000,16 @@ OrEaxImm32::OrEaxImm32(string code_name):Instruction(code_name){
 void OrEaxImm32::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t result;
-        result = cpu.GetR32(EAX) | memory.Read32(cpu.GetLinearAddrForCodeAccess());
+        uint32_t eax   = cpu.GetR32(EAX);
+        uint32_t imm32 = memory.Read32(cpu.GetLinearAddrForCodeAccess());
         cpu.AddEip(4);
-        cpu.SetR32(EAX, result);
-        cpu.UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+        cpu.SetR32(EAX, cpu.Or(eax, imm32));
         return;
     }
-    uint16_t result;
-    result = cpu.GetR16(EAX) | memory.Read16(cpu.GetLinearAddrForCodeAccess());
+    uint16_t ax    = cpu.GetR16(EAX);
+    uint16_t imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(2);
-    cpu.SetR16(EAX, result);
-    cpu.UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    cpu.SetR16(EAX, cpu.Or(ax, imm16));
     return;
 }
 
@@ -4536,14 +4520,9 @@ OrRm8R8::OrRm8R8(string code_name):Instruction(code_name){
 void OrRm8R8::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
-    uint8_t rm8;
-    uint8_t r8;
-    uint8_t result;
-    rm8 = this->GetRM8(cpu, memory);
-    r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = rm8|r8;
-    this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    uint8_t rm8 = this->GetRM8(cpu, memory);
+    uint8_t r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    this->SetRM8(cpu, memory, cpu.Or(rm8, r8));
     return;
 }
 
@@ -4835,14 +4814,9 @@ OrR8Rm8::OrR8Rm8(string code_name):Instruction(code_name){
 void OrR8Rm8::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
-    uint8_t rm8;
-    uint8_t r8;
-    uint8_t result;
-    rm8 = this->GetRM8(cpu, memory);
-    r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = rm8|r8;
-    cpu.SetR8(this->modrm.reg_index, result);
-    cpu.UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    uint8_t rm8 = this->GetRM8(cpu, memory);
+    uint8_t r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    cpu.SetR8(this->modrm.reg_index, cpu.Or(rm8, r8));
     return;
 }
 
@@ -4856,14 +4830,9 @@ void OrR32Rm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
-    uint16_t rm16;
-    uint16_t r16;
-    uint16_t result;
-    rm16 = this->GetRM16(cpu, memory);
-    r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = rm16 | r16;
-    cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
-    cpu.UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    uint16_t r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, cpu.Or(rm16, r16));
     return;
 }
 
@@ -4873,14 +4842,10 @@ OrAlImm8::OrAlImm8(string code_name):Instruction(code_name){
 
 void OrAlImm8::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
-    uint8_t al, imm8;
-    uint8_t result;
-    al = cpu.GetR8L(EAX);
-    imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+    uint8_t al = cpu.GetR8L(EAX);
+    uint8_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
-    result = al|imm8;
-    cpu.SetR8L(EAX, result);
-    cpu.UpdateEflagsForAnd(result);
+    cpu.SetR8L(EAX, cpu.Or(al, imm8));
     return;
 }
 
@@ -5012,14 +4977,10 @@ OrRm8Imm8::OrRm8Imm8(string code_name):Instruction(code_name){
 }
 
 void OrRm8Imm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8, imm8;
-    uint8_t result;
-    rm8 = this->GetRM8(cpu, memory);
-    imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+    uint8_t rm8 = this->GetRM8(cpu, memory);
+    uint8_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
-    result = rm8|imm8;
-    this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);
+    this->SetRM8(cpu, memory, cpu.Or(rm8, imm8));
     return;
 }
 
