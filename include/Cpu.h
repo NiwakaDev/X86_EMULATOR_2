@@ -135,13 +135,9 @@ class Cpu{
         template<typename type>type Sub(type data1, type data2);
         template<typename type>type And(type data1, type data2);
         template<typename type>type Or(type data1, type data2);
+        template<typename type>type Xor(type data1, type data2);
         template<typename type>void UpdateEflagsForDec(type result, type d1, type d2);
         template<typename type>void UpdateEflagsForShr(type result);
-        void UpdateZF(uint32_t result);
-        void UpdateCF(uint64_t result);
-        template<typename type> void UpdateCfForSub(type data, int group);
-        void UpdatePF(uint8_t result);
-        template<typename type> void UpdateSF(type data);
         bool IsFlag(EFLAGS_KIND eflags_kind);
         void SetFlag(EFLAGS_KIND eflags_kind);
         void ClearFlag(EFLAGS_KIND eflags_kind);
@@ -265,6 +261,11 @@ class Cpu{
         template<typename type>void UpdateEflagsForAdd(type d1, type d2);
         template<typename type>void UpdateEflagsForInc(type d);
         template<typename type>void UpdateEflagsForAdc(type d1, type d2, type c);
+        void UpdateZF(uint32_t result);
+        void UpdateCF(uint64_t result);
+        template<typename type> void UpdateCfForSub(type data, int group);
+        void UpdatePF(uint8_t result);
+        template<typename type> void UpdateSF(type data);
 };
 
 #include "detail/Cpu.h"

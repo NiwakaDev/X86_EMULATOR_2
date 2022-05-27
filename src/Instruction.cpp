@@ -1485,23 +1485,6 @@ void Nop::Run(Cpu& cpu, Memory& memory){
     return;
 }
 
-/***
-void MovSregRm16::Run(Cpu& cpu, Memory& memory){
-    uint32_t eip = cpu.GetEip();
-    cpu.AddEip(1);
-    this->ParseModRM(cpu, memory);
-    SEGMENT_REGISTER register_type = (SEGMENT_REGISTER)this->modrm.reg_index;
-    if(register_type==CS){
-        cpu.SetEip(eip);
-        cpu.SetException();
-        cpu.SetVectorNumber(CpuEnum::UD);
-        return;
-    }
-    uint16_t rm16                  = this->GetRM16(cpu, memory);
-    cpu.SetR16(register_type, rm16);
-}   
-***/
-
 Cli::Cli(string code_name):Instruction(code_name){
 
 }
@@ -2012,22 +1995,16 @@ void XorRm32R32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         uint32_t rm32;
         uint32_t r32;
-        uint32_t result;
         r32    = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
         rm32   = this->GetRM32(cpu, memory);
-        result = rm32^r32;
-        this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
+        this->SetRM32(cpu, memory, cpu.Xor(rm32, r32));
         return;
     }
     uint16_t rm16;
     uint16_t r16;
-    uint16_t result;
     rm16 = this->GetRM16(cpu, memory);
     r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = rm16^r16;
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
+    this->SetRM16(cpu, memory, cpu.Xor(rm16, r16));
     return;
 }
 
@@ -3038,13 +3015,10 @@ XorRm32Imm8::XorRm32Imm8(string code_name):Instruction(code_name){
 
 void XorRm32Imm8::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t imm8;
-        uint32_t result;
-        imm8   =  (int32_t)(int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess());
+        uint32_t imm8   =  (int32_t)(int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess());
         cpu.AddEip(1);
-        result = this->GetRM32(cpu, memory)^imm8;
-        this->SetRM32(cpu, memory, result);
-        cpu.UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        this->SetRM32(cpu, memory, cpu.Xor(imm8, rm32));
         return;
     }
     this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
@@ -4921,14 +4895,11 @@ XorRm8R8::XorRm8R8(string code_name):Instruction(code_name){
 void XorRm8R8::Run(Cpu& cpu, Memory& memory){
     uint8_t rm8;
     uint8_t r8;
-    uint8_t result;
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
     rm8 = this->GetRM8(cpu, memory);
     r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = rm8^r8;
-    this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
+    this->SetRM8(cpu, memory, cpu.Xor(rm8, r8));
     return;
 }
 
@@ -4939,14 +4910,11 @@ XorR8Rm8::XorR8Rm8(string code_name):Instruction(code_name){
 void XorR8Rm8::Run(Cpu& cpu, Memory& memory){
     uint8_t rm8;
     uint8_t r8;
-    uint8_t result;
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
     rm8 = this->GetRM8(cpu, memory);
     r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = rm8^r8;
-    cpu.SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
-    cpu.UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
+    cpu.SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, cpu.Xor(rm8, r8));
     return;
 }
 
@@ -4963,12 +4931,9 @@ void XorR32Rm32::Run(Cpu& cpu, Memory& memory){
     }
     uint16_t rm16;
     uint16_t r16;
-    uint16_t result;
     rm16 = this->GetRM16(cpu, memory);
     r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-    result = rm16^r16;
-    cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, result);
-    cpu.UpdateEflagsForAnd(result);//ANDと更新フラグが同じ
+    cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, cpu.Xor(rm16, r16));
     return;
 }
 
@@ -5004,13 +4969,10 @@ XorRm8Imm8::XorRm8Imm8(string code_name):Instruction(code_name){
 
 void XorRm8Imm8::Run(Cpu& cpu, Memory& memory){
     uint8_t rm8, imm8;
-    uint8_t result;
     rm8 = this->GetRM8(cpu, memory);
     imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
-    result = rm8^imm8;
-    this->SetRM8(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);
+    this->SetRM8(cpu, memory, cpu.Xor(rm8, imm8));
     return;
 }
 
@@ -5022,11 +4984,10 @@ void XorRm32Imm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         this->obj->Error("Not implemented: 32bit=op_size at %s::Run", this->code_name.c_str());
     }
-    uint16_t result;
-    result = this->GetRM16(cpu, memory)^memory.Read16(cpu.GetLinearAddrForCodeAccess());
+    uint16_t rm16  = this->GetRM16(cpu, memory);
+    uint16_t imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(2);
-    this->SetRM16(cpu, memory, result);
-    cpu.UpdateEflagsForAnd(result);  
+    this->SetRM16(cpu, memory, cpu.Xor(rm16, imm16));
     return;
 }
 
@@ -5849,11 +5810,10 @@ void XorEaxImm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         this->obj->Error("Not implemented: %s::Run", this->code_name.c_str());
     }
-    uint16_t result;
-    result = cpu.GetR16(EAX) ^ memory.Read16(cpu.GetLinearAddrForCodeAccess());
+    uint16_t ax    = cpu.GetR16(EAX);
+    uint16_t imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(2);
-    cpu.SetR16(EAX, result);
-    cpu.UpdateEflagsForAnd(result);//ORとANDのフラグレジスタ更新は同じ
+    cpu.SetR16(EAX, cpu.Xor(ax, imm16));
     return;
 }
 

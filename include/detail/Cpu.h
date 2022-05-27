@@ -137,6 +137,12 @@ inline template<typename type>type Cpu::Adc(type data1, type data2, type carry){
     return data1+data2+carry;
 }
 
+inline template<typename type>type Cpu::Xor(type data1, type data2){
+    type result = data1^data2;
+    this->UpdateEflagsForAnd(result);
+    return result;
+}
+
 inline template<typename type>type Cpu::Or(type data1, type data2){
     this->UpdateEflagsForAnd((type)(data1|data2));
     return data1|data2;
