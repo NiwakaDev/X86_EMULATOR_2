@@ -134,7 +134,6 @@ class Cpu{
         template<typename type>type Add(type data1, type data2);
         template<typename type>type Sub(type data1, type data2);
         template<typename type>void UpdateEflagsForDec(type result, type d1, type d2);
-        template<typename type>void UpdateEflagsForAdc(type d1, type d2, type c);
         template<typename type>void UpdateEflagsForShr(type result);
         void UpdateZF(uint32_t result);
         void UpdateCF(uint64_t result);
@@ -263,6 +262,7 @@ class Cpu{
         template<typename type>void UpdateEflagsForSub(type data1, type data2);
         template<typename type>void UpdateEflagsForAdd(type d1, type d2);
         template<typename type>void UpdateEflagsForInc(type d);
+        template<typename type>void UpdateEflagsForAdc(type d1, type d2, type c);
 };
 
 #include "detail/Cpu.h"
