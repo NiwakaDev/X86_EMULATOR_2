@@ -94,6 +94,7 @@ inline uint32_t Cpu::GetEflgs(){
     return this->eflags.raw;
 }
 
+
 template<typename type>type Cpu::Inc(type data){
     this->UpdateEflagsForInc(data);
     return data+1;
@@ -236,6 +237,40 @@ inline template<typename type>void Cpu::UpdateEflagsForAdd(type d1, type d2){
         this->obj->Error("Not implemented: sizeof(type)=%d\n", sizeof(type));
     }
     this->UpdateOF_Add((type)(d1+d2), (type)d1, (type)d2);
+}
+
+template<typename type>type Cpu::Shr(type data, type count){
+    type masked_count = count&0x1F;
+    if(masked_count==0){
+        return data;
+    }
+    if(masked_count==1){
+        type msb;
+        if(sizeof(data)==1){
+            msb = 0x80;
+        }else if(sizeof(data)==2){
+            msb = 0x8000;
+        }else if(sizeof(data)==4){
+            msb = 0x80000000;
+        }else{
+            this->obj->Error("Not implemented: sizeof(data)=%d", sizeof(data));
+        }
+        if((data&msb)!=0){
+            this->SetFlag(OF);
+        }else{
+            this->ClearFlag(OF);
+        }
+    }
+    for(int i=0; i<masked_count; i++){
+        if(data&0x01){
+            this->SetFlag(CF);
+        }else{
+            this->ClearFlag(CF);
+        }
+        data = data>>1;
+    }
+    this->UpdateEflagsForShr(data);
+    return data;
 }
 
 inline template<typename type>void Cpu::UpdateEflagsForShr(type result){

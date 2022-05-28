@@ -1796,25 +1796,11 @@ ShrRm32Imm8::ShrRm32Imm8(string code_name):Instruction(code_name){
 void ShrRm32Imm8::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         uint32_t rm32;
-        uint8_t imm8;
+        uint32_t imm8;
         rm32 = this->GetRM32(cpu, memory);
         imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
         cpu.AddEip(1);
-        if(imm8==0){
-            return;
-        }
-        if(imm8==1){
-            this->obj->Error("imm8==1 is not implemented at %s::Run", this->code_name.c_str());
-        }
-        rm32 = rm32 >> (imm8-1);
-        if(rm32&0x01){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm32 = rm32 >> 1;
-        this->SetRM32(cpu, memory, rm32);
-        cpu.UpdateEflagsForShr(rm32);
+        this->SetRM32(cpu, memory, cpu.Shr(rm32, imm8));
         return;
     }
     this->obj->Error("Not implemented: 16bit op_size at %s::Run", this->code_name.c_str());
@@ -2114,21 +2100,7 @@ void ShrRm8Imm8::Run(Cpu& cpu, Memory& memory){
     rm8  = this->GetRM8(cpu, memory);
     imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
-    if(imm8==0){
-        return;
-    }
-    if(imm8==1){
-        this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
-    }
-    rm8 = rm8 >> (imm8-1);
-    if(rm8&0x01){
-        cpu.SetFlag(CF);
-    }else{
-        cpu.ClearFlag(CF);
-    }
-    rm8 = rm8 >> 1;
-    this->SetRM8(cpu, memory, rm8);
-    cpu.UpdateEflagsForShr(rm8);
+    this->SetRM8(cpu, memory, cpu.Shr(rm8, imm8));
 }
 
 LeaR32M::LeaR32M(string code_name):Instruction(code_name){
@@ -3153,54 +3125,16 @@ ShrRm32Cl::ShrRm32Cl(string code_name):Instruction(code_name){
 void ShrRm32Cl::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         uint32_t rm32;
-        uint8_t cl;
         rm32 = this->GetRM32(cpu, memory);
-        cl = cpu.GetR8L(ECX);
-        if(cl==0){
-            return;
-        }
-        if(cl==1){
-            if(rm32&SIGN_FLG4){
-                cpu.SetFlag(OF);
-            }else{
-                cpu.ClearFlag(OF);
-            }
-        }
-        rm32 = rm32 >> (cl-1);
-        if(rm32&1){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm32 = rm32 >> 1;
-        this->SetRM32(cpu, memory, rm32);
-        cpu.UpdateEflagsForShr(rm32);
+        uint32_t cl = cpu.GetR8L(ECX);
+        this->SetRM32(cpu, memory, cpu.Shr(rm32, cl));
         return;
     }
     uint16_t rm16;
-    uint8_t cl;
+    uint16_t cl;
     rm16 = this->GetRM16(cpu, memory);
     cl = cpu.GetR8L(ECX);
-    if(cl==0){//cl==0の時、何もしない。
-        return;
-    }
-    if(cl==1){
-        if(rm16&SIGN_FLG2){
-            cpu.SetFlag(OF);
-        }else{
-            cpu.ClearFlag(OF);
-        }
-    }
-    for(uint32_t i=0; i<cl; i++){
-        if(rm16&1){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm16 = rm16 >> 1;
-    }
-    this->SetRM16(cpu, memory, rm16);
-    cpu.UpdateEflagsForShr(rm16);
+    this->SetRM16(cpu, memory, cpu.Shr(rm16, cl));
     return;
 }
 
@@ -3900,41 +3834,13 @@ ShrRm32::ShrRm32(string code_name):Instruction(code_name){
 void ShrRm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         uint32_t rm32;
-        uint32_t temp_rm32;
         rm32 = this->GetRM32(cpu, memory);
-        temp_rm32 = rm32;
-        if(rm32&1){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm32 = rm32 >> 1;
-        this->SetRM32(cpu, memory, rm32);
-        if(temp_rm32&0x80000000){
-            cpu.SetFlag(OF);
-        }else{
-            cpu.ClearFlag(OF);
-        }
-        cpu.UpdateEflagsForShr(rm32);
+        this->SetRM32(cpu, memory, cpu.Shr(rm32, (uint32_t)1));
         return;
     }
     uint16_t rm16;
-    uint16_t temp_rm16;
     rm16 = this->GetRM16(cpu, memory);
-    temp_rm16 = rm16;
-    if(rm16&1){
-        cpu.SetFlag(CF);
-    }else{
-        cpu.ClearFlag(CF);
-    }
-    rm16 = rm16 >> 1;
-    this->SetRM16(cpu, memory, rm16);
-    if(temp_rm16&SIGN_FLG2){
-        cpu.SetFlag(OF);
-    }else{
-        cpu.ClearFlag(OF);
-    }
-    cpu.UpdateEflagsForShr(rm16);
+    this->SetRM16(cpu, memory, cpu.Shr(rm16, (uint16_t)1));
     return;
 }
 
@@ -5770,22 +5676,8 @@ ShrRm8::ShrRm8(string code_name):Instruction(code_name){
 
 void ShrRm8::Run(Cpu& cpu, Memory& memory){
     uint8_t rm8;
-    uint8_t temp_rm8;
     rm8  = this->GetRM8(cpu, memory);
-    temp_rm8 = rm8;
-    if(rm8&LSB){
-        cpu.SetFlag(CF);
-    }else{
-        cpu.ClearFlag(CF);
-    }
-    rm8 = rm8 >> 1;
-    this->SetRM8(cpu, memory, rm8);
-    cpu.UpdateEflagsForShr(rm8);
-    if((temp_rm8&MSB_8)){
-        cpu.SetFlag(OF);
-    }else{
-        cpu.SetFlag(OF);
-    }
+    this->SetRM8(cpu, memory, cpu.Shr(rm8, (uint8_t)1));
 }
 
 AdcRm8Imm8::AdcRm8Imm8(string code_name):Instruction(code_name){
