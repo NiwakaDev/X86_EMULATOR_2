@@ -5560,7 +5560,11 @@ XorEaxImm32::XorEaxImm32(string code_name):Instruction(code_name){
 void XorEaxImm32::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        this->obj->Error("Not implemented: %s::Run", this->code_name.c_str());
+        uint32_t eax    = cpu.GetR32(EAX);
+        uint32_t imm32 = memory.Read32(cpu.GetLinearAddrForCodeAccess());
+        cpu.AddEip(4);
+        cpu.SetR32(EAX, cpu.Xor(eax, imm32));
+        return;
     }
     uint16_t ax    = cpu.GetR16(EAX);
     uint16_t imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
