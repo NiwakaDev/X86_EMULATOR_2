@@ -1795,10 +1795,8 @@ ShrRm32Imm8::ShrRm32Imm8(string code_name):Instruction(code_name){
 
 void ShrRm32Imm8::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        uint32_t imm8;
-        rm32 = this->GetRM32(cpu, memory);
-        imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        uint32_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
         cpu.AddEip(1);
         this->SetRM32(cpu, memory, cpu.Shr(rm32, imm8));
         return;
@@ -2095,10 +2093,8 @@ ShrRm8Imm8::ShrRm8Imm8(string code_name):Instruction(code_name){
 }
 
 void ShrRm8Imm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8;
-    uint8_t imm8;
-    rm8  = this->GetRM8(cpu, memory);
-    imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+    uint8_t rm8  = this->GetRM8(cpu, memory);
+    uint8_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
     this->SetRM8(cpu, memory, cpu.Shr(rm8, imm8));
 }
@@ -3124,16 +3120,13 @@ ShrRm32Cl::ShrRm32Cl(string code_name):Instruction(code_name){
 
 void ShrRm32Cl::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        rm32 = this->GetRM32(cpu, memory);
+        uint32_t rm32 = this->GetRM32(cpu, memory);
         uint32_t cl = cpu.GetR8L(ECX);
         this->SetRM32(cpu, memory, cpu.Shr(rm32, cl));
         return;
     }
-    uint16_t rm16;
-    uint16_t cl;
-    rm16 = this->GetRM16(cpu, memory);
-    cl = cpu.GetR8L(ECX);
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    uint16_t cl = cpu.GetR8L(ECX);
     this->SetRM16(cpu, memory, cpu.Shr(rm16, cl));
     return;
 }
@@ -3833,13 +3826,11 @@ ShrRm32::ShrRm32(string code_name):Instruction(code_name){
 
 void ShrRm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        rm32 = this->GetRM32(cpu, memory);
+        uint32_t rm32 = this->GetRM32(cpu, memory);
         this->SetRM32(cpu, memory, cpu.Shr(rm32, (uint32_t)1));
         return;
     }
-    uint16_t rm16;
-    rm16 = this->GetRM16(cpu, memory);
+    uint16_t rm16 = this->GetRM16(cpu, memory);
     this->SetRM16(cpu, memory, cpu.Shr(rm16, (uint16_t)1));
     return;
 }
@@ -5675,8 +5666,7 @@ ShrRm8::ShrRm8(string code_name):Instruction(code_name){
 }
 
 void ShrRm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8;
-    rm8  = this->GetRM8(cpu, memory);
+    uint8_t rm8  = this->GetRM8(cpu, memory);
     this->SetRM8(cpu, memory, cpu.Shr(rm8, (uint8_t)1));
 }
 
