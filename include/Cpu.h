@@ -137,6 +137,7 @@ class Cpu{
         template<typename type>type Or(type data1, type data2);
         template<typename type>type Xor(type data1, type data2);
         template<typename type>type Shr(type data, type count);
+        template<typename type>type Sal(type data, type count);
         template<typename type>void UpdateEflagsForDec(type result, type d1, type d2);
         template<typename type>void UpdateEflagsForShr(type result);
         bool IsFlag(EFLAGS_KIND eflags_kind);

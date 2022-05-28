@@ -2316,46 +2316,16 @@ SalRm32Imm8::SalRm32Imm8(string code_name):Instruction(code_name){
 
 void SalRm32Imm8::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        uint32_t imm8;
-        rm32 = this->GetRM32(cpu, memory);
-        imm8 = (uint32_t)memory.Read8(cpu.GetLinearAddrForCodeAccess());
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        uint32_t imm8 = (uint32_t)memory.Read8(cpu.GetLinearAddrForCodeAccess());
         cpu.AddEip(1);
-        if(imm8==0){
-            return;
-        }
-        if(imm8==1){
-            this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
-        }
-        rm32 = rm32 << (imm8-1);
-        if(rm32&0x80000000){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm32 = rm32 << 1;
-        this->SetRM32(cpu, memory, rm32);
+        this->SetRM32(cpu, memory, cpu.Sal(rm32, imm8));
         return;
     }
-    uint16_t rm16;
-    uint16_t imm8;
-    rm16 = this->GetRM16(cpu, memory);
-    imm8 = (uint32_t)memory.Read8(cpu.GetLinearAddrForCodeAccess());
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    uint16_t imm8 = (uint32_t)memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
-    if(imm8==0){
-        return;
-    }
-    if(imm8==1){
-        this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
-    }
-    rm16 = rm16 << (imm8-1);
-    if(rm16&0x8000){
-        cpu.SetFlag(CF);
-    }else{
-        cpu.ClearFlag(CF);
-    }
-    rm16 = rm16 << 1;
-    this->SetRM16(cpu, memory, rm16);
+    this->SetRM16(cpu, memory, cpu.Sal(rm16, imm8));
     return;
 }
 
@@ -3841,61 +3811,14 @@ SalRm32Cl::SalRm32Cl(string code_name):Instruction(code_name){
 
 void SalRm32Cl::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        uint32_t cl;
-        bool change_of_flg;
-        uint32_t msb_dest;
-        rm32 = this->GetRM32(cpu, memory);
-        cl = cpu.GetR8L(ECX);
-        if(cl==0){//回転しないなら、フラグに影響を与えないようにするという仕様
-            return;
-        }
-        change_of_flg = cl==1;
-        rm32 = rm32 << (cl-1);
-        if(rm32&0x80000000){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm32 = rm32 << 1;
-        this->SetRM32(cpu, memory, rm32);
-        if(change_of_flg){
-            msb_dest = (0x80000000&rm32)!=0;
-            if(msb_dest^cpu.IsFlag(CF)){
-                cpu.SetFlag(OF);
-            }else{
-                cpu.ClearFlag(OF);
-            }
-        }   
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        uint32_t cl = cpu.GetR8L(ECX);
+        this->SetRM32(cpu, memory, cpu.Sal(rm32, cl));
         return;
     }
-    uint16_t rm16;
-    uint16_t cl;
-    bool flg;
-    rm16 = this->GetRM16(cpu, memory);
-    cl = cpu.GetR8L(ECX);
-    flg = cl==1;
-    if(cl==0){//cl==0の時、何もしない。
-        return;
-    }
-    for(uint16_t i=0; i<cl; i++){
-        if(rm16&SIGN_FLG2){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm16 = rm16 << 1;
-    }
-    this->SetRM16(cpu, memory, rm16);
-    cpu.UpdateEflagsForShr(rm16);
-    if(flg){
-        bool msb_dest= (SIGN_FLG2&rm16)?true:false;
-        if(msb_dest^cpu.IsFlag(CF)){
-            cpu.SetFlag(OF);
-        }else{
-            cpu.ClearFlag(OF);
-        }
-    }   
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    uint16_t cl = cpu.GetR8L(ECX);
+    this->SetRM16(cpu, memory, cpu.Sal(rm16, cl));
 }
 
 SetgRm8::SetgRm8(string code_name):Instruction(code_name){
@@ -3994,41 +3917,12 @@ SalRm32::SalRm32(string code_name):Instruction(code_name){
 
 void SalRm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        uint32_t msb_dest;
-        rm32 = this->GetRM32(cpu, memory);
-        if(rm32&0x80000000){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm32 = rm32 << 1;
-        this->SetRM32(cpu, memory, rm32);
-        msb_dest = (0x80000000&rm32)!=0;
-        if(msb_dest^cpu.IsFlag(CF)){
-            cpu.SetFlag(OF);
-        }else{
-            cpu.ClearFlag(OF);
-        }
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        this->SetRM32(cpu, memory, cpu.Sal(rm32, (uint32_t)1));
         return;
     }
-    uint16_t rm16;
-    bool msb_dest;
-    rm16 = this->GetRM16(cpu, memory);
-    if(rm16&SIGN_FLG2){
-        cpu.SetFlag(CF);
-    }else{
-        cpu.ClearFlag(CF);
-    }
-    rm16 = rm16 << 1;
-    this->SetRM16(cpu, memory, rm16);
-    cpu.UpdateEflagsForShr(rm16);
-    msb_dest = (SIGN_FLG2&rm16)?true:false;
-    if(msb_dest^cpu.IsFlag(CF)){
-        cpu.SetFlag(OF);
-    }else{
-        cpu.ClearFlag(OF);
-    }
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    this->SetRM16(cpu, memory, cpu.Sal(rm16, (uint16_t)1));
     return;
 }
 
@@ -5259,33 +5153,9 @@ SalRm8Cl::SalRm8Cl(string code_name):Instruction(code_name){
 }
 
 void SalRm8Cl::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8;
-    uint8_t cl;
-    bool flg;
-    rm8 = this->GetRM8(cpu, memory);
-    cl = cpu.GetR8L(ECX);
-    flg = cl==1;
-    if(cl==0){//cl==0の時、何もしない。
-        return;
-    }
-    for(uint16_t i=0; i<cl; i++){
-        if(rm8&SIGN_FLG1){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm8 = rm8 << 1;
-    }
-    this->SetRM8(cpu, memory, rm8);
-    cpu.UpdateEflagsForShr(rm8);
-    if(flg){
-        bool msb_dest= (SIGN_FLG1&rm8)?true:false;
-        if(msb_dest^cpu.IsFlag(CF)){
-            cpu.SetFlag(OF);
-        }else{
-            cpu.ClearFlag(OF);
-        }
-    }   
+    uint8_t rm8 = this->GetRM8(cpu, memory);
+    uint8_t cl = cpu.GetR8L(ECX);
+    this->SetRM8(cpu, memory, cpu.Sal(rm8, cl));
 }
 
 LoopeRel8::LoopeRel8(string code_name):Instruction(code_name){
@@ -5926,23 +5796,8 @@ void SalRm8::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
-    uint16_t rm16;
-    bool msb_dest;
-    rm16 = this->GetRM16(cpu, memory);
-    if(rm16&SIGN_FLG2){
-        cpu.SetFlag(CF);
-    }else{
-        cpu.ClearFlag(CF);
-    }
-    rm16 = rm16 << 1;
-    this->SetRM16(cpu, memory, rm16);
-    cpu.UpdateEflagsForShr(rm16);
-    msb_dest = (SIGN_FLG2&rm16)?true:false;
-    if(msb_dest^cpu.IsFlag(CF)){
-        cpu.SetFlag(OF);
-    }else{
-        cpu.ClearFlag(OF);
-    }
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    this->SetRM16(cpu, memory, cpu.Sal(rm16, (uint16_t)1));
     return;
 }
 
@@ -6191,33 +6046,10 @@ SalRm8Imm8::SalRm8Imm8(string code_name):Instruction(code_name){
 }
 
 void SalRm8Imm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8;
-    uint8_t imm8;
-    rm8  = this->GetRM8(cpu, memory);
-    imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+    uint8_t rm8  = this->GetRM8(cpu, memory);
+    uint8_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
-    bool flg = imm8==1;
-    if(imm8==0){//cl==0の時、何もしない。
-        return;
-    }
-    for(uint16_t i=0; i<imm8; i++){
-        if(rm8&SIGN_FLG1){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm8 = rm8 << 1;
-    }
-    this->SetRM8(cpu, memory, rm8);
-    cpu.UpdateEflagsForShr(rm8);
-    if(flg){
-        bool msb_dest= (SIGN_FLG1&rm8)?true:false;
-        if(msb_dest^cpu.IsFlag(CF)){
-            cpu.SetFlag(OF);
-        }else{
-            cpu.ClearFlag(OF);
-        }
-    } 
+    this->SetRM8(cpu, memory, cpu.Sal(rm8, (uint8_t)imm8));
     return;
 }
 

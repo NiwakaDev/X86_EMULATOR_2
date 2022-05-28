@@ -239,6 +239,58 @@ inline template<typename type>void Cpu::UpdateEflagsForAdd(type d1, type d2){
     this->UpdateOF_Add((type)(d1+d2), (type)d1, (type)d2);
 }
 
+template<typename type>type Cpu::Sal(type data, type count){
+    type masked_count = count&0x1F;
+    if(masked_count==0){
+        return data;
+    }
+    if(masked_count==1){
+        bool next_msb;//最上位bitをn番目とすると、これはn-1番目のbit
+        bool cf;
+        if(sizeof(data)==1){
+            next_msb = (0x40&data)!=0;
+            cf       = (0x80&data)!=0;
+        }else if(sizeof(data)==2){
+            next_msb = (0x4000&data)!=0;
+            cf       = (0x8000&data)!=0;
+        }else if(sizeof(data)==4){
+            next_msb = (0x40000000&data)!=0;
+            cf       = (0x80000000&data)!=0;
+        }else{
+            this->obj->Error("Not implemented: sizeof(data)=%d", sizeof(data));
+        }
+        if(next_msb^cf){
+            this->SetFlag(OF);
+        }else{
+            this->ClearFlag(OF);
+        }
+    }
+    for(int i=0; i<masked_count; i++){
+        if(sizeof(data)==1){
+            if((0x80&data)!=0){
+                this->SetFlag(CF);
+            }else{
+                this->ClearFlag(CF);
+            }
+        }else if(sizeof(data)==2){
+            if((0x8000&data)!=0){
+                this->SetFlag(CF);
+            }else{
+                this->ClearFlag(CF);
+            }
+        }else if(sizeof(data)==4){
+            if((0x80000000&data)!=0){
+                this->SetFlag(CF);
+            }else{
+                this->ClearFlag(CF);
+            }
+        }
+        data = data<<1;
+    }
+    this->UpdateEflagsForShr(data);
+    return data;
+}
+
 template<typename type>type Cpu::Shr(type data, type count){
     type masked_count = count&0x1F;
     if(masked_count==0){
