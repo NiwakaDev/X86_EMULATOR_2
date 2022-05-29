@@ -387,6 +387,50 @@ type Cpu::Shr(type data, type count) {
   return data;
 }
 
+template<typename type>
+type Cpu::Ror(type data, type count){
+    type masked_count;
+    type msb;
+    type next_msb;
+    if(sizeof(data)==1){
+        masked_count = count%8;
+        msb      = 0x80;
+        next_msb = 0x40;
+    }else if(sizeof(data)==2){
+        masked_count = count%16;
+        msb      = 0x8000;
+        next_msb = 0x4000;
+    }else if(sizeof(data)==4){
+        masked_count = count%32;
+        msb      = 0x80000000;
+        next_msb = 0x40000000;
+    }else{
+        this->obj->Error("Not implemented: sizeof(data)=%d", sizeof(data));
+    }
+    for(int i=0; i<masked_count; i++){
+        if(data&0x01){
+          this->SetFlag(CF);
+        }else{
+          this->ClearFlag(CF);
+        }
+        data = data >> 1;
+        if(this->IsFlag(CF)){
+          data = data | msb;
+        }
+    }
+
+    if(masked_count==1){
+      bool msb_flg      = (data&msb)!=0;
+      bool next_msb_flg = (data&next_msb)!=0;
+      if(msb_flg^next_msb_flg){
+        this->SetFlag(OF);
+      }else{
+        this->ClearFlag(OF);
+      }
+    }
+    return data;
+}
+
 template <typename type>
 type Cpu::Rcl(type data, type count) {
   type masked_count;

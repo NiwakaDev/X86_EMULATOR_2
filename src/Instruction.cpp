@@ -6,6 +6,7 @@
 using namespace std;
 using namespace chrono;
 
+//TODO : RORとRCRの処理をCPUに移す
 // TODO : defineをconstに変更
 #define LSB 0x01
 #define MSB_8 0x80
@@ -1941,34 +1942,9 @@ void XorRm32R32::Run(Cpu& cpu, Memory& memory) {
 RorRm8Cl::RorRm8Cl(string code_name) : Instruction(code_name) {}
 
 void RorRm8Cl::Run(Cpu& cpu, Memory& memory) {
-  uint8_t rm8;
-  uint8_t cl;
-  bool flg;
-  // cpu.AddEip(1);
-  // this->ParseModRM(cpu, memory);
-  cl = cpu.GetR8L(ECX);
-  rm8 = this->GetRM8(cpu, memory);
-  if (cl == 1) {
-    this->obj->Error("Not implemented: update OF at %s::Run",
-                     this->code_name.c_str());
-  }
-  for (uint8_t i = 0; i < cl; i++) {
-    if (rm8 & 0x01) {
-      flg = true;
-    } else {
-      flg = false;
-    }
-    rm8 = rm8 >> 1;
-    if (flg) {
-      rm8 = 0x80 | rm8;
-    }
-  }
-  if (rm8 & 0x01) {
-    cpu.SetFlag(CF);
-  } else {
-    cpu.ClearFlag(CF);
-  }
-  this->SetRM8(cpu, memory, rm8);
+  uint8_t cl = cpu.GetR8L(ECX);
+  uint8_t rm8 = this->GetRM8(cpu, memory);
+  this->SetRM8(cpu, memory, cpu.Ror(rm8, cl));
   return;
 }
 
@@ -3945,25 +3921,8 @@ void XchgRm8R8::Run(Cpu& cpu, Memory& memory) {
 RorRm8::RorRm8(string code_name) : Instruction(code_name) {}
 
 void RorRm8::Run(Cpu& cpu, Memory& memory) {
-  uint8_t rm8;
-  rm8 = this->GetRM8(cpu, memory);
-  uint8_t temp_cf = (rm8 & LSB_8) ? MSB_8 : 0;
-  rm8 = (rm8 >> 1) + temp_cf;
-  this->SetRM8(cpu, memory, rm8);
-  if (MSB_8 & rm8) {
-    cpu.SetFlag(CF);
-  } else {
-    cpu.ClearFlag(CF);
-  }
-  //結果の最上位2ビットの排他的論理和
-  bool bit7, bit6;
-  bit7 = (rm8 & 0x80) ? true : false;
-  bit6 = (rm8 & 0x40) ? true : false;
-  if (bit7 ^ bit6) {
-    cpu.SetFlag(OF);
-  } else {
-    cpu.SetFlag(OF);
-  }
+  uint8_t rm8 = this->GetRM8(cpu, memory);
+  this->SetRM8(cpu, memory, cpu.Ror(rm8, (uint8_t)1));
   return;
 }
 

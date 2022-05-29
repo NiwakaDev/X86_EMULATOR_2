@@ -1912,3 +1912,117 @@ TEST_F(CpuTest, CheckSar14){
     EXPECT_TRUE(cpu->IsFlag(OF));
     EXPECT_TRUE(cpu->IsFlag(CF));
 }
+
+//ROR命令はRCR命令と異なりCFを1つのbitとして扱わない。
+//SF、ZF、AF、PFは影響を受けない。
+//CFは右に追い出された値が格納される。これは最上位bitと等しくなる。
+//OFは１回転のみ影響を受ける。最上位2bitの排他的論理和がOFに格納される。
+TEST_F(CpuTest, CheckRor0){
+    uint8_t temp_dest  = 0x01;
+    uint8_t temp_count = 0x01;
+    cpu->ClearFlag(OF);//1回転なので、OFは影響を受ける。
+    uint8_t result     = cpu->Ror(temp_dest, temp_count);
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)0x80);
+}
+
+TEST_F(CpuTest, CheckRor1){
+    uint16_t temp_dest  = 0x0001;
+    uint16_t temp_count = 0x0001;
+    cpu->ClearFlag(OF);//1回転なので、OFは影響を受ける。
+    uint16_t result     = cpu->Ror(temp_dest, temp_count);
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)0x8000);
+}
+
+TEST_F(CpuTest, CheckRor2){
+    uint32_t temp_dest  = 0x00000001;
+    uint32_t temp_count = 0x00000001;
+    cpu->ClearFlag(OF);//1回転なので、OFは影響を受ける。
+    uint32_t result     = cpu->Ror(temp_dest, temp_count);
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)0x80000000);
+}
+
+TEST_F(CpuTest, CheckRor3){
+    uint8_t temp_dest  = 0x02;
+    uint8_t temp_count = 0x02;
+    cpu->ClearFlag(OF);//2回転なので、OFは影響を受けないはず
+    uint8_t result     = cpu->Ror(temp_dest, temp_count);
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)0x80);
+}
+
+TEST_F(CpuTest, CheckRor4){
+    uint16_t temp_dest  = 0x0002;
+    uint16_t temp_count = 0x02;
+    cpu->ClearFlag(OF);//2回転なので、OFは影響を受けないはず
+    uint16_t result     = cpu->Ror(temp_dest, temp_count);
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)0x8000);
+}
+
+TEST_F(CpuTest, CheckRor5){
+    uint8_t temp_dest  = 0x88;
+    uint8_t temp_count = 0x03;
+    cpu->ClearFlag(OF);
+    uint8_t result     = cpu->Ror(temp_dest, temp_count);
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)0x11);
+}
+
+TEST_F(CpuTest, CheckRor6){
+    uint16_t temp_dest  = 0x8008;
+    uint16_t temp_count = 0x03;
+    cpu->ClearFlag(OF);
+    uint16_t result     = cpu->Ror(temp_dest, temp_count);
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)0x1001);
+}
+
+TEST_F(CpuTest, CheckRor7){
+    uint32_t temp_dest  = 0x80000008;
+    uint32_t temp_count = 0x03;
+    cpu->ClearFlag(OF);
+    uint32_t result     = cpu->Ror(temp_dest, temp_count);
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)0x10000001);
+}
+
+TEST_F(CpuTest, CheckRor8){
+    uint8_t temp_dest  = 0x02;
+    uint8_t temp_count = 0x01;
+    cpu->ClearFlag(OF);
+    uint8_t result     = cpu->Ror(temp_dest, temp_count);
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));//1回転だが、OFはFALSEになるはず
+    EXPECT_EQ(result, (uint8_t)0x01);
+}
+
+TEST_F(CpuTest, CheckRor9){
+    uint16_t temp_dest  = 0x0002;
+    uint16_t temp_count = 0x01;
+    cpu->ClearFlag(OF);
+    uint16_t result     = cpu->Ror(temp_dest, temp_count);
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));//1回転だが、OFはFALSEになるはず
+    EXPECT_EQ(result, (uint16_t)0x01);
+}
+
+TEST_F(CpuTest, CheckRor10){
+    uint32_t temp_dest  = 0x00000002;
+    uint32_t temp_count = 0x01;
+    cpu->ClearFlag(OF);
+    uint32_t result     = cpu->Ror(temp_dest, temp_count);
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));//1回転だが、OFはFALSEになるはず
+    EXPECT_EQ(result, (uint32_t)0x01);
+}
