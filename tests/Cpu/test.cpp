@@ -1882,3 +1882,33 @@ TEST_F(CpuTest, CheckSar11){
     EXPECT_TRUE(cpu->IsFlag(OF));
     EXPECT_FALSE(cpu->IsFlag(CF));
 }
+
+TEST_F(CpuTest, CheckSar12){
+    uint8_t temp_dest  = 0x7F;
+    uint8_t temp_count = 0x02;
+    cpu->SetFlag(OF);
+    uint8_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint8_t)0x1F);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar13){
+    uint16_t temp_dest  = 0x7FFF;
+    uint16_t temp_count = 0x02;
+    cpu->SetFlag(OF);
+    uint16_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint16_t)0x1FFF);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar14){
+    uint32_t temp_dest  = 0x7FFFFFFF;
+    uint32_t temp_count = 0x02;
+    cpu->SetFlag(OF);
+    uint32_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint32_t)0x1FFFFFFF);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+}
