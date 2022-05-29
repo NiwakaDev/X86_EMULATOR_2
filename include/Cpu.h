@@ -136,6 +136,7 @@ class Cpu{
         template<typename type>type And(type data1, type data2);
         template<typename type>type Or(type data1, type data2);
         template<typename type>type Xor(type data1, type data2);
+        template<typename type>type Sar(type data1, type data2);
         template<typename type>type Shr(type data, type count);
         template<typename type>type Sal(type data, type count);
         template<typename type>type Rcl(type data, type count);

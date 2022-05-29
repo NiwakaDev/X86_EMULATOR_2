@@ -1759,3 +1759,126 @@ TEST_F(CpuTest, CheckRcl17){
     EXPECT_FALSE(cpu->IsFlag(OF));
     EXPECT_EQ(result, (uint32_t)0x80000000);
 }
+
+//最上位bit以外を右に指定した回数だけシフトする。
+//はみ出た値はCFに格納される。
+//1回回転の場合は、OFがクリアされる。
+TEST_F(CpuTest, CheckSar0){
+    uint8_t temp_dest  = 0xF7;
+    uint8_t temp_count = 0x02;
+    cpu->SetFlag(OF);//2回以上の回転はOFが変化しないはず
+    uint8_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint8_t)0xFD);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar1){
+    uint8_t temp_dest  = 0xF7;
+    uint8_t temp_count = 0x01;
+    cpu->SetFlag(OF);
+    uint8_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint8_t)0xFB);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar2){
+    uint16_t temp_dest  = 0xFFF7;
+    uint16_t temp_count = 0x02;
+    cpu->SetFlag(OF);//2回以上の回転はOFが変化しないはず
+    uint16_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint16_t)0xFFFD);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar3){
+    uint16_t temp_dest  = 0xFFF7;
+    uint16_t temp_count = 0x01;
+    cpu->SetFlag(OF);
+    uint16_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint16_t)0xFFFB);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar4){
+    uint32_t temp_dest  = 0xFFFFFFF7;
+    uint32_t temp_count = 0x02;
+    cpu->SetFlag(OF);//2回以上の回転はOFが変化しないはず
+    uint32_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint32_t)0xFFFFFFFD);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar5){
+    uint32_t temp_dest  = 0xFFFFFFF7;
+    uint32_t temp_count = 0x01;
+    cpu->SetFlag(OF);
+    uint32_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint32_t)0xFFFFFFFB);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar6){
+    uint8_t temp_dest  = 0xF7;
+    uint8_t temp_count = 0x20;//1Fでマスクされるので、0回転
+    cpu->SetFlag(OF);
+    uint8_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint8_t)0xF7);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar7){
+    uint16_t temp_dest  = 0xFFF7;
+    uint16_t temp_count = 0x20;//1Fでマスクされるので、0回転
+    cpu->SetFlag(OF);
+    uint16_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint16_t)0xFFF7);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar8){
+    uint32_t temp_dest  = 0xFFFFFFF7;
+    uint32_t temp_count = 0x20;//1Fでマスクされるので、0回転
+    cpu->SetFlag(OF);
+    uint32_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint32_t)0xFFFFFFF7);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar9){
+    uint8_t temp_dest  = 0xF7;
+    uint8_t temp_count = 0x04;
+    cpu->SetFlag(OF);
+    uint8_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint8_t)0xFF);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar10){
+    uint16_t temp_dest  = 0xFFF7;
+    uint16_t temp_count = 0x04;
+    cpu->SetFlag(OF);
+    uint16_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint16_t)0xFFFF);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+}
+
+TEST_F(CpuTest, CheckSar11){
+    uint32_t temp_dest  = 0xFFFFFFF7;
+    uint32_t temp_count = 0x04;
+    cpu->SetFlag(OF);
+    uint32_t result     = cpu->Sar(temp_dest, temp_count);
+    EXPECT_EQ(result, (uint32_t)0xFFFFFFFF);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+}

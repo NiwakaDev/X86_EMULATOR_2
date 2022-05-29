@@ -2438,26 +2438,10 @@ SarRm32Imm8::SarRm32Imm8(string code_name):Instruction(code_name){
 
 void SarRm32Imm8::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        int32_t rm32;//符号付回転なので、in32_tにしている。
-        uint32_t imm8;
-        rm32 = this->GetRM32(cpu, memory);
-        imm8 = (uint32_t)(memory.Read8(cpu.GetLinearAddrForCodeAccess()));
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        uint32_t imm8 = (uint32_t)(memory.Read8(cpu.GetLinearAddrForCodeAccess()));
         cpu.AddEip(1);
-        if(imm8==0){
-            return;
-        }
-        if(imm8==1){
-            this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
-        }
-        rm32 = rm32 >> (imm8-1);
-        if(rm32&0x01){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm32 = rm32 >> 1;
-        this->SetRM32(cpu, memory, rm32);
-        cpu.UpdateEflagsForShr(rm32);//shrと同じ
+        this->SetRM32(cpu, memory, cpu.Sar(rm32, imm8));
         return;
     }
     this->obj->Error("Not implemented: 16bits mode at %s::Run", this->code_name.c_str());
@@ -3248,27 +3232,10 @@ SarRm8Imm8::SarRm8Imm8(string code_name):Instruction(code_name){
 }
 
 void SarRm8Imm8::Run(Cpu& cpu, Memory& memory){
-    int8_t rm8;//符号付回転なので、int8_t
-    uint8_t imm8;
-    rm8 = this->GetRM8(cpu, memory);
-    imm8 = (uint8_t)(memory.Read8(cpu.GetLinearAddrForCodeAccess()));
+    uint8_t rm8 = this->GetRM8(cpu, memory);
+    uint8_t imm8 = (uint8_t)(memory.Read8(cpu.GetLinearAddrForCodeAccess()));
     cpu.AddEip(1);
-    bool flg = (rm8&SIGN_FLG1)? 1:0;
-    if(imm8==0){
-        return;
-    }
-    if(imm8==1){
-        this->obj->Error("Not implemented: imm8==1 at %s::Run", this->code_name.c_str());
-    }
-    rm8 = rm8 >> (imm8-1);
-    if(rm8&0x01){
-        cpu.SetFlag(CF);
-    }else{
-        cpu.ClearFlag(CF);
-    }
-    rm8 = rm8 >> 1;
-    this->SetRM8(cpu, memory, rm8);
-    cpu.UpdateEflagsForShr(rm8);
+    this->SetRM8(cpu, memory, cpu.Sar(rm8, imm8));
     return;
 }
 
@@ -3781,50 +3748,14 @@ SarRm32Cl::SarRm32Cl(string code_name):Instruction(code_name){
 
 void SarRm32Cl::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        int32_t rm32;//SAR命令は符号付回転
-        uint32_t cl;
-        rm32 = this->GetRM32(cpu, memory);
-        cl = cpu.GetR8L(ECX);
-        if(cl==0){//cl==0の時、何もしない。
-            return;
-        }
-        if(cl==1){
-            cpu.ClearFlag(OF);
-        }
-        rm32 = rm32 >> (cl-1);
-        if(rm32&0x01){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm32 = rm32 >> 1;
-        this->SetRM32(cpu, memory, rm32);
-        cpu.UpdateEflagsForShr(rm32);//shr命令と同じ
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        uint32_t cl = cpu.GetR8L(ECX);
+        this->SetRM32(cpu, memory, cpu.Sar(rm32, cl));
         return;
     }
-    //TODO:SAR命令は符号を維持して、回転させるので、rm16はint16_tにすべき
-    uint16_t rm16;
-    uint16_t cl;
-    rm16 = this->GetRM16(cpu, memory);
-    cl = cpu.GetR8L(ECX);
-    if(cl==0){//cl==0の時、何もしない。
-        return;
-    }
-    bool flg = (rm16&SIGN_FLG2)? true:false;
-    if(cl==1){
-        cpu.ClearFlag(OF);
-    }
-    for(uint32_t i=0; i<cl; i++){
-        if(rm16&0x01){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm16 = rm16 >> 1;
-        rm16 = rm16 | ((flg)?SIGN_FLG2:0);
-    }
-    this->SetRM16(cpu, memory, rm16);
-    cpu.UpdateEflagsForShr(rm16);//shr命令と同じ
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    uint16_t cl = cpu.GetR8L(ECX);
+    this->SetRM16(cpu, memory, cpu.Sar(rm16, cl));
     return;
 }
 
@@ -3921,34 +3852,12 @@ SarRm32::SarRm32(string code_name):Instruction(code_name){
 
 void SarRm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        rm32 = this->GetRM32(cpu, memory);
-        bool flg = (rm32&SIGN_FLG4)? 1:0;
-        cpu.ClearFlag(OF);
-        if(rm32&0x01){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-        rm32 = rm32 >> 1;
-        rm32 = rm32 | ((flg)?SIGN_FLG4:0);
-        this->SetRM32(cpu, memory, rm32);
-        cpu.UpdateEflagsForShr(rm32);//shr命令と同じ
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        this->SetRM32(cpu, memory, cpu.Sar(rm32, (uint32_t)1));
         return;
     }
-    uint16_t rm16;
-    rm16 = this->GetRM16(cpu, memory);
-    bool flg = (rm16&SIGN_FLG2)? true:false;
-    cpu.ClearFlag(OF);
-    if(rm16&0x01){
-        cpu.SetFlag(CF);
-    }else{
-        cpu.ClearFlag(CF);
-    }
-    rm16 = rm16 >> 1;
-    rm16 = rm16 | ((flg)?SIGN_FLG2:0);
-    this->SetRM16(cpu, memory, rm16);
-    cpu.UpdateEflagsForShr(rm16);//shr命令と同じ
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    this->SetRM16(cpu, memory, cpu.Sar(rm16, (uint16_t)1));
     return;
 }
 

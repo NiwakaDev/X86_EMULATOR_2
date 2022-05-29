@@ -292,6 +292,43 @@ template<typename type>type Cpu::Sal(type data, type count){
     return data;
 }
 
+template<typename type>type Cpu::Sar(type data, type count){
+    type masked_count = count&0x1F;
+    if(masked_count==0){
+        return data;
+    }
+    if(masked_count==1){
+        this->ClearFlag(OF);
+    }
+    type sign=0;
+    if(sizeof(data)==1){
+        if((data&0x80)==0x80){
+            sign = 0x80;
+        }
+    }else if(sizeof(data)==2){
+        if((data&0x8000)==0x8000){
+            sign = 0x8000;
+        }
+    }else if(sizeof(data)==4){
+        if((data&0x80000000)==0x80000000){
+            sign = 0x80000000;
+        }
+    }else{
+        this->obj->Error("Not implemented: sizeof(data)=%d", sizeof(data));
+    }
+    for(int i=0; i<masked_count; i++){
+        if(data&0x01){
+            this->SetFlag(CF);
+        }else{
+            this->ClearFlag(CF);
+        }
+        data = data >> 1;
+        data = data|sign;
+    }
+    this->UpdateEflagsForShr(data);
+    return data;
+}
+
 template<typename type>type Cpu::Shr(type data, type count){
     type masked_count = count&0x1F;
     if(masked_count==0){
