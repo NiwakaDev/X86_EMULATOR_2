@@ -12,8 +12,9 @@ class Bios {
   Bios(std::function<void(uint8_t* buff, int size)> read_callback, Vga& vga,
        Kbc& kbc);
   ~Bios();
-  void LoadIpl(std::function<void(uint8_t* buff, int size)> read_callback,
-               Memory& mem);
+  void LoadIpl(
+      std::function<void(uint8_t* buff, int size)> read_callback,
+      std::function<void(uint32_t addr, uint8_t data)> memory_write8_callback);
   void CallFunction(Cpu& cpu, Memory& mem, const uint8_t bios_number);
 
  private:

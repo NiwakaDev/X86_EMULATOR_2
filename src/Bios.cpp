@@ -2,7 +2,6 @@
 #include <fstream>
 #include "BiosFunction.h"
 #include "Cpu.h"
-#include "Memory.h"
 const int IPL_SIZE = 512;
 using namespace std;
 
@@ -39,11 +38,12 @@ void Bios::CallFunction(Cpu& cpu, Memory& mem, const uint8_t bios_number) {
 
 // TODO :
 // LoadIpl内の処理はBIOS::BIOSに移して、LoadIpl関数は廃止にする
-void Bios::LoadIpl(function<void(uint8_t* buff, int size)> read_callback,
-                   Memory& mem) {
+void Bios::LoadIpl(
+    function<void(uint8_t* buff, int size)> read_callback,
+    function<void(uint32_t addr, uint8_t data)> memory_write8_callback) {
   uint8_t buff[IPL_SIZE];
   read_callback(buff, IPL_SIZE);
   for (int i = 0; i < IPL_SIZE; i++) {
-    mem.Write(IPL_START_ADDR + i, buff[i]);
+    memory_write8_callback(IPL_START_ADDR + i, buff[i]);
   }
 }

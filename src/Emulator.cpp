@@ -77,7 +77,9 @@ Emulator::Emulator(int argc, char* argv[]) {
                            [&](uint8_t data) { this->kbc->Push(data); });
     this->gui->AddIoDevice(Gui::MOUSE,
                            [&](uint8_t data) { this->mouse->Push(data); });
-    this->bios->LoadIpl(file_read_callback, *(this->mem.get()));
+    this->bios->LoadIpl(file_read_callback, [&](uint32_t addr, uint8_t data) {
+      this->mem->Write(addr, data);
+    });
     for (int i = 0; i < 0x20; i++) {  // full.img and fd.imgで利用,
                                       // 8086runを参考
       this->mem->Write(i << 2, i);
