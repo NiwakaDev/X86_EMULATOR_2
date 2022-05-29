@@ -157,7 +157,7 @@ class Cpu {
   type Sal(type data, type count);
   template <typename type>
   type Rcl(type data, type count);
-  template<typename type>
+  template <typename type>
   type Ror(type data, type count);
   template <typename type>
   void UpdateEflagsForDec(type result, type d1, type d2);

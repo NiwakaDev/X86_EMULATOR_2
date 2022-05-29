@@ -6,8 +6,8 @@
 using namespace std;
 using namespace chrono;
 
-//TODO : RORとRCRの処理をCPUに移す
-// TODO : defineをconstに変更
+// TODO : RORとRCRの処理をCPUに移す
+//  TODO : defineをconstに変更
 #define LSB 0x01
 #define MSB_8 0x80
 #define MSB_16 0x8000
