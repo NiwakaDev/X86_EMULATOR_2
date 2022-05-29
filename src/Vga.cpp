@@ -168,3 +168,18 @@ void Vga::InitPalette(){
 void Vga::SetSnap(uint8_t* const snap, const int w, const int h){
     memcpy(snap, this->mem_get_pointer(this->vram_start_addr), this->width*this->height);
 }
+
+void Vga::SetImage(Pixel* image, int* display_width, int* display_height, std::function<void()> resize_callback){
+    this->LockVga();
+    if((this->GetHeight()!=(*display_height))||(this->GetWidth()!=(*display_width))){
+        *display_height = this->GetHeight();
+        *display_width  = this->GetWidth();
+        resize_callback();
+    }
+    for(int y=0; y<this->height; y++){
+        for(int x=0; x<this->width; x++){
+            image[x+y*this->width] = *(this->GetPixel(x, y));
+        }
+    }
+    this->UnlockVga();
+}

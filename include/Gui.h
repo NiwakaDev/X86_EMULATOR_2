@@ -1,13 +1,11 @@
 #pragma once
 #include "common.h"
 
-class Vga;
-
 class Gui{
     public:
-        Gui();
+        Gui(int default_height, int default_width);
         ~Gui();
-        void Display(Vga& vga);
+        void Display(std::function<void(Pixel* image, int* display_width, int* display_height, std::function<void()> resize_callback)> set_image_callback);
         bool IsQuit();
         void Finish();
         enum IO_DEVICE_KIND {KBD, MOUSE, IO_DEVICE_KIND_TOTAL};

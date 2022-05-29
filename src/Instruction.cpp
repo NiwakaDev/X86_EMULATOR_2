@@ -2,7 +2,6 @@
 #include "Instructions.h"
 #include "Cpu.h"
 #include "Memory.h"
-#include "IoPort.h"
 
 using namespace std;
 using namespace chrono;

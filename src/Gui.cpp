@@ -1,4 +1,3 @@
-#include "Vga.h"
 #include "Gui.h"
 #include "KbcEnum.h"
 #include <SDL2/SDL.h>
@@ -51,9 +50,9 @@ static inline int GuiHelper::GetModState(){
     return (mod_state&ctrl_alt_state)==ctrl_alt_state;
 }
 
-Gui::Gui():pimpl(make_unique<Gui::Pimpl>()){
-    this->pimpl->screen_height = DEFAULT_HEIGHT;
-    this->pimpl->screen_width  = DEFAULT_WIDTH;
+Gui::Gui(int default_height, int default_width):pimpl(make_unique<Gui::Pimpl>()){
+    this->pimpl->screen_height = default_height;
+    this->pimpl->screen_width  = default_width;
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
         cerr << SDL_GetError() << endl;
         this->pimpl->obj->Error("at Gui::Gui");
@@ -416,15 +415,10 @@ inline void Gui::Pimpl::HandleMouseButton(SDL_Event& e){
 }
 
 //この関数はVgaクラスのvga_mutexをロックします。
-void Gui::Display(Vga& vga){
-    unique_ptr<uint8_t[]> prev_snap = make_unique<uint8_t[]>(MAX_HEIGHT*MAX_WIDTH);
-    unique_ptr<uint8_t[]> new_snap = make_unique<uint8_t[]>(MAX_HEIGHT*MAX_WIDTH);
-    memset(prev_snap.get(), 0x00, MAX_HEIGHT*MAX_WIDTH);
-    memset(new_snap.get(), 0x00, MAX_HEIGHT*MAX_WIDTH);
+void Gui::Display(std::function<void(Pixel* image, int* display_width, int* display_height, std::function<void()> resize_callback)> set_image_callback){
     while (!this->pimpl->quit){
         try{
-            unsigned int start;
-            start = SDL_GetTicks();
+            unsigned int start = SDL_GetTicks();
             SDL_Event e;
             while (SDL_PollEvent(&e)){
                 if (e.type == SDL_QUIT){
@@ -449,52 +443,9 @@ void Gui::Display(Vga& vga){
                     this->pimpl->HandleMouseButton(e);
                 }
             }
-            vga.LockVga();
-            bool full_update = false;
-            if((vga.GetHeight()!=this->pimpl->screen_height)||(vga.GetWidth()!=this->pimpl->screen_width)){
-                this->pimpl->screen_height = vga.GetHeight();
-                this->pimpl->screen_width  = vga.GetWidth();
-                this->pimpl->Resize();
-                full_update = true;
-            }
-            if(vga.GetMode()==TEXT_MODE){
-                full_update = true;//変更部分のみの描画処理はグラフィックモードでしかサポートしていない。
-            }
-            if(full_update){
-                for(int y=0; y<this->pimpl->screen_height; y++){
-                    for(int x=0; x<this->pimpl->screen_width; x++){
-                        this->pimpl->image[x+y*this->pimpl->screen_width] = *(vga.GetPixel(x, y));
-                    }
-                }
-                this->pimpl->Update();
-            }else{
-                vga.SetSnap(new_snap.get(), this->pimpl->screen_height, this->pimpl->screen_width);
-                int y_start = -1;
-                int y;//forループ抜け出した後も利用する。
-                for(y=0; y<this->pimpl->screen_height; y++){
-                    //一致しないとき、再描画
-                    if(memcmp(prev_snap.get()+y*this->pimpl->screen_width, new_snap.get()+y*this->pimpl->screen_width, this->pimpl->screen_width)){//1行比較
-                        for(int x=0; x<this->pimpl->screen_width; x++){
-                            this->pimpl->image[x+y*this->pimpl->screen_width] = *(vga.GetPixel(x, y));//一致していないので、1行転送, memcpyしない理由はGetPixelを参照してくだされば分かります。
-                        }
-                        if(y_start<0){
-                            y_start = y;
-                        }
-                    }else{//メモリの内容は一致。それまでの内容を書き出す
-                        if(y_start>=0){
-                            this->pimpl->Update(0, y_start, this->pimpl->screen_width, y-y_start);
-                            y_start = -1;
-                        }   
-                    }
-                }
-                if(y_start>=0){//最後の行まで一致しなかった時の条件式
-                    this->pimpl->Update(0, y_start, this->pimpl->screen_width, y-y_start);
-                }
-                memcpy(prev_snap.get(), new_snap.get(), this->pimpl->screen_height*this->pimpl->screen_width);
-            }
-            vga.UnlockVga();
-            unsigned int end;
-            end = SDL_GetTicks();
+            set_image_callback(this->pimpl->image.get(), &this->pimpl->screen_width, &this->pimpl->screen_height, [&](){this->pimpl->Resize();});
+            this->pimpl->Update();
+            unsigned int end = SDL_GetTicks();
             end = end - start;
             if(16>end){
                 SDL_Delay(16-end);

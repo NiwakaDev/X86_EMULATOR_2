@@ -79,7 +79,7 @@ Emulator::Emulator(int argc, char* argv[]){
                                             }
                                         );
         this->io_port = make_unique<IoPort>(*(this->vga.get()), *(this->pic.get()), *(this->kbc.get()), *(this->timer.get()), *(this->fdc.get()));
-        this->gui     = make_unique<Gui>();
+        this->gui     = make_unique<Gui>(DEFAULT_HEIGHT, DEFAULT_WIDTH);
         this->gui->AddIoDevice(
             Gui::KBD,
             [&](uint8_t data){
@@ -172,7 +172,11 @@ void Emulator::RunMainLoop(){
 }
 
 void Emulator::RunGuiThread(){
-    this->gui->Display(*(this->vga.get()));
+    this->gui->Display(
+        [&](Pixel* image, int* display_width, int* display_height, std::function<void()> resize_callback){
+            this->vga->SetImage(image, display_width, display_height, resize_callback);
+        }
+    );
 }
 
 void Emulator::MainLoop(){

@@ -38,6 +38,7 @@ class Vga{
         void UnlockVga();
         VGA_MODE GetMode();
         void SetSnap(uint8_t* const snap, const int w, const int h);
+        void SetImage(Pixel* image, int* display_width, int* display_height, std::function<void()> resize_callback);
     private:
         std::unique_ptr<Object> obj;
         std::mutex vga_mtx;
