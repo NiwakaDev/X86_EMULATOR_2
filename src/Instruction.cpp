@@ -5013,30 +5013,10 @@ void RclRm32Imm8::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
-    uint8_t imm8 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
+    uint16_t imm8 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
-    uint16_t rm16;
-    bool temp_cf;
-    bool result_msb;
-    rm16    = this->GetRM16(cpu, memory);
-    for(uint8_t i=0; i<imm8; i++){
-        temp_cf = (rm16&MSB_16)?true:false;
-        rm16    = (rm16<<1) + (cpu.IsFlag(CF)?1:0);
-        if(temp_cf){
-            cpu.SetFlag(CF);
-        }else{
-            cpu.ClearFlag(CF);
-        }
-    }
-    this->SetRM16(cpu, memory , rm16);
-    if(imm8==1){
-        result_msb = (rm16&MSB_16)?true:false;
-        if(result_msb^cpu.IsFlag(CF)){
-            cpu.SetFlag(OF);
-        }else{
-            cpu.ClearFlag(OF);
-        }
-    }
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    this->SetRM16(cpu, memory , cpu.Rcl(rm16, imm8));
 }
 
 RetImm16::RetImm16(string code_name):Instruction(code_name){
@@ -5128,24 +5108,8 @@ void RclRm32::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
         this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
     }
-    uint16_t rm16;
-    bool temp_cf;
-    bool result_msb;
-    rm16    = this->GetRM16(cpu, memory);
-    temp_cf = (rm16&MSB_16)?true:false;
-    rm16    = (rm16<<1) + (cpu.IsFlag(CF)?1:0);
-    this->SetRM16(cpu, memory , rm16);
-    if(temp_cf){
-        cpu.SetFlag(CF);
-    }else{
-        cpu.ClearFlag(CF);
-    }
-    result_msb = (rm16&MSB_16)?true:false;
-    if(result_msb^cpu.IsFlag(CF)){
-        cpu.SetFlag(OF);
-    }else{
-        cpu.ClearFlag(OF);
-    }
+    uint16_t rm16    = this->GetRM16(cpu, memory);
+    this->SetRM16(cpu, memory , cpu.Rcl(rm16, (uint16_t)1));
 }
 
 SalRm8Cl::SalRm8Cl(string code_name):Instruction(code_name){

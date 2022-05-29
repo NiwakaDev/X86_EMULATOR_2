@@ -326,6 +326,41 @@ template<typename type>type Cpu::Shr(type data, type count){
     return data;
 }
 
+template<typename type>type Cpu::Rcl(type data, type count){
+    type masked_count;
+    type msb;
+    if(sizeof(data)==1){
+        msb = 0x80;
+        masked_count = (count&0x1F)%9;
+    }else if(sizeof(data)==2){
+        msb = 0x8000;
+        masked_count = (count&0x1F)%17;
+    }else if(sizeof(data)==4){
+        msb = 0x80000000;
+        masked_count = (count&0x1F);
+    }else{
+        this->obj->Error("Not implemented: sizeof(data)=%d", sizeof(data));
+    }
+    for(int i=0; i<masked_count; i++){
+        bool temp_cf = (data&msb)?true:false;
+        data    = (data<<1) + (this->IsFlag(CF)?1:0);
+        if(temp_cf){
+            this->SetFlag(CF);
+        }else{
+            this->ClearFlag(CF);
+        }
+    }
+    if(masked_count==1){
+        bool result_msb = (data&msb)?true:false;
+        if(result_msb^this->IsFlag(CF)){
+            this->SetFlag(OF);
+        }else{
+            this->ClearFlag(OF);
+        }
+    }
+    return data;
+}
+
 inline template<typename type>void Cpu::UpdateEflagsForShr(type result){
     this->UpdateZF((uint32_t)result);
     this->UpdateSF(result);
