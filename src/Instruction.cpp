@@ -1644,18 +1644,14 @@ OrRm32Imm8::OrRm32Imm8(string code_name):Instruction(code_name){
 
 void OrRm32Imm8::Run(Cpu& cpu, Memory& memory){
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        uint32_t imm8;
-        rm32 = this->GetRM32(cpu, memory);
-        imm8 = (int32_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        uint32_t imm8 = (int32_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
         cpu.AddEip(1);
         this->SetRM32(cpu, memory, cpu.Or(rm32, imm8));
         return;
     }
-    uint16_t rm16;
-    uint16_t imm8;
-    rm16 = this->GetRM16(cpu, memory);
-    imm8 = (int16_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    uint16_t imm8 = (int16_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
     cpu.AddEip(1);
     this->SetRM16(cpu, memory, cpu.Or(rm16, imm8));
     return;
@@ -1961,17 +1957,13 @@ void XorRm32R32::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        uint32_t r32;
-        r32    = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-        rm32   = this->GetRM32(cpu, memory);
+        uint32_t r32    = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+        uint32_t rm32   = this->GetRM32(cpu, memory);
         this->SetRM32(cpu, memory, cpu.Xor(rm32, r32));
         return;
     }
-    uint16_t rm16;
-    uint16_t r16;
-    rm16 = this->GetRM16(cpu, memory);
-    r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    uint16_t r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     this->SetRM16(cpu, memory, cpu.Xor(rm16, r16));
     return;
 }
@@ -2482,17 +2474,13 @@ void OrRm32R32::Run(Cpu& cpu, Memory& memory){
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
-        uint32_t rm32;
-        uint32_t r32;
-        rm32 = this->GetRM32(cpu, memory);
-        r32  = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+        uint32_t rm32 = this->GetRM32(cpu, memory);
+        uint32_t r32  = cpu.GetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
         this->SetRM32(cpu, memory, cpu.Or(rm32, r32));
         return;
     }
-    uint16_t rm16;
-    uint16_t r16;
-    rm16 = this->GetRM16(cpu, memory);
-    r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    uint16_t r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     this->SetRM16(cpu, memory, cpu.Or(rm16, r16));
     return;
 }
@@ -4629,12 +4617,10 @@ XorRm8R8::XorRm8R8(string code_name):Instruction(code_name){
 }
 
 void XorRm8R8::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8;
-    uint8_t r8;
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
-    rm8 = this->GetRM8(cpu, memory);
-    r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint8_t rm8 = this->GetRM8(cpu, memory);
+    uint8_t r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     this->SetRM8(cpu, memory, cpu.Xor(rm8, r8));
     return;
 }
@@ -4644,12 +4630,10 @@ XorR8Rm8::XorR8Rm8(string code_name):Instruction(code_name){
 }
 
 void XorR8Rm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8;
-    uint8_t r8;
     cpu.AddEip(1);
     this->ParseModRM(cpu, memory);
-    rm8 = this->GetRM8(cpu, memory);
-    r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint8_t rm8 = this->GetRM8(cpu, memory);
+    uint8_t r8  = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     cpu.SetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, cpu.Xor(rm8, r8));
     return;
 }
@@ -4665,10 +4649,8 @@ void XorR32Rm32::Run(Cpu& cpu, Memory& memory){
         this->obj->Error("Not implemented: op_size=32bit at %s::Run", this->code_name.c_str());
         return;
     }
-    uint16_t rm16;
-    uint16_t r16;
-    rm16 = this->GetRM16(cpu, memory);
-    r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
+    uint16_t rm16 = this->GetRM16(cpu, memory);
+    uint16_t r16  = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
     cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, cpu.Xor(rm16, r16));
     return;
 }
@@ -4702,9 +4684,8 @@ XorRm8Imm8::XorRm8Imm8(string code_name):Instruction(code_name){
 }
 
 void XorRm8Imm8::Run(Cpu& cpu, Memory& memory){
-    uint8_t rm8, imm8;
-    rm8 = this->GetRM8(cpu, memory);
-    imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+    uint8_t rm8 = this->GetRM8(cpu, memory);
+    uint8_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     cpu.AddEip(1);
     this->SetRM8(cpu, memory, cpu.Xor(rm8, imm8));
     return;
