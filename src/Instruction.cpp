@@ -5620,17 +5620,14 @@ void RepeScasM32::Run(Cpu& cpu, Memory& memory){
         d = cpu.IsFlag(DF)? -2:2;
     }
     for(uint16_t i = 0; i<cnt; i++){
-        uint32_t base_es;
         uint32_t edi;
-        uint32_t base_es_edi;
-        uint32_t m32;
-        base_es = cpu.GetBaseAddr(ES);
+        uint32_t base_es = cpu.GetBaseAddr(ES);
         if(cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()){
             edi     = cpu.GetR32(EDI);
         }else{
             edi     = cpu.GetR16(EDI);
         }
-        base_es_edi = base_es+edi;
+        uint32_t base_es_edi = base_es+edi;
         if(cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()){
             uint32_t eax = cpu.GetR32(EAX);
             uint32_t m32      = memory.Read32(cpu.GetPhysicalAddr(base_es_edi));
