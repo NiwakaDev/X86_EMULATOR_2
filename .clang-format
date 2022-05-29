@@ -1,0 +1,8 @@
+BasedOnStyle: Google
+DerivePointerAlignment: false
+IncludeBlocks: Preserve
+Language: Cpp
+Standard: c++14
+SpaceAfterCStyleCast: false
+SpaceInEmptyParentheses: false
+TabWidth: 4

@@ -1,30 +1,29 @@
 #pragma once
-#include<iostream>
-#include<vector>
-#include<string>
-#include <string.h>
-#include <map>
-#include <unistd.h>
-#include <thread>
-#include <chrono>
-#include <mutex>
-#include <cassert>
 #include <stdarg.h>
-#include <utility>
+#include <string.h>
+#include <unistd.h>
+#include <cassert>
+#include <chrono>
 #include <condition_variable>
 #include <cstdint>
-#include <queue>
 #include <fstream>
+#include <iostream>
+#include <map>
 #include <memory>
-#include <fstream>
+#include <mutex>
+#include <queue>
+#include <string>
+#include <thread>
+#include <utility>
+#include <vector>
 #include "Object.h"
 
-struct _Pixel{
-    uint8_t a;
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-}__attribute__((__packed__));
+struct _Pixel {
+  uint8_t a;
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+} __attribute__((__packed__));
 
 typedef struct _Pixel Pixel;
 

@@ -1,4 +1,4 @@
-.PHONY:clean build all test
+.PHONY:clean build all test format
 
 EMULATOR            = x86
 EMULATOR_TEST       = x86_test
@@ -43,3 +43,10 @@ x86_test : $(OBJECTS_DEBUG)
 clean :
 	rm -f $(OUTPUTS_DIR)$(EMULATOR)
 	rm -f $(SOURCE_DIR)*.o
+
+
+#https://stackoverflow.com/questions/28896909/how-to-call-clang-format-over-a-cpp-project-folder
+#以下のコマンドでフォーマットできるらしい。詳細は上のURLを見て。
+format : 
+	find include/ -iname *.h -o -iname *.cpp | xargs clang-format -i
+	find src/ -iname *.h -o -iname *.cpp | xargs clang-format -i
