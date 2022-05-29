@@ -940,5 +940,5 @@ bool Cpu::Run() {
     fprintf(stderr, "Error\n");
     return false;
   }
-  ß #endif
+#endif
 }
