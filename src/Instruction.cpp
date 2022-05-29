@@ -4761,27 +4761,22 @@ void MovsM8M8::Run(Cpu& cpu, Memory& memory){
         this->obj->Error("Not implemented: segment override at %s::Run", this->code_name.c_str());
     }
     if(cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()){
-        uint32_t ds, es;
-        uint32_t esi, edi;
         uint32_t d = cpu.IsFlag(DF)? -1:1;
-        ds = cpu.GetBaseAddr(DS);
-        esi = cpu.GetR32(ESI);
-        es = cpu.GetBaseAddr(ES);
-        edi = cpu.GetR32(EDI);
+        uint32_t ds = cpu.GetBaseAddr(DS);
+        uint32_t esi = cpu.GetR32(ESI);
+        uint32_t es = cpu.GetBaseAddr(ES);
+        uint32_t edi = cpu.GetR32(EDI);
         memory.Write(cpu.GetPhysicalAddr(es+edi), memory.Read8(cpu.GetPhysicalAddr(ds+esi)));
         cpu.SetR32(EDI, edi+d);
         cpu.SetR32(ESI, esi+d);
         return;
     }
-    uint32_t ds, es;
-    uint16_t si, di;
-    uint16_t d;
-    ds = cpu.GetBaseAddr(DS);
-    si = cpu.GetR16(ESI);
-    es = cpu.GetBaseAddr(ES);
-    di = cpu.GetR16(EDI);
+    uint32_t ds = cpu.GetBaseAddr(DS);
+    uint16_t si = cpu.GetR16(ESI);
+    uint32_t es = cpu.GetBaseAddr(ES);
+    uint16_t di = cpu.GetR16(EDI);
     memory.Write(cpu.GetPhysicalAddr(es+di), memory.Read8(cpu.GetPhysicalAddr(ds+si)));
-    d = cpu.IsFlag(DF)? -1:1;
+    uint16_t d = cpu.IsFlag(DF)? -1:1;
     cpu.SetR16(EDI, di+d);
     cpu.SetR16(ESI, si+d);
     return;
