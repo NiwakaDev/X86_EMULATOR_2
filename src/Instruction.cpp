@@ -397,8 +397,7 @@ Instruction::~Instruction(){
 }
 
 inline void Instruction::ParseModRM(Cpu& cpu, Memory& memory){
-    uint8_t code;
-    code = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+    uint8_t code = memory.Read8(cpu.GetLinearAddrForCodeAccess());
     this->modrm.mod = ((code&0xC0)>>6);
     this->modrm.op_code = ((code&0x38) >> 3);
     this->modrm.rm = code & 0x07;
