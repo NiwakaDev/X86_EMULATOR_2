@@ -12,9 +12,8 @@ static const int RGB_OFFSET    = 1;
 static const int PALETTE_SIZE  = 16;
 static const int ALPHA_MAX     = 0xFF;
 
-Vga::Vga(std::function<uint8_t(const uint32_t addr)> mem_read8, std::function<uint8_t*(const uint32_t addr)> mem_get_pointer){
+Vga::Vga(std::function<uint8_t(const uint32_t addr)> mem_read8){
     this->mem_read8 = mem_read8;
-    this->mem_get_pointer = mem_get_pointer;
     this->height = DEFAULT_HEIGHT;
     this->width  = DEFAULT_WIDTH;
     this->vram_start_addr = DEFAULT_VRAM_START_ADDR;
@@ -162,10 +161,6 @@ void Vga::InitPalette(){
     this->SetColor(13, 0xffff00ff);
     this->SetColor(14, 0xffffff00);
     this->SetColor(15, 0xffffffff);
-}
-
-void Vga::SetSnap(uint8_t* const snap, const int w, const int h){
-    memcpy(snap, this->mem_get_pointer(this->vram_start_addr), this->width*this->height);
 }
 
 void Vga::SetImage(Pixel* image, int* display_width, int* display_height, std::function<void()> resize_callback){

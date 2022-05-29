@@ -24,9 +24,8 @@ class Vga{
         VGA_MODE vga_mode;
         std::unique_ptr<Pixel[]> image_text_mode;
         Pixel* GetPixel(const int x, const int y);
-        Vga(std::function<uint8_t(const uint32_t addr)> mem_read8, std::function<uint8_t*(const uint32_t addr)> mem_get_pointer);
+        Vga(std::function<uint8_t(const uint32_t addr)> mem_read8);
         std::function<uint8_t(uint32_t addr)> mem_read8;
-        std::function<uint8_t*(uint32_t addr)> mem_get_pointer;
         void Out8(const uint16_t addr, const uint8_t data);
         uint8_t In8(const uint16_t addr);
         void SetInfo(const int width, const int height, const int vram_start_add);
@@ -35,7 +34,6 @@ class Vga{
         int GetHeight();
         int GetVramStartAddr();
         VGA_MODE GetMode();
-        void SetSnap(uint8_t* const snap, const int w, const int h);
         void SetImage(Pixel* image, int* display_width, int* display_height, std::function<void()> resize_callback);
     private:
         std::unique_ptr<Object> obj;

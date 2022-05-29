@@ -2,8 +2,9 @@
 #include "common.h"
 const uint32_t MEM_SIZE = 33554432;//2<<24
 
-class Memory:public Object{
+class Memory{
     private:
+        std::unique_ptr<Object> obj;
         std::unique_ptr<uint8_t[]> buff;
         uint32_t mem_size_      = MEM_SIZE;
     public:

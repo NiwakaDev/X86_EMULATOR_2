@@ -60,9 +60,6 @@ Emulator::Emulator(int argc, char* argv[]){
         this->vga     = make_unique<Vga>(
                                             [&](const uint32_t addr){
                                                 return this->mem->Read8(addr);
-                                            },
-                                            [&](const uint32_t addr){
-                                                return this->mem->GetPointer(addr);
                                             }
         );
         this->bios    = make_unique<Bios>(file_read_callback, *(this->vga.get()), *(this->kbc.get()));
