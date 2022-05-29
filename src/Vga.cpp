@@ -26,12 +26,11 @@ Vga::Vga(std::function<uint8_t(const uint32_t addr)> mem_read8, std::function<ui
 
 //この関数はVgaクラスのvga_mutexをロックします。
 void Vga::SetInfo(const int width, const int height, const int vram_start_addr){
-    this->vga_mtx.lock();
+    lock_guard<mutex> lock(this->vga_mtx);
     this->width = width;
     this->height = height;
     this->vram_start_addr = vram_start_addr;
     this->vga_mode = GRAPHIC_MODE;
-    this->vga_mtx.unlock();
 }
 
 void Vga::Out8(const uint16_t addr, const uint8_t data){
@@ -170,7 +169,7 @@ void Vga::SetSnap(uint8_t* const snap, const int w, const int h){
 }
 
 void Vga::SetImage(Pixel* image, int* display_width, int* display_height, std::function<void()> resize_callback){
-    this->LockVga();
+    lock_guard<mutex> lock(this->vga_mtx);
     if((this->GetHeight()!=(*display_height))||(this->GetWidth()!=(*display_width))){
         *display_height = this->GetHeight();
         *display_width  = this->GetWidth();
@@ -181,5 +180,4 @@ void Vga::SetImage(Pixel* image, int* display_width, int* display_height, std::f
             image[x+y*this->width] = *(this->GetPixel(x, y));
         }
     }
-    this->UnlockVga();
 }
