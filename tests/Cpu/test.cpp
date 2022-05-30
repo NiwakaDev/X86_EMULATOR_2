@@ -2026,3 +2026,87 @@ TEST_F(CpuTest, CheckRor10){
     EXPECT_FALSE(cpu->IsFlag(OF));//1回転だが、OFはFALSEになるはず
     EXPECT_EQ(result, (uint32_t)0x01);
 }
+
+TEST_F(CpuTest, CheckRcr0){
+    uint8_t temp_dest  = 0x01;
+    uint8_t temp_count = 0x01;
+    uint8_t result     = cpu->Rcr(temp_dest, temp_count);
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)0x00);
+}
+
+TEST_F(CpuTest, CheckRcr1){
+    uint16_t temp_dest  = 0x0001;
+    uint16_t temp_count = 0x01;
+    uint16_t result     = cpu->Rcr(temp_dest, temp_count);
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)0x0000);
+}
+
+TEST_F(CpuTest, CheckRcr2){
+    uint32_t temp_dest  = 0x00000001;
+    uint32_t temp_count = 0x01;
+    uint32_t result     = cpu->Rcr(temp_dest, temp_count);
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)0x00000000);
+}
+
+TEST_F(CpuTest, CheckRcr3){
+    uint8_t temp_dest  = 0x01;
+    uint8_t temp_count = 0x01;
+    cpu->SetFlag(CF);
+    uint8_t result     = cpu->Rcr(temp_dest, temp_count);
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)0x80);
+}
+
+TEST_F(CpuTest, CheckRcr4){
+    uint16_t temp_dest  = 0x0001;
+    uint16_t temp_count = 0x01;
+    cpu->SetFlag(CF);
+    uint16_t result     = cpu->Rcr(temp_dest, temp_count);
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)0x8000);
+}
+
+TEST_F(CpuTest, CheckRcr5){
+    uint32_t temp_dest  = 0x00000001;
+    uint32_t temp_count = 0x01;
+    cpu->SetFlag(CF);
+    uint32_t result     = cpu->Rcr(temp_dest, temp_count);
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)0x80000000);
+}
+
+TEST_F(CpuTest, CheckRcr6){
+    uint8_t temp_dest  = 0x01;
+    uint8_t temp_count = 0x02;
+    uint8_t result     = cpu->Rcr(temp_dest, temp_count);
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint8_t)0x80);
+}
+
+TEST_F(CpuTest, CheckRcr7){
+    uint16_t temp_dest  = 0x0001;
+    uint16_t temp_count = 0x02;
+    uint16_t result     = cpu->Rcr(temp_dest, temp_count);
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint16_t)0x8000);
+}
+
+TEST_F(CpuTest, CheckRcr8){
+    uint32_t temp_dest  = 0x00000001;
+    uint32_t temp_count = 0x02;
+    uint32_t result     = cpu->Rcr(temp_dest, temp_count);
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_EQ(result, (uint32_t)0x80000000);
+}

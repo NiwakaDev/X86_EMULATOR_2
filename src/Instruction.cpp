@@ -6,7 +6,7 @@
 using namespace std;
 using namespace chrono;
 
-// TODO : RORとRCRの処理をCPUに移す
+// TODO : RCRの処理をCPUに移す
 //  TODO : defineをconstに変更
 #define LSB 0x01
 #define MSB_8 0x80
@@ -3072,28 +3072,10 @@ void MovAlMoffs8::Run(Cpu& cpu, Memory& memory) {
 RcrRm8Imm8::RcrRm8Imm8(string code_name) : Instruction(code_name) {}
 
 void RcrRm8Imm8::Run(Cpu& cpu, Memory& memory) {
-  uint8_t rm8;
-  uint8_t imm8;
-  rm8 = this->GetRM8(cpu, memory);
-  imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
+  uint8_t rm8 = this->GetRM8(cpu, memory);
+  uint8_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
   cpu.AddEip(1);
-  if (imm8 == 0) {
-    return;
-  }
-  if (imm8 == 1) {
-    this->obj->Error("Not implemented: imm8==1 at %s::Run",
-                     this->code_name.c_str());
-  }
-  for (uint32_t i = 0; i < imm8; i++) {
-    if (rm8 & 0x01) {
-      cpu.SetFlag(CF);
-    } else {
-      cpu.ClearFlag(CF);
-    }
-    rm8 = rm8 >> 1;
-    rm8 = rm8 | (cpu.IsFlag(CF) ? 0x80 : 0x00);
-  }
-  this->SetRM8(cpu, memory, rm8);
+  this->SetRM8(cpu, memory, cpu.Rcr(rm8, imm8));
   return;
 }
 
@@ -5230,28 +5212,12 @@ void RepeScasM8::Run(Cpu& cpu, Memory& memory) {
 RcrRm32::RcrRm32(string code_name) : Instruction(code_name) {}
 
 void RcrRm32::Run(Cpu& cpu, Memory& memory) {
-  bool temp_cf;
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {  // 32bit op_size
     this->obj->Error("Not implemented: op_size=32bit at %s::Run",
                      this->code_name.c_str());
   }
-  uint32_t rm16;  // 16bit目にCFが来るから、uint32_tにしている。
-  rm16 = this->GetRM16(cpu, memory);
-  bool dest_msb = (rm16 & MSB_16) ? true : false;
-  if (dest_msb ^ cpu.IsFlag(CF)) {
-    cpu.SetFlag(OF);
-  } else {
-    cpu.ClearFlag(OF);
-  }
-
-  temp_cf = (rm16 & LSB) ? true : false;
-  rm16 = (rm16 >> 1) + (cpu.IsFlag(CF) ? (1 << WORD) : 0);
-  if (temp_cf) {
-    cpu.SetFlag(CF);
-  } else {
-    cpu.ClearFlag(CF);
-  }
-  this->SetRM16(cpu, memory, rm16);
+  uint16_t rm16 = this->GetRM16(cpu, memory);
+  this->SetRM16(cpu, memory, cpu.Rcr(rm16, (uint16_t)1));
   return;
 }
 
