@@ -435,34 +435,34 @@ template <typename type>
 type Cpu::Rcr(type data, type count) {
   type masked_count;
   type msb;
-  if(sizeof(data)==1){
-    masked_count = count%8;
+  if (sizeof(data) == 1) {
+    masked_count = count % 8;
     msb = 0x80;
-  }else if(sizeof(data)==2){
-    masked_count = count%16;
+  } else if (sizeof(data) == 2) {
+    masked_count = count % 16;
     msb = 0x8000;
-  }else if(sizeof(data)==4){
-    masked_count = count%32;
+  } else if (sizeof(data) == 4) {
+    masked_count = count % 32;
     msb = 0x80000000;
-  }else{
+  } else {
     this->obj->Error("Not implemented: sizeof(data)\n", sizeof(data));
   }
-  if(masked_count==1){
-    if(((data&msb)!=0x00)^(this->IsFlag(CF))){
+  if (masked_count == 1) {
+    if (((data & msb) != 0x00) ^ (this->IsFlag(CF))) {
       this->SetFlag(OF);
-    }else{
+    } else {
       this->ClearFlag(OF);
     }
   }
-  for(int i=0; i<masked_count; i++){
-    bool temp_cf = data&0x01;
+  for (int i = 0; i < masked_count; i++) {
+    bool temp_cf = data & 0x01;
     data = data >> 1;
-    if(this->IsFlag(CF)){
+    if (this->IsFlag(CF)) {
       data = data | msb;
     }
-    if(temp_cf){
+    if (temp_cf) {
       this->SetFlag(CF);
-    }else{
+    } else {
       this->ClearFlag(CF);
     }
   }

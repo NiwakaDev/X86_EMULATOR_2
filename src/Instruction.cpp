@@ -6,13 +6,6 @@
 using namespace std;
 using namespace chrono;
 
-// TODO : RCRの処理をCPUに移す
-//  TODO : defineをconstに変更
-#define LSB 0x01
-#define MSB_8 0x80
-#define MSB_16 0x8000
-#define LSB_8 0x01
-
 // Instructionクラスのメンバにアクセスすることがない
 // or
 // Instructionクラスのpublicメンバにしかアクセスしない関数をInstructionHelper空間に移動させた。
