@@ -32,6 +32,31 @@ TEST(MemoryTest, CheckRead8_OutOfRange_3){
     EXPECT_NO_THROW(memory->Read8(size-1));
 }
 
+TEST(MemoryTest, CheckRead16_OutOfRange_0){
+    const int size = 1024;
+    auto memory = make_unique<Memory>(size);
+    EXPECT_THROW(memory->Read16(size), out_of_range);
+}
+
+TEST(MemoryTest, CheckRead16_OutOfRange_1){
+    const int size = 1024;
+    auto memory = make_unique<Memory>(size);
+    EXPECT_THROW(memory->Read16(size+1), out_of_range);
+}
+
+TEST(MemoryTest, CheckRead16_OutOfRange_2){
+    const int size = 1024;
+    auto memory = make_unique<Memory>(size);
+    EXPECT_THROW(memory->Read16(1024*1024*1024), out_of_range);
+}
+
+TEST(MemoryTest, CheckRead16_OutOfRange_3){
+    const int size = 1024;
+    auto memory = make_unique<Memory>(size);
+    EXPECT_NO_THROW(memory->Read16(size-2));
+}
+
+
 /***
 TEST(MemoryTest, CheckSize1){
     const int size = 1024*1024;
