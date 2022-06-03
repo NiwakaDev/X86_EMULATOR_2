@@ -1,33 +1,38 @@
-#include "../include/Memory.h"
+#include "../../include/Memory.h"
+#include "../../include/Cpu.h"
 #include <gtest/gtest.h>
 #include <memory>
+using namespace std;
+
+TEST(MemoryTest, CheckRead8_OutOfRange_0){
+    const int size = 1024;
+    //Memory* memory = new Memory(size);
+    auto memory = make_unique<Memory>(size);
+    EXPECT_THROW(memory->Read8(size), out_of_range);
+}
+
+TEST(MemoryTest, CheckRead8_OutOfRange_1){
+    const int size = 1024;
+    //Memory* memory = new Memory(size);
+    auto memory = make_unique<Memory>(size);
+    EXPECT_THROW(memory->Read8(size+1), out_of_range);
+}
+
+TEST(MemoryTest, CheckRead8_OutOfRange_2){
+    const int size = 1024;
+    //Memory* memory = new Memory(size);
+    auto memory = make_unique<Memory>(size);
+    EXPECT_THROW(memory->Read8(1024*1024*1024), out_of_range);
+}
+
+TEST(MemoryTest, CheckRead8_OutOfRange_3){
+    const int size = 1024;
+    //Memory* memory = new Memory(size);
+    auto memory = make_unique<Memory>(size);
+    EXPECT_NO_THROW(memory->Read8(size-1));
+}
 
 /***
-//メモ： https://monoist.itmedia.co.jp/mn/articles/1706/28/news017_3.html
-//フィクスチャとはテストに必要な準備のことらしい。
-class MemoryTestFixture:public::testing::Test{
-    protected:
-        Memory* memory;
-        virtual void SetUp(){
-            const int MEM_SIZE = 10;
-            memory = new Memory(MEM_SIZE);
-        }
-        virtual void TearDown(){
-            delete memory;
-        }
-};
-
-TEST_F(MemoryTestFixture, CheckSize){
-    EXPECT_EQ(memory->GetMemSize(), 10);
-}
-***/
-
-TEST(MemoryTest, CheckSize0){
-    const int size = 1024;
-    Memory* memory = new Memory(size);
-    EXPECT_EQ(memory->GetMemSize(), size);
-}
-
 TEST(MemoryTest, CheckSize1){
     const int size = 1024*1024;
     Memory* memory = new Memory(size);
@@ -109,3 +114,4 @@ TEST(MemoryTest, CheckWriteRead4Byte1){
     memory.Write(addr, data);
     EXPECT_EQ(memory.Read32(addr), data);
 }
+***/

@@ -10,7 +10,8 @@ void Memory::Write(const uint32_t addr, const type data) {
 
 inline uint8_t Memory::Read8(const uint32_t addr) const {
   if ((mem_size_) <= addr) {
-    return 0;
+    //TODO: エラーメッセージにアドレスを埋め込むようにする。
+    throw std::out_of_range("Invalid addr");
   }
   return this->buff[addr];
 }
@@ -22,6 +23,7 @@ inline uint16_t Memory::Read16(const uint32_t addr) const {
   uint16_t* data = (uint16_t*)(this->buff.get() + addr);
   return *data;
 }
+
 
 inline uint32_t Memory::Read32(const uint32_t addr) const {
   if ((mem_size_ - 3) <= addr) {
