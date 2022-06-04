@@ -121,7 +121,7 @@ Run <a href="https://github.com/neri/osz">osz</a>
 ```
 
 <h2>Language and Library</h2>
-c++20, <a href="https://www.libsdl.org/">SDL2</a>
+c++14, <a href="https://www.libsdl.org/">SDL2</a>
 
 
 <p>test : <a href="https://github.com/google/googletest">googletest</p> 
