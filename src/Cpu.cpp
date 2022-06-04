@@ -936,10 +936,13 @@ bool Cpu::Run() {
     cerr << error_message << endl;
     this->ShowRegisters();
     return false;
-  } catch (const int page_fault) {
+  } catch (const int page_fault) {//TODO : これをpage_fault処理を実装し、例外からここを消す。
     fprintf(stderr, "Error\n");
     return false;
   } catch (const runtime_error& e) {
+    cout << e.what() << endl;
+    return false;
+  } catch (const out_of_range& e) {
     cout << e.what() << endl;
     return false;
   }

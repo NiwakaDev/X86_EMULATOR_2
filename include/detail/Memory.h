@@ -10,15 +10,16 @@ void Memory::Write(const uint32_t addr, const type data) {
 
 inline uint8_t Memory::Read8(const uint32_t addr) const {
   if ((mem_size_) <= addr) {
-    // TODO: エラーメッセージにアドレスを埋め込むようにする。
-    throw std::out_of_range("Invalid addr");
+    throw std::out_of_range(
+        this->obj->Format("Invalid addr = 0x%08X at Memory::Read8", addr));
   }
   return this->buff[addr];
 }
 
 inline uint16_t Memory::Read16(const uint32_t addr) const {
   if ((mem_size_ - 1) <= addr) {
-    throw std::out_of_range("Invalid addr");
+    throw std::out_of_range(
+        this->obj->Format("Invalid addr = 0x%08X at Memory::Read16", addr));
   }
   uint16_t* data = (uint16_t*)(this->buff.get() + addr);
   return *data;
