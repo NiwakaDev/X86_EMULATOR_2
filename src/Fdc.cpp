@@ -240,4 +240,4 @@ void Fdc::Push(uint8_t data) { this->fifo->Push(data); }
 
 uint8_t Fdc::Pop() { return this->fifo->Pop(); }
 
-uint8_t Fdc::Front() { throw runtime_error("Not implemented: Fdc::Front");}
+uint8_t Fdc::Front() { throw runtime_error("Not implemented: Fdc::Front"); }

@@ -11,9 +11,7 @@ Kbc::Kbc(Mouse& mouse) {
   this->mouse = &mouse;
 }
 
-Kbc::~Kbc() {
-
-}
+Kbc::~Kbc() {}
 
 void Kbc::ProcessCommand(uint8_t command) {
   switch (command) {

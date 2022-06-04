@@ -176,20 +176,31 @@ void Emulator::MainLoop() {
   fprintf(stderr, "DEBUG\n");
 #endif
 
-  while (!this->gui->IsQuit()) {
-    if ((this->cpu->IsException()) ||
-        (this->cpu->IsFlag(IF) && this->cpu->IsProtectedMode())) {
-      if (this->cpu->IsException()) {
-        this->cpu->HandleInterrupt(this->cpu->GetVectorNumber());
-      } else if (this->pic->HasIrq()) {
-        this->cpu->HandleInterrupt(this->pic->GetNowIrq() + 0x20);
+  try {
+    while (!this->gui->IsQuit()) {
+      if ((this->cpu->IsException()) ||
+          (this->cpu->IsFlag(IF) && this->cpu->IsProtectedMode())) {
+        if (this->cpu->IsException()) {
+          this->cpu->HandleInterrupt(this->cpu->GetVectorNumber());
+        } else if (this->pic->HasIrq()) {
+          this->cpu->HandleInterrupt(this->pic->GetNowIrq() + 0x20);
+        }
       }
+      if (this->cpu->Run()) {
+        continue;
+      }
+      // TODO : cpuから例外を投げて、catchでgui->Finishを呼び出す
+      this->gui->Finish();
+      break;
     }
-    if (this->cpu->Run()) {
-      continue;
-    }
-    // TODO : cpuから例外を投げて、catchでgui->Finishを呼び出す
+  } catch (const runtime_error& e) {
+    cout << e.what() << endl;
     this->gui->Finish();
-    break;
+  } catch (const out_of_range& e) {
+    cout << e.what() << endl;
+    this->gui->Finish();
+  } catch (const system_error& e) {
+    cout << e.what() << endl;
+    this->gui->Finish();
   }
 }

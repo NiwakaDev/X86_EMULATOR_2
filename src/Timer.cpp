@@ -53,16 +53,14 @@ void Timer::Out8(const uint16_t addr, const uint8_t data) {
         return;
       }
     default:
-      this->obj->Error("Not implemented: io_addr(0x%02X) at Timer::Out8");
-      // throw runtime_error(this->obj->Format("Not implemented: io_addr(0x%04X)
-      // at Timer::Out8", addr));
+      throw runtime_error(this->obj->Format(
+          "Not implemented: io_addr(0x%04X) at Timer::Out8", addr));
       break;
   }
 }
 
 uint8_t Timer::In8(const uint16_t addr) {
-  this->obj->Error("Not implemented: Timer::In8");
-  return 0;
+  throw runtime_error("Not implemented: Timer::In8");
 }
 
 void Timer::Run(uint32_t cycle) {
@@ -91,6 +89,4 @@ void Timer::Push(uint8_t data) { this->fifo->Push(data); }
 
 uint8_t Timer::Pop() { return this->fifo->Pop(); }
 
-uint8_t Timer::Front() {
-  throw runtime_error("Not implemented: Timer::Front");
- }
+uint8_t Timer::Front() { throw runtime_error("Not implemented: Timer::Front"); }
