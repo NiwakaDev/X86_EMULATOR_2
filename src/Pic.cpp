@@ -4,7 +4,7 @@ using namespace std;
 
 Pic::Pic(IoDevice** io_devices) {
   if (io_devices == NULL) {
-    this->obj->Error("io_devices is NULL at Pic::Pic");
+    throw runtime_error("io_devices is NULL at Pic::Pic");
   }
   this->obj = make_unique<Object>();
   for (int i = 0; i < 16; i++) {
@@ -32,13 +32,15 @@ void Pic::Out8(const uint16_t addr, const uint8_t data) {
       }
       break;
     default:
-      this->obj->Error("Not implemented: io_addr=%04X\n", addr);
+      throw runtime_error("Not implemented: io_addr=0x%04X");
+      //this->obj->Error("Not implemented: io_addr=%04X\n", addr);
   }
 }
 
 uint8_t Pic::In8(const uint16_t addr) {
   switch (addr) {
     default:
+      throw runtime_error("Not implemented: io_addr=%04X");
       this->obj->Error("Not implemented addr=0x%04X at Pic::In8", addr);
   }
 }

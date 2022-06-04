@@ -2,7 +2,7 @@
 
 CC = clang++
 
-G++_OPTIONS = -Wall -std=c++14 -O0 -g -I $(INCLUDE_DIR) -DDEBUG
+G++_OPTIONS = -Wall -std=c++20 -O0 -g -I $(INCLUDE_DIR) -DDEBUG
 #LD_FLGS += -lSDL2
 
 

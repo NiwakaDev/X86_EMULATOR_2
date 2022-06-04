@@ -1,35 +1,30 @@
-#include "../include/Pic.h"
-#include "IoDevice.h"
+#include "../../include/Pic.h"
+#include "../../include/IoDevice.h"
 #include <memory>
+#include <gtest/gtest.h>
+using namespace std;
 
-void Test1(){
-    {//存在しないデバイスにアクセスしたときに、例外が発生するかのテスト
-        IoDevice* io_devices[16];
-        Pic pic(io_devices);
-        try{
-            pic.Out8(0, 0);
-        }catch(const char* message){
-            std::cerr << message << std::endl;
-            std::cerr << "PIC TEST1 SUCCESS !!" << std::endl;
-            exit(EXIT_SUCCESS);
-        }
-    }
-    std::cerr << "PIC TEST1 FAILED !!" << std::endl;   
+TEST(PicTest, CheckPic_RunTimeError0){
+    IoDevice** io_devices = NULL;
+    EXPECT_THROW(Pic pic(io_devices), runtime_error);
 }
 
-void Test2(){
-    {//Picが完全コンストラクタになっているかどうかのテスト
-        try{
-            std::unique_ptr<Pic> pic = std::make_unique<Pic>((IoDevice**)NULL);
-        }catch(const char* message){
-            std::cerr << message << std::endl;
-            std::cerr << "PIC TEST2 SUCCESS !!" << std::endl;
-            exit(EXIT_SUCCESS);
-        }
-    }
-    std::cerr << "PIC TEST2 FAILED !!" << std::endl;
+TEST(PicTest, CheckPic_RunTimeError1){
+    IoDevice* io_devices[16];
+    EXPECT_NO_THROW(Pic pic(io_devices));
 }
 
-int main(){
-    Test2();
+TEST(PicTest, CheckOut8_RunTimeError_0){
+    IoDevice* io_devices[16];
+    auto pic = make_unique<Pic>(io_devices);
+    uint16_t addr = 0;
+    uint8_t  data = 0;
+    EXPECT_THROW(pic->Out8(addr, data), runtime_error);
+}
+
+TEST(PicTest, CheckIn8_RunTimeError_0){
+    IoDevice* io_devices[16];
+    auto pic = make_unique<Pic>(io_devices);
+    uint16_t addr = 0;
+    EXPECT_THROW(pic->In8(addr), runtime_error);
 }

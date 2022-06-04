@@ -2,7 +2,7 @@
 
 CC = clang++
 
-G++_OPTIONS = -Wall -std=c++14 -O0 -g -I $(INCLUDE_DIR) -DDEBUG -arch x86_64
+G++_OPTIONS = -Wall -std=c++20 -O0 -g -I $(INCLUDE_DIR) -DDEBUG -arch x86_64
 LD_FLGS += -lSDL2 -lgtest_main -lgtest -arch x86_64
 
 
