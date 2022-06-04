@@ -91,7 +91,7 @@ class Cpu {
       Memory& mem, std::function<uint8_t(uint16_t addr)> io_in8,
       std::function<void(uint16_t addr, uint8_t data)> io_out8);
   ~Cpu();
-  bool Run();
+  void Run();
   inline void AddEip(uint32_t data);
   inline void SetEip(uint32_t addr);
   uint32_t GetLinearAddrForCodeAccess();

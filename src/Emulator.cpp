@@ -186,21 +186,23 @@ void Emulator::MainLoop() {
           this->cpu->HandleInterrupt(this->pic->GetNowIrq() + 0x20);
         }
       }
-      if (this->cpu->Run()) {
-        continue;
-      }
-      // TODO : cpuから例外を投げて、catchでgui->Finishを呼び出す
-      this->gui->Finish();
-      break;
+      this->cpu->Run();
     }
   } catch (const runtime_error& e) {
+    this->cpu->ShowRegisters();
     cout << e.what() << endl;
     this->gui->Finish();
   } catch (const out_of_range& e) {
+    this->cpu->ShowRegisters();
     cout << e.what() << endl;
     this->gui->Finish();
   } catch (const system_error& e) {
+    this->cpu->ShowRegisters();
     cout << e.what() << endl;
+    this->gui->Finish();
+  } catch (const char* error_message) {
+    this->cpu->ShowRegisters();
+    cerr << error_message << endl;
     this->gui->Finish();
   }
 }

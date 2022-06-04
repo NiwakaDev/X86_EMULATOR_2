@@ -848,7 +848,7 @@ void Cpu::Debug(FILE* f, bool h) {
   ***/
 }
 
-bool Cpu::Run() {
+void Cpu::Run() {
 #ifdef DEBUG
   static FILE* fp = NULL;
   static vector<uint32_t> eip_history;
@@ -856,92 +856,70 @@ bool Cpu::Run() {
   static long long cnt = 0;
   static bool flg = false;
   cnt++;
-  try {  // TODO: エラー処理はtry
-         // catchで処理するようにする。まだ未実装の箇所が多い。
-    eip_history.push_back(this->eip);
-    // if(this->eip==0xD58F){
-    if (cnt == 790738) {
-      cnt = cnt;
-    }
-    if (this->eip == 0x0000D58F) {
-      for (int i = eip_history.size() - 100; i < eip_history.size(); i++) {
-        fprintf(stderr, "EIP=0x%08X %s\n", eip_history[i],
-                instruction_history[i].c_str());
-      }
-      fprintf(stderr, "cnt=%d\n", cnt);
-      throw "\n";
-    }
-    if (this->eip == 0x000078A1) {
-      int i = 0;
-      i++;
-    }
-    if (this->eip == 0x000077A7) {
-      int i = 0;
-      i++;
-    }
-    if (this->eip == 0x000078A2) {
-      int i = 0;
-      i++;
-    }
-    if ((!flg) && this->eip == 0x000077AC) {
-      int i = 0;
-      i++;
-      flg = true;
-      fp = fopen("x86_linearaddr_log.txt", "w");
-    }
-    if (flg) {
-      // fprintf(fp, "0x%08X\n", this->eip);
-      // fprintf(stderr, "0x%08X\n", this->GetLinearAddrForCodeAccess());
-    }
-    if (this->eip == 0x000076c1) {
-      fprintf(stderr, "0x%08X", this->eip);
-    }
-    if (this->eip == 0x00000026) {
-      int i = 0;
-      i++;
-    }
-    this->InitSelector();
-    this->ResetPrefixFlg();
-    this->CheckPrefixCode(*(this->mem));
-    uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
-    if (this->instructions[op_code].get() == NULL) {
-      if (fp != NULL) {
-        fclose(fp);
-      }
-      this->obj->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
-    }
-    this->instructions[op_code]->Run(*this, *this->mem);
-    instruction_history.push_back(
-        this->instructions[op_code]->GetInstructionName());
-    // fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
-    return true;
-  } catch (const char* error_message) {
-    cerr << error_message << endl;
-    this->ShowRegisters();
-    return false;
+  eip_history.push_back(this->eip);
+  // if(this->eip==0xD58F){
+  if (cnt == 790738) {
+    cnt = cnt;
   }
+  if (this->eip == 0x0000D58F) {
+    for (int i = eip_history.size() - 100; i < eip_history.size(); i++) {
+      fprintf(stderr, "EIP=0x%08X %s\n", eip_history[i],
+              instruction_history[i].c_str());
+    }
+    fprintf(stderr, "cnt=%d\n", cnt);
+    throw "\n";
+  }
+  if (this->eip == 0x000078A1) {
+    int i = 0;
+    i++;
+  }
+  if (this->eip == 0x000077A7) {
+    int i = 0;
+    i++;
+  }
+  if (this->eip == 0x000078A2) {
+    int i = 0;
+    i++;
+  }
+  if ((!flg) && this->eip == 0x000077AC) {
+    int i = 0;
+    i++;
+    flg = true;
+    fp = fopen("x86_linearaddr_log.txt", "w");
+  }
+  if (flg) {
+    // fprintf(fp, "0x%08X\n", this->eip);
+    // fprintf(stderr, "0x%08X\n", this->GetLinearAddrForCodeAccess());
+  }
+  if (this->eip == 0x000076c1) {
+    fprintf(stderr, "0x%08X", this->eip);
+  }
+  if (this->eip == 0x00000026) {
+    int i = 0;
+    i++;
+  }
+  this->InitSelector();
+  this->ResetPrefixFlg();
+  this->CheckPrefixCode(*(this->mem));
+  uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
+  if (this->instructions[op_code].get() == NULL) {
+    if (fp != NULL) {
+      fclose(fp);
+    }
+    this->obj->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
+  }
+  this->instructions[op_code]->Run(*this, *this->mem);
+  instruction_history.push_back(
+      this->instructions[op_code]->GetInstructionName());
+  // fprintf(stderr, "%s\n", this->instructions[op_code]->code_name.c_str());
 #else
-  try {  // TODO: エラー処理はtry
-         // catchで処理するようにする。まだ未実装の箇所が多い。
-    this->InitSelector();
-    this->ResetPrefixFlg();
-    this->CheckPrefixCode(*(this->mem));
-    uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
-    if (this->instructions[op_code].get() == NULL) {
-      this->obj->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
-    }
-    this->instructions[op_code]->Run(*this, *this->mem);
-    return true;
-  } catch (const char* error_message) {
-    cerr << error_message << endl;
-    this->ShowRegisters();
-    return false;
-  } catch (
-      const int
-          page_fault) {  // TODO :
-                         // これをpage_fault処理を実装し、例外からここを消す。
-    fprintf(stderr, "Error\n");
-    return false;
+  this->InitSelector();
+  this->ResetPrefixFlg();
+  this->CheckPrefixCode(*(this->mem));
+  uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
+  if (this->instructions[op_code].get() == NULL) {
+    this->obj->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
   }
+  this->instructions[op_code]->Run(*this, *this->mem);
 #endif
 }
