@@ -1344,12 +1344,10 @@ void Hlt::Run(Cpu& cpu, Memory& memory) {
 MovRm16Sreg::MovRm16Sreg(string code_name) : Instruction(code_name) {}
 
 void MovRm16Sreg::Run(Cpu& cpu, Memory& memory) {
-  uint16_t register_value;
-  SEGMENT_REGISTER register_type;
   cpu.AddEip(1);
   this->ParseModRM(cpu, memory);
-  register_type = (SEGMENT_REGISTER)this->modrm.reg_index;
-  register_value = cpu.GetR16(register_type);
+  SEGMENT_REGISTER register_type = (SEGMENT_REGISTER)this->modrm.reg_index;
+  uint16_t register_value = cpu.GetR16(register_type);
   this->SetRM16(cpu, memory, register_value);
   return;
 }
