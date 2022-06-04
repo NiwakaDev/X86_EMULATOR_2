@@ -4,7 +4,9 @@ using namespace std;
 
 #define SECTOR_SIZE 512
 
-Fdc::Fdc(function<void(uint8_t* buff, int size)> read_callback) : IoDevice() {
+Fdc::Fdc(function<void(uint8_t* buff, int size)> read_callback) {
+  this->fifo = make_unique<Fifo<uint8_t>>();
+  this->obj = make_unique<Object>();
   this->msr.flgs.rqm = 1;
   this->fdc_mode = FDC_IDLE_MODE;
   this->buff = make_unique<uint8_t[]>(FLOPPY_DISK_SIZE);
@@ -233,3 +235,9 @@ int Fdc::IsEmpty() {
   }
   return -1;
 }
+
+void Fdc::Push(uint8_t data) { this->fifo->Push(data); }
+
+uint8_t Fdc::Pop() { return this->fifo->Pop(); }
+
+uint8_t Fdc::Front() { throw runtime_error("Not implemented: Fdc::Front");}

@@ -5,17 +5,19 @@ using namespace std;
 using namespace chrono;
 using namespace this_thread;
 
-Timer::Timer() : IoDevice() {
+Timer::Timer() {
+  this->fifo = make_unique<Fifo<uint8_t>>();
+  this->obj = make_unique<Object>();
   this->enable = false;
   this->timer_thread = nullptr;
 }
 
 Timer::~Timer() {
-  if(this->timer_thread.get()==nullptr){
+  if (this->timer_thread.get() == nullptr) {
     return;
   }
   this->enable = false;
-  if(this->timer_thread->joinable()){
+  if (this->timer_thread->joinable()) {
     this->timer_thread->join();
   }
 }
@@ -28,10 +30,10 @@ void Timer::Out8(const uint16_t addr, const uint8_t data) {
     case PIT_MODE_COMMAND_REGISTER:
       mode = 0;
       this->enable = false;
-      if(this->timer_thread.get()==nullptr){
+      if (this->timer_thread.get() == nullptr) {
         return;
       }
-      if(this->timer_thread->joinable()){
+      if (this->timer_thread->joinable()) {
         this->timer_thread->join();
       }
       this->timer_thread.reset(nullptr);
@@ -52,6 +54,8 @@ void Timer::Out8(const uint16_t addr, const uint8_t data) {
       }
     default:
       this->obj->Error("Not implemented: io_addr(0x%02X) at Timer::Out8");
+      // throw runtime_error(this->obj->Format("Not implemented: io_addr(0x%04X)
+      // at Timer::Out8", addr));
       break;
   }
 }
@@ -82,3 +86,11 @@ int Timer::IsEmpty() {
   this->Pop();
   return 0x00;
 }
+
+void Timer::Push(uint8_t data) { this->fifo->Push(data); }
+
+uint8_t Timer::Pop() { return this->fifo->Pop(); }
+
+uint8_t Timer::Front() {
+  throw runtime_error("Not implemented: Timer::Front");
+ }

@@ -2,7 +2,11 @@
 #include "Pic.h"
 using namespace std;
 
-Mouse::Mouse() : IoDevice() { this->enable_flg = false; }
+Mouse::Mouse() {
+  this->fifo = make_unique<Fifo<uint8_t>>();
+  this->obj = make_unique<Object>();
+  this->enable_flg = false;
+}
 
 Mouse::~Mouse() {}
 
@@ -20,3 +24,9 @@ uint8_t Mouse::In8(const uint16_t addr) {
 }
 
 int Mouse::IsEmpty() { return this->fifo->IsEmpty() ? -1 : 0x0C; }
+
+uint8_t Mouse::Pop() { return this->fifo->Pop(); }
+
+uint8_t Mouse::Front() {
+  throw runtime_error("Not implemented: Mouse::Front");
+}

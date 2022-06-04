@@ -12,6 +12,9 @@ class Fdc : public IoDevice {
   void Out8(const uint16_t addr, const uint8_t data);
   uint8_t In8(const uint16_t addr);
   int IsEmpty();
+  void Push(uint8_t data);
+  uint8_t Pop();
+  uint8_t Front();
   enum FDC_MODE {
     FDC_IDLE_MODE,
     FDC_COMMAND_MODE,
@@ -69,4 +72,6 @@ class Fdc : public IoDevice {
   std::unique_ptr<uint8_t[]> buff;
   uint8_t ProcessCommandForIn8();
   void ProcessCommandForOut8(uint8_t data);
+  std::unique_ptr<Fifo<uint8_t>> fifo;
+  std::unique_ptr<Object> obj;
 };

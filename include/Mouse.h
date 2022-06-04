@@ -6,6 +6,10 @@
 class Pic;
 
 class Mouse : public IoDevice {
+ private:
+  std::unique_ptr<Fifo<uint8_t>> fifo;
+  std::unique_ptr<Object> obj;
+
  public:
   Mouse();
   ~Mouse();
@@ -14,6 +18,8 @@ class Mouse : public IoDevice {
   int IsEmpty();
   void SetEnable();
   inline void Push(uint8_t data);
+  uint8_t Pop();
+  uint8_t Front();
 
  private:
   Mouse(const Mouse& other);

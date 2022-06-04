@@ -5,9 +5,15 @@ using namespace std;
 
 const uint8_t ACK = 0xFA;
 
-Kbc::Kbc(Mouse& mouse) : IoDevice() { this->mouse = &mouse; }
+Kbc::Kbc(Mouse& mouse) {
+  this->fifo = make_unique<Fifo<uint8_t>>();
+  this->obj = make_unique<Object>();
+  this->mouse = &mouse;
+}
 
-Kbc::~Kbc() {}
+Kbc::~Kbc() {
+
+}
 
 void Kbc::ProcessCommand(uint8_t command) {
   switch (command) {
@@ -65,3 +71,9 @@ int Kbc::IsEmpty() {
   }
   return 0x01;
 }
+
+void Kbc::Push(uint8_t data) { this->fifo->Push(data); }
+
+uint8_t Kbc::Pop() { return this->fifo->Pop(); }
+
+uint8_t Kbc::Front() { return this->fifo->Front(); }
