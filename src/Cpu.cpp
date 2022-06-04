@@ -939,6 +939,9 @@ bool Cpu::Run() {
   } catch (const int page_fault) {
     fprintf(stderr, "Error\n");
     return false;
+  } catch (const runtime_error& e) {
+    cout << e.what() << endl;
+    return false;
   }
 #endif
 }

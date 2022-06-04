@@ -1,6 +1,6 @@
 #include "Pic.h"
-#include "IoDevice.h"
 #include <format>
+#include "IoDevice.h"
 using namespace std;
 
 Pic::Pic(IoDevice** io_devices) {
@@ -33,17 +33,16 @@ void Pic::Out8(const uint16_t addr, const uint8_t data) {
       }
       break;
     default:
-      throw runtime_error("Not implemented: io_addr=0x%04X");
-      // this->obj->Error("Not implemented: io_addr=%04X\n", addr);
+      throw runtime_error(this->obj->Format(
+          "Not implemented: io_addr=0x%04X at Pic::Out8", addr));
   }
 }
 
 uint8_t Pic::In8(const uint16_t addr) {
   switch (addr) {
     default:
-      throw runtime_error("Not implemented: io_addr=%04X");
-      //throw runtime_error(format("Hello"));
-      // this->obj->Error("Not implemented addr=0x%04X at Pic::In8", addr);
+      throw runtime_error(
+          this->obj->Format("Not implemented: io_addr=%04X at Pic::In8", addr));
   }
 }
 

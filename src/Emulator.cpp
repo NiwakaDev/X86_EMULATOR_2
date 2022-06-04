@@ -87,6 +87,9 @@ Emulator::Emulator(int argc, char* argv[]) {
   } catch (const char* error_message) {
     cout << error_message << endl;
     exit(EXIT_FAILURE);
+  } catch (const runtime_error& e) {
+    cout << e.what() << endl;
+    exit(EXIT_FAILURE);
   }
 #ifdef DEBUG
   // biosをロードする。
