@@ -918,7 +918,8 @@ void Cpu::Run() {
   this->CheckPrefixCode(*(this->mem));
   uint8_t op_code = this->mem->Read8(this->GetLinearAddrForCodeAccess());
   if (this->instructions[op_code].get() == NULL) {
-    this->obj->Error("Not implemented: op_code = 0x%02X Cpu::Run\n", op_code);
+    throw runtime_error(this->obj->Format(
+        "Not implemented: op_code = 0x%02X Cpu::Run\n", op_code));
   }
   this->instructions[op_code]->Run(*this, *this->mem);
 #endif
