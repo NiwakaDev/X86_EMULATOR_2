@@ -11,10 +11,11 @@ Timer::Timer() : IoDevice() {
 }
 
 Timer::~Timer() {
-  if (this->timer_thread != nullptr) {
+  if (this->timer_thread.get() != nullptr) {
     this->enable = false;
-    this->timer_thread->join();
-    delete this->timer_thread;
+    if(this->timer_thread->joinable()){
+      this->timer_thread->join();
+    }
   }
 }
 
@@ -26,9 +27,11 @@ void Timer::Out8(const uint16_t addr, const uint8_t data) {
     case PIT_MODE_COMMAND_REGISTER:
       mode = 0;
       this->enable = false;
-      if (this->timer_thread != nullptr) {
-        this->timer_thread->join();
-        delete this->timer_thread;
+      if (this->timer_thread.get() != nullptr) {
+        if(this->timer_thread->joinable()){
+          this->timer_thread->join();
+        }
+        this->timer_thread.reset(nullptr);
       }
       return;
     case PIT_CHANNEL_0:
@@ -42,7 +45,7 @@ void Timer::Out8(const uint16_t addr, const uint8_t data) {
         cycle = (uint32_t)ceil(((double)clock) / ((double)cycle));
         mode = 3;
         this->enable = true;
-        this->timer_thread = new thread(&Timer::Run, this, cycle);
+        this->timer_thread = make_unique<thread>(&Timer::Run, this, cycle);
         return;
       }
     default:

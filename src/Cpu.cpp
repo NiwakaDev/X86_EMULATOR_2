@@ -945,6 +945,9 @@ bool Cpu::Run() {
   } catch (const out_of_range& e) {
     cout << e.what() << endl;
     return false;
+  } catch (const system_error& e){
+    cout << e.what() << endl;
+    return false;
   }
 #endif
 }
