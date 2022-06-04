@@ -11,11 +11,12 @@ Timer::Timer() : IoDevice() {
 }
 
 Timer::~Timer() {
-  if (this->timer_thread.get() != nullptr) {
-    this->enable = false;
-    if(this->timer_thread->joinable()){
-      this->timer_thread->join();
-    }
+  if(this->timer_thread.get()==nullptr){
+    return;
+  }
+  this->enable = false;
+  if(this->timer_thread->joinable()){
+    this->timer_thread->join();
   }
 }
 
@@ -27,12 +28,13 @@ void Timer::Out8(const uint16_t addr, const uint8_t data) {
     case PIT_MODE_COMMAND_REGISTER:
       mode = 0;
       this->enable = false;
-      if (this->timer_thread.get() != nullptr) {
-        if(this->timer_thread->joinable()){
-          this->timer_thread->join();
-        }
-        this->timer_thread.reset(nullptr);
+      if(this->timer_thread.get()==nullptr){
+        return;
       }
+      if(this->timer_thread->joinable()){
+        this->timer_thread->join();
+      }
+      this->timer_thread.reset(nullptr);
       return;
     case PIT_CHANNEL_0:
       if (mode == 0) {
