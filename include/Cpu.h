@@ -6,11 +6,10 @@
 class SegmentRegister;
 class Memory;
 class Instruction;
-class Gdtr;
-class Idtr;
 class Ldtr;
 class TaskRegister;
 class Emulator;
+class DescriptorTableRegister;
 
 // TODO : defineで定義された定数をconstに変更
 #define IPL_START_ADDR 0x7c00
@@ -207,8 +206,8 @@ class Cpu {
   Memory* mem;
   std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)>
       bios_call;
-  std::unique_ptr<Gdtr> gdtr;
-  std::unique_ptr<Idtr> idtr;
+  std::unique_ptr<DescriptorTableRegister> gdtr;
+  std::unique_ptr<DescriptorTableRegister> idtr;
   std::unique_ptr<Ldtr> ldtr;
   std::unique_ptr<TaskRegister> task_register;
   std::unique_ptr<Instruction>

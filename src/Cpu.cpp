@@ -1,6 +1,5 @@
 #include "Cpu.h"
-#include "Gdtr.h"
-#include "Idtr.h"
+#include "DescriptorTableRegister.h"
 #include "Instruction.h"
 #include "InstructionHelper.h"
 #include "Ldtr.h"
@@ -37,8 +36,8 @@ Cpu::Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)>
   }
   this->task_register = make_unique<TaskRegister>(0x00);
   this->ldtr = make_unique<Ldtr>(0);
-  this->gdtr = make_unique<Gdtr>("Gdtr", 0, 0);
-  this->idtr = make_unique<Idtr>("Idtr", 0, 0);
+  this->gdtr = make_unique<DescriptorTableRegister>(0, 0);
+  this->idtr = make_unique<DescriptorTableRegister>(0, 0);
 
   this->registers.eax = GPR_INIT_VALUE;
   this->registers.ebx = GPR_INIT_VALUE;
@@ -104,8 +103,8 @@ Cpu::Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)>
   }
   this->task_register = make_unique<TaskRegister>(0x00);
   this->ldtr = make_unique<Ldtr>(0);
-  this->gdtr = make_unique<Gdtr>("Gdtr", 0, 0);
-  this->idtr = make_unique<Idtr>("Idtr", 0, 0);
+  this->gdtr = make_unique<DescriptorTableRegister>(0, 0);
+  this->idtr = make_unique<DescriptorTableRegister>(0, 0);
 
   this->registers.eax = GPR_INIT_VALUE;
   this->registers.ebx = GPR_INIT_VALUE;
