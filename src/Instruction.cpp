@@ -4234,32 +4234,7 @@ MovsM8M8::MovsM8M8(string code_name) : Instruction(code_name) {}
 
 void MovsM8M8::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
-  if (cpu.IsSegmentOverride()) {
-    this->obj->Error("Not implemented: segment override at %s::Run",
-                     this->code_name.c_str());
-  }
-  if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-    uint32_t d = cpu.IsFlag(DF) ? -1 : 1;
-    uint32_t ds = cpu.GetBaseAddr(DS);
-    uint32_t esi = cpu.GetR32(ESI);
-    uint32_t es = cpu.GetBaseAddr(ES);
-    uint32_t edi = cpu.GetR32(EDI);
-    memory.Write(cpu.GetPhysicalAddr(es + edi),
-                 memory.Read8(cpu.GetPhysicalAddr(ds + esi)));
-    cpu.SetR32(EDI, edi + d);
-    cpu.SetR32(ESI, esi + d);
-    return;
-  }
-  uint32_t ds = cpu.GetBaseAddr(DS);
-  uint16_t si = cpu.GetR16(ESI);
-  uint32_t es = cpu.GetBaseAddr(ES);
-  uint16_t di = cpu.GetR16(EDI);
-  memory.Write(cpu.GetPhysicalAddr(es + di),
-               memory.Read8(cpu.GetPhysicalAddr(ds + si)));
-  uint16_t d = cpu.IsFlag(DF) ? -1 : 1;
-  cpu.SetR16(EDI, di + d);
-  cpu.SetR16(ESI, si + d);
-  return;
+  cpu.Movs(1);  // TODO : マジックナンバーの修正
 }
 
 TestAlImm8::TestAlImm8(string code_name) : Instruction(code_name) {}
@@ -4511,71 +4486,7 @@ RepMovsM8M8::RepMovsM8M8(string code_name) : Instruction(code_name) {}
 
 void RepMovsM8M8::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
-  if (cpu.IsSegmentOverride()) {
-    this->obj->Error("Not implemented: segment override at %s::Run",
-                     this->code_name.c_str());
-  }
-  if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {  // 32bit op_size
-    uint32_t cnt;
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-      cnt = cpu.GetR32(ECX);
-    } else {
-      cnt = cpu.GetR16(ECX);
-    }
-    uint32_t ds, es;
-    ds = cpu.GetBaseAddr(DS);
-    es = cpu.GetBaseAddr(ES);
-    uint32_t d = cpu.IsFlag(DF) ? -1 : 1;
-    uint16_t si, di;
-    uint32_t esi, edi;
-    for (uint16_t i = 0; i < cnt; i++) {
-      if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-        esi = cpu.GetR32(ESI);
-        edi = cpu.GetR32(EDI);
-      } else {
-        si = cpu.GetR16(ESI);
-        di = cpu.GetR16(EDI);
-      }
-      if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-        memory.Write(cpu.GetPhysicalAddr(es + edi),
-                     memory.Read8(cpu.GetPhysicalAddr(ds + esi)));
-      } else {
-        memory.Write(cpu.GetPhysicalAddr(es + di),
-                     memory.Read8(cpu.GetPhysicalAddr(ds + si)));
-      }
-      if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-        cpu.SetR32(EDI, edi + d);
-        cpu.SetR32(ESI, esi + d);
-        cpu.SetR32(ECX, cpu.GetR32(ECX) - 1);
-      } else {
-        cpu.SetR16(EDI, di + d);
-        cpu.SetR16(ESI, si + d);
-        cpu.SetR16(ECX, cpu.GetR16(ECX) - 1);
-      }
-    }
-    return;
-  } else {  // 16bit op_size
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-      this->obj->Error(
-          "Not implemented: addr_size=32bits && addr_size=32bits at %s::Run",
-          this->code_name.c_str());
-    }
-    uint16_t cx = cpu.GetR16(ECX);
-    uint32_t ds, es;
-    ds = cpu.GetBaseAddr(DS);
-    es = cpu.GetBaseAddr(ES);
-    for (uint16_t i = 0; i < cx; i++) {
-      uint16_t si, di;
-      uint16_t d;
-      si = cpu.GetR16(ESI);
-      di = cpu.GetR16(EDI);
-      memory.Write(es + di, memory.Read8(ds + si));
-      d = cpu.IsFlag(DF) ? -1 : 1;
-      cpu.SetR16(EDI, di + d);
-      cpu.SetR16(ESI, si + d);
-      cpu.SetR16(ECX, cpu.GetR16(ECX) - 1);
-    }
-  }
+  cpu.Rep([&]() { cpu.Movs(1); }, [&]() { return false; });
   return;
 }
 
@@ -4583,50 +4494,15 @@ RepMovsM32M32::RepMovsM32M32(string code_name) : Instruction(code_name) {}
 
 void RepMovsM32M32::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
-  if (cpu.IsSegmentOverride()) {
-    this->obj->Error("Not implemented: segment override at %s::Run",
-                     this->code_name.c_str());
-  }
-  uint32_t cnt;
-  if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-    cnt = cpu.GetR32(ECX);
-  } else {
-    cnt = cpu.GetR16(ECX);
-  }
-  uint32_t ds = cpu.GetBaseAddr(DS);
-  uint32_t es = cpu.GetBaseAddr(ES);
-  uint32_t d;
-  if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
-    d = cpu.IsFlag(DF) ? -4 : 4;
-  } else {
-    d = cpu.IsFlag(DF) ? -2 : 2;
-  }
-  for (uint32_t i = 0; i < cnt; i++) {
-    uint32_t esi, edi;
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-      esi = cpu.GetR32(ESI);
-      edi = cpu.GetR32(EDI);
-    } else {
-      esi = cpu.GetR16(ESI);
-      edi = cpu.GetR16(EDI);
-    }
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
-      memory.Write(cpu.GetPhysicalAddr(es + edi),
-                   memory.Read32(cpu.GetPhysicalAddr(ds + esi)));
-    } else {
-      memory.Write(cpu.GetPhysicalAddr(es + edi),
-                   memory.Read16(cpu.GetPhysicalAddr(ds + esi)));
-    }
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-      cpu.SetR32(EDI, edi + d);
-      cpu.SetR32(ESI, esi + d);
-      cpu.SetR32(ECX, cpu.GetR32(ECX) - 1);
-    } else {
-      cpu.SetR16(EDI, edi + d);
-      cpu.SetR16(ESI, esi + d);
-      cpu.SetR16(ECX, cpu.GetR16(ECX) - 1);
-    }
-  }
+  cpu.Rep(
+      [&]() {
+        if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
+          cpu.Movs(4);
+        } else {
+          cpu.Movs(2);
+        }
+      },
+      [&]() { return false; });
   return;
 }
 

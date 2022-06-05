@@ -2706,3 +2706,98 @@ TEST_F(CpuTest, CheckRep3){
     cpu->Rep(step_execute, is_termination_condition);
     EXPECT_EQ(cpu->GetR32(ECX), 999);
 }
+
+TEST_F(CpuTest, CheckMovs0){
+    uint8_t data = 0xFA;
+    uint32_t src_offset_addr  = 0;
+    uint32_t dest_offset_addr = 10000;
+    cpu->On32bitMode();
+    cpu->ClearFlag(DF);
+    cpu->SetR32(ESI, src_offset_addr);
+    cpu->SetR32(EDI, dest_offset_addr);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+src_offset_addr), data);
+    cpu->Movs(sizeof(data));
+    EXPECT_EQ(memory->Read8(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+dest_offset_addr)), data);
+    EXPECT_EQ(cpu->GetR32(ESI), src_offset_addr+1);
+    EXPECT_EQ(cpu->GetR32(EDI), dest_offset_addr+1);
+}
+
+TEST_F(CpuTest, CheckMovs1){
+    uint16_t data = 0x12FA;
+    uint32_t src_offset_addr  = 0;
+    uint32_t dest_offset_addr = 10000;
+    cpu->On32bitMode();
+    cpu->ClearFlag(DF);
+    cpu->SetR32(ESI, src_offset_addr);
+    cpu->SetR32(EDI, dest_offset_addr);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+src_offset_addr), data);
+    cpu->Movs(sizeof(data));
+    EXPECT_EQ(memory->Read16(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+dest_offset_addr)), data);
+    EXPECT_EQ(cpu->GetR32(ESI), src_offset_addr+2);
+    EXPECT_EQ(cpu->GetR32(EDI), dest_offset_addr+2);
+}
+
+TEST_F(CpuTest, CheckMovs2){
+    uint32_t data = 0xF2DC12FA;
+    uint32_t src_offset_addr  = 0;
+    uint32_t dest_offset_addr = 10000;
+    cpu->On32bitMode();
+    cpu->ClearFlag(DF);
+    cpu->SetR32(ESI, src_offset_addr);
+    cpu->SetR32(EDI, dest_offset_addr);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+src_offset_addr), data);
+    cpu->Movs(sizeof(data));
+    EXPECT_EQ(memory->Read32(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+dest_offset_addr)), data);
+    EXPECT_EQ(cpu->GetR32(ESI), src_offset_addr+4);
+    EXPECT_EQ(cpu->GetR32(EDI), dest_offset_addr+4);
+}
+
+TEST_F(CpuTest, CheckMovs3){
+    uint64_t data = 0;
+    EXPECT_THROW(cpu->Movs(sizeof(data)), runtime_error);
+}
+
+TEST_F(CpuTest, CheckMovs4){
+    uint8_t data = 0xFA;
+    uint32_t src_offset_addr  = 10000;
+    uint32_t dest_offset_addr = 20000;
+    cpu->On32bitMode();
+    cpu->SetFlag(DF);
+    cpu->SetR32(ESI, src_offset_addr);
+    cpu->SetR32(EDI, dest_offset_addr);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+src_offset_addr), data);
+    cpu->Movs(sizeof(data));
+    EXPECT_EQ(memory->Read8(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+dest_offset_addr)), data);
+    EXPECT_EQ(cpu->GetR32(ESI), src_offset_addr-1);
+    EXPECT_EQ(cpu->GetR32(EDI), dest_offset_addr-1);
+}
+
+TEST_F(CpuTest, CheckMovs5){
+    uint16_t data = 0x32FA;
+    uint32_t src_offset_addr  = 10000;
+    uint32_t dest_offset_addr = 20000;
+    cpu->On32bitMode();
+    cpu->SetFlag(DF);
+    cpu->SetR32(ESI, src_offset_addr);
+    cpu->SetR32(EDI, dest_offset_addr);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+src_offset_addr), data);
+    cpu->Movs(sizeof(data));
+    EXPECT_EQ(memory->Read16(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+dest_offset_addr)), data);
+    EXPECT_EQ(cpu->GetR32(ESI), src_offset_addr-2);
+    EXPECT_EQ(cpu->GetR32(EDI), dest_offset_addr-2);
+}
+
+TEST_F(CpuTest, CheckMovs6){
+    uint32_t data = 0xAD1232FA;
+    uint32_t src_offset_addr  = 10000;
+    uint32_t dest_offset_addr = 20000;
+    cpu->On32bitMode();
+    cpu->SetFlag(DF);
+    cpu->SetR32(ESI, src_offset_addr);
+    cpu->SetR32(EDI, dest_offset_addr);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+src_offset_addr), data);
+    cpu->Movs(sizeof(data));
+    EXPECT_EQ(memory->Read32(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+dest_offset_addr)), data);
+    EXPECT_EQ(cpu->GetR32(ESI), src_offset_addr-4);
+    EXPECT_EQ(cpu->GetR32(EDI), dest_offset_addr-4);
+}

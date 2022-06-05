@@ -574,6 +574,56 @@ void Cpu::Rep(std::function<void()> step_execute,
   return;
 }
 
+void Cpu::Movs(int operand_size) {
+  if (this->IsSegmentOverride()) {
+    throw runtime_error("Not implemented: segment override at Cpu::Movs");
+  }
+  uint32_t d = operand_size;
+  if (this->IsFlag(DF)) {
+    d = d * -1;
+  }
+  uint32_t es = this->GetBaseAddr(ES);
+  uint32_t edi;
+  if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+    edi = this->GetR32(EDI);
+  } else {
+    edi = this->GetR16(EDI);
+  }
+  uint32_t es_edi = es + edi;
+
+  uint32_t ds = this->GetBaseAddr(DS);
+  uint32_t esi;
+  if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+    esi = this->GetR32(ESI);
+  } else {
+    esi = this->GetR16(ESI);
+  }
+  uint32_t ds_esi = ds + esi;
+
+  if (operand_size == 1) {
+    this->mem->Write(this->GetPhysicalAddr(es_edi),
+                     (uint8_t)this->mem->Read8(this->GetPhysicalAddr(ds_esi)));
+  } else if (operand_size == 2) {
+    this->mem->Write(
+        this->GetPhysicalAddr(es_edi),
+        (uint16_t)this->mem->Read16(this->GetPhysicalAddr(ds_esi)));
+  } else if (operand_size == 4) {
+    this->mem->Write(
+        this->GetPhysicalAddr(es_edi),
+        (uint32_t)this->mem->Read32(this->GetPhysicalAddr(ds_esi)));
+  } else {
+    throw runtime_error(this->obj->Format(
+        "Not implemented: operand size=%d at Cpu::Movs", operand_size));
+  }
+  if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+    this->SetR32(EDI, edi + d);
+    this->SetR32(ESI, esi + d);
+  } else {
+    this->SetR16(EDI, edi + d);
+    this->SetR16(ESI, esi + d);
+  }
+}
+
 bool Cpu::IsFlag(EFLAGS_KIND eflags_kind) {
   switch (eflags_kind) {
     case CF:

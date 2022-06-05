@@ -167,6 +167,7 @@ class Cpu {
   void Cmps(int operand_size);
   void Rep(std::function<void()> step_execute,
            std::function<bool()> is_termination_condition);
+  void Movs(int operand_size);
   template <typename type>
   void UpdateEflagsForDec(type result, type d1, type d2);
   template <typename type>
