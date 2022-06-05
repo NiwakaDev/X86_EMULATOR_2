@@ -1,5 +1,5 @@
 #include "../Cpu.h"
-
+#include "../Memory.h"
 inline void Cpu::AddEip(uint32_t data) {
   this->eip += data;
   if (this->IsRealMode()) {
@@ -503,6 +503,29 @@ type Cpu::Rcl(type data, type count) {
     }
   }
   return data;
+}
+
+template <typename type>
+void Cpu::Stos(type data) {
+  uint32_t edi;
+  uint32_t d;
+  d = sizeof(data);
+  if (this->IsFlag(DF)) {
+    d = d * -1;
+  }
+  uint32_t es = this->GetBaseAddr(ES);
+  if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+    edi = this->GetR32(EDI);
+  } else {
+    edi = this->GetR16(EDI);
+  }
+  mem->Write(this->GetPhysicalAddr(es + edi), data);
+  if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+    this->SetR32(EDI, edi + d);
+  } else {
+    this->SetR16(EDI, edi + d);
+  }
+  return;
 }
 
 inline template <typename type>

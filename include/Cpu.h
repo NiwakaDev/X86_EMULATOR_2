@@ -161,6 +161,8 @@ class Cpu {
   template <typename type>
   type Ror(type data, type count);
   template <typename type>
+  void Stos(type data);
+  template <typename type>
   void UpdateEflagsForDec(type result, type d1, type d2);
   template <typename type>
   void UpdateEflagsForShr(type result);

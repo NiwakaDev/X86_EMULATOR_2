@@ -2110,3 +2110,83 @@ TEST_F(CpuTest, CheckRcr8){
     EXPECT_FALSE(cpu->IsFlag(OF));
     EXPECT_EQ(result, (uint32_t)0x80000000);
 }
+
+//STOS命令で影響を受けるフラグ : 無し
+//DF = 1 : EDI or DIがデクリメントされる
+//DF = 0 : EDI or DIがインクリメントされる
+//インクリメントもしくはデクリメントされる数値は、転送されるデータの大きさで決まる。
+//al  : 1 インクリメントorデクリメント
+//ax  : 2 インクリメントorデクリメント
+//eax : 4 インクリメントorデクリメント
+//al, ax, eaxをデスティネーションオペランドに格納する。
+//ディスティネーションオペランドは、ES:EDI or ES:DIが示す番地
+//ESはセグメントオーバーライドすることはできない。
+//EDI : アドレスサイズが32bitの時に利用される。
+//DI  : アドレスサイズが16bitの時に利用される。
+
+//Stos命令の全てをreal modeで実行する。
+TEST_F(CpuTest, CheckStos0){
+    uint8_t al = 0xFA;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();//アドレスサイズが32bitになる。
+    cpu->SetR32(EDI, 0);
+    uint32_t addr = cpu->GetBaseAddr(ES)+cpu->GetR32(EDI);
+    cpu->Stos(al);
+    EXPECT_EQ(memory->Read8(addr), al);
+    EXPECT_EQ(cpu->GetR32(EDI), (uint32_t)0x00000001);
+}
+
+TEST_F(CpuTest, CheckStos1){
+    uint16_t ax = 0x12FA;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();//アドレスサイズが32bitになる。
+    cpu->SetR32(EDI, 0);
+    uint32_t addr = cpu->GetBaseAddr(ES)+cpu->GetR32(EDI);
+    cpu->Stos(ax);
+    EXPECT_EQ(memory->Read16(addr), ax);
+    EXPECT_EQ(cpu->GetR32(EDI), (uint32_t)0x00000002);
+}
+
+TEST_F(CpuTest, CheckStos2){
+    uint32_t eax = 0x7DBC12FA;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();//アドレスサイズが32bitになる。
+    cpu->SetR32(EDI, 0);
+    uint32_t addr = cpu->GetBaseAddr(ES)+cpu->GetR32(EDI);
+    cpu->Stos(eax);
+    EXPECT_EQ(memory->Read32(addr), eax);
+    EXPECT_EQ(cpu->GetR32(EDI), (uint32_t)0x00000004);
+}
+
+TEST_F(CpuTest, CheckStos3){
+    uint8_t al = 0xFA;
+    cpu->SetFlag(DF);
+    cpu->On32bitMode();//アドレスサイズが32bitになる。
+    cpu->SetR32(EDI, 100);
+    uint32_t addr = cpu->GetBaseAddr(ES)+cpu->GetR32(EDI);
+    cpu->Stos(al);
+    EXPECT_EQ(memory->Read8(addr), al);
+    EXPECT_EQ(cpu->GetR32(EDI), (uint32_t)99);
+}
+
+TEST_F(CpuTest, CheckStos4){
+    uint16_t ax = 0x12FA;
+    cpu->SetFlag(DF);
+    cpu->On32bitMode();//アドレスサイズが32bitになる。
+    cpu->SetR32(EDI, 100);
+    uint32_t addr = cpu->GetBaseAddr(ES)+cpu->GetR32(EDI);
+    cpu->Stos(ax);
+    EXPECT_EQ(memory->Read16(addr), ax);
+    EXPECT_EQ(cpu->GetR32(EDI), (uint32_t)98);
+}
+
+TEST_F(CpuTest, CheckStos5){
+    uint32_t eax = 0x7DBC12FA;
+    cpu->SetFlag(DF);
+    cpu->On32bitMode();//アドレスサイズが32bitになる。
+    cpu->SetR32(EDI, 100);
+    uint32_t addr = cpu->GetBaseAddr(ES)+cpu->GetR32(EDI);
+    cpu->Stos(eax);
+    EXPECT_EQ(memory->Read32(addr), eax);
+    EXPECT_EQ(cpu->GetR32(EDI), (uint32_t)96);
+}
