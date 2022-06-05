@@ -542,12 +542,13 @@ void Cpu::Scas(type data) {
     edi = this->GetR16(EDI);
   }
   uint32_t linear_addr = es + edi;
+  uint32_t physical_addr = this->GetPhysicalAddr(linear_addr);
   if (sizeof(data) == 1) {
-    this->UpdateEflagsForSub(data, (type)this->mem->Read8(linear_addr));
+    this->UpdateEflagsForSub(data, (type)this->mem->Read8(physical_addr));
   } else if (sizeof(data) == 2) {
-    this->UpdateEflagsForSub(data, (type)this->mem->Read16(linear_addr));
+    this->UpdateEflagsForSub(data, (type)this->mem->Read16(physical_addr));
   } else if (sizeof(data) == 4) {
-    this->UpdateEflagsForSub(data, (type)this->mem->Read32(linear_addr));
+    this->UpdateEflagsForSub(data, (type)this->mem->Read32(physical_addr));
   } else {
     throw std::runtime_error(this->obj->Format(
         "Not supported: sizeof(data)=%d at Cpu::Scas", sizeof(data)));

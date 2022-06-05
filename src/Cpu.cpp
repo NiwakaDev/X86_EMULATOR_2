@@ -501,6 +501,54 @@ void Cpu::UpdatePF(uint8_t result) {
   this->eflags.flgs.PF = (pf_cnt % 2 == 0) ? 1 : 0;
 }
 
+void Cpu::Cmps(int operand_size) {
+  uint32_t d = operand_size;
+  if (this->IsFlag(DF)) {
+    d = d * -1;
+  }
+  uint32_t es = this->GetBaseAddr(ES);
+  uint32_t edi;
+  if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+    edi = this->GetR32(EDI);
+  } else {
+    edi = this->GetR16(EDI);
+  }
+  uint32_t es_edi = es + edi;
+
+  uint32_t ds = this->GetBaseAddr(DS);
+  uint32_t esi;
+  if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+    esi = this->GetR32(ESI);
+  } else {
+    esi = this->GetR16(ESI);
+  }
+  uint32_t ds_esi = ds + esi;
+
+  if (operand_size == 1) {
+    uint8_t m1 = this->mem->Read8(this->GetPhysicalAddr(ds_esi));
+    uint8_t m2 = this->mem->Read8(this->GetPhysicalAddr(es_edi));
+    this->UpdateEflagsForSub(m1, m2);
+  } else if (operand_size == 2) {
+    uint16_t m1 = this->mem->Read16(this->GetPhysicalAddr(ds_esi));
+    uint16_t m2 = this->mem->Read16(this->GetPhysicalAddr(es_edi));
+    this->UpdateEflagsForSub(m1, m2);
+  } else if (operand_size == 4) {
+    uint32_t m1 = this->mem->Read32(this->GetPhysicalAddr(ds_esi));
+    uint32_t m2 = this->mem->Read32(this->GetPhysicalAddr(es_edi));
+    this->UpdateEflagsForSub(m1, m2);
+  } else {
+    throw std::runtime_error(this->obj->Format(
+        "Not supported: sizeof(data)=%d at Cpu::Scas", operand_size));
+  }
+  if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+    this->SetR32(EDI, edi + d);
+    this->SetR32(ESI, esi + d);
+  } else {
+    this->SetR16(EDI, edi + d);
+    this->SetR16(ESI, esi + d);
+  }
+}
+
 bool Cpu::IsFlag(EFLAGS_KIND eflags_kind) {
   switch (eflags_kind) {
     case CF:

@@ -2402,3 +2402,255 @@ TEST_F(CpuTest, CheckScas12){
     EXPECT_TRUE(cpu->IsFlag(CF));
     EXPECT_EQ(cpu->GetR32(EDI), 4);
 }
+
+//Cmps命令で影響を受けるフラグ : OF, SF, ZF, AF, PF, CF
+//ただし、AFの更新処理はX86_EMULATOR2では行わない。
+//メモリオペランドで指定されたバイト、ワード、ダブルワード同士を比較する
+//アドレスサイズによって、「EDI or DI」のどちらを使用するかが決まる。
+//「ESI, SI」も同様にアドレスサイズで決まる。
+//比較した後、「EDI or DI」と「ESI or SI」は、DFによって、インクリメント or デクリメントが行われる。
+//DF = 0 : インクリメント
+//DF = 1 : デクリメント
+//ESはセグメントオーバーライドすることはできない。
+//DSはオーバーライドできる。
+TEST_F(CpuTest, CheckCmps0){
+    uint8_t m1 = 0;
+    uint8_t m2 = 0;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_TRUE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 1);
+    EXPECT_EQ(cpu->GetR32(ESI), 1001);
+}
+
+TEST_F(CpuTest, CheckCmps1){
+    uint16_t m1 = 0;
+    uint16_t m2 = 0;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_TRUE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 2);
+    EXPECT_EQ(cpu->GetR32(ESI), 1002);
+}
+
+TEST_F(CpuTest, CheckCmps2){
+    uint32_t m1 = 0;
+    uint32_t m2 = 0;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_TRUE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 4);
+    EXPECT_EQ(cpu->GetR32(ESI), 1004);
+}
+
+TEST_F(CpuTest, CheckCmps3){
+    uint64_t m1 = 0;
+    EXPECT_THROW(cpu->Cmps(sizeof(m1)), runtime_error);
+}
+
+TEST_F(CpuTest, CheckCmps4){
+    uint8_t m1 = 0;
+    uint8_t m2 = 1;
+
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 1);
+    EXPECT_EQ(cpu->GetR32(ESI), 1001);
+}
+
+TEST_F(CpuTest, CheckCmps5){
+    uint16_t m1 = 0;
+    uint16_t m2 = 1;
+
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 2);
+    EXPECT_EQ(cpu->GetR32(ESI), 1002);
+}
+
+TEST_F(CpuTest, CheckCmps6){
+    uint32_t m1 = 0;
+    uint32_t m2 = 1;
+
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 4);
+    EXPECT_EQ(cpu->GetR32(ESI), 1004);
+}
+
+TEST_F(CpuTest, CheckCmps7){
+    uint8_t m1 = 0x80;
+    uint8_t m2 = 0x01;
+
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_FALSE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 1);
+    EXPECT_EQ(cpu->GetR32(ESI), 1001);
+}
+
+TEST_F(CpuTest, CheckCmps8){
+    uint16_t m1 = 0x8000;
+    uint16_t m2 = 0x0001;
+
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 2);
+    EXPECT_EQ(cpu->GetR32(ESI), 1002);
+}
+
+TEST_F(CpuTest, CheckCmps9){
+    uint32_t m1 = 0x80000000;
+    uint32_t m2 = 0x0001;
+
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 4);
+    EXPECT_EQ(cpu->GetR32(ESI), 1004);
+}
+
+TEST_F(CpuTest, CheckCmps10){
+    uint8_t m1 = 2;
+    uint8_t m2 = 3;
+
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 1);
+    EXPECT_EQ(cpu->GetR32(ESI), 1001);
+}
+
+TEST_F(CpuTest, CheckCmps11){
+    uint16_t m1 = 2;
+    uint16_t m2 = 3;
+
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 2);
+    EXPECT_EQ(cpu->GetR32(ESI), 1002);
+}
+
+TEST_F(CpuTest, CheckCmps12){
+    uint32_t m1 = 2;
+    uint32_t m2 = 3;
+
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    cpu->SetR32(ESI, 1000);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(DS)+cpu->GetR32(ESI)), m1);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), m2);
+    cpu->Cmps(sizeof(m1));
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 4);
+    EXPECT_EQ(cpu->GetR32(ESI), 1004);
+}

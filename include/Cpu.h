@@ -164,6 +164,7 @@ class Cpu {
   void Stos(type data);
   template <typename type>
   void Scas(type data);
+  void Cmps(int operand_size);
   template <typename type>
   void UpdateEflagsForDec(type result, type d1, type d2);
   template <typename type>
