@@ -2654,3 +2654,55 @@ TEST_F(CpuTest, CheckCmps12){
     EXPECT_EQ(cpu->GetR32(EDI), 4);
     EXPECT_EQ(cpu->GetR32(ESI), 1004);
 }
+
+TEST_F(CpuTest, CheckRep0){
+    auto is_termination_condition = [&](){
+        return !cpu->IsFlag(ZF);
+    };
+    auto step_execute = [&](){
+        cpu->Cmps(1);
+    };
+    cpu->SetR32(ECX, 100);
+    cpu->On32bitMode();
+    cpu->Rep(step_execute, is_termination_condition);
+    EXPECT_EQ(cpu->GetR32(ECX), 0);
+}
+
+TEST_F(CpuTest, CheckRep1){
+    auto is_termination_condition = [&](){
+        return cpu->IsFlag(ZF);
+    };
+    auto step_execute = [&](){
+        cpu->Cmps(1);
+    };
+    cpu->SetR32(ECX, 100);
+    cpu->On32bitMode();
+    cpu->Rep(step_execute, is_termination_condition);
+    EXPECT_EQ(cpu->GetR32(ECX), 99);
+}
+
+TEST_F(CpuTest, CheckRep2){
+    auto is_termination_condition = [&](){
+        return false;
+    };
+    auto step_execute = [&](){
+        cpu->Cmps(1);
+    };
+    cpu->SetR32(ECX, 1000);
+    cpu->On32bitMode();
+    cpu->Rep(step_execute, is_termination_condition);
+    EXPECT_EQ(cpu->GetR32(ECX), 0);
+}
+
+TEST_F(CpuTest, CheckRep3){
+    auto is_termination_condition = [&](){
+        return true;
+    };
+    auto step_execute = [&](){
+        cpu->Cmps(1);
+    };
+    cpu->SetR32(ECX, 1000);
+    cpu->On32bitMode();
+    cpu->Rep(step_execute, is_termination_condition);
+    EXPECT_EQ(cpu->GetR32(ECX), 999);
+}

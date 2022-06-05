@@ -3967,27 +3967,7 @@ RepeCmpsM8M8::RepeCmpsM8M8(string code_name) : Instruction(code_name) {}
 
 void RepeCmpsM8M8::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
-  if (cpu.IsSegmentOverride()) {
-    this->obj->Error("Not implemented: segment_override at %s::Run",
-                     this->code_name.c_str());
-  }
-  uint32_t cnt;
-  if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-    cnt = cpu.GetR32(ECX);
-  } else {
-    cnt = cpu.GetR16(ECX);
-  }
-  for (uint32_t i = 0; i < cnt; i++) {
-    cpu.Cmps(1);
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-      cpu.SetR32(ECX, cpu.GetR32(ECX) - 1);
-    } else {
-      cpu.SetR16(ECX, cpu.GetR16(ECX) - 1);
-    }
-    if (!cpu.IsFlag(ZF)) {
-      return;
-    }
-  }
+  cpu.Rep([&]() { cpu.Cmps(1); }, [&]() { return !cpu.IsFlag(ZF); });
   return;
 }
 
@@ -4013,28 +3993,8 @@ RepneScasM8::RepneScasM8(string code_name) : Instruction(code_name) {}
 
 void RepneScasM8::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
-  if (cpu.IsSegmentOverride()) {
-    this->obj->Error("Not implemented: segment override at %s::Run",
-                     this->code_name.c_str());
-  }
-  uint32_t cnt = cpu.GetR32(ECX);
-  if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-    cnt = cpu.GetR32(ECX);
-  } else {
-    cnt = cpu.GetR16(ECX);
-  }
   uint8_t al = cpu.GetR8L(EAX);
-  for (uint32_t i = 0; i < cnt; i++) {
-    cpu.Scas(al);
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-      cpu.SetR32(ECX, cpu.GetR32(ECX) - 1);
-    } else {
-      cpu.SetR16(ECX, cpu.GetR16(ECX) - 1);
-    }
-    if (cpu.IsFlag(ZF)) {  //等しくなったら終了
-      break;
-    }
-  }
+  cpu.Rep([&]() { cpu.Scas(al); }, [&]() { return cpu.IsFlag(ZF); });
   return;
 }
 
@@ -4674,63 +4634,21 @@ RepStosM8::RepStosM8(string code_name) : Instruction(code_name) {}
 
 void RepStosM8::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
-  if (cpu.IsSegmentOverride()) {
-    this->obj->Error("Not implemented: segment override at %s::Run",
-                     this->code_name.c_str());
-  }
-  uint32_t cnt;
-  if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-    cnt = cpu.GetR32(ECX);
-  } else {
-    cnt = cpu.GetR16(ECX);
-  }
   uint8_t al = cpu.GetR8L(EAX);
-  for (uint16_t i = 0; i < cnt; i++) {
-    cpu.Stos(al);
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-      cpu.SetR32(ECX, cpu.GetR32(ECX) - 1);
-    } else {
-      cpu.SetR16(ECX, cpu.GetR16(ECX) - 1);
-    }
-  }
-  return;
+  cpu.Rep([&]() { cpu.Stos(al); }, [&]() { return false; });
 }
 
 RepStosM32::RepStosM32(string code_name) : Instruction(code_name) {}
 
 void RepStosM32::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
-  if (cpu.IsSegmentOverride()) {
-    this->obj->Error("Not implemented: segment override at %s::Run",
-                     this->code_name.c_str());
-  }
-  uint32_t cnt;
-  if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-    cnt = cpu.GetR32(ECX);
-  } else {
-    cnt = cpu.GetR16(ECX);
-  }
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {  // 32bit op_size
     uint32_t eax = cpu.GetR32(EAX);
-    for (uint16_t i = 0; i < cnt; i++) {
-      cpu.Stos(eax);
-      if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-        cpu.SetR32(ECX, cpu.GetR32(ECX) - 1);
-      } else {
-        cpu.SetR16(ECX, cpu.GetR16(ECX) - 1);
-      }
-    }
+    cpu.Rep([&]() { cpu.Stos(eax); }, [&]() { return false; });
     return;
   }
   uint16_t ax = cpu.GetR16(EAX);
-  for (uint16_t i = 0; i < cnt; i++) {
-    cpu.Stos(ax);
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-      cpu.SetR32(ECX, cpu.GetR32(ECX) - 1);
-    } else {
-      cpu.SetR16(ECX, cpu.GetR16(ECX) - 1);
-    }
-  }
+  cpu.Rep([&]() { cpu.Stos(ax); }, [&]() { return false; });
   return;
 }
 
@@ -4838,31 +4756,15 @@ RepeCmpsM32M32::RepeCmpsM32M32(string code_name) : Instruction(code_name) {}
 
 void RepeCmpsM32M32::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
-  if (cpu.IsSegmentOverride()) {
-    this->obj->Error("Not implemented: segment_override at %s::Run",
-                     this->code_name.c_str());
-  }
-  uint32_t cnt;
-  if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-    cnt = cpu.GetR32(ECX);
-  } else {
-    cnt = cpu.GetR16(ECX);
-  }
-  for (uint32_t i = 0; i < cnt; i++) {
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
-      cpu.Cmps(4);
-    } else {
-      cpu.Cmps(2);
-    }
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-      cpu.SetR32(ECX, cpu.GetR32(ECX) - 1);
-    } else {
-      cpu.SetR16(ECX, cpu.GetR16(ECX) - 1);
-    }
-    if (!cpu.IsFlag(ZF)) {
-      return;
-    }
-  }
+  cpu.Rep(
+      [&]() {
+        if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
+          cpu.Cmps(4);
+        } else {
+          cpu.Cmps(2);
+        }
+      },
+      [&]() { return !cpu.IsFlag(ZF); });
   return;
 }
 
@@ -4870,28 +4772,8 @@ RepeScasM8::RepeScasM8(string code_name) : Instruction(code_name) {}
 
 void RepeScasM8::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
-  if (cpu.IsSegmentOverride()) {
-    this->obj->Error("Not implemented: segment override at %s::Run",
-                     this->code_name.c_str());
-  }
-  uint32_t cnt;
-  if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-    cnt = cpu.GetR32(ECX);
-  } else {
-    cnt = cpu.GetR16(ECX);
-  }
-  for (uint32_t i = 0; i < cnt; i++) {
-    uint8_t al = cpu.GetR8L(EAX);
-    cpu.Scas(al);
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-      cpu.SetR32(ECX, cpu.GetR32(ECX) - 1);
-    } else {
-      cpu.SetR16(ECX, cpu.GetR16(ECX) - 1);
-    }
-    if (!cpu.IsFlag(ZF)) {
-      break;
-    }
-  }
+  uint8_t al = cpu.GetR8L(EAX);
+  cpu.Rep([&]() { cpu.Scas(al); }, [&]() { return !cpu.IsFlag(ZF); });
   return;
 }
 
@@ -4926,33 +4808,17 @@ RepeScasM32::RepeScasM32(string code_name) : Instruction(code_name) {}
 
 void RepeScasM32::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
-  if (cpu.IsSegmentOverride()) {
-    this->obj->Error("Not implemented: segment override at %s::Run",
-                     this->code_name.c_str());
-  }
-  uint32_t cnt;
-  if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-    cnt = cpu.GetR32(ECX);
-  } else {
-    cnt = cpu.GetR16(ECX);
-  }
-  for (uint16_t i = 0; i < cnt; i++) {
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
-      uint32_t eax = cpu.GetR32(EAX);
-      cpu.Scas(eax);
-    } else {
-      uint16_t ax = cpu.GetR16(EAX);
-      cpu.Scas(ax);
-    }
-    if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
-      cpu.SetR32(ECX, cpu.GetR32(ECX) - 1);
-    } else {
-      cpu.SetR16(ECX, cpu.GetR16(ECX) - 1);
-    }
-    if (!cpu.IsFlag(ZF)) {  //等しくなったら終了
-      break;
-    }
-  }
+  cpu.Rep(
+      [&]() {
+        if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
+          uint32_t eax = cpu.GetR32(EAX);
+          cpu.Scas(eax);
+        } else {
+          uint16_t ax = cpu.GetR16(EAX);
+          cpu.Scas(ax);
+        }
+      },
+      [&]() { return !cpu.IsFlag(ZF); });
   return;
 }
 

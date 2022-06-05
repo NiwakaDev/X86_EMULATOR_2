@@ -165,6 +165,8 @@ class Cpu {
   template <typename type>
   void Scas(type data);
   void Cmps(int operand_size);
+  void Rep(std::function<void()> step_execute,
+           std::function<bool()> is_termination_condition);
   template <typename type>
   void UpdateEflagsForDec(type result, type d1, type d2);
   template <typename type>

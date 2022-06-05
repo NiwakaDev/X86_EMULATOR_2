@@ -549,6 +549,31 @@ void Cpu::Cmps(int operand_size) {
   }
 }
 
+void Cpu::Rep(std::function<void()> step_execute,
+              std::function<bool()> is_termination_condition) {
+  if (this->IsSegmentOverride()) {
+    this->obj->Error("Not implemented: segment_override at Cpu::Rep");
+  }
+  uint32_t cnt;
+  if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+    cnt = this->GetR32(ECX);
+  } else {
+    cnt = this->GetR16(ECX);
+  }
+  for (uint32_t i = 0; i < cnt; i++) {
+    step_execute();
+    if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+      this->SetR32(ECX, this->GetR32(ECX) - 1);
+    } else {
+      this->SetR16(ECX, this->GetR16(ECX) - 1);
+    }
+    if (is_termination_condition()) {
+      return;
+    }
+  }
+  return;
+}
+
 bool Cpu::IsFlag(EFLAGS_KIND eflags_kind) {
   switch (eflags_kind) {
     case CF:
