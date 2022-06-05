@@ -2190,3 +2190,215 @@ TEST_F(CpuTest, CheckStos5){
     EXPECT_EQ(memory->Read32(addr), eax);
     EXPECT_EQ(cpu->GetR32(EDI), (uint32_t)96);
 }
+
+//Scas命令で影響を受けるフラグ : OF, SF, ZF, AF, PF, CF
+//ただし、AFの更新処理はX86_EMULATOR2では行わない。
+//メモリオペランドで指定されたバイト、ワード、ダブルワードを
+//AL, AX, EAXの値と比較する。
+//アドレスサイズによって、EDI or DIのどちらを使用するかが決まる。
+//比較した後、EDI or DIは、DFによって、インクリメント or デクリメントが行われる。
+//DF = 0 : インクリメント
+//DF = 1 : デクリメント
+//ESはセグメントオーバーライドすることはできない。
+TEST_F(CpuTest, CheckScas0){
+    uint8_t al = 0x00;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), al);
+    cpu->Scas(al);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_TRUE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 1);
+}
+
+TEST_F(CpuTest, CheckScas1){
+    uint16_t ax = 0x0000;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), ax);
+    cpu->Scas(ax);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_TRUE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 2);
+}
+
+TEST_F(CpuTest, CheckScas2){
+    uint32_t eax = 0x00000000;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), eax);
+    cpu->Scas(eax);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_TRUE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 4);
+}
+
+TEST_F(CpuTest, CheckScas3){
+    uint8_t al = 0;
+    EXPECT_NO_THROW(cpu->Scas(al));
+
+    uint16_t ax = 0;
+    EXPECT_NO_THROW(cpu->Scas(ax));
+
+    uint32_t eax = 0;
+    EXPECT_NO_THROW(cpu->Scas(eax));
+
+    uint64_t rax = 0x00000000;
+    EXPECT_THROW(cpu->Scas(rax), runtime_error);
+}
+
+TEST_F(CpuTest, CheckScas4){
+    uint8_t al = 0x00;
+    uint8_t memory_operand = 0x01;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), memory_operand);
+    cpu->Scas(al);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 1);
+}
+
+TEST_F(CpuTest, CheckScas5){
+    uint16_t ax = 0x0000;
+    uint16_t memory_operand = 0x0001;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), memory_operand);
+    cpu->Scas(ax);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 2);
+}
+
+TEST_F(CpuTest, CheckScas6){
+    uint32_t eax = 0x00000000;
+    uint32_t memory_operand = 0x00000001;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), memory_operand);
+    cpu->Scas(eax);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 4);
+}
+
+TEST_F(CpuTest, CheckScas7){
+    uint8_t al = 0x80;
+    uint8_t memory_operand = 0x01;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), memory_operand);
+    cpu->Scas(al);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_FALSE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 1);
+}
+
+TEST_F(CpuTest, CheckScas8){
+    uint16_t ax = 0x8000;
+    uint16_t memory_operand = 0x0001;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), memory_operand);
+    cpu->Scas(ax);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 2);
+}
+
+TEST_F(CpuTest, CheckScas9){
+    uint32_t eax = 0x80000000;
+    uint32_t memory_operand = 0x00000001;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), memory_operand);
+    cpu->Scas(eax);
+    EXPECT_TRUE(cpu->IsFlag(OF));
+    EXPECT_FALSE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_FALSE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 4);
+}
+
+TEST_F(CpuTest, CheckScas10){
+    uint8_t al = 0x2;
+    uint8_t memory_operand = 0x3;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), memory_operand);
+    cpu->Scas(al);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 1);
+}
+
+TEST_F(CpuTest, CheckScas11){
+    uint16_t ax = 0x2;
+    uint16_t memory_operand = 0x3;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), memory_operand);
+    cpu->Scas(ax);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 2);
+}
+
+TEST_F(CpuTest, CheckScas12){
+    uint32_t eax = 0x2;
+    uint32_t memory_operand = 0x3;
+    cpu->ClearFlag(DF);
+    cpu->On32bitMode();
+    cpu->SetR32(EDI, 0);
+    memory->Write(cpu->GetPhysicalAddr(cpu->GetBaseAddr(ES)+cpu->GetR32(EDI)), memory_operand);
+    cpu->Scas(eax);
+    EXPECT_FALSE(cpu->IsFlag(OF));
+    EXPECT_TRUE(cpu->IsFlag(SF));
+    EXPECT_FALSE(cpu->IsFlag(ZF));
+    EXPECT_TRUE(cpu->IsFlag(PF));
+    EXPECT_TRUE(cpu->IsFlag(CF));
+    EXPECT_EQ(cpu->GetR32(EDI), 4);
+}

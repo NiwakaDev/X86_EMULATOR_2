@@ -528,6 +528,37 @@ void Cpu::Stos(type data) {
   return;
 }
 
+template <typename type>
+void Cpu::Scas(type data) {
+  uint32_t d = sizeof(data);
+  if (this->IsFlag(DF)) {
+    d = d * -1;
+  }
+  uint32_t es = this->GetBaseAddr(ES);
+  uint32_t edi;
+  if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+    edi = this->GetR32(EDI);
+  } else {
+    edi = this->GetR16(EDI);
+  }
+  uint32_t linear_addr = es + edi;
+  if (sizeof(data) == 1) {
+    this->UpdateEflagsForSub(data, (type)this->mem->Read8(linear_addr));
+  } else if (sizeof(data) == 2) {
+    this->UpdateEflagsForSub(data, (type)this->mem->Read16(linear_addr));
+  } else if (sizeof(data) == 4) {
+    this->UpdateEflagsForSub(data, (type)this->mem->Read32(linear_addr));
+  } else {
+    throw std::runtime_error(this->obj->Format(
+        "Not supported: sizeof(data)=%d at Cpu::Scas", sizeof(data)));
+  }
+  if (this->Is32bitsMode() ^ this->IsPrefixAddrSize()) {
+    this->SetR32(EDI, edi + d);
+  } else {
+    this->SetR16(EDI, edi + d);
+  }
+}
+
 inline template <typename type>
 void Cpu::UpdateEflagsForShr(type result) {
   this->UpdateZF((uint32_t)result);
