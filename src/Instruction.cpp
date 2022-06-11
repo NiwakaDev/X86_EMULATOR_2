@@ -441,7 +441,11 @@ inline uint32_t Instruction::GetEffectiveAddr(Cpu& cpu, Memory& memory) {
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
     uint32_t addr;
     if (this->modrm.mod != 3 && this->modrm.rm == 4) {
-      addr = this->sib.GetAddress(cpu);
+      addr = this->sib.GetAddress(
+          [&](GENERAL_PURPOSE_REGISTER32 general_purpose_register_kind) {
+            return cpu.GetR32(general_purpose_register_kind);
+          },
+          cpu.IsSegmentOverride(), [&]() { cpu.SetDataSelector(SS); });
     }
     if (this->modrm.mod == 0) {
       if (this->modrm.rm == 5) {
