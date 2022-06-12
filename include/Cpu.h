@@ -139,7 +139,7 @@ class Cpu {
   template <typename type>
   type Dec(type data);
   template <typename type>
-  type Adc(type data1, type data2, type carry);
+  type Adc(type data1, type data2);
   template <typename type>
   type Add(type data1, type data2);
   template <typename type>
@@ -307,7 +307,7 @@ class Cpu {
   template <typename type>
   void UpdateEflagsForInc(type d);
   template <typename type>
-  void UpdateEflagsForAdc(type d1, type d2, type c);
+  void UpdateEflagsForAdc(type d1, type d2, type carry);
   void UpdateZF(uint32_t result);
   void UpdateCF(uint64_t result);
   template <typename type>

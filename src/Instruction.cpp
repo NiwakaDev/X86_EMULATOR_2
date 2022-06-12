@@ -2860,8 +2860,7 @@ void AdcRm8R8::Run(Cpu& cpu, Memory& memory) {
   this->ParseModRM(cpu, memory);
   uint8_t rm8 = this->GetRM8(cpu, memory);
   uint8_t r8 = cpu.GetR8((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-  uint8_t cf = cpu.IsFlag(CF) ? 1 : 0;
-  this->SetRM8(cpu, memory, cpu.Adc(rm8, r8, cf));
+  this->SetRM8(cpu, memory, cpu.Adc(rm8, r8));
   return;
 }
 
@@ -3688,7 +3687,7 @@ void AdcRm32Imm8::Run(Cpu& cpu, Memory& memory) {
   uint16_t rm16 = this->GetRM16(cpu, memory);
   uint16_t imm8 =
       (int16_t)((int8_t)memory.Read8(cpu.GetLinearAddrForCodeAccess()));
-  this->SetRM16(cpu, memory, cpu.Adc(rm16, imm8, cf));
+  this->SetRM16(cpu, memory, cpu.Adc(rm16, imm8));
   cpu.AddEip(1);
   return;
 }
@@ -3718,8 +3717,7 @@ void AdcRm32R32::Run(Cpu& cpu, Memory& memory) {
   }
   uint16_t rm16 = this->GetRM16(cpu, memory);
   uint16_t r16 = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
-  uint16_t cf = cpu.IsFlag(CF) ? 1 : 0;
-  this->SetRM16(cpu, memory, cpu.Adc(rm16, r16, cf));
+  this->SetRM16(cpu, memory, cpu.Adc(rm16, r16));
 }
 
 LodsM8::LodsM8(string code_name) : Instruction(code_name) {}
@@ -3922,10 +3920,9 @@ void AdcR32Rm32::Run(Cpu& cpu, Memory& memory) {
   }
   cpu.AddEip(1);
   this->ParseModRM(cpu, memory);
-  uint16_t cf = cpu.IsFlag(CF) ? 1 : 0;
   uint16_t r16 = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index);
   uint16_t rm16 = this->GetRM16(cpu, memory);
-  this->SetRM16(cpu, memory, cpu.Adc(r16, rm16, cf));
+  this->SetRM16(cpu, memory, cpu.Adc(r16, rm16));
   return;
 }
 
@@ -4609,8 +4606,7 @@ void AdcRm8Imm8::Run(Cpu& cpu, Memory& memory) {
   uint8_t rm8 = this->GetRM8(cpu, memory);
   uint8_t imm8 = memory.Read8(cpu.GetLinearAddrForCodeAccess());
   cpu.AddEip(1);
-  uint8_t cf = cpu.IsFlag(CF) ? 1 : 0;
-  this->SetRM8(cpu, memory, cpu.Adc(rm8, imm8, cf));
+  this->SetRM8(cpu, memory, cpu.Adc(rm8, imm8));
   return;
 }
 
@@ -4676,10 +4672,9 @@ void AdcEaxImm32::Run(Cpu& cpu, Memory& memory) {
     this->obj->Error("Not implemented: op_size=32bit at %s::Run",
                      this->code_name.c_str());
   }
-  uint16_t cf = cpu.IsFlag(CF) ? 1 : 0;
   uint16_t ax = cpu.GetR16(EAX);
   uint16_t imm16 = memory.Read16(cpu.GetLinearAddrForCodeAccess());
-  cpu.SetR16(EAX, cpu.Adc(ax, imm16, cf));
+  cpu.SetR16(EAX, cpu.Adc(ax, imm16));
   cpu.AddEip(2);
   return;
 }

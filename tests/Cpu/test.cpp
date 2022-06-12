@@ -392,9 +392,8 @@ TEST_F(CpuTest, CheckAdd16){
 TEST_F(CpuTest, CheckAdc0){
     uint8_t d1 = 0xFF;
     uint8_t d2 = 0xFF;
-    uint8_t c  = 0x01;
-
-    uint8_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint8_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_TRUE(cpu->IsFlag(SF));
     EXPECT_TRUE(cpu->IsFlag(PF)); 
@@ -406,8 +405,8 @@ TEST_F(CpuTest, CheckAdc0){
 TEST_F(CpuTest, CheckAdc1){
     uint8_t d1 = 0x80;
     uint8_t d2 = 0x80;
-    uint8_t c  = 0x01;
-    uint8_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint8_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_FALSE(cpu->IsFlag(SF));
     EXPECT_FALSE(cpu->IsFlag(PF)); 
@@ -419,8 +418,8 @@ TEST_F(CpuTest, CheckAdc1){
 TEST_F(CpuTest, CheckAdc2){
     uint8_t d1 = 0x80;
     uint8_t d2 = 0x00;
-    uint8_t c  = 0x01;
-    uint8_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint8_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_TRUE(cpu->IsFlag(SF));
     EXPECT_TRUE(cpu->IsFlag(PF)); 
@@ -432,8 +431,8 @@ TEST_F(CpuTest, CheckAdc2){
 TEST_F(CpuTest, CheckAdc3){
     uint8_t d1 = 0xFF;
     uint8_t d2 = 0x01;
-    uint8_t c  = 0x01;
-    uint8_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint8_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_FALSE(cpu->IsFlag(SF));
     EXPECT_FALSE(cpu->IsFlag(PF)); 
@@ -445,8 +444,8 @@ TEST_F(CpuTest, CheckAdc3){
 TEST_F(CpuTest, CheckAdc4){
     uint8_t d1 = 0xFF;
     uint8_t d2 = 0xFF;
-    uint8_t c  = 0x00;
-    uint8_t result = cpu->Adc(d1, d2, c);
+    cpu->ClearFlag(CF);
+    uint8_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_TRUE(cpu->IsFlag(SF));
     EXPECT_FALSE(cpu->IsFlag(PF)); 
@@ -458,8 +457,8 @@ TEST_F(CpuTest, CheckAdc4){
 TEST_F(CpuTest, CheckAdc5){
     uint16_t d1 = 0xFFFF;
     uint16_t d2 = 0xFFFF;
-    uint16_t c  = 0x0001;
-    uint16_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint16_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_TRUE(cpu->IsFlag(SF));
     EXPECT_TRUE(cpu->IsFlag(PF)); 
@@ -471,8 +470,8 @@ TEST_F(CpuTest, CheckAdc5){
 TEST_F(CpuTest, CheckAdc6){
     uint16_t d1 = 0x8000;
     uint16_t d2 = 0x8000;
-    uint16_t c  = 0x0001;
-    uint16_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint16_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_FALSE(cpu->IsFlag(SF));
     EXPECT_FALSE(cpu->IsFlag(PF)); 
@@ -484,8 +483,8 @@ TEST_F(CpuTest, CheckAdc6){
 TEST_F(CpuTest, CheckAdc7){
     uint16_t d1 = 0x8000;
     uint16_t d2 = 0x0000;
-    uint16_t c  = 0x0001;
-    uint16_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint16_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_TRUE(cpu->IsFlag(SF));
     EXPECT_FALSE(cpu->IsFlag(PF)); 
@@ -497,8 +496,8 @@ TEST_F(CpuTest, CheckAdc7){
 TEST_F(CpuTest, CheckAdc8){
     uint16_t d1 = 0xFFFF;
     uint16_t d2 = 0x0001;
-    uint16_t c  = 0x0001;
-    uint16_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint16_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_FALSE(cpu->IsFlag(SF));
     EXPECT_FALSE(cpu->IsFlag(PF)); 
@@ -510,8 +509,8 @@ TEST_F(CpuTest, CheckAdc8){
 TEST_F(CpuTest, CheckAdc9){
     uint16_t d1 = 0xFFFF;
     uint16_t d2 = 0xFFFF;
-    uint16_t c  = 0x0000;
-    uint16_t result = cpu->Adc(d1, d2, c);
+    cpu->ClearFlag(CF);
+    uint16_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_TRUE(cpu->IsFlag(SF));
     EXPECT_FALSE(cpu->IsFlag(PF)); 
@@ -523,8 +522,8 @@ TEST_F(CpuTest, CheckAdc9){
 TEST_F(CpuTest, CheckAdc10){
     uint32_t d1 = 0xFFFFFFFF;
     uint32_t d2 = 0xFFFFFFFF;
-    uint32_t c  = 0x00000001;
-    uint32_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint32_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_TRUE(cpu->IsFlag(SF));
     EXPECT_TRUE(cpu->IsFlag(PF)); 
@@ -536,8 +535,8 @@ TEST_F(CpuTest, CheckAdc10){
 TEST_F(CpuTest, CheckAdc11){
     uint32_t d1 = 0x80000000;
     uint32_t d2 = 0x80000000;
-    uint32_t c  = 0x00000001;
-    uint32_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint32_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_FALSE(cpu->IsFlag(SF));
     EXPECT_FALSE(cpu->IsFlag(PF)); 
@@ -549,8 +548,8 @@ TEST_F(CpuTest, CheckAdc11){
 TEST_F(CpuTest, CheckAdc12){
     uint32_t d1 = 0x80000000;
     uint32_t d2 = 0x00000000;
-    uint32_t c  = 0x00000001;
-    uint32_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint32_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_TRUE(cpu->IsFlag(SF));
     EXPECT_FALSE(cpu->IsFlag(PF)); 
@@ -562,8 +561,8 @@ TEST_F(CpuTest, CheckAdc12){
 TEST_F(CpuTest, CheckAdc13){
     uint32_t d1 = 0xFFFFFFFF;
     uint32_t d2 = 0x00000001;
-    uint32_t c  = 0x00000001;
-    uint32_t result = cpu->Adc(d1, d2, c);
+    cpu->SetFlag(CF);
+    uint32_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_FALSE(cpu->IsFlag(SF));
     EXPECT_FALSE(cpu->IsFlag(PF)); 
@@ -575,8 +574,8 @@ TEST_F(CpuTest, CheckAdc13){
 TEST_F(CpuTest, CheckAdc14){
     uint16_t d1 = 0xFFFFFFFF;
     uint16_t d2 = 0xFFFFFFFF;
-    uint16_t c  = 0x00000000;
-    uint16_t result = cpu->Adc(d1, d2, c);
+    cpu->ClearFlag(CF);
+    uint16_t result = cpu->Adc(d1, d2);
     EXPECT_FALSE(cpu->IsFlag(ZF));
     EXPECT_TRUE(cpu->IsFlag(SF));
     EXPECT_FALSE(cpu->IsFlag(PF)); 

@@ -135,7 +135,8 @@ void Cpu::UpdateEflagsForDec(type result, type d1, type d2) {
 }
 
 inline template <typename type>
-type Cpu::Adc(type data1, type data2, type carry) {
+type Cpu::Adc(type data1, type data2) {
+  type carry = this->IsFlag(CF) ? 1 : 0;
   this->UpdateEflagsForAdc(data1, data2, carry);
   return data1 + data2 + carry;
 }
