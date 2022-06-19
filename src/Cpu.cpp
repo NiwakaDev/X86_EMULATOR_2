@@ -862,9 +862,6 @@ void Cpu::HandleInterrupt(int irq_num) {
 
 uint16_t Cpu::GetGdtLimit() { return this->gdtr->GetLimit(); }
 
-//#define OFFSET 10
-#define OFFSET 35
-
 static void Dump(const Memory& mem, uint32_t start, uint32_t size) {
   for (int i = 0; i < size; i++) {
     if (i % 8 == 0) {
