@@ -43,7 +43,8 @@ TEST(SegmentRegisterTest, CheckSetCache0){
     auto MockGetGdtGate = [&](uint16_t data){return &gdt_gate;};
     auto MockGetLdtGate = [&](uint16_t data){return (GdtGate*)NULL;};
     uint16_t mock_data  = 0x1000;
-    segment_register.Set(mock_data, MockGetGdtGate, MockGetLdtGate, true);
+    bool is_protected_mode = true;
+    segment_register.Set(mock_data, MockGetGdtGate, MockGetLdtGate, is_protected_mode);
     EXPECT_EQ(segment_register.Is32bitsMode(), false);
     EXPECT_EQ(segment_register.GetLimit(), 0);
     EXPECT_EQ(segment_register.GetBaseAddr(), 0);
@@ -63,7 +64,8 @@ TEST(SegmentRegisterTest, CheckSetCache1){
     auto MockGetGdtGate = [&](uint16_t data){return &gdt_gate;};
     auto MockGetLdtGate = [&](uint16_t data){return (GdtGate*)NULL;};
     uint16_t mock_data  = 0x1000;
-    segment_register.Set(mock_data, MockGetGdtGate, MockGetLdtGate, true);
+    bool is_protected_mode = true;
+    segment_register.Set(mock_data, MockGetGdtGate, MockGetLdtGate, is_protected_mode);
     EXPECT_EQ(segment_register.Is32bitsMode(), true);
     EXPECT_EQ(segment_register.GetLimit(), 0);
     EXPECT_EQ(segment_register.GetBaseAddr(), 0xFA12FBCD);
@@ -83,7 +85,8 @@ TEST(SegmentRegisterTest, CheckSetCache2){
     auto MockGetGdtGate = [&](uint16_t data){return &gdt_gate;};
     auto MockGetLdtGate = [&](uint16_t data){return (GdtGate*)NULL;};
     uint16_t mock_data  = 0x1000;
-    segment_register.Set(mock_data, MockGetGdtGate, MockGetLdtGate, true);
+    bool is_protected_mode = true;
+    segment_register.Set(mock_data, MockGetGdtGate, MockGetLdtGate, is_protected_mode);
     EXPECT_EQ(segment_register.Is32bitsMode(), true);
     EXPECT_EQ(segment_register.GetLimit(), 0x000FFFFF);
     EXPECT_EQ(segment_register.GetBaseAddr(), 0xF012F000);
@@ -104,7 +107,8 @@ TEST(SegmentRegisterTest, CheckSetCache3){
     auto MockGetGdtGate = [&](uint16_t data){return &gdt_gate;};
     auto MockGetLdtGate = [&](uint16_t data){return (GdtGate*)NULL;};
     uint16_t mock_data  = 0x1000;
-    segment_register.Set(mock_data, MockGetGdtGate, MockGetLdtGate, false);
+    bool is_protected_mode = false;
+    segment_register.Set(mock_data, MockGetGdtGate, MockGetLdtGate, is_protected_mode);
     EXPECT_EQ(segment_register.Is32bitsMode(), false);
     EXPECT_EQ(segment_register.GetLimit(), 0x0000FFFF);
     EXPECT_EQ(segment_register.GetBaseAddr(), selector*16);
