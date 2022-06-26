@@ -24,7 +24,6 @@ enum PREFIX_FLG_KIND {
   FLG_26 = 0x26,
   FLG_64 = 0x64,
   FLG_65 = 0x65,
-  PREFIX_FLG_KIND_COUNT = 10,
 };
 enum EFLAGS_KIND {
   PF = 1 << 2,
