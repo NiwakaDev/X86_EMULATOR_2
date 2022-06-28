@@ -83,15 +83,6 @@ Cpu::Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)>
   this->prefix_table[0x65] = true;
   this->prefix_table[0x66] = true;
   this->prefix_table[0x67] = true;
-
-  for (int i = 0; i < InstructionHelper::INSTRUCTION_SIZE; i++) {
-    this->instructions[i] = Instruction::CreateInstruction(i);
-    if (this->instructions[i].get() == NULL) {
-      continue;
-    }
-    this->instructions[i]->SetIoIn8(io_in8);
-    this->instructions[i]->SetIoOut8(io_out8);
-  }
 #else
   this->mem = &mem;
   this->eflags.raw = EFLAGS_INIT_VALUE;
@@ -151,6 +142,7 @@ Cpu::Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)>
   this->prefix_table[0x66] = true;
   this->prefix_table[0x67] = true;
 
+#endif
   for (int i = 0; i < InstructionHelper::INSTRUCTION_SIZE; i++) {
     this->instructions[i] = Instruction::CreateInstruction(i);
     if (this->instructions[i].get() == NULL) {
@@ -159,7 +151,6 @@ Cpu::Cpu(std::function<void(Cpu& cpu, Memory& mem, const uint8_t bios_number)>
     this->instructions[i]->SetIoIn8(io_in8);
     this->instructions[i]->SetIoOut8(io_out8);
   }
-#endif
   this->is_exception_ = false;
 }
 
