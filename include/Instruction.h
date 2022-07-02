@@ -18,8 +18,8 @@ class Instruction {
   uint8_t GetRM8(Cpu& cpu, Memory& memory);
   uint16_t GetRM16(Cpu& cpu, Memory& memory);
   uint32_t GetRM32(Cpu& cpu, Memory& memory);
-  uint16_t GetR16ForEffectiveAddr(Cpu& cpu, Memory& memory);
-  uint32_t GetEffectiveAddr(Cpu& cpu, Memory& memory);
+  uint16_t GetR16ForEffectiveAddr(Cpu& cpu);
+  uint32_t GetEffectiveAddr(Cpu& cpu);
   void SetRM8(Cpu& cpu, Memory& memory, const uint8_t data);
   void SetRM16(Cpu& cpu, Memory& memory, const uint16_t data);
   void SetRM32(Cpu& cpu, Memory& memory, const uint32_t data);

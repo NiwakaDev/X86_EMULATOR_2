@@ -437,7 +437,7 @@ inline void Instruction::ParseRegIdx(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
 }
 
-inline uint32_t Instruction::GetEffectiveAddr(Cpu& cpu, Memory& memory) {
+inline uint32_t Instruction::GetEffectiveAddr(Cpu& cpu) {
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
     uint32_t addr;
     if (this->modrm.mod != 3 && this->modrm.rm == 4) {
@@ -489,17 +489,17 @@ inline uint32_t Instruction::GetEffectiveAddr(Cpu& cpu, Memory& memory) {
         addr = this->modrm.disp16;
         return this->modrm.disp16;
       }
-      addr = this->GetR16ForEffectiveAddr(cpu, memory);
+      addr = this->GetR16ForEffectiveAddr(cpu);
       return addr;
     }
     if (this->modrm.mod == 1) {
       uint16_t disp8 = (int16_t)this->modrm.disp8;
-      addr = disp8 + this->GetR16ForEffectiveAddr(cpu, memory);
+      addr = disp8 + this->GetR16ForEffectiveAddr(cpu);
       return addr;
     }
     if (this->modrm.mod == 2) {
       uint16_t disp16 = this->modrm.disp16;
-      addr = disp16 + this->GetR16ForEffectiveAddr(cpu, memory);
+      addr = disp16 + this->GetR16ForEffectiveAddr(cpu);
       return addr;
     }
     addr = cpu.GetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.rm);
@@ -507,7 +507,7 @@ inline uint32_t Instruction::GetEffectiveAddr(Cpu& cpu, Memory& memory) {
   }
 }
 
-inline uint16_t Instruction::GetR16ForEffectiveAddr(Cpu& cpu, Memory& memory) {
+inline uint16_t Instruction::GetR16ForEffectiveAddr(Cpu& cpu) {
   uint16_t data = 0;
   switch (this->modrm.rm) {
     uint16_t r1;
@@ -557,7 +557,7 @@ inline uint16_t Instruction::GetR16ForEffectiveAddr(Cpu& cpu, Memory& memory) {
 
 inline uint8_t Instruction::GetRM8(Cpu& cpu, Memory& memory) {
   if (this->modrm.mod != 3) {
-    uint32_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+    uint32_t effective_addr = this->GetEffectiveAddr(cpu);
     uint32_t linear_addr = cpu.GetLinearAddrForDataAccess(effective_addr);
     return memory.Read8(linear_addr);
   }
@@ -566,7 +566,7 @@ inline uint8_t Instruction::GetRM8(Cpu& cpu, Memory& memory) {
 
 inline uint16_t Instruction::GetRM16(Cpu& cpu, Memory& memory) {
   if (this->modrm.mod != 3) {
-    uint32_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+    uint32_t effective_addr = this->GetEffectiveAddr(cpu);
     uint32_t linear_addr = cpu.GetLinearAddrForDataAccess(effective_addr);
     return memory.Read16(linear_addr);
   }
@@ -575,7 +575,7 @@ inline uint16_t Instruction::GetRM16(Cpu& cpu, Memory& memory) {
 
 inline uint32_t Instruction::GetRM32(Cpu& cpu, Memory& memory) {
   if (this->modrm.mod != 3) {
-    uint32_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+    uint32_t effective_addr = this->GetEffectiveAddr(cpu);
     uint32_t linear_addr = cpu.GetLinearAddrForDataAccess(effective_addr);
     return memory.Read32(linear_addr);
   }
@@ -584,7 +584,7 @@ inline uint32_t Instruction::GetRM32(Cpu& cpu, Memory& memory) {
 
 inline void Instruction::SetRM8(Cpu& cpu, Memory& memory, const uint8_t data) {
   if (this->modrm.mod != 3) {
-    uint32_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+    uint32_t effective_addr = this->GetEffectiveAddr(cpu);
     uint32_t linear_addr = cpu.GetLinearAddrForDataAccess(effective_addr);
     memory.Write(linear_addr, data);
     return;
@@ -595,7 +595,7 @@ inline void Instruction::SetRM8(Cpu& cpu, Memory& memory, const uint8_t data) {
 inline void Instruction::SetRM16(Cpu& cpu, Memory& memory,
                                  const uint16_t data) {
   if (this->modrm.mod != 3) {
-    uint32_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+    uint32_t effective_addr = this->GetEffectiveAddr(cpu);
     uint32_t linear_addr = cpu.GetLinearAddrForDataAccess(effective_addr);
     memory.Write(linear_addr, data);
     return;
@@ -606,7 +606,7 @@ inline void Instruction::SetRM16(Cpu& cpu, Memory& memory,
 inline void Instruction::SetRM32(Cpu& cpu, Memory& memory,
                                  const uint32_t data) {
   if (this->modrm.mod != 3) {
-    uint32_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+    uint32_t effective_addr = this->GetEffectiveAddr(cpu);
     uint32_t linear_addr = cpu.GetLinearAddrForDataAccess(effective_addr);
     memory.Write(linear_addr, data);
     return;
@@ -1552,14 +1552,14 @@ void Lgdt::Run(Cpu& cpu, Memory& memory) {
   uint32_t base_addr;
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
     uint32_t m32;
-    m32 = this->GetEffectiveAddr(cpu, memory);
+    m32 = this->GetEffectiveAddr(cpu);
     limit = memory.Read16(cpu.GetLinearAddrForDataAccess(m32));
     base_addr = memory.Read32(cpu.GetLinearAddrForDataAccess(m32 + 2));
     cpu.SetGdtr(limit, base_addr);
     return;
   }
   uint16_t effective_addr;
-  effective_addr = this->GetEffectiveAddr(cpu, memory);
+  effective_addr = this->GetEffectiveAddr(cpu);
   limit = memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr));
   base_addr = 0x00FFFFFF &
               memory.Read32(cpu.GetLinearAddrForDataAccess(effective_addr + 2));
@@ -1573,7 +1573,7 @@ void Lidt::Run(Cpu& cpu, Memory& memory) {
   uint16_t limit;
   uint32_t m32, base;
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
-    m32 = this->GetEffectiveAddr(cpu, memory);
+    m32 = this->GetEffectiveAddr(cpu);
     limit = memory.Read16(cpu.GetLinearAddrForDataAccess(m32));
     base = memory.Read32(cpu.GetLinearAddrForDataAccess(m32 + 2));
     cpu.SetIdtr(limit, base);
@@ -2017,7 +2017,7 @@ void LeaR32M::Run(Cpu& cpu, Memory& memory) {
       this->obj->Error("Not implemented: addr_size=16 at %s::Run",
                        this->code_name.c_str());
     }
-    uint32_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+    uint32_t effective_addr = this->GetEffectiveAddr(cpu);
     cpu.SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
                effective_addr);
     return;
@@ -2026,7 +2026,7 @@ void LeaR32M::Run(Cpu& cpu, Memory& memory) {
     this->obj->Error("Not implemented: addr_size=32 at %s::Run",
                      this->code_name.c_str());
   }
-  uint16_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+  uint16_t effective_addr = this->GetEffectiveAddr(cpu);
   cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index, effective_addr);
   return;
 }
@@ -2999,7 +2999,7 @@ void JmpM1632::Run(Cpu& cpu, Memory& memory) {
     uint32_t addr;
     uint16_t offset_addr;
     uint16_t selector;
-    addr = this->GetEffectiveAddr(cpu, memory);
+    addr = this->GetEffectiveAddr(cpu);
     offset_addr = memory.Read16(cpu.GetLinearAddrForDataAccess(addr));
     selector = memory.Read16(cpu.GetLinearAddrForDataAccess(addr + 2));
     cpu.SetR16(CS, selector);
@@ -3010,7 +3010,7 @@ void JmpM1632::Run(Cpu& cpu, Memory& memory) {
     uint32_t addr;
     uint32_t offset_addr;
     uint16_t selector;
-    addr = this->GetEffectiveAddr(cpu, memory);
+    addr = this->GetEffectiveAddr(cpu);
     offset_addr = memory.Read32(cpu.GetLinearAddrForDataAccess(addr));
     selector = memory.Read16(cpu.GetLinearAddrForDataAccess(addr + 4));
     GdtGate* gdt_gate = cpu.GetGdtGate(selector);
@@ -3334,7 +3334,7 @@ void CallM1632::Run(Cpu& cpu, Memory& memory) {
     if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
       uint32_t effective_addr;
       uint32_t offset_addr;
-      effective_addr = this->GetEffectiveAddr(cpu, memory);
+      effective_addr = this->GetEffectiveAddr(cpu);
       offset_addr =
           memory.Read32(cpu.GetLinearAddrForDataAccess(effective_addr));
       selector =
@@ -3359,7 +3359,7 @@ void CallM1632::Run(Cpu& cpu, Memory& memory) {
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
     uint16_t effective_addr;
     uint32_t eip;
-    effective_addr = this->GetEffectiveAddr(cpu, memory);
+    effective_addr = this->GetEffectiveAddr(cpu);
     eip = memory.Read32(cpu.GetLinearAddrForDataAccess(effective_addr));
     selector =
         memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr + 4));
@@ -3371,7 +3371,7 @@ void CallM1632::Run(Cpu& cpu, Memory& memory) {
   }
   uint16_t effective_addr;
   uint16_t eip;
-  effective_addr = this->GetEffectiveAddr(cpu, memory);
+  effective_addr = this->GetEffectiveAddr(cpu);
   eip = memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr));
   selector = memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr + 2));
   cpu.Push16(cpu.GetR16(CS));
@@ -3752,7 +3752,7 @@ void LesR32M1632::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
   this->ParseModRM(cpu, memory);
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
-    uint32_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+    uint32_t effective_addr = this->GetEffectiveAddr(cpu);
     cpu.SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
                memory.Read32(cpu.GetLinearAddrForDataAccess(effective_addr)));
     cpu.SetR16(
@@ -3760,7 +3760,7 @@ void LesR32M1632::Run(Cpu& cpu, Memory& memory) {
     return;
   }
   uint32_t effective_addr;
-  effective_addr = this->GetEffectiveAddr(cpu, memory);
+  effective_addr = this->GetEffectiveAddr(cpu);
   cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
              memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr)));
   // fprintf(stderr, "ES=%04X\n",
@@ -4212,12 +4212,12 @@ void PopM32::Run(Cpu& cpu, Memory& memory) {
   this->ParseModRM(cpu, memory);
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
     uint32_t effective_addr;
-    effective_addr = this->GetEffectiveAddr(cpu, memory);
+    effective_addr = this->GetEffectiveAddr(cpu);
     memory.Write(cpu.GetLinearAddrForDataAccess(effective_addr), cpu.Pop32());
     return;
   }
   uint32_t effective_addr;
-  effective_addr = this->GetEffectiveAddr(cpu, memory);
+  effective_addr = this->GetEffectiveAddr(cpu);
   memory.Write(cpu.GetLinearAddrForDataAccess(effective_addr), cpu.Pop16());
   return;
 }
@@ -4336,7 +4336,7 @@ void LdsR32M1632::Run(Cpu& cpu, Memory& memory) {
   this->ParseModRM(cpu, memory);
   if (cpu.IsProtectedMode()) {
     if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
-      uint16_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+      uint16_t effective_addr = this->GetEffectiveAddr(cpu);
       cpu.SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
                  memory.Read32(cpu.GetLinearAddrForDataAccess(effective_addr)));
       cpu.SetR16(DS, memory.Read16(
@@ -4348,7 +4348,7 @@ void LdsR32M1632::Run(Cpu& cpu, Memory& memory) {
     return;
   } else {
     if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
-      uint16_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+      uint16_t effective_addr = this->GetEffectiveAddr(cpu);
       cpu.SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
                  memory.Read32(cpu.GetLinearAddrForDataAccess(effective_addr)));
       cpu.SetR16(DS, memory.Read16(
@@ -4356,7 +4356,7 @@ void LdsR32M1632::Run(Cpu& cpu, Memory& memory) {
       return;
     }
     uint16_t effective_addr;
-    effective_addr = this->GetEffectiveAddr(cpu, memory);
+    effective_addr = this->GetEffectiveAddr(cpu);
     cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
                memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr)));
     // fprintf(stderr, "ES=%04X\n",
@@ -4898,14 +4898,14 @@ void LssR32M1632::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
   this->ParseModRM(cpu, memory);
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
-    uint32_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+    uint32_t effective_addr = this->GetEffectiveAddr(cpu);
     cpu.SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
                memory.Read32(cpu.GetLinearAddrForDataAccess(effective_addr)));
     cpu.SetR16(
         SS, memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr + 4)));
     return;
   }
-  uint32_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+  uint32_t effective_addr = this->GetEffectiveAddr(cpu);
   cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
              memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr)));
   cpu.SetR16(SS,
@@ -4919,14 +4919,14 @@ void LfsR32M1632::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
   this->ParseModRM(cpu, memory);
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
-    uint16_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+    uint16_t effective_addr = this->GetEffectiveAddr(cpu);
     cpu.SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
                memory.Read32(cpu.GetLinearAddrForDataAccess(effective_addr)));
     cpu.SetR16(
         FS, memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr + 4)));
     return;
   }
-  uint16_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+  uint16_t effective_addr = this->GetEffectiveAddr(cpu);
   cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
              memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr)));
   cpu.SetR16(FS,
@@ -4944,14 +4944,14 @@ void LgsR32M1632::Run(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
   this->ParseModRM(cpu, memory);
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixOpSize()) {
-    uint16_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+    uint16_t effective_addr = this->GetEffectiveAddr(cpu);
     cpu.SetR32((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
                memory.Read32(cpu.GetLinearAddrForDataAccess(effective_addr)));
     cpu.SetR16(
         GS, memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr + 4)));
     return;
   }
-  uint16_t effective_addr = this->GetEffectiveAddr(cpu, memory);
+  uint16_t effective_addr = this->GetEffectiveAddr(cpu);
   cpu.SetR16((GENERAL_PURPOSE_REGISTER32)this->modrm.reg_index,
              memory.Read16(cpu.GetLinearAddrForDataAccess(effective_addr)));
   cpu.SetR16(GS,
