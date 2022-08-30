@@ -396,7 +396,7 @@ inline void Instruction::ParseModRM(Cpu& cpu, Memory& memory) {
   cpu.AddEip(1);
   if (cpu.Is32bitsMode() ^ cpu.IsPrefixAddrSize()) {
     if ((this->modrm.mod == 0x01 && this->modrm.rm == 0x05) ||
-        (this->modrm.mod == 0x10 && this->modrm.rm == 0x05)) {
+        (this->modrm.mod == 0x02 && this->modrm.rm == 0x05)) {
       if (!cpu.IsSegmentOverride()) cpu.SetDataSelector(SS);
     }
     // SIB判定
