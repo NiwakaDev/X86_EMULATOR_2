@@ -8,12 +8,12 @@ using namespace std;
 class CpuTest: public ::testing::Test{
     protected:
         virtual void SetUp(){
-            auto MockIoIn8    = [&](uint16_t addr){return 0;};
-            auto MockIoOut8   = [&](uint16_t addr, uint8_t data){};
-            auto MockBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
+            auto StubIoIn8    = [&](uint16_t addr){return 0;};
+            auto StubIoOut8   = [&](uint16_t addr, uint8_t data){};
+            auto StubBiosCall = [&](Cpu& cpu, Memory& mem, const uint8_t bios_number){};
             int size = 1024*1024;
             memory = make_unique<Memory>(size);
-            cpu    = make_unique<Cpu>(MockBiosCall, *(memory.get()), MockIoIn8, MockIoOut8);
+            cpu    = make_unique<Cpu>(StubBiosCall, *(memory.get()), StubIoIn8, StubIoOut8);
         }
         virtual void TearDown(){
 
