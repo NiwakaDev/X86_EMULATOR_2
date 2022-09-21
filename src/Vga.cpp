@@ -68,16 +68,18 @@ void Vga::SetText(const uint8_t ascii_code, const int w, const int h) {
   int y = h * 8;
 
   uint8_t* font = font8x8_basic[ascii_code];
-  Pixel pixel;
-  pixel.r = 0xFF;
-  pixel.g = 0xFF;
-  pixel.b = 0xFF;
-
-  Pixel black_pixel;
-  black_pixel.r = 0x00;
-  black_pixel.g = 0x00;
-  black_pixel.b = 0x00;
-
+  Pixel pixel = {
+    .a = 0x00, 
+    .r = 0xFF, 
+    .g = 0xFF, 
+    .b = 0xFF, 
+  };
+  Pixel black_pixel = {
+    .a = 0x00, 
+    .r = 0x00,
+    .g = 0x00, 
+    .b = 0x00,  
+  };
   for (int i = 0; i < 8; i++) {
     uint8_t data = font[i];
     if ((data & 0x80) != 0) {
