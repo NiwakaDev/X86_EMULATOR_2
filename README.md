@@ -1,7 +1,7 @@
 # X86_EMULATOR_2
 
 
-<p>X86_EMULATOR_2 is a x86 emulator written in C++ .</p>
+<p>X86_EMULATOR_2 is a x86 emulator written in C++.</p>
 
 <p><a href="https://www.amazon.co.jp/30%E6%97%A5%E3%81%A7%E3%81%A7%E3%81%8D%E3%82%8B-OS%E8%87%AA%E4%BD%9C%E5%85%A5%E9%96%80-%E5%B7%9D%E5%90%88-%E7%A7%80%E5%AE%9F-ebook/dp/B00IR1HYI0">Haribote OS</a></p>
 
@@ -104,57 +104,30 @@ make
 
 <h2>Run</h2>
 
-
-Run Haribote OS
 ```
-./x86 -i haribote.img
+./x86 -i os_image
 ```
 
-Run FreeDOS
-```
-./x86 -i fd.img
-```
+This project includes `full.img` and `haribote.img`. You can immediately run both of them on the emulator.
 
-Run <a href="https://github.com/neri/osz">osz</a>
-```
-./x86 -i full.img
-```
-
-<h2>Language and Library</h2>
-c++14, <a href="https://www.libsdl.org/">SDL2</a>
-
-
-<p>test : <a href="https://github.com/google/googletest">googletest</p> 
+<h2>Language</h2>
+c++14
 
 <h2>How to use mouse</h2>
 
-<h3>Mouse into the emulator</h3>
+<h3>Move mouse into window</h3>
 
 ```
-Click mouse on the emulator 
+Click mouse on the window
 ```
 
-<h3>Mouse out of the emulator</h3>
+<h3>Move mouse out of window</h3>
 
 ```
 left-ctrl+left-alt+g
 ```
 
-※Press left-ctrl+left-alt first, then g .
-
-<h2>Test</h2>
-
-```
-./test.sh
-```
-
-or
-
-```
-make clean
-make x86_test
-./x86_test
-```
+※Press left-ctrl+left-alt first, then g.
 
 <h2>Reference</h2>
 
@@ -165,10 +138,5 @@ make x86_test
 <a href="https://github.com/dhepper/font8x8">https://github.com/dhepper/font8x8</a>
 
 <h2>Contact</h2>
-Feel free to contact me .
-
-<h2>フロッピーディスクの音源について</h2>
-<strong>※これは廃止になりました。</strong>
-
-<p>OtoLogicの素材を使用(https://otologic.jp/)</p>
-<p>フロッピーディスクの音源ファイル:Floppy_Disk_Drive02-1(Operating_Noise).mp3</p>
+Feel free to open an issue.
+Welcome any content!!
