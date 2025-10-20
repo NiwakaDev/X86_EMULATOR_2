@@ -96,8 +96,8 @@ type Cpu::Inc(type data) {
   return data + 1;
 }
 
-inline template <typename type>
-void Cpu::UpdateEflagsForInc(type d) {
+template <typename type>
+inline void Cpu::UpdateEflagsForInc(type d) {
   type result = (type)(d + 1);
   this->UpdateZF(result);
   this->UpdateSF(result);
@@ -112,8 +112,8 @@ type Cpu::Dec(type data) {
   return result;
 }
 
-inline template <typename type>
-void Cpu::UpdateEflagsForDec(type result, type d1, type d2) {
+template <typename type>
+inline void Cpu::UpdateEflagsForDec(type result, type d1, type d2) {
   this->UpdateZF(result);
   this->UpdateSF(result);
   this->UpdatePF(result);
@@ -134,46 +134,46 @@ void Cpu::UpdateEflagsForDec(type result, type d1, type d2) {
   }
 }
 
-inline template <typename type>
-type Cpu::Adc(type data1, type data2) {
+template <typename type>
+inline type Cpu::Adc(type data1, type data2) {
   type carry = this->IsFlag(CF) ? 1 : 0;
   this->UpdateEflagsForAdc(data1, data2, carry);
   return data1 + data2 + carry;
 }
 
-inline template <typename type>
-type Cpu::Xor(type data1, type data2) {
+template <typename type>
+inline type Cpu::Xor(type data1, type data2) {
   type result = data1 ^ data2;
   this->UpdateEflagsForAnd(result);
   return result;
 }
 
-inline template <typename type>
-type Cpu::Or(type data1, type data2) {
+template <typename type>
+inline type Cpu::Or(type data1, type data2) {
   this->UpdateEflagsForAnd((type)(data1 | data2));
   return data1 | data2;
 }
 
-inline template <typename type>
-type Cpu::And(type data1, type data2) {
+template <typename type>
+inline type Cpu::And(type data1, type data2) {
   this->UpdateEflagsForAnd((type)(data1 & data2));
   return data1 & data2;
 }
 
-inline template <typename type>
-type Cpu::Add(type data1, type data2) {
+template <typename type>
+inline type Cpu::Add(type data1, type data2) {
   this->UpdateEflagsForAdd(data1, data2);
   return data1 + data2;
 }
 
-inline template <typename type>
-type Cpu::Sub(type data1, type data2) {
+template <typename type>
+inline type Cpu::Sub(type data1, type data2) {
   this->UpdateEflagsForSub(data1, data2);
   return data1 - data2;
 }
 
-inline template <typename type>
-void Cpu::UpdateEflagsForSub(type data1, type data2) {
+template <typename type>
+inline void Cpu::UpdateEflagsForSub(type data1, type data2) {
   this->UpdateZF((type)(data1 - data2));
   this->UpdatePF(data1 - data2);
   this->UpdateSF((type)(data1 - data2));
@@ -245,8 +245,8 @@ void Cpu::UpdateEflagsForAdc(type d1, type d2, type c) {
   }
 }
 
-inline template <typename type>
-void Cpu::UpdateEflagsForAdd(type d1, type d2) {
+template <typename type>
+inline void Cpu::UpdateEflagsForAdd(type d1, type d2) {
   this->UpdateZF((type)(d1 + d2));
   this->UpdateSF((type)(d1 + d2));
   this->UpdatePF((type)(d1 + d2));
@@ -561,15 +561,15 @@ void Cpu::Scas(type data) {
   }
 }
 
-inline template <typename type>
-void Cpu::UpdateEflagsForShr(type result) {
+template <typename type>
+inline void Cpu::UpdateEflagsForShr(type result) {
   this->UpdateZF((uint32_t)result);
   this->UpdateSF(result);
   this->UpdatePF((uint32_t)result);
 }
 
-inline template <typename type>
-void Cpu::UpdateOF_Add(type result, type d1, type d2) {
+template <typename type>
+inline void Cpu::UpdateOF_Add(type result, type d1, type d2) {
   switch (sizeof(result)) {
     case 1:
       this->eflags.flgs.OF = ((d1 & SIGN_FLG1) == (d2 & SIGN_FLG1)) &&
@@ -589,8 +589,8 @@ void Cpu::UpdateOF_Add(type result, type d1, type d2) {
   }
 }
 
-inline template <typename type>
-void Cpu::UpdateCfForSub(type data, int group) {
+template <typename type>
+inline void Cpu::UpdateCfForSub(type data, int group) {
   switch (group) {
     case 1:
       this->eflags.flgs.CF = ((data >> 8) & 1) ? 1 : 0;
@@ -608,8 +608,8 @@ void Cpu::UpdateCfForSub(type data, int group) {
   }
 }
 
-inline template <typename type>
-void Cpu::UpdateSF(type data) {
+template <typename type>
+inline void Cpu::UpdateSF(type data) {
   switch (sizeof(data)) {
     case 1:
       this->eflags.flgs.SF = ((data & SIGN_FLG1) == SIGN_FLG1) ? 1 : 0;
@@ -627,8 +627,8 @@ void Cpu::UpdateSF(type data) {
   }
 }
 
-inline template <typename type>
-void Cpu::UpdateEflagsForAnd(type data) {
+template <typename type>
+inline void Cpu::UpdateEflagsForAnd(type data) {
   this->ClearFlag(CF);
   this->ClearFlag(OF);
   this->UpdateSF(data);
@@ -636,8 +636,8 @@ void Cpu::UpdateEflagsForAnd(type data) {
   this->UpdatePF(data);
 }
 
-inline template <typename type>
-void Cpu::UpdateEflagsForUnsignedMul(type data) {
+template <typename type>
+inline void Cpu::UpdateEflagsForUnsignedMul(type data) {
   if (data == 0) {
     this->ClearFlag(OF);
     this->ClearFlag(CF);

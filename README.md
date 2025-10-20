@@ -98,8 +98,10 @@
   
 <h2>Build</h2>
 
-```
-make
+```bash
+mkdir build
+cmake ..
+cmake --build .
 ```
 
 <h2>Run</h2>

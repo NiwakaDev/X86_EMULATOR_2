@@ -1,0 +1,30 @@
+name: Build x86 emulator
+
+on: [push,pull_request]
+
+jobs:
+  strategy:
+    matrix:
+      config:
+        - name: linux 
+          os: ubuntu-latest 
+        - name: maxos 
+          os: macos-latest
+  build1:
+    name: Build x86 emulator on Linux
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: libsdl-org/setup-sdl@main
+      if: runner.os == 'Linux'
+      id: sdl
+      with:
+        install-linux-dependencies: true
+        version: 2.30.9
+    - name: brew install 
+      if: runner.os == 'macOS'
+      run: brew install -q sdl2
+    - name: Generate build system
+      run: cmake .
+    - name: Build
+      run: cmake --build .

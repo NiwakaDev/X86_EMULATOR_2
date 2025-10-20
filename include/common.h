@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <stdarg.h>
 #include <string.h>
 #include <unistd.h>
