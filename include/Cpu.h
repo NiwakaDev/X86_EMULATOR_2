@@ -24,13 +24,13 @@ class DescriptorTableRegister;
 #define DPL 0x60  // access_rightのDPLの該当部分
 
 namespace CpuHelper {
-inline template <typename type>
-uint8_t GetDpl(type data) {
+template <typename type>
+inline uint8_t GetDpl(type data) {
   return (data & DPL) >> 5;
 }
 
-inline template <typename type>
-uint8_t GetRpl(type data) {
+template <typename type>
+inline uint8_t GetRpl(type data) {
   return data & 0x03;
 }
 }  // namespace CpuHelper

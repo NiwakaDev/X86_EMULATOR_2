@@ -1,7 +1,7 @@
 #include "../Memory.h"
 
-inline template <typename type>
-void Memory::Write(const uint32_t addr, const type data) {
+template <typename type>
+inline void Memory::Write(const uint32_t addr, const type data) {
   if ((mem_size_ - sizeof(data) + 1) <= addr) {
     return;
   }
