@@ -15,3 +15,6 @@ target_include_directories(x86 PUBLIC
     ${SDL2_INCLUDE_DIRS} 
 )
 target_include_directories(x86 PRIVATE include SDL2)
+
+include(CTest)
+add_subdirectory(test)

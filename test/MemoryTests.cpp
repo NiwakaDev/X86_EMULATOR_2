@@ -1,5 +1,5 @@
-#include "../../include/Memory.h"
-#include "../../include/Cpu.h"
+#include "Memory.h"
+#include "Cpu.h"
 #include <gtest/gtest.h>
 #include <memory>
 using namespace std;
